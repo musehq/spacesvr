@@ -7,11 +7,8 @@ import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
-import {
-  useEnvironmentState,
-  environmentStateContext,
-  EnvironmentProps,
-} from "..";
+import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
+import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import { RealisticEffects } from "../../effects";

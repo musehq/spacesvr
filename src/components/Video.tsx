@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { useFrame, useThree } from "react-three-fiber";
 import { Vector2 } from "three";
 import { Group } from "three";
-import { useEnvironment } from "../core";
+import { useEnvironment } from "../core/utils/hooks";
 
 type VideoProps = JSX.IntrinsicElements["group"] & {
   src: string;

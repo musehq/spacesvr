@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group } from "three";
-import { useEnvironment } from "../core/";
+import { useEnvironment } from "../core/utils/hooks";
 import { useFrame } from "react-three-fiber";
 
 type InteractableProps = {

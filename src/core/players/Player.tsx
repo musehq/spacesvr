@@ -6,7 +6,7 @@ import { isMobile } from "react-device-detect";
 
 import MobileControls from "../controls/MobileControls";
 import DesktopControls from "../controls/DesktopControls";
-import { useEnvironment } from "../";
+import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 
 const VELOCITY_FACTOR = 250;

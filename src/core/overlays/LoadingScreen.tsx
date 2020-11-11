@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useControlledProgress } from "../index";
+import { useControlledProgress } from "../utils/hooks";
 
 const Container = styled.div<{ finished: boolean; landing: boolean }>`
   width: 100%;

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useEnvironment } from "../index";
+import { useEnvironment } from "../utils/hooks";
 
 const Container = styled.div<{ paused: boolean }>`
   position: absolute;

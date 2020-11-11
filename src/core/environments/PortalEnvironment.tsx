@@ -4,13 +4,8 @@ import styled from "@emotion/styled";
 import ShirtsLoading from "../overlays/PortalLoadingScreen";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { usePortal } from "services/portal";
-import {
-  EnvironmentProps,
-  EnvironmentState,
-  useEnvironmentState,
-  environmentStateContext,
-  Portal,
-} from "../";
+import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
+import { EnvironmentProps, Portal, EnvironmentState } from "../types";
 import { Canvas } from "react-three-fiber";
 import { Physics } from "@react-three/cannon";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";

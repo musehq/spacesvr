@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import Transition from "./components/Transition";
 import Loading from "./components/Loading";
-import { useControlledProgress, useEnvironment } from "../../index";
+import { useControlledProgress, useEnvironment } from "../../utils/hooks";
 
 type LoadingScreenProps = {
   setFixedPath: Dispatch<SetStateAction<boolean>>;

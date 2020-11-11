@@ -72,7 +72,7 @@ function createConfig(entry, out) {
 }
 
 export default [
-  ...createConfig("index", "index"),
+  ...createConfig("index", "main"),
   ...createConfig("components", "components"),
   ...createConfig("core", "core"),
   ...createConfig("effects", "effects"),

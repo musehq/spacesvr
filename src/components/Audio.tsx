@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { useEffect, useRef } from "react";
 import { useThree } from "react-three-fiber";
-import { useEnvironment } from "../core";
+import { useEnvironment } from "../core/utils/hooks";
 import { Vector3 } from "three";
 import { PositionalAudioHelper } from "three/examples/jsm/helpers/PositionalAudioHelper";
 

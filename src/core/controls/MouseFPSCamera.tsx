@@ -3,7 +3,7 @@ import { useRef, useEffect, MutableRefObject } from "react";
 import { extend, useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Vector3 } from "three";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
-import { useEnvironment } from "../";
+import { useEnvironment } from "../utils/hooks";
 
 extend({ PointerLockControls });
 

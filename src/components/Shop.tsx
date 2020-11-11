@@ -1,5 +1,5 @@
 import { useShopify } from "../services";
-import { Image } from "./";
+import { Image } from "./Image";
 import { Interactable } from "../modifiers";
 
 type ShopProps = {
