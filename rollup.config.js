@@ -37,6 +37,14 @@ function targetTypings(entry, out) {
   };
 }
 
+function addReactImport(out) {
+  return {
+    writeBundle() {
+      return fs.appendFile(`dist/${out}.js`, `import React from "react"`);
+    },
+  };
+}
+
 function createConfig(entry, out) {
   return [
     {
@@ -45,6 +53,7 @@ function createConfig(entry, out) {
       external,
       plugins: [
         json(),
+        addReactImport(out),
         commonjs(),
         babel(
           getBabelOptions(

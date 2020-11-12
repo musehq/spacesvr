@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "private": true,
   "description": "An Environment for WebXR Spaces",
   "keywords": [
@@ -20,12 +20,12 @@
   "main": "main.cjs.js",
   "module": "main.js",
   "scripts": {
-    "build": "rimraf dist && mkdir dist && cp -R src/* dist && rollup -c && tsc && yarn copy",
+    "build": "rimraf dist && mkdir dist && cp -R src/* dist && rollup -c && tsc && yarn copy && yarn pack-dist",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "process-gltf": "./scripts/process-gltf.sh",
     "eslint": "eslint --fix {src,examples/src}/**/*.{js,ts,jsx,tsx}",
     "copy": "copyfiles package.json readme.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.optionalDependencies=undefined; this.scripts=undefined; this.husky=undefined; this.prettier=undefined; this.jest=undefined; this['lint-staged']=undefined;\"",
-    "pack-dist": "cd dist && yarn pack && mv *.tgz .."
+    "pack-dist": "cd dist && yarn pack && mv *.tgz .. && cd .."
   },
   "husky": {
     "hooks": {
