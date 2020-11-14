@@ -8,7 +8,7 @@ type FloatingProps = {
   children: ReactNode;
 };
 
-const Floating = (props: FloatingProps) => {
+export const Floating = (props: FloatingProps) => {
   const { children, height = 0.2, speed = 1 } = props;
 
   const group = useRef<Group>();
@@ -24,5 +24,3 @@ const Floating = (props: FloatingProps) => {
 
   return <group ref={group}>{children}</group>;
 };
-
-export default Floating;
