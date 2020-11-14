@@ -1,9 +1,7 @@
 import fetch from "node-fetch";
 import { useEffect, useState } from "react";
-import { fetchAccount } from "services/instagram";
+import { fetchAccount } from "./instagram";
 import { Portal } from "../core";
-
-const BACKEND_ROUTE = process.env.NEXT_PUBLIC_BACKEND_ROUTE;
 
 type PortalHookResponse = {
   result?: Portal;
