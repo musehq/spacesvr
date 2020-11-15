@@ -9,3 +9,4 @@ export * from "./Logo";
 export * from "./Shop";
 export * from "./Text";
 export * from "./Video";
+export * from "./Fog";

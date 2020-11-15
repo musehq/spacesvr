@@ -4,13 +4,20 @@ import { PlayerRef } from "./player";
 import { MutableRefObject, ReactNode } from "react";
 import { Portal } from "./portal";
 
+export enum Environment {
+  STANDARD,
+  TRACK,
+  PORTAL,
+}
+
 export type EnvironmentProps = {
   children: ReactNode;
   canvasProps?: Partial<ContainerProps>;
   physicsProps?: Partial<ProviderProps>;
 };
 
-export type EnvironmentState = {
+export interface EnvironmentState {
+  type: Environment;
   paused: boolean;
   player: PlayerRef;
   overlay: string | null;
@@ -20,8 +27,11 @@ export type EnvironmentState = {
   setPlayer: (p: PlayerRef) => void;
   setPaused: (p: boolean, overlay?: string) => void;
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
-  portal?: Portal;
-};
+}
+
+export interface PortalEnvironmentState extends EnvironmentState {
+  portal: Portal;
+}
 
 export interface EnvironmentEvent {
   name: string;

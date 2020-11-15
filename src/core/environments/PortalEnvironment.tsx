@@ -5,13 +5,13 @@ import ShirtsLoading from "../overlays/PortalLoadingScreen";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { usePortal } from "../../services/portal";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import { EnvironmentProps, Portal, EnvironmentState } from "../types";
+import { EnvironmentProps, Portal, PortalEnvironmentState } from "../types";
 import { Canvas } from "react-three-fiber";
 import { Physics } from "@react-three/cannon";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Vector3 } from "three";
 import TrackPlayer from "../players/TrackPlayer";
-import Player from "../players/TrackPlayer";
+import Player from "../players/Player";
 import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
@@ -91,7 +91,10 @@ export const PortalEnvironment = (
   const { result, error } = usePortal(portalId, portalHandler);
 
   const state = useEnvironmentState();
-  const localState: EnvironmentState = { ...state, portal: result };
+  const localState: PortalEnvironmentState = {
+    ...state,
+    portal: result as Portal,
+  };
 
   const [fixedPath, setFixedPath] = useState<boolean>(true);
 

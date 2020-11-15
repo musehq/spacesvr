@@ -5,19 +5,19 @@ import * as THREE from "three";
 import { PlayerControls, PlayerRef, PlayerVec } from "../types";
 
 export function createPlayerRef(
-  bodyApi: Api[1],
+  bodyApi: Api[1] | undefined,
   position: MutableRefObject<Vector3>,
   velocity: MutableRefObject<Vector3>,
   lockControls: MutableRefObject<boolean>,
   raycaster: MutableRefObject<THREE.Raycaster>
 ): PlayerRef {
   const posVec: PlayerVec = {
-    set: (vec: Vector3) => bodyApi.position.set(vec.x, vec.y, vec.z),
+    set: (vec: Vector3) => bodyApi && bodyApi.position.set(vec.x, vec.y, vec.z),
     get: () => position.current,
   };
 
   const velVec: PlayerVec = {
-    set: (vec: Vector3) => bodyApi.velocity.set(vec.x, vec.y, vec.z),
+    set: (vec: Vector3) => bodyApi && bodyApi.velocity.set(vec.x, vec.y, vec.z),
     get: () => velocity.current,
   };
 

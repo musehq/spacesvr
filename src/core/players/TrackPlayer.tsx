@@ -1,19 +1,18 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
-import { useSphere } from "@react-three/cannon";
 import { isMobile } from "react-device-detect";
 
-import { useEnvironment } from "../utils/hooks";
+import { useTrackEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
-import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
 import MouseFPSCamera from "../controls/MouseFPSCamera";
+import { GyroControls } from "../controls/GyroControls";
+import { useSphere } from "@react-three/cannon";
 
 const SHOW_PLAYER_HITBOX = false;
 
-export type PlayerProps = {
-  initPos?: Vector3;
-  initRot?: number;
+type TrackPlayerProps = {
+  spring: any;
 };
 
 /**
@@ -25,15 +24,23 @@ export type PlayerProps = {
  *
  * @constructor
  */
-const TrackPlayer = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 1, 0), initRot = 0 } = props;
+const TrackPlayer = (props: TrackPlayerProps) => {
+  const { spring } = props;
+
   const { camera } = useThree();
-  const { setPlayer } = useEnvironment();
+  const { setPlayer, keyframes } = useTrackEnvironment();
+
+  const scale = keyframes.currentFrame.scale || 1;
+  const keyframePos = keyframes.currentFrame.position;
 
   // physical body
   const [bodyRef, bodyApi] = useSphere(() => ({
-    mass: 500,
-    position: initPos.toArray(),
+    mass: 0,
+    position: [
+      keyframePos.x * scale,
+      keyframePos.y * scale,
+      keyframePos.z * scale,
+    ],
     args: 1,
     fixedRotation: true,
   }));
@@ -47,25 +54,24 @@ const TrackPlayer = (props: PlayerProps) => {
   // consumer
   const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis
 
-  const controls = useRef<DeviceOrientationControls>();
-
   // setup player
   useEffect(() => {
-    // store position and velocity
     bodyApi.position.subscribe((p) => {
       position.current.set(p[0], p[1], p[2]);
     });
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
 
-    const xLook = initPos.x + 100 * Math.cos(initRot);
-    const zLook = initPos.z + 100 * Math.sin(initRot);
-    camera?.lookAt(xLook, initPos.y, zLook);
+    const { position: keyframePosition, scale = 1 } = keyframes.currentFrame;
+    const rotation = 0;
+    const xLook = keyframePosition.x + 100 * Math.cos(rotation);
+    const zLook = keyframePosition.z + 100 * Math.sin(rotation);
+    camera?.lookAt(xLook, keyframePosition.y, zLook);
 
-    if (isMobile) {
-      window.addEventListener("click", () => {
-        controls.current = new DeviceOrientationControls(camera);
-      });
-    }
+    camera?.position.set(
+      keyframePosition.x * scale,
+      keyframePosition.y * scale,
+      keyframePosition.z * scale
+    );
 
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
@@ -74,23 +80,38 @@ const TrackPlayer = (props: PlayerProps) => {
 
   // update player every frame
   useFrame(({ clock }) => {
-    if (isMobile && controls.current) {
-      controls.current.update();
-    }
+    // @ts-ignore
+    const newVals = spring.xyzs.interpolate((x, y, z, s) => [x, y, z, s]);
+    // @ts-ignore
+    const newX = newVals.payload[0].value;
+    // @ts-ignore
+    const xVel = newVals.payload[0].lastVelocity || 0;
+    // @ts-ignore
+    const newY = newVals.payload[1].value;
+    // @ts-ignore
+    const yVel = newVals.payload[1].lastVelocity || 0;
+    // @ts-ignore
+    const newZ = newVals.payload[2].value;
+    // @ts-ignore
+    const zVel = newVals.payload[2].lastVelocity || 0;
+    // @ts-ignore
+    const newS = newVals.payload[3].value;
+    // @ts-ignore
+    const sVel = newVals.payload[3].lastVelocity || 0;
 
-    const dist = (22 + 50) / 2;
-    const x = dist * Math.cos(clock.getElapsedTime() / 10);
-    const z = dist * Math.sin(clock.getElapsedTime() / 10);
-    camera.position.set(x, 2, z);
+    bodyApi?.position.set(newX * newS, newY * newS, newZ * newS);
+
     return;
   });
 
   return (
     <>
-      {!isMobile && (
+      {isMobile ? (
+        <GyroControls />
+      ) : (
         <MouseFPSCamera quaternion={quaternion} position={position} />
       )}
-      <mesh ref={bodyRef} name="player">
+      <mesh name="player">
         {SHOW_PLAYER_HITBOX && (
           <>
             <sphereBufferGeometry attach="geometry" args={[1]} />

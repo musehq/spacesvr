@@ -6,15 +6,30 @@ import {
   useRef,
   useState,
 } from "react";
-import { EnvironmentState, EnvironmentEvent, PlayerRef } from "../";
+import {
+  Environment,
+  EnvironmentEvent,
+  EnvironmentState,
+  PlayerRef,
+  PortalEnvironmentState,
+  TrackEnvironmentState,
+} from "../types";
 import { useProgress } from "@react-three/drei";
 
 export const environmentStateContext = createContext<EnvironmentState>(
   {} as EnvironmentState
 );
 
-export function useEnvironment(): EnvironmentState {
-  return useContext(environmentStateContext);
+export function useEnvironment<T extends EnvironmentState>(): T {
+  return useContext(environmentStateContext) as T & EnvironmentState;
+}
+
+export function usePortalEnvironment(): PortalEnvironmentState {
+  return useEnvironment<PortalEnvironmentState>();
+}
+
+export function useTrackEnvironment(): TrackEnvironmentState {
+  return useEnvironment<TrackEnvironmentState>();
 }
 
 export function useEnvironmentState(): EnvironmentState {
@@ -64,6 +79,7 @@ export function useEnvironmentState(): EnvironmentState {
   );
 
   const context: EnvironmentState = {
+    type: Environment.STANDARD,
     paused,
     overlay,
     player: player.current,
