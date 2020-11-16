@@ -1,11 +1,10 @@
-import { useRef, useEffect, MutableRefObject, RefObject } from "react";
+import { useRef, useEffect, MutableRefObject } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Vector3, Vector2, Euler } from "three";
 
 type DragFPSCameraProps = {
   quaternion: MutableRefObject<Quaternion>;
   position: MutableRefObject<Vector3>;
-  nippleContainer: RefObject<HTMLElement>;
 };
 
 type Touch = {

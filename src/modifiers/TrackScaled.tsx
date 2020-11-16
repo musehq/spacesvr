@@ -20,8 +20,6 @@ export const TrackScaled = (props: TrackScaledProps) => {
       // @ts-ignore
       const sVel = newVals.payload[3].lastVelocity || 0;
 
-      // console.log(newS);
-
       group.current.scale.set(newS, newS, newS);
     }
   });

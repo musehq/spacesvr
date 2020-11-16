@@ -4,10 +4,12 @@ import { Quaternion, Raycaster, Vector3 } from "three";
 import { useSphere } from "@react-three/cannon";
 import { isMobile } from "react-device-detect";
 
-import MobileControls from "../controls/MobileControls";
-import DesktopControls from "../controls/DesktopControls";
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
+import NippleMovement from "../controls/NippleMovement";
+import KeyboardMovement from "../controls/KeyboardMovement";
+import MouseFPSCamera from "../controls/MouseFPSCamera";
+import TouchFPSCamera from "../controls/TouchFPSCamera";
 
 const VELOCITY_FACTOR = 250;
 const SHOW_PLAYER_HITBOX = false;
@@ -110,17 +112,15 @@ const Player = (props: PlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <MobileControls
-          quaternion={quaternion}
-          position={position}
-          direction={direction}
-        />
+        <>
+          <NippleMovement direction={direction} />
+          <TouchFPSCamera quaternion={quaternion} position={position} />
+        </>
       ) : (
-        <DesktopControls
-          quaternion={quaternion}
-          position={position}
-          direction={direction}
-        />
+        <>
+          <KeyboardMovement direction={direction} />
+          <MouseFPSCamera quaternion={quaternion} position={position} />
+        </>
       )}
       <mesh ref={bodyRef} name="player">
         {SHOW_PLAYER_HITBOX && (
