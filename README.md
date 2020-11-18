@@ -7,7 +7,7 @@
      Spaces VR
 </h3>
 <h5 align="center">
-     Sleek, powerful front-end framework for quickly creating accessible VR Websites.
+     Sleek, powerful front-end framework for quickly creating cross-platform VR Websites.
 </h5>
 <p align="center">
     <a href="https://spacesvr.io">spacesvr.io</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
@@ -80,9 +80,9 @@ const App = () => {
 
 #### > how does it work?
 
-The essential functionality comes from the `Environment` components which provide...
+The main functionality comes from the `Environment` components which provide...
 
-- a player with a control scheme
+- a controllable player with a control scheme
 - post processing
 - physics with ground plane
 - loading menu
@@ -94,7 +94,7 @@ code in an environment and you will be able to navigate your space on mobile and
 
 #### > what are modifiers?
 
-Modifiers, well, modify any 3d object in different ways. For example, the `Floating`
+Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`
 modifier will make its children steadily float up and down. Perfect for quickly adding
 animations to components!
 
@@ -238,10 +238,10 @@ Makes its children float up and down
 
 ```jsx
 <Floating
-    height={1} // the height it should float
-    speed={1} // just eyeball it
+  height={1} // the height it should float
+  speed={1} // just eyeball it
 >
-    <3DStuff />
+  <Stuff />
 </Floating>
 ```
 
@@ -251,11 +251,11 @@ Makes its children react to onclick and on hover methods
 
 ```jsx
 <Interactable
-   onClick={() => console.log("I've been clicked!")}
-   onHovered={() => console.log("I've been hovered!")}
-   onUnHovered={() => console.log("I've been unhovered?")}
+  onClick={() => console.log("I've been clicked!")}
+  onHovered={() => console.log("I've been hovered!")}
+  onUnHovered={() => console.log("I've been unhovered?")}
 >
-    <3DStuff />
+  <Stuff />
 </Interactable>
 ```
 
