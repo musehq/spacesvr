@@ -8,7 +8,6 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   ratio: [number, number];
   sizeScale: number;
   framed?: boolean;
-  paused?: boolean;
   doubleSided?: boolean;
   material?: Material;
   color?: Color;

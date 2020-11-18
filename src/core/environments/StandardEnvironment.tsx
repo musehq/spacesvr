@@ -16,6 +16,7 @@ import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
+import { ReactNode } from "react";
 
 const Container = styled.div`
   position: absolute;
@@ -53,8 +54,7 @@ type StandardEnvironmentProps = {
     pos?: Vector3;
     rot?: number;
   };
-  disableGround?: boolean;
-  disableEffects?: boolean;
+  effects?: ReactNode;
 };
 
 /**
@@ -70,14 +70,7 @@ type StandardEnvironmentProps = {
 export const StandardEnvironment = (
   props: EnvironmentProps & StandardEnvironmentProps
 ) => {
-  const {
-    children,
-    canvasProps,
-    physicsProps,
-    player,
-    disableGround,
-    disableEffects,
-  } = props;
+  const { children, canvasProps, physicsProps, player, effects } = props;
 
   const state = useEnvironmentState();
 
@@ -89,8 +82,8 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
-              {!disableGround && <InfinitePlane height={-0.001} />}
-              {!disableEffects && <RealisticEffects />}
+              <InfinitePlane height={-0.001} />
+              {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
