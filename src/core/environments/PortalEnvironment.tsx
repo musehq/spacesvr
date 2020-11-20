@@ -5,13 +5,13 @@ import ShirtsLoading from "../overlays/PortalLoadingScreen";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { usePortal } from "../../services/portal";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import { EnvironmentProps, Portal, EnvironmentState } from "../types";
+import { EnvironmentProps, Portal, PortalEnvironmentState } from "../types";
 import { Canvas } from "react-three-fiber";
 import { Physics } from "@react-three/cannon";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Vector3 } from "three";
-import TrackPlayer from "../players/TrackPlayer";
-import Player from "../players/TrackPlayer";
+import ParamaterizedPlayer from "../players/ParamaterizedPlayer";
+import Player from "../players/Player";
 import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
@@ -70,7 +70,7 @@ type PortalEnvironmentProps = {
  *
  * Provides an environment that loads a portal based on the url
  *
- * Player Type: First Person on a track or with WASD/Joystick
+ * Player Type: First Person on a paramaterized position
  * Physics: Enabled with default y=0 floor plane
  * Loading Screen: Spaces Portal Edition
  * Pause Menu: Spaces Edition
@@ -91,13 +91,22 @@ export const PortalEnvironment = (
   const { result, error } = usePortal(portalId, portalHandler);
 
   const state = useEnvironmentState();
-  const localState: EnvironmentState = { ...state, portal: result };
+  const localState: PortalEnvironmentState = {
+    ...state,
+    portal: result as Portal,
+  };
 
   const [fixedPath, setFixedPath] = useState<boolean>(true);
 
   if (error) {
     return <ErrorText>{error}</ErrorText>;
   }
+
+  const posFunc = (time: number) => [
+    Math.cos(time * 0.1) * 36,
+    2,
+    Math.sin(time * 0.1) * 36,
+  ];
 
   return (
     <BrowserChecker>
@@ -107,7 +116,7 @@ export const PortalEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={localState}>
               {fixedPath ? (
-                <TrackPlayer />
+                <ParamaterizedPlayer positionFunc={posFunc} />
               ) : (
                 <Player initPos={new Vector3(0, 2, 53)} />
               )}
