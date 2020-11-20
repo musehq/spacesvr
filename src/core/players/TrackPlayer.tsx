@@ -8,6 +8,7 @@ import { createPlayerRef } from "../utils/player";
 import { GyroControls } from "../controls/GyroControls";
 import { useSphere } from "@react-three/cannon";
 import DragControls from "../controls/DragControls";
+import TouchFPSCamera from "../controls/TouchFPSCamera";
 
 const SHOW_PLAYER_HITBOX = false;
 
@@ -107,7 +108,13 @@ const TrackPlayer = (props: TrackPlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <GyroControls />
+        <GyroControls
+          quaternion={quaternion}
+          position={position}
+          fallback={
+            <TouchFPSCamera quaternion={quaternion} position={position} />
+          }
+        />
       ) : (
         <DragControls quaternion={quaternion} position={position} />
       )}
