@@ -11,7 +11,7 @@ import DragControls from "../controls/DragControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 const SHOW_PLAYER_HITBOX = false;
 
-type TrackPlayerProps = {
+type ParamaterizedPlayerProps = {
   positionFunc: (time: number) => number[];
 };
 
@@ -27,7 +27,7 @@ type TrackPlayerProps = {
  *
  * @constructor
  */
-const ParamaterizedPlayer = (props: TrackPlayerProps) => {
+const ParamaterizedPlayer = (props: ParamaterizedPlayerProps) => {
   const { positionFunc } = props;
 
   const { camera } = useThree();

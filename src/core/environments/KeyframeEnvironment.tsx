@@ -65,7 +65,7 @@ type KeyframeEnvironmentProps = {
 
 /**
  *
- * Track environment moves camera between keyframes using arrow keys
+ * Keyframe environment moves camera between keyframes using arrow keys
  *
  * Player Type: First Person w/ Mouse, Drag controls
  * Physics: Enabled with default y=0 floor plane

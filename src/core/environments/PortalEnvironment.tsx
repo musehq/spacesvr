@@ -70,7 +70,7 @@ type PortalEnvironmentProps = {
  *
  * Provides an environment that loads a portal based on the url
  *
- * Player Type: First Person on a track or with WASD/Joystick
+ * Player Type: First Person on a paramaterized position
  * Physics: Enabled with default y=0 floor plane
  * Loading Screen: Spaces Portal Edition
  * Pause Menu: Spaces Edition

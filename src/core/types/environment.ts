@@ -2,7 +2,6 @@ import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { PlayerRef } from "./player";
 import { MutableRefObject, ReactNode } from "react";
-import { Portal } from "./portal";
 
 export enum Environment {
   STANDARD,
@@ -27,10 +26,6 @@ export interface EnvironmentState {
   setPlayer: (p: PlayerRef) => void;
   setPaused: (p: boolean, overlay?: string) => void;
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
-}
-
-export interface PortalEnvironmentState extends EnvironmentState {
-  portal: Portal;
 }
 
 export interface EnvironmentEvent {

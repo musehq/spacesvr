@@ -36,22 +36,25 @@ const RightNavButton = styled(NavButton)`
   right: 0;
 `;
 
+/**
+ * Sets up Keyframe controls to click to move between keyframes or
+ * press A/D/Arrow Keys to move between keyframes
+ *
+ * To be used with a keyframe environment
+ *
+ * @constructor
+ */
 export const KeyframeControlDisplay = () => {
-  const {
-    keyframes: { frames, setCurrent, currentIndex },
-  } = useKeyframeEnvironment();
+  const { keyframes } = useKeyframeEnvironment();
+  const { frames, setCurrent, currentIndex } = keyframes;
 
   const handleKeyboardInput = useCallback(
     (e: KeyboardEvent) => {
-      switch (e.key) {
-        case "ArrowLeft": {
-          setCurrent((currentIndex - 1 + frames.length) % frames.length);
-          break;
-        }
-        case "ArrowRight": {
-          setCurrent((currentIndex + 1 + frames.length) % frames.length);
-          break;
-        }
+      const code = e.key.toLowerCase();
+      if (code === "arrowleft" || code === "a") {
+        setCurrent((currentIndex - 1 + frames.length) % frames.length);
+      } else if (code === "arrowright" || code === "d") {
+        setCurrent((currentIndex + 1 + frames.length) % frames.length);
       }
     },
     [currentIndex, frames]

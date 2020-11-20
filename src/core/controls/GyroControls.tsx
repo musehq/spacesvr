@@ -9,6 +9,15 @@ type GyroControlsProps = {
   fallback: ReactNode;
 };
 
+/**
+ *
+ * Gyro controls uses device orientation controls from three js, if applicable.
+ * A required fallback component will be used in the place of the gyroscope
+ * controls until they are accepted and in use.
+ *
+ * @param props
+ * @constructor
+ */
 export const GyroControls = (props: GyroControlsProps) => {
   const { quaternion, position, fallback } = props;
 
@@ -17,11 +26,12 @@ export const GyroControls = (props: GyroControlsProps) => {
   const [controls, setControls] = useState<DeviceOrientationControls>();
   const [enableGyro, setEnableGyro] = useState(false);
 
+  // try to prompt user for device controls
   useEffect(() => {
     if (!controls) {
       const func = () => {
         const cont = new DeviceOrientationControls(camera);
-        cont.enabled = false;
+        cont.enabled = false; // set to disabled in case they're not working yet
         setControls(cont);
       };
       window.addEventListener("click", func);
@@ -34,6 +44,7 @@ export const GyroControls = (props: GyroControlsProps) => {
 
   useFrame(() => {
     if (controls && !enableGyro) {
+      // check if an event has been received yet
       if (Object.keys(controls.deviceOrientation).length !== 0) {
         setEnableGyro(true);
         controls.enabled = true;

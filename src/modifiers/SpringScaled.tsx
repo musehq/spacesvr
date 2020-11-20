@@ -8,6 +8,12 @@ type SpringScaledProps = {
   children: ReactNode;
 };
 
+/**
+ * Given a spring will scale the group. Format expected is XYZS
+ *
+ * @param props
+ * @constructor
+ */
 export const SpringScaled = (props: SpringScaledProps) => {
   const { spring, children } = props;
 
