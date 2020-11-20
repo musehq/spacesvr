@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import { Canvas } from "react-three-fiber";
+import { Canvas as RegularCanvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
@@ -17,6 +17,7 @@ import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import { DefaultXRControllers, VRCanvas } from "@react-three/xr";
 
 const Container = styled.div`
   position: absolute;
@@ -55,6 +56,7 @@ type StandardEnvironmentProps = {
     rot?: number;
   };
   effects?: ReactNode;
+  vr?: boolean;
 };
 
 /**
@@ -70,20 +72,23 @@ type StandardEnvironmentProps = {
 export const StandardEnvironment = (
   props: EnvironmentProps & StandardEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, player, effects } = props;
+  const { vr, children, canvasProps, physicsProps, player, effects } = props;
 
   const state = useEnvironmentState();
+
+  const Canvas = vr ? VRCanvas : RegularCanvas;
 
   return (
     <BrowserChecker>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
+          {vr && <DefaultXRControllers />}
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
-              <Player initPos={player?.pos} initRot={player?.rot} />
+              <Player initPos={player?.pos} initRot={player?.rot} vr={vr} />
               <InfinitePlane height={-0.001} />
-              {effects || <RealisticEffects />}
+              {effects || (!vr && <RealisticEffects />)}
               {children}
             </environmentStateContext.Provider>
           </Physics>

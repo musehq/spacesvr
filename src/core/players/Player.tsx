@@ -6,6 +6,8 @@ import { isMobile } from "react-device-detect";
 
 import MobileControls from "../controls/MobileControls";
 import DesktopControls from "../controls/DesktopControls";
+import VRControls from "../controls/VRControls";
+
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 
@@ -13,6 +15,7 @@ const VELOCITY_FACTOR = 250;
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
+  vr?: boolean;
   initPos?: Vector3;
   initRot?: number;
 };
@@ -27,7 +30,7 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 1, 0), initRot = 0 } = props;
+  const { initPos = new Vector3(0, 1, 0), initRot = 0, vr } = props;
   const { camera } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
@@ -38,6 +41,9 @@ const Player = (props: PlayerProps) => {
     args: 1,
     fixedRotation: true,
   }));
+
+  // camera parent reference for rotation in VR
+  const camParent = useRef();
 
   // producer
   const prevTime = useRef(performance.now());
@@ -122,7 +128,19 @@ const Player = (props: PlayerProps) => {
           direction={direction}
         />
       )}
+      {vr && (
+        <VRControls
+          quaternion={quaternion}
+          direction={direction}
+          camParent={camParent}
+        />
+      )}
       <mesh ref={bodyRef} name="player">
+        {vr && (
+          <group ref={camParent}>
+            <primitive object={camera} />
+          </group>
+        )}
         {SHOW_PLAYER_HITBOX && (
           <>
             <sphereBufferGeometry attach="geometry" args={[1]} />
