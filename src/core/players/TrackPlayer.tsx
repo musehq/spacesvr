@@ -5,9 +5,9 @@ import { isMobile } from "react-device-detect";
 
 import { useTrackEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
-import MouseFPSCamera from "../controls/MouseFPSCamera";
 import { GyroControls } from "../controls/GyroControls";
 import { useSphere } from "@react-three/cannon";
+import DragControls from "../controls/DragControls";
 
 const SHOW_PLAYER_HITBOX = false;
 
@@ -109,7 +109,7 @@ const TrackPlayer = (props: TrackPlayerProps) => {
       {isMobile ? (
         <GyroControls />
       ) : (
-        <MouseFPSCamera quaternion={quaternion} position={position} />
+        <DragControls quaternion={quaternion} position={position} />
       )}
       <mesh name="player">
         {SHOW_PLAYER_HITBOX && (
