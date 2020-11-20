@@ -2,7 +2,6 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
-import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
@@ -10,13 +9,10 @@ import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeConta
 import { Environment, EnvironmentProps, TrackEnvironmentState } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { RealisticEffects } from "../../effects";
-import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
-import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import TrackPlayer from "../players/TrackPlayer";
 import { TrackKeyframe } from "../types/keyframes";
-import { TrackControlDisplay } from "../overlays/TrackControlDisplay";
+import { TrackControlDisplay } from "../ui/TrackControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { TrackScaled } from "../../modifiers/TrackScaled";
 

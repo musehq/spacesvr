@@ -1,23 +1,39 @@
 import styled from "@emotion/styled";
-import { useTrackEnvironment } from "../utils/hooks";
+import { useTrackEnvironment } from "../../utils/hooks";
 import { useCallback, useEffect } from "react";
-
-const Container = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 9;
-  display: flex;
-  justify-items: flex-end;
-  align-items: flex-end;
-  padding: 25px;
-`;
+import Arrow from "./components/Arrow";
 
 const NavButton = styled.button`
-  background: white;
   padding: 10px 20px;
-  font-size: 3rem;
-  border: 2px solid black;
+  border: none;
+  background: none;
+  position: absolute;
+  top: 75%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.15s ease;
+  mix-blend-mode: difference;
+
+  &:hover {
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.925);
+  }
+
+  @media screen and (max-width: 750px) {
+    top: calc(100% - 3rem);
+  }
+`;
+
+const LeftNavButton = styled(NavButton)`
+  left: 0;
+`;
+
+const RightNavButton = styled(NavButton)`
+  right: 0;
 `;
 
 export const TrackControlDisplay = () => {
@@ -50,17 +66,19 @@ export const TrackControlDisplay = () => {
   }, [handleKeyboardInput]);
 
   return (
-    <Container>
-      <NavButton
+    <>
+      <LeftNavButton
         onClick={() =>
           setCurrent((currentIndex - 1 + frames.length) % frames.length)
         }
       >
-        &lt;
-      </NavButton>
-      <NavButton onClick={() => setCurrent((currentIndex + 1) % frames.length)}>
-        &gt;
-      </NavButton>
-    </Container>
+        <Arrow dir={"left"} />
+      </LeftNavButton>
+      <RightNavButton
+        onClick={() => setCurrent((currentIndex + 1) % frames.length)}
+      >
+        <Arrow dir={"right"} />
+      </RightNavButton>
+    </>
   );
 };
