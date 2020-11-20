@@ -3,6 +3,7 @@ import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
 import { Quaternion, Vector3, Vector2, Euler } from "three";
 import { useEnvironment } from "../utils/hooks";
+import { getSpringValues } from "../utils/spring";
 
 type DragControlsProps = {
   quaternion: MutableRefObject<Quaternion>;
@@ -41,21 +42,8 @@ const DragControls = (props: DragControlsProps) => {
     }
 
     if (setEuler.current) {
-      // @ts-ignore
-      const newVals = spring.xyz.interpolate((x, y, z) => [x, y, z]);
-      // @ts-ignore
-      const newX = newVals.payload[0].value;
-      // @ts-ignore
-      const xVel = newVals.payload[0].lastVelocity || 0;
-      // @ts-ignore
-      const newY = newVals.payload[1].value;
-      // @ts-ignore
-      const yVel = newVals.payload[1].lastVelocity || 0;
-      // @ts-ignore
-      const newZ = newVals.payload[2].value;
-      // @ts-ignore
-      const zVel = newVals.payload[2].lastVelocity || 0;
-      setEuler.current.set(newX, newY, newZ);
+      const [x, y, z] = getSpringValues(spring);
+      setEuler.current.set(x, y, z);
       camera.quaternion.setFromEuler(setEuler.current);
     }
   });

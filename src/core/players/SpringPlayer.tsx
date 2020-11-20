@@ -3,17 +3,19 @@ import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
-import { useTrackEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 import { GyroControls } from "../controls/GyroControls";
 import { useSphere } from "@react-three/cannon";
 import DragControls from "../controls/DragControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
+import { getSpringValues } from "../utils/spring";
+import { AnimatedValue } from "react-spring";
+import { useEnvironment } from "..";
 
 const SHOW_PLAYER_HITBOX = false;
 
-type TrackPlayerProps = {
-  spring: any;
+type SpringPlayerProps = {
+  spring: AnimatedValue<any>;
 };
 
 /**
@@ -21,27 +23,24 @@ type TrackPlayerProps = {
  * control scheme and a physical representation that interacts with other physics-
  * enabled objects.
  *
+ * Spring should be stored as XYZ(S)
+ *
  * There should only be one player per environment.
  *
  * @constructor
  */
-const TrackPlayer = (props: TrackPlayerProps) => {
+const SpringPlayer = (props: SpringPlayerProps) => {
   const { spring } = props;
 
   const { camera } = useThree();
-  const { setPlayer, keyframes } = useTrackEnvironment();
-
-  const scale = keyframes.currentFrame.scale || 1;
-  const keyframePos = keyframes.currentFrame.position;
+  const { setPlayer } = useEnvironment();
+  const [initX, initY, initZ, initS] = getSpringValues(spring);
+  const initPos = new Vector3(initX * initS, initY * initS, initZ * initS);
 
   // physical body
   const [bodyRef, bodyApi] = useSphere(() => ({
     mass: 0,
-    position: [
-      keyframePos.x * scale,
-      keyframePos.y * scale,
-      keyframePos.z * scale,
-    ],
+    position: initPos.toArray(),
     args: 1,
     fixedRotation: true,
   }));
@@ -62,17 +61,12 @@ const TrackPlayer = (props: TrackPlayerProps) => {
     });
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
 
-    const { position: keyframePosition, scale = 1 } = keyframes.currentFrame;
     const rotation = 0;
-    const xLook = keyframePosition.x + 100 * Math.cos(rotation);
-    const zLook = keyframePosition.z + 100 * Math.sin(rotation);
-    camera?.lookAt(xLook, keyframePosition.y, zLook);
+    const xLook = initPos.x + 100 * Math.cos(rotation);
+    const zLook = initPos.z + 100 * Math.sin(rotation);
+    camera?.lookAt(xLook, initPos.y, zLook);
 
-    camera?.position.set(
-      keyframePosition.x * scale,
-      keyframePosition.y * scale,
-      keyframePosition.z * scale
-    );
+    camera?.position.set(initPos.x, initPos.y, initPos.z);
 
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
@@ -81,28 +75,8 @@ const TrackPlayer = (props: TrackPlayerProps) => {
 
   // update player every frame
   useFrame(({ clock }) => {
-    // @ts-ignore
-    const newVals = spring.xyzs.interpolate((x, y, z, s) => [x, y, z, s]);
-    // @ts-ignore
-    const newX = newVals.payload[0].value;
-    // @ts-ignore
-    const xVel = newVals.payload[0].lastVelocity || 0;
-    // @ts-ignore
-    const newY = newVals.payload[1].value;
-    // @ts-ignore
-    const yVel = newVals.payload[1].lastVelocity || 0;
-    // @ts-ignore
-    const newZ = newVals.payload[2].value;
-    // @ts-ignore
-    const zVel = newVals.payload[2].lastVelocity || 0;
-    // @ts-ignore
-    const newS = newVals.payload[3].value;
-    // @ts-ignore
-    const sVel = newVals.payload[3].lastVelocity || 0;
-
-    bodyApi?.position.set(newX * newS, newY * newS, newZ * newS);
-
-    return;
+    const [x, y, z, s = 1] = getSpringValues(spring);
+    bodyApi?.position.set(x * s, y * s, z * s);
   });
 
   return (
@@ -130,4 +104,4 @@ const TrackPlayer = (props: TrackPlayerProps) => {
   );
 };
 
-export default TrackPlayer;
+export default SpringPlayer;

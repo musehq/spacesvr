@@ -12,7 +12,7 @@ import {
   EnvironmentState,
   PlayerRef,
   PortalEnvironmentState,
-  TrackEnvironmentState,
+  KeyframeEnvironmentState,
 } from "../types";
 import { useProgress } from "@react-three/drei";
 
@@ -28,8 +28,8 @@ export function usePortalEnvironment(): PortalEnvironmentState {
   return useEnvironment<PortalEnvironmentState>();
 }
 
-export function useTrackEnvironment(): TrackEnvironmentState {
-  return useEnvironment<TrackEnvironmentState>();
+export function useKeyframeEnvironment(): KeyframeEnvironmentState {
+  return useEnvironment<KeyframeEnvironmentState>();
 }
 
 export function useEnvironmentState(): EnvironmentState {

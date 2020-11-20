@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
 import { Background, Logo, Fog } from "spacesvr/components";
-import { TrackEnvironment } from "spacesvr";
+import { KeyframeEnvironment } from "spacesvr";
 
 export default () => {
   const keyframes = [
@@ -23,7 +23,7 @@ export default () => {
   ];
 
   return (
-    <TrackEnvironment keyframes={keyframes}>
+    <KeyframeEnvironment keyframes={keyframes}>
       <Background color={0xffffff} />
       <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       <Fog color={0xffffff} near={10} far={90} />
@@ -32,6 +32,6 @@ export default () => {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
-    </TrackEnvironment>
+    </KeyframeEnvironment>
   );
 };

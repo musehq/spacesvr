@@ -6,7 +6,7 @@ import { Portal } from "./portal";
 
 export enum Environment {
   STANDARD,
-  TRACK,
+  KEYFRAME,
   PORTAL,
 }
 

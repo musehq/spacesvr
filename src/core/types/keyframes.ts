@@ -1,20 +1,20 @@
 import { Vector3 } from "three";
 import { EnvironmentState } from "./environment";
 
-export type TrackKeyframe = {
+export type Keyframe = {
   label: string;
   position: Vector3;
   scale?: number;
 };
 
-export type TrackKeyframes = {
-  getCurrent: () => TrackKeyframe;
+export type Keyframes = {
+  getCurrent: () => Keyframe;
   setCurrent: (id: number) => void;
-  frames: TrackKeyframe[];
-  currentFrame: TrackKeyframe;
+  frames: Keyframe[];
+  currentFrame: Keyframe;
   currentIndex: number;
 };
 
-export interface TrackEnvironmentState extends EnvironmentState {
-  keyframes: TrackKeyframes;
+export interface KeyframeEnvironmentState extends EnvironmentState {
+  keyframes: Keyframes;
 }

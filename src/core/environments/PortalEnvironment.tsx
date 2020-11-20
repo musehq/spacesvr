@@ -10,7 +10,7 @@ import { Canvas } from "react-three-fiber";
 import { Physics } from "@react-three/cannon";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Vector3 } from "three";
-import TrackPlayer from "../players/TrackPlayer";
+import ParamaterizedPlayer from "../players/ParamaterizedPlayer";
 import Player from "../players/Player";
 import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
@@ -102,6 +102,12 @@ export const PortalEnvironment = (
     return <ErrorText>{error}</ErrorText>;
   }
 
+  const posFunc = (time: number) => [
+    Math.cos(time * 0.1) * 36,
+    2,
+    Math.sin(time * 0.1) * 36,
+  ];
+
   return (
     <BrowserChecker>
       <GlobalStyles />
@@ -110,7 +116,7 @@ export const PortalEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={localState}>
               {fixedPath ? (
-                <TrackPlayer />
+                <ParamaterizedPlayer positionFunc={posFunc} />
               ) : (
                 <Player initPos={new Vector3(0, 2, 53)} />
               )}

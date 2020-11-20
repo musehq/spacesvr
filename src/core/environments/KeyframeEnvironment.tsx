@@ -6,15 +6,19 @@ import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
-import { Environment, EnvironmentProps, TrackEnvironmentState } from "../types";
+import {
+  Environment,
+  EnvironmentProps,
+  Keyframe,
+  KeyframeEnvironmentState,
+} from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
-import TrackPlayer from "../players/TrackPlayer";
-import { TrackKeyframe } from "../types/keyframes";
-import { TrackControlDisplay } from "../ui/TrackControlDisplay/";
+import SpringPlayer from "../players/SpringPlayer";
+import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
-import { TrackScaled } from "../../modifiers/TrackScaled";
+import { SpringScaled } from "../../modifiers/SpringScaled";
 
 const Container = styled.div`
   position: absolute;
@@ -54,8 +58,8 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
   },
 };
 
-type TrackEnvironmentProps = {
-  keyframes: TrackKeyframe[];
+type KeyframeEnvironmentProps = {
+  keyframes: Keyframe[];
   effects?: ReactNode;
 };
 
@@ -70,21 +74,17 @@ type TrackEnvironmentProps = {
  *
  */
 
-export const TrackEnvironment = (
-  props: EnvironmentProps & TrackEnvironmentProps
+export const KeyframeEnvironment = (
+  props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
   const { children, canvasProps, physicsProps, keyframes, effects } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
   const keyframePos = keyframes[keyframeIndex].position;
+  const multPos = keyframePos.clone().multiplyScalar(scale);
   const [spring, setSpring] = useSpring(() => ({
-    xyzs: [
-      keyframePos.x * scale,
-      keyframePos.y * scale,
-      keyframePos.z * scale,
-      scale,
-    ],
+    xyzs: [...multPos.toArray(), scale],
     config: config.molasses,
   }));
 
@@ -97,9 +97,9 @@ export const TrackEnvironment = (
   }, [keyframeIndex]);
 
   const state = useEnvironmentState();
-  const localState: TrackEnvironmentState = {
+  const localState: KeyframeEnvironmentState = {
     ...state,
-    type: Environment.TRACK,
+    type: Environment.KEYFRAME,
     keyframes: {
       getCurrent: useCallback(() => keyframes[keyframeIndex], [keyframeIndex]),
       setCurrent: (i: number) => setKeyframeIndex(i),
@@ -116,15 +116,15 @@ export const TrackEnvironment = (
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={localState}>
-              <TrackPlayer spring={spring} />
+              <SpringPlayer spring={spring} />
               {effects || <RealisticEffects />}
-              <TrackScaled spring={spring}>{children}</TrackScaled>
+              <SpringScaled spring={spring}>{children}</SpringScaled>
             </environmentStateContext.Provider>
           </Physics>
         </Canvas>
         <environmentStateContext.Provider value={localState}>
           <LoadingScreen />
-          <TrackControlDisplay />
+          <KeyframeControlDisplay />
         </environmentStateContext.Provider>
       </Container>
     </BrowserChecker>

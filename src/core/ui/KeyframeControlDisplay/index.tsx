@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useTrackEnvironment } from "../../utils/hooks";
+import { useKeyframeEnvironment } from "../../utils/hooks";
 import { useCallback, useEffect } from "react";
 import Arrow from "./components/Arrow";
 
@@ -36,10 +36,10 @@ const RightNavButton = styled(NavButton)`
   right: 0;
 `;
 
-export const TrackControlDisplay = () => {
+export const KeyframeControlDisplay = () => {
   const {
     keyframes: { frames, setCurrent, currentIndex },
-  } = useTrackEnvironment();
+  } = useKeyframeEnvironment();
 
   const handleKeyboardInput = useCallback(
     (e: KeyboardEvent) => {
