@@ -34,7 +34,7 @@
 
 <ul>
     <li><a href="#quick-start">Quick Start</a></li>
-    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#faq">Guide</a></li>
     <li>
         <a href="#documentation">Documentation</a>
         <ul>
@@ -48,11 +48,11 @@
 
 # Quick Start
 
-#### > codesandbox
+#### codesandbox
 
 Visit [this code sandbox](https://codesandbox.io/s/polished-meadow-erzku?fontsize=14&hidenavigation=1&theme=dark) to instantly play with the package
 
-#### > npm
+#### npm
 
 You could set up the framework in your sleep. Just import the package
 
@@ -76,15 +76,16 @@ const App = () => {
 };
 ```
 
-# FAQ
+# Guide
 
-#### > how does it work?
+#### the environment component.
 
-The main functionality comes from the `Environment` components which provide...
+The main functionality comes from the `Environment` components which provide variations of...
 
-- a controllable player with a control scheme
+- a player with a control scheme
 - post processing
-- physics with ground plane
+- physics
+- default components
 - loading menu
 - pause menu
 
@@ -92,8 +93,27 @@ Under the hood it enables cannon physics and react-three-fiber code with a canva
 to do is wrap your [react-three-fiber](https://github.com/react-spring/react-three-fiber)
 code in an environment and you will be able to navigate your space on mobile and desktop!
 
-#### > what are modifiers?
+#### the useEnvironment Hook.
 
+The `useEnvironment` hook is your direct access to the environment state. It can be used anywhere
+inside an `Environment` component and gives you an `EnvironmentState`, defined as:
+
+```jsx
+{
+  type: Environment; // the type of environment, { STANDARD, TRACK, PORTAL }
+  paused: boolean; // whether the pointer lock controls are engaged
+  setPaused: (p: boolean, overlay?: string) => void; // set the paused state, along with overlay
+  player: PlayerRef;
+  overlay: string | null; // null if no overlay enabled or string with id of currenly open overlay
+  containerRef: MutableRefObject<HTMLDivElement | null>; // ref to html container (parent of Canvas)
+  container: HTMLDivElement | null;
+  events: EnvironmentEvent[];
+  setPlayer: (p: PlayerRef) => void;
+  addEvent: (name: string, callback: (...args: any[]) => void) => void;
+}
+```
+
+#### modifiers.
 Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`
 modifier will make its children steadily float up and down. Perfect for quickly adding
 animations to components!
@@ -111,7 +131,7 @@ animations to components!
 
 ## Environments
 
-#### > Standard Environment
+#### Standard Environment
 
 The Standard Environment defines the following:
 
@@ -123,7 +143,7 @@ The Standard Environment defines the following:
 
 ```jsx
 <StandardEnvironment
-    canvasProps={{...}} // props to be passed along to r3f's canvas
+    canvasProps={{...}} // props to be passed along to the r3f canvas
     physicsProps={{...}} // props to be passed along to cannon.js
     player={{
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
@@ -133,33 +153,69 @@ The Standard Environment defines the following:
 />
 ```
 
+#### Keyframe Environment
+
+The Keyframe Environment defines the following:
+
+- 2 unit tall floating player
+- Move with Arrow Keys, A/D movement, or Onscreen Arrows
+- Drag Controls, Gryro Controls with Mobile Drag as fallback
+- Realistic Effects with FXAA and gamma correction
+- Physics enabled, ground plane at y=0
+- Custom loading menu
+- No pause menu
+
+```jsx
+<KeyframeEnvironment
+    canvasProps={{...}} // props to be passed along to the r3f canvas
+    physicsProps={{...}} // props to be passed along to cannon.js
+    player={{
+        pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
+        rot: Math.PI / 2,  // initial rotation
+    }}
+    effects={RealisticEffects} // custom effects component to override default effects
+    keyframes={[
+        { label: "home", position: new Vector3(0, 2, 5) },
+        { label: "about", position: new Vector3(1, 2, 6), scale: 1.5 }
+    ]} // keyframes to travel between
+/>
+```
+
 ## Components
 
-#### > Arrow
+#### Arrow
 
 An arrow icon
 
-`<Arrow dark={true} />`
+```jsx
+<Arrow dark={true} />
+```
 
-#### > Audio
+#### Audio
 
 A positional audio component that will play the passed in audio url.
 
-`<Audio url="https://link-to-your-audio.mp3" position={new Vector3(0, 4, 0)} />`
+```jsx
+<Audio url="https://link-to-your-audio.mp3" position={new Vector3(0, 4, 0)} />
+```
 
-#### > Background
+#### Background
 
 Easily set the background color of your space
 
-`<Background color="blue" />`
+```jsx
+<Background color="blue" />
+```
 
-#### > HDRI
+#### HDRI
 
 Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
 
-`<HDRI src="https://link-to-your-hdri.hdr" />`
+```jsx
+<HDRI src="https://link-to-your-hdri.hdr" />
+```
 
-#### > Image
+#### Image
 
 Quickly add an image to your scene
 
@@ -175,7 +231,7 @@ Quickly add an image to your scene
 />
 ```
 
-#### > Logo
+#### Logo
 
 Adds a cool Spaces Logo
 
@@ -186,7 +242,7 @@ Adds a cool Spaces Logo
 />
 ```
 
-#### > Shop
+#### Shop
 
 Given Shopify credentials, will populate space with products available for sale.
 
@@ -198,7 +254,7 @@ Given Shopify credentials, will populate space with products available for sale.
 />
 ```
 
-#### > Text
+#### Text
 
 A 3D text component with a default font of Myriad Pro. Custom fonts need to be converted to
 a json file, which can be done here: https://gero3.github.io/facetype.js/
@@ -206,8 +262,8 @@ a json file, which can be done here: https://gero3.github.io/facetype.js/
 ```jsx
 <Text
   text="Hello Space"
-  vAlign="center" // vertical align relative to the position's y component
-  hAlign="center" // horizontal align relative to the position's x component
+  vAlign="center" // vertical align relative to the y component
+  hAlign="center" // horizontal align relative to the x component
   size={1} // scale
   color="#000000" // color
   font={"https://your-font-file.json"} // default is Myriad Pro
@@ -215,7 +271,7 @@ a json file, which can be done here: https://gero3.github.io/facetype.js/
 />
 ```
 
-#### > Video
+#### Video
 
 Add a video file to your space with positional audio
 
@@ -232,7 +288,7 @@ Add a video file to your space with positional audio
 
 ## Modifiers
 
-#### > Floating
+#### Floating
 
 Makes its children float up and down
 
@@ -245,15 +301,15 @@ Makes its children float up and down
 </Floating>
 ```
 
-#### > Interactable
+#### Interactable
 
 Makes its children react to onclick and on hover methods
 
 ```jsx
 <Interactable
-  onClick={() => console.log("I've been clicked!")}
-  onHovered={() => console.log("I've been hovered!")}
-  onUnHovered={() => console.log("I've been unhovered?")}
+  onClick={() => console.log("Ive been clicked!")}
+  onHovered={() => console.log("Ive been hovered!")}
+  onUnHovered={() => console.log("Ive been unhovered?")}
 >
   <Stuff />
 </Interactable>

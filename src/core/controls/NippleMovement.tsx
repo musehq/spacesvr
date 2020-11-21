@@ -5,7 +5,6 @@ import { useEnvironment } from "../utils/hooks";
 
 type NippleMovementProps = {
   direction: MutableRefObject<Vector3>;
-  nippleContainer: MutableRefObject<HTMLElement | null>;
 };
 
 /**
@@ -21,9 +20,10 @@ type NippleMovementProps = {
  * @constructor
  */
 const NippleMovement = (props: NippleMovementProps) => {
-  const { direction, nippleContainer } = props;
+  const { direction } = props;
 
   const nipple = useRef<JoystickManager>();
+  const nippleContainer = useRef<HTMLElement>();
   const { container } = useEnvironment();
 
   useEffect(() => {

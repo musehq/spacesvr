@@ -1,18 +1,14 @@
-import { Vector3 } from "three";
-import { Background, Logo } from "spacesvr/components";
-import { StandardEnvironment } from "spacesvr";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Starter from "./scenes/Starter";
+import Keyframes from "./scenes/Keyframes";
 
 export default () => {
   return (
-    <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
-      <Background color={0xffffff} />
-      <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
-      <fog attach="fog" args={[0xffffff, 10, 90]} />
-      <ambientLight />
-      <mesh rotation-x={-Math.PI / 2}>
-        <planeBufferGeometry args={[200, 200]} />
-        <meshBasicMaterial color={"purple"} />
-      </mesh>
-    </StandardEnvironment>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Starter} />
+        <Route exact path="/keyframes" component={Keyframes} />
+      </Switch>
+    </Router>
   );
 };

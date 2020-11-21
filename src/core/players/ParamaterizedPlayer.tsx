@@ -1,22 +1,24 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
-import { useSphere } from "@react-three/cannon";
 import { isMobile } from "react-device-detect";
 
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
-import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
-import MouseFPSCamera from "../controls/MouseFPSCamera";
-
+import { GyroControls } from "../controls/GyroControls";
+import { useSphere } from "@react-three/cannon";
+import DragControls from "../controls/DragControls";
+import TouchFPSCamera from "../controls/TouchFPSCamera";
 const SHOW_PLAYER_HITBOX = false;
 
-export type PlayerProps = {
-  initPos?: Vector3;
-  initRot?: number;
+type ParamaterizedPlayerProps = {
+  positionFunc: (time: number) => number[];
 };
 
 /**
+ *
+ * Paramaterized player moves player using a given time-based function
+ *
  * Player represents a physics-enabled player in the environment, complete with a
  * control scheme and a physical representation that interacts with other physics-
  * enabled objects.
@@ -25,15 +27,16 @@ export type PlayerProps = {
  *
  * @constructor
  */
-const TrackPlayer = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 1, 0), initRot = 0 } = props;
+const ParamaterizedPlayer = (props: ParamaterizedPlayerProps) => {
+  const { positionFunc } = props;
+
   const { camera } = useThree();
   const { setPlayer } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useSphere(() => ({
-    mass: 500,
-    position: initPos.toArray(),
+    mass: 0,
+    position: [0, 0, 0],
     args: 1,
     fixedRotation: true,
   }));
@@ -47,25 +50,19 @@ const TrackPlayer = (props: PlayerProps) => {
   // consumer
   const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis
 
-  const controls = useRef<DeviceOrientationControls>();
-
   // setup player
   useEffect(() => {
-    // store position and velocity
     bodyApi.position.subscribe((p) => {
       position.current.set(p[0], p[1], p[2]);
     });
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
 
-    const xLook = initPos.x + 100 * Math.cos(initRot);
-    const zLook = initPos.z + 100 * Math.sin(initRot);
-    camera?.lookAt(xLook, initPos.y, zLook);
+    const rotation = 0;
+    const xLook = 100 * Math.cos(rotation);
+    const zLook = 100 * Math.sin(rotation);
+    camera?.lookAt(xLook, 0, zLook);
 
-    if (isMobile) {
-      window.addEventListener("click", () => {
-        controls.current = new DeviceOrientationControls(camera);
-      });
-    }
+    camera?.position.set(0, 0, 0);
 
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
@@ -74,23 +71,26 @@ const TrackPlayer = (props: PlayerProps) => {
 
   // update player every frame
   useFrame(({ clock }) => {
-    if (isMobile && controls.current) {
-      controls.current.update();
+    if (positionFunc) {
+      const [x, y, z] = positionFunc(clock.getElapsedTime());
+      bodyApi?.position.set(x, y, z);
     }
-
-    const dist = (22 + 50) / 2;
-    const x = dist * Math.cos(clock.getElapsedTime() / 10);
-    const z = dist * Math.sin(clock.getElapsedTime() / 10);
-    camera.position.set(x, 2, z);
-    return;
   });
 
   return (
     <>
-      {!isMobile && (
-        <MouseFPSCamera quaternion={quaternion} position={position} />
+      {isMobile ? (
+        <GyroControls
+          quaternion={quaternion}
+          position={position}
+          fallback={
+            <TouchFPSCamera quaternion={quaternion} position={position} />
+          }
+        />
+      ) : (
+        <DragControls quaternion={quaternion} position={position} />
       )}
-      <mesh ref={bodyRef} name="player">
+      <mesh name="player">
         {SHOW_PLAYER_HITBOX && (
           <>
             <sphereBufferGeometry attach="geometry" args={[1]} />
@@ -102,4 +102,4 @@ const TrackPlayer = (props: PlayerProps) => {
   );
 };
 
-export default TrackPlayer;
+export default ParamaterizedPlayer;
