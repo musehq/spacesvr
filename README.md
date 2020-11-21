@@ -114,7 +114,6 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 ```
 
 #### modifiers.
-
 Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`
 modifier will make its children steadily float up and down. Perfect for quickly adding
 animations to components!
