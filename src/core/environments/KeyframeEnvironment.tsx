@@ -85,7 +85,7 @@ export const KeyframeEnvironment = (
   const multPos = keyframePos.clone().multiplyScalar(scale);
   const [spring, setSpring] = useSpring(() => ({
     xyzs: [...multPos.toArray(), scale],
-    config: config.molasses,
+    config: { ...config.molasses, precision: 0.0001 },
   }));
 
   // update keyframe positions

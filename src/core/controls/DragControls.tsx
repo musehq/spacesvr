@@ -32,7 +32,7 @@ const DragControls = (props: DragControlsProps) => {
 
   const [spring, setSpring] = useSpring(() => ({
     xyz: [0, 0, 0],
-    config: config.default,
+    config: { ...config.default, precision: 0.0001 },
   }));
 
   useFrame(() => {
