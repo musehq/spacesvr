@@ -1,12 +1,12 @@
-import { useXR } from "@react-three/xr";
-import { MutableRefObject, RefObject } from "react";
+import { useController } from "@react-three/xr";
+import { MutableRefObject } from "react";
 import { Group, Quaternion, Vector3 } from "three";
 import { useFrame, useThree } from "react-three-fiber";
 
 type VRControllerMovementProps = {
   quaternion: MutableRefObject<Quaternion>;
   direction: MutableRefObject<Vector3>;
-  camParent: RefObject<Group>;
+  camParent: MutableRefObject<Group>;
 };
 
 /**
@@ -25,11 +25,14 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
   const { direction, quaternion, camParent } = props;
 
   const { camera, gl } = useThree();
-  const { controllers } = useXR();
+
+  const left = useController("left");
+  const right = useController("right");
 
   useFrame(() => {
-    const cam = gl.xr.isPresenting ? gl.xr.getCamera(camera) : camera;
-    const [left, right] = controllers || [];
+    if (!gl.xr.isPresenting) {
+      return;
+    }
     if (left) {
       // move the player
       const [, , x, y] = left.inputSource.gamepad?.axes;
@@ -46,7 +49,7 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
         camParent.current.rotation.y -= x * ROTATION_SPEED;
       }
     }
-    quaternion.current = cam.quaternion;
+    quaternion.current = gl.xr.getCamera(camera).quaternion;
   });
 
   return <></>;

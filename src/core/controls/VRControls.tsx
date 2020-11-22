@@ -1,13 +1,13 @@
 import { useXR } from "@react-three/xr";
 import { MutableRefObject, useEffect } from "react";
-import { Quaternion, Vector3 } from "three";
+import { Group, Quaternion, Vector3 } from "three";
 
 import VRControllerMovement from "./VRControllerMovement";
 
 type VRControlsProps = {
   direction: MutableRefObject<Vector3>;
   quaternion: MutableRefObject<Quaternion>;
-  camParent: any;
+  camParent: MutableRefObject<Group>;
 };
 
 const VRControls = (props: VRControlsProps) => {
