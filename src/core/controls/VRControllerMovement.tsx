@@ -6,7 +6,7 @@ import { useFrame, useThree } from "react-three-fiber";
 type VRControllerMovementProps = {
   quaternion: MutableRefObject<Quaternion>;
   direction: MutableRefObject<Vector3>;
-  camParent: MutableRefObject<Group>;
+  camParent: MutableRefObject<undefined | Group>;
 };
 
 /**

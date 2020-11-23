@@ -7,7 +7,7 @@ import VRControllerMovement from "./VRControllerMovement";
 type VRControlsProps = {
   direction: MutableRefObject<Vector3>;
   quaternion: MutableRefObject<Quaternion>;
-  camParent: MutableRefObject<Group>;
+  camParent: MutableRefObject<undefined | Group>;
 };
 
 const VRControls = (props: VRControlsProps) => {
@@ -18,9 +18,11 @@ const VRControls = (props: VRControlsProps) => {
   // bundle add the controllers to the same object as the camera so it all stays together.
   useEffect(() => {
     const camParentRef = camParent.current;
-    if (controllers.length > 0)
-      controllers.forEach((c) => camParentRef.add(c.grip));
-    return () => controllers.forEach((c) => camParentRef.remove(c.grip));
+    if (camParentRef) {
+      if (controllers.length > 0)
+        controllers.forEach((c) => camParentRef.add(c.grip));
+      return () => controllers.forEach((c) => camParentRef.remove(c.grip));
+    }
   }, [controllers, camParent]);
 
   return (
