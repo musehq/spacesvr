@@ -14,7 +14,7 @@ import {
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
 
-const VELOCITY_FACTOR = 250;
+const VELOCITY_FACTOR = 300;
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
@@ -32,7 +32,7 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 1, 0), initRot = 0 } = props;
+  const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
   const { camera } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
@@ -40,7 +40,6 @@ const Player = (props: PlayerProps) => {
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
 
   // producer
-  const prevTime = useRef(performance.now());
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
@@ -66,9 +65,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame(() => {
-    const time = performance.now();
-
+  useFrame((stuff, delta) => {
     // update raycaster
     if (position.current && quaternion.current) {
       raycaster.current.ray.origin.copy(position.current);
@@ -77,32 +74,24 @@ const Player = (props: PlayerProps) => {
       raycaster.current.ray.direction.copy(lookAt);
     }
 
-    if (paused) {
-      // stop player from moving when paused
-      bodyApi?.velocity.set(0, 0, 0);
-    } else {
-      // get time since last computation
-      const delta = (time - prevTime.current) / 1000;
+    // get forward/back movement and left/right movement velocities
+    const inputVelocity = new Vector3(0, 0, 0);
+    if (!lockControls.current && !paused) {
+      inputVelocity.x = direction.current.x * 0.75;
+      inputVelocity.z = direction.current.y;
+      inputVelocity.normalize().multiplyScalar(delta * VELOCITY_FACTOR);
 
-      // get forward/back movement and left/right movement velocities
-      const inputVelocity = new Vector3(0, 0, 0);
-      if (!lockControls.current) {
-        inputVelocity.x = direction.current.x * delta * 0.75 * VELOCITY_FACTOR;
-        inputVelocity.z = direction.current.y * delta * VELOCITY_FACTOR;
-      }
-
-      // apply quaternion to get adjusted direction based on camera
       const moveQuaternion = quaternion.current.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
-
-      // keep y velocity intact and update velocity
-      inputVelocity.add(new Vector3(0, velocity.current.y, 0));
-      bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+      inputVelocity.y = velocity.current.y;
     }
 
-    prevTime.current = time;
+    if (!lockControls.current) {
+      // keep y velocity intact and update velocity
+      bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    }
   });
 
   return (

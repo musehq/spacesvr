@@ -50,8 +50,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
-  iterations: 20,
-  size: 10,
+  size: 50,
   allowSleep: false,
   defaultContactMaterial: {
     friction: 0,
