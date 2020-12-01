@@ -25,11 +25,18 @@ const Container = styled.div`
 
   canvas {
     position: absolute;
+    cursor: grab;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     outline: 0;
+  }
+
+  &.grabbing {
+    canvas {
+      cursor: grabbing;
+    }
   }
 `;
 

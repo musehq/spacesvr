@@ -35,7 +35,7 @@ export const usePortal = (
         const response = await fetch(
           `https://27m2mbw4h0.execute-api.us-west-1.amazonaws.com/fetch`,
           {
-            method: "POST ",
+            method: "POST",
             body: JSON.stringify({ id }),
             headers: { "Content-Type": "application/json" },
           }
