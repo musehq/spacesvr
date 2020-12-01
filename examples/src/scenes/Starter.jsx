@@ -1,6 +1,5 @@
 import { Vector3 } from "three";
-import { Background, Logo } from "spacesvr/components";
-import { StandardEnvironment } from "spacesvr";
+import { StandardEnvironment, Background, Logo } from "spacesvr";
 
 export default () => {
   return (

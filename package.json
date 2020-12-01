@@ -19,6 +19,7 @@
   },
   "main": "main.cjs.js",
   "module": "main.js",
+  "types": "main.d.ts",
   "scripts": {
     "build": "rimraf dist && mkdir dist && cp -R src/* dist && rollup -c && tsc && yarn copy && yarn pack-dist",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",

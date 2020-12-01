@@ -1,6 +1,5 @@
 import { Vector3 } from "three";
-import { Background, Logo, Fog } from "spacesvr/components";
-import { KeyframeEnvironment } from "spacesvr";
+import { KeyframeEnvironment, Background, Logo, Fog } from "spacesvr";
 
 export default () => {
   const keyframes = [
