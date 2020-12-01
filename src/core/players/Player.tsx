@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
-import { useSphere } from "@react-three/cannon";
 import { isMobile } from "react-device-detect";
 
 import { useEnvironment } from "../utils/hooks";
@@ -10,6 +9,10 @@ import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import MouseFPSCamera from "../controls/MouseFPSCamera";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
+import {
+  useCapsuleCollider,
+  VisibleCapsuleCollider,
+} from "./colliders/CapsuleCollider";
 
 const VELOCITY_FACTOR = 250;
 const SHOW_PLAYER_HITBOX = false;
@@ -34,12 +37,7 @@ const Player = (props: PlayerProps) => {
   const { paused, setPlayer } = useEnvironment();
 
   // physical body
-  const [bodyRef, bodyApi] = useSphere(() => ({
-    mass: 500,
-    position: initPos.toArray(),
-    args: 1,
-    fixedRotation: true,
-  }));
+  const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
 
   // producer
   const prevTime = useRef(performance.now());
@@ -55,9 +53,7 @@ const Player = (props: PlayerProps) => {
   // setup player
   useEffect(() => {
     // store position and velocity
-    bodyApi.position.subscribe((p) => {
-      position.current.set(p[0], p[1], p[2]);
-    });
+    bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
 
     const xLook = initPos.x + 100 * Math.cos(initRot);
@@ -123,12 +119,7 @@ const Player = (props: PlayerProps) => {
         </>
       )}
       <mesh ref={bodyRef} name="player">
-        {SHOW_PLAYER_HITBOX && (
-          <>
-            <sphereBufferGeometry attach="geometry" args={[1]} />
-            <meshPhongMaterial attach="material" color="#172017" />
-          </>
-        )}
+        {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
       </mesh>
     </>
   );
