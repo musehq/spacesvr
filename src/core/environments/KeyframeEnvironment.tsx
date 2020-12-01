@@ -50,8 +50,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
-  iterations: 20,
-  size: 10,
+  size: 50,
   allowSleep: false,
   defaultContactMaterial: {
     friction: 0,
@@ -85,12 +84,11 @@ export const KeyframeEnvironment = (
   const multPos = keyframePos.clone().multiplyScalar(scale);
   const [spring, setSpring] = useSpring(() => ({
     xyzs: [...multPos.toArray(), scale],
-    config: config.molasses,
+    config: { ...config.molasses, precision: 0.0001 },
   }));
 
   // update keyframe positions
   useEffect(() => {
-    console.log(keyframes[keyframeIndex].label);
     const posArray = keyframes[keyframeIndex].position.toArray();
     const scale = keyframes[keyframeIndex].scale || 1;
     setSpring({ xyzs: [...posArray, scale] });

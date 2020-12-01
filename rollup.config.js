@@ -81,11 +81,4 @@ function createConfig(entry, out) {
   ];
 }
 
-export default [
-  ...createConfig("index", "main"),
-  ...createConfig("components", "components"),
-  ...createConfig("core", "core"),
-  ...createConfig("effects", "effects"),
-  ...createConfig("modifiers", "modifiers"),
-  ...createConfig("services", "services"),
-];
+export default [...createConfig("index", "main")];

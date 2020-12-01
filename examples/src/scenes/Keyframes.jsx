@@ -1,6 +1,5 @@
 import { Vector3 } from "three";
-import { Background, Logo, Fog } from "spacesvr/components";
-import { KeyframeEnvironment } from "spacesvr";
+import { KeyframeEnvironment, Background, Logo, Fog } from "spacesvr";
 
 export default () => {
   const keyframes = [
@@ -18,7 +17,7 @@ export default () => {
     },
     {
       label: "So Tiny",
-      position: new Vector3(1, 2, 1),
+      position: new Vector3(0, 0.755, 1),
     },
   ];
 

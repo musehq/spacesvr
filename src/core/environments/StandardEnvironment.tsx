@@ -41,8 +41,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
-  iterations: 20,
-  size: 10,
+  size: 50,
   allowSleep: false,
   defaultContactMaterial: {
     friction: 0,
@@ -55,6 +54,7 @@ type StandardEnvironmentProps = {
     rot?: number;
   };
   effects?: ReactNode;
+  disableGround?: boolean;
 };
 
 /**
@@ -70,7 +70,14 @@ type StandardEnvironmentProps = {
 export const StandardEnvironment = (
   props: EnvironmentProps & StandardEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, player, effects } = props;
+  const {
+    children,
+    canvasProps,
+    physicsProps,
+    player,
+    effects,
+    disableGround,
+  } = props;
 
   const state = useEnvironmentState();
 
@@ -82,7 +89,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
-              <InfinitePlane height={-0.001} />
+              {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
