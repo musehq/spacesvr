@@ -90,7 +90,6 @@ export const KeyframeEnvironment = (
 
   // update keyframe positions
   useEffect(() => {
-    console.log(keyframes[keyframeIndex].label);
     const posArray = keyframes[keyframeIndex].position.toArray();
     const scale = keyframes[keyframeIndex].scale || 1;
     setSpring({ xyzs: [...posArray, scale] });

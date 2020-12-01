@@ -21,13 +21,13 @@ export const Interactable = (props: InteractableProps) => {
   const { children, onClick, onHover, onUnHover } = props;
 
   const { player } = useEnvironment();
-  const { raycaster } = player;
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
 
   useFrame(() => {
-    if (group.current && raycaster) {
+    if (group.current && player && player.raycaster) {
+      const { raycaster } = player;
       const intersections = raycaster.intersectObject(group.current, true);
       if (intersections && intersections.length > 0) {
         if (!hovered) {
@@ -56,7 +56,7 @@ export const Interactable = (props: InteractableProps) => {
     return () => {
       document.removeEventListener("click", checkClick);
     };
-  }, [hovered, onClick]);
+  }, [hovered, onClick, player]);
 
   return <group ref={group}>{children}</group>;
 };
