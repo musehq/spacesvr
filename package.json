@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "description": "An Environment for WebXR Spaces",
   "keywords": [
@@ -21,7 +21,7 @@
   "module": "main.js",
   "types": "main.d.ts",
   "scripts": {
-    "build": "rimraf dist && mkdir dist && cp -R src/* dist && rollup -c && tsc && yarn copy && yarn pack-dist",
+    "build": "rimraf dist && mkdir dist && rollup -c && yarn copy && tsc && yarn pack-dist",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "process-gltf": "./scripts/process-gltf.sh",
     "eslint": "eslint --fix {src,examples/src}/**/*.{js,ts,jsx,tsx}",
