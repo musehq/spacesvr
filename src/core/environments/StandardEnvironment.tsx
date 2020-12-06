@@ -37,7 +37,7 @@ const Container = styled.div`
 const defaultCanvasProps: Partial<ContainerProps> = {
   shadowMap: true,
   gl: { alpha: false },
-  camera: { position: [0, 2, 0], near: 0.01, far: 100 },
+  camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {

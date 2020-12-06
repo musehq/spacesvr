@@ -28,7 +28,10 @@ export const Logo = (props: LogoProps) => {
 
   const group = useRef<THREE.Group>();
   const sphereGroup = useRef<THREE.Group>();
-  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const { nodes, materials } = useGLTF(
+    FILE_URL,
+    "https://www.gstatic.com/draco/versioned/decoders/1.4.0/"
+  ) as GLTFResult;
 
   useFrame(({ clock }) => {
     if (group.current && rotating) {
