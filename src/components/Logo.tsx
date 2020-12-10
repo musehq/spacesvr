@@ -3,7 +3,7 @@ import { useFrame } from "react-three-fiber";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
-import { DRACO_URL } from "../services/constants";
+import { DRACO_URL } from "../services/";
 
 type GLTFResult = GLTF & {
   nodes: {
