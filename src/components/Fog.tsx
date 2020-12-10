@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useThree } from "react-three-fiber";
 import * as THREE from "three";
 
@@ -12,14 +12,11 @@ export const Fog = (props: FogProps) => {
   const { color, near, far } = props;
 
   const { scene } = useThree();
-  const [setup, setSetup] = useState(false);
 
   useEffect(() => {
-    if (scene && !setup) {
-      scene.fog = new THREE.Fog(color, near, far);
-      setSetup(true);
-    }
-  }, [scene, setup]);
+    console.log("new fog!");
+    scene.fog = new THREE.Fog(color, near, far);
+  }, [scene, color, near, far]);
 
-  return null;
+  return <></>;
 };

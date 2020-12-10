@@ -114,6 +114,7 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 ```
 
 #### modifiers.
+
 Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`
 modifier will make its children steadily float up and down. Perfect for quickly adding
 animations to components!
@@ -205,6 +206,14 @@ Easily set the background color of your space
 
 ```jsx
 <Background color="blue" />
+```
+
+#### Fog
+
+Add fog to your scene. Required rather than attaching to parent since direct parent is `<Physics />`
+
+```jsx
+<Fog color="blue" near={10} far={100} />
 ```
 
 #### HDRI
