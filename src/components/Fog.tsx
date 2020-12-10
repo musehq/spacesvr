@@ -14,7 +14,6 @@ export const Fog = (props: FogProps) => {
   const { scene } = useThree();
 
   useEffect(() => {
-    console.log("new fog!");
     scene.fog = new THREE.Fog(color, near, far);
   }, [scene, color, near, far]);
 

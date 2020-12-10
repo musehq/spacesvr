@@ -1,5 +1,12 @@
 import { Vector3 } from "three";
-import { KeyframeEnvironment, Background, Logo, Fog } from "spacesvr";
+import {
+  KeyframeEnvironment,
+  Background,
+  Logo,
+  Fog,
+  Text,
+  Interactable,
+} from "spacesvr";
 
 export default () => {
   const keyframes = [
@@ -31,6 +38,18 @@ export default () => {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
+      <Interactable onClick={() => console.log("hello!")}>
+        <mesh position={[2, 1, 2]}>
+          <boxBufferGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color={"red"} />
+        </mesh>
+      </Interactable>
+      <Text
+        text="Click Me!"
+        rotation-y={Math.PI}
+        position={[2, 2, 2]}
+        size={2}
+      />
     </KeyframeEnvironment>
   );
 };
