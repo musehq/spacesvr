@@ -23,7 +23,7 @@ export const Interactable = (props: InteractableProps) => {
   const { children, onClick, onHover, onUnHover } = props;
 
   const { raycaster: defaultRaycaster } = useThree();
-  const { containerRef, player } = useEnvironment();
+  const { containerRef, player, paused } = useEnvironment();
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
@@ -56,7 +56,7 @@ export const Interactable = (props: InteractableProps) => {
     };
 
     const mouseUp = () => {
-      if (onClick && hovered && allowClick) {
+      if (onClick && hovered && allowClick && !paused) {
         onClick();
       }
     };
