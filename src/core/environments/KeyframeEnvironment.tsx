@@ -14,6 +14,7 @@ import {
 } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { RealisticEffects } from "../../effects";
+import { useEnvironment } from "../utils/hooks";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
@@ -97,6 +98,7 @@ export const KeyframeEnvironment = (
   const state = useEnvironmentState();
   const localState: KeyframeEnvironmentState = {
     ...state,
+    paused: false,
     type: Environment.KEYFRAME,
     keyframes: {
       getCurrent: useCallback(() => keyframes[keyframeIndex], [keyframeIndex]),

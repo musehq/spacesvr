@@ -27,7 +27,7 @@ export const Interactable = (props: InteractableProps) => {
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
-  const [allowClick, setAllowClick] = useState(false);
+  const [moved, setMoved] = useState(false);
 
   useFrame(() => {
     if (group.current) {
@@ -40,10 +40,12 @@ export const Interactable = (props: InteractableProps) => {
             onHover();
           }
         }
-      } else if (hovered) {
-        setHovered(false);
-        if (onUnHover) {
-          onUnHover();
+      } else {
+        if (hovered) {
+          setHovered(false);
+          if (onUnHover) {
+            onUnHover();
+          }
         }
       }
     }
@@ -51,18 +53,21 @@ export const Interactable = (props: InteractableProps) => {
 
   useEffect(() => {
     const mouseDown = () => {
-      setAllowClick(true);
-      setTimeout(() => setAllowClick(false), MOUSEDOWN_TIMEOUT);
+      setMoved(false);
     };
-
+    const mouseMove = () => {
+      setMoved(true);
+    };
     const mouseUp = () => {
-      if (onClick && hovered && allowClick && !paused) {
+      if (onClick && hovered && !moved && !paused) {
         onClick();
       }
     };
 
     containerRef?.current?.addEventListener("mousedown", mouseDown);
     containerRef?.current?.addEventListener("touchstart", mouseDown);
+    containerRef?.current?.addEventListener("mousemove", mouseMove);
+    containerRef?.current?.addEventListener("touchmove", mouseMove);
     containerRef?.current?.addEventListener("mouseup", mouseUp);
     containerRef?.current?.addEventListener("touchend", mouseUp);
     return () => {
@@ -70,8 +75,10 @@ export const Interactable = (props: InteractableProps) => {
       containerRef?.current?.removeEventListener("touchstart", mouseDown);
       containerRef?.current?.removeEventListener("mouseup", mouseUp);
       containerRef?.current?.removeEventListener("touchend", mouseUp);
+      containerRef?.current?.removeEventListener("mousemove", mouseMove);
+      containerRef?.current?.removeEventListener("touchmove", mouseMove);
     };
-  }, [containerRef, hovered, onClick, player, allowClick]);
+  }, [containerRef, hovered, onClick, player, moved]);
 
   return <group ref={group}>{children}</group>;
 };
