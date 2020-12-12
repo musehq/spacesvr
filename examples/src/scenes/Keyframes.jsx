@@ -27,11 +27,16 @@ export default () => {
       position: new Vector3(0, 0.755, 1),
     },
   ];
+  const handleClick = () => {
+    console.log("click");
+  };
 
   return (
     <KeyframeEnvironment keyframes={keyframes}>
       <Background color={0xffffff} />
-      <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
+      <Interactable onClick={handleClick}>
+        <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
+      </Interactable>
       <Fog color={0xffffff} near={10} far={90} />
       <ambientLight />
       <mesh rotation-x={-Math.PI / 2}>
