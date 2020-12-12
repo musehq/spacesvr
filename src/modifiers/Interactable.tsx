@@ -10,8 +10,6 @@ type InteractableProps = {
   onUnHover?: () => void;
 };
 
-const MOUSEDOWN_TIMEOUT = 500; // ms
-
 /**
  *
  * Interactable adds on click and hover methods to any group of Object3D's
@@ -40,12 +38,10 @@ export const Interactable = (props: InteractableProps) => {
             onHover();
           }
         }
-      } else {
-        if (hovered) {
-          setHovered(false);
-          if (onUnHover) {
-            onUnHover();
-          }
+      } else if (hovered) {
+        setHovered(false);
+        if (onUnHover) {
+          onUnHover();
         }
       }
     }

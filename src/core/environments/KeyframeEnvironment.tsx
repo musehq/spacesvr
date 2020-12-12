@@ -14,7 +14,6 @@ import {
 } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { RealisticEffects } from "../../effects";
-import { useEnvironment } from "../utils/hooks";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
