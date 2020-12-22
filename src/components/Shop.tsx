@@ -37,8 +37,7 @@ export const Shop = (props: ShopProps) => {
         >
           <Image
             src={product[0]}
-            ratio={itemRatio}
-            sizeScale={itemSize}
+            size={itemRatio}
             position={[
               Math.cos(offset) * 19 + spaceBetween,
               2,
@@ -78,8 +77,7 @@ export const Shop = (props: ShopProps) => {
         const productImage = (
           <Image
             src={src}
-            ratio={itemRatio}
-            sizeScale={itemSize}
+            size={itemRatio}
             position={[spaceBetween * positionOffset, 2, 0]}
             rotation={[0, Math.PI, 0]}
             framed

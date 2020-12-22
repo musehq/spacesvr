@@ -231,12 +231,10 @@ Quickly add an image to your scene
 ```jsx
 <Image
   src="https://link-to-your-image.png"
-  ratio={[imageWidth, imageHeight]}
-  sizeScale={1}
+  size={[width, height]}
   framed // adds a frame
   doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
-  color={THREE.Color} // color of the frame
 />
 ```
 
@@ -287,11 +285,11 @@ Add a video file to your space with positional audio
 ```jsx
 <Video
   src="https://link-to-your-video.mp4"
-  ratio={[imageWidth, imageHeight]}
-  sizeScale={1}
+  size={[width, height]}
   muted // mutes the video
   framed // adds a frame
   doubleSided // removes back face of frame and creates two opposite facing images
+  material={THREE.Material} // custom material for the frame
 />
 ```
 
