@@ -6,9 +6,6 @@ const {
 } = require("customize-cra");
 const path = require("path");
 
-const { exec } = require("child_process");
-exec(`node ${__dirname}/server/app.js`);
-
 module.exports = (config, env) => {
   config.resolve.extensions = [
     ...config.resolve.extensions,
