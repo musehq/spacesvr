@@ -97,6 +97,7 @@ export const KeyframeEnvironment = (
   const state = useEnvironmentState();
   const localState: KeyframeEnvironmentState = {
     ...state,
+    paused: false,
     type: Environment.KEYFRAME,
     keyframes: {
       getCurrent: useCallback(() => keyframes[keyframeIndex], [keyframeIndex]),

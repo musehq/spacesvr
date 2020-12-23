@@ -3,6 +3,7 @@ import { useFrame } from "react-three-fiber";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
+import { DRACO_URL } from "../services/";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -28,10 +29,7 @@ export const Logo = (props: LogoProps) => {
 
   const group = useRef<THREE.Group>();
   const sphereGroup = useRef<THREE.Group>();
-  const { nodes, materials } = useGLTF(
-    FILE_URL,
-    "https://www.gstatic.com/draco/versioned/decoders/1.4.0/"
-  ) as GLTFResult;
+  const { nodes, materials } = useGLTF(FILE_URL, DRACO_URL) as GLTFResult;
 
   useFrame(({ clock }) => {
     if (group.current && rotating) {
@@ -63,4 +61,4 @@ export const Logo = (props: LogoProps) => {
   );
 };
 
-useGLTF.preload(FILE_URL);
+useGLTF.preload(FILE_URL, DRACO_URL);

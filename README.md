@@ -114,6 +114,7 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 ```
 
 #### modifiers.
+
 Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`
 modifier will make its children steadily float up and down. Perfect for quickly adding
 animations to components!
@@ -207,6 +208,14 @@ Easily set the background color of your space
 <Background color="blue" />
 ```
 
+#### Fog
+
+Add fog to your scene. Required rather than attaching to parent since direct parent is `<Physics />`
+
+```jsx
+<Fog color="blue" near={10} far={100} />
+```
+
 #### HDRI
 
 Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
@@ -222,12 +231,10 @@ Quickly add an image to your scene
 ```jsx
 <Image
   src="https://link-to-your-image.png"
-  ratio={[imageWidth, imageHeight]}
-  sizeScale={1}
+  size={[width, height]}
   framed // adds a frame
   doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
-  color={THREE.Color} // color of the frame
 />
 ```
 
@@ -278,11 +285,11 @@ Add a video file to your space with positional audio
 ```jsx
 <Video
   src="https://link-to-your-video.mp4"
-  ratio={[imageWidth, imageHeight]}
-  sizeScale={1}
+  size={[width, height]}
   muted // mutes the video
   framed // adds a frame
   doubleSided // removes back face of frame and creates two opposite facing images
+  material={THREE.Material} // custom material for the frame
 />
 ```
 

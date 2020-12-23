@@ -3,8 +3,7 @@ import { FontLoader, Vector3 } from "three";
 import { useLoader, useUpdate } from "react-three-fiber";
 import * as THREE from "three";
 
-const FONT_FILE =
-  "https://d27rt3a60hh1lx.cloudfront.net/fonts/Myriad%20Pro%20Light_Regular.json";
+const FONT_FILE = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Coolvetica.json";
 
 type TextProps = JSX.IntrinsicElements["group"] & {
   text: string;
