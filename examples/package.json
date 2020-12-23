@@ -19,7 +19,8 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "signal": "node server/app.js"
   },
   "eslintConfig": {
     "extends": [

@@ -18,6 +18,7 @@ app.use("/signal", peerServer);
 peerServer.on("connection", (client) => {
   console.log("Client connected ", client.id);
 });
+
 peerServer.on("disconnect", (client) => {
   console.log("Client disconnected ", client.id);
 });
