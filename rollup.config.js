@@ -1,4 +1,3 @@
-import path from "path";
 import { promises as fs } from "fs";
 import babel from "rollup-plugin-babel";
 import resolve from "rollup-plugin-node-resolve";
@@ -38,9 +37,21 @@ function targetTypings(entry, out) {
 }
 
 function addReactImport(out) {
+  const text = out.includes("cjs")
+    ? `var React = require('react');\n`
+    : `import React from "react";\n`;
+
   return {
     writeBundle() {
-      return fs.appendFile(`dist/${out}`, `import React from "react";`);
+      return fs.lstat(`dist/${out}`).then(async () => {
+        const data = await fs.readFile(`dist/${out}`);
+        const fd = await fs.open(`dist/${out}`, "w+");
+        // eslint-disable-next-line no-undef
+        const insert = new Buffer.from(text);
+        await fd.write(insert, 0, insert.length, 0);
+        await fd.write(data, 0, data.length, insert.length);
+        await fd.close();
+      });
     },
   };
 }
