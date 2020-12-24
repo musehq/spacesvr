@@ -29,7 +29,6 @@ export const Interactable = (props: InteractableProps) => {
   const [cursorState, setCursorState] = useState<"down" | "up">("up");
 
   useFrame(() => {
-    // console.log(player && player.raycaster);
     if (group.current) {
       const raycaster = (player && player.raycaster) || defaultRaycaster;
       const intersections = raycaster.intersectObject(group.current, true);
