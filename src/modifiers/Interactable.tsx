@@ -24,8 +24,8 @@ export const Interactable = (props: InteractableProps) => {
   const { containerRef, player, paused } = useEnvironment();
 
   const group = useRef<Group>();
-  const [hovered, setHovered] = useState<boolean>(false);
-  const [moved, setMoved] = useState<boolean>(false);
+  const [hovered, setHovered] = useState(false);
+  const [moved, setMoved] = useState(false);
   const [cursorState, setCursorState] = useState<"down" | "up">("up");
 
   useFrame(() => {
