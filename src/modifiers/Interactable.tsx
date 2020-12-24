@@ -24,8 +24,9 @@ export const Interactable = (props: InteractableProps) => {
   const { containerRef, player, paused } = useEnvironment();
 
   const group = useRef<Group>();
-  const [hovered, setHovered] = useState(false);
-  const [moved, setMoved] = useState(false);
+  const [hovered, setHovered] = useState<boolean>(false);
+  const [moved, setMoved] = useState<boolean>(false);
+  const [cursorState, setCursorState] = useState<"down" | "up">("up");
 
   useFrame(() => {
     if (group.current) {
@@ -49,15 +50,17 @@ export const Interactable = (props: InteractableProps) => {
 
   useEffect(() => {
     const mouseDown = () => {
+      setCursorState("up");
       setMoved(false);
     };
     const mouseMove = () => {
-      setMoved(true);
+      cursorState === "down" && setMoved(true);
     };
     const mouseUp = () => {
       if (onClick && hovered && !moved && !paused) {
         onClick();
       }
+      setCursorState("up");
     };
 
     containerRef?.current?.addEventListener("mousedown", mouseDown);
