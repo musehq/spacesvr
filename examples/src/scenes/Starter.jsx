@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 import { StandardEnvironment, Background, Logo, Interactable } from "spacesvr";
 
 const handleClick = () => {
-  window.open("www.apple.com", "_blank");
+  window.open("https://www.apple.com", "_blank");
 };
 
 export default () => {
