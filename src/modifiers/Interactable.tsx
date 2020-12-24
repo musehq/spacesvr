@@ -26,7 +26,7 @@ export const Interactable = (props: InteractableProps) => {
   const group = useRef<Group>();
   const [hovered, setHovered] = useState<boolean>(false);
   const [moved, setMoved] = useState<boolean>(false);
-  const [cursorState, setCursorState] = useState<"down" | "up">("down");
+  const [cursorState, setCursorState] = useState<"down" | "up">("up");
 
   useFrame(() => {
     // console.log(player && player.raycaster);
