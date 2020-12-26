@@ -2,6 +2,7 @@ const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const { ExpressPeerServer } = require("peer");
+const Websocket = require("ws");
 
 process.title = "spaces-server";
 
@@ -16,25 +17,30 @@ const peerServer = ExpressPeerServer(httpServer, {
   allow_discovery: true,
   debug: true,
 });
+const wsServer = new Websocket.Server({ port: 8080 });
 
 app.use("/signal", peerServer);
-// var connections = [];
+const peers = {};
 
 peerServer.on("connection", (client) => {
+  peers[client.id] = client;
   console.log("Client connected ", client.id);
-  // var idx = connected.indexOf(client.id);
-  // if (idx != -1) { connected.push(client.id) }
 });
 
 peerServer.on("disconnect", (client) => {
+  delete peers[client.id];
   console.log("Client disconnected ", client.id);
-  // var idx = connected.indexOf(client.id);
-  // if (idx != -1) { connected.splice(idx, 1) }
 });
 
-// app.get('/listPeers', (req, res) => {
-//   return res.json(connected);
-// });
+wsServer.on("connection", (socket) => {
+  // socket.on('message', message => {
+  // 	console.log('Msg from client: '+message)
+  // })
+  // socket.send();
+  wsServer.clients.forEach((wsClient) => {
+    wsClient.send(JSON.stringify(Object.keys(peers)));
+  });
+});
 
 httpServer.listen(PORT);
 console.log("Peer server running @ http://localhost: ", PORT);
