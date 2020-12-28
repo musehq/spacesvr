@@ -1,52 +1,41 @@
-import { useRef, useEffect, MutableRefObject } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
-import { Quaternion, Vector3, Vector2, Euler } from "three";
-import { useEnvironment } from "../utils/hooks";
+import { Vector2, Euler, MathUtils } from "three";
 import { getSpringValues } from "../utils/spring";
 
-type DragControlsProps = {
-  quaternion: MutableRefObject<Quaternion>;
-  position: MutableRefObject<Vector3>;
-};
-
-const DRAG_SENSITIVITY = new Vector2(0.16, 0.16);
+const DRAG_SENSITIVITY = new Vector2(0.25, 0.25); //new Vector2(0.16, 0.16);
 const HOVER_SENSITIVITY = new Vector2(0.02, 0.02);
 
 /**
  * DragControls allows for a click-and-drag control
  * of the camera
- *
- * @param props
- * @constructor
  */
-const DragControls = (props: DragControlsProps) => {
-  const { quaternion, position } = props;
+const DragControls = () => {
+  const { camera, gl, mouse } = useThree();
+  const { domElement } = gl;
 
-  const originEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
-  const setEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
-  const mouseDownPos = useRef<Vector2>(new Vector2(0, 0));
+  // initial position (map mouse position)
+  const initMouseDown: Vector2 = mouse
+    ? mouse
+        .clone()
+        .add(new Vector2(1, 1))
+        .multiply(new Vector2(window.innerWidth / 2, window.innerHeight / 2))
+    : new Vector2(0, 0);
+  const initEuler = new Euler(0, 0, 0, "YXZ").setFromQuaternion(
+    camera.quaternion
+  );
+
+  const dummyEuler = useRef(initEuler.clone());
+  const originEuler = useRef(initEuler.clone());
+  const mouseDownPos = useRef(initMouseDown);
   const dragging = useRef(false);
-  const { camera } = useThree();
-  const { containerRef } = useEnvironment();
 
+  // used to interpolate euler
   const [spring, setSpring] = useSpring(() => ({
-    xyz: [0, 0, 0],
+    xyz: initEuler.toArray(),
     config: { ...config.default, precision: 0.0001 },
   }));
-
-  useFrame(() => {
-    if (position.current) {
-      const { x: pX, y: pY, z: pZ } = position.current;
-      camera?.position?.set(pX, pY, pZ);
-    }
-
-    if (setEuler.current) {
-      const [x, y, z] = getSpringValues(spring);
-      setEuler.current.set(x, y, z);
-      camera.quaternion.setFromEuler(setEuler.current);
-    }
-  });
 
   const getNewEuler = (
     dragX: number,
@@ -60,34 +49,48 @@ const DragControls = (props: DragControlsProps) => {
     const SENSITIVITY = isHover ? HOVER_SENSITIVITY : DRAG_SENSITIVITY;
 
     newEuler.setFromQuaternion(camera.quaternion);
-    newEuler.y = originEuler.current.y - (moveX * SENSITIVITY.x) / 100;
-    newEuler.x = originEuler.current.x - (moveY * SENSITIVITY.y) / 100;
-    // newEuler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, newEuler.x));
+
+    const xDiff = (moveY * SENSITIVITY.x) / 100;
+    const xnew = originEuler.current.x - xDiff;
+    newEuler.x = MathUtils.clamp(
+      xnew,
+      -Math.PI / 2 + 0.00001,
+      Math.PI / 2 - 0.00001
+    );
+
+    // attempt to smoothly limit, work in progress
+    // const xperc = Math.abs(newEuler.x / (Math.PI / 2));
+    // const xscalar = 1 - Math.pow(xperc, 2);
+
+    newEuler.y = originEuler.current.y - (moveX * SENSITIVITY.y) / 100;
 
     return newEuler;
   };
 
   // touch move scripts
-  const onMouseDown = (ev: MouseEvent) => {
+  const onMouseDown = (e: MouseEvent) => {
     dragging.current = true;
-    mouseDownPos.current.set(ev.clientX, ev.clientY);
-    containerRef?.current?.classList.add("grabbing");
+    mouseDownPos.current.set(e.clientX, e.clientY);
+    domElement.classList.add("grabbing");
   };
-  const onMouseMove = (ev: MouseEvent) => {
-    const newEuler = getNewEuler(ev.clientX, ev.clientY, !dragging.current);
+  const onMouseMove = (e: MouseEvent) => {
+    console.log(e.clientX, e.clientY);
+    const newEuler = getNewEuler(e.clientX, e.clientY, !dragging.current);
     setSpring({ xyz: newEuler.toArray() });
-    quaternion.current = camera.quaternion;
   };
-  const onMouseUp = (ev: MouseEvent) => {
+  const onMouseUp = (e: MouseEvent) => {
     dragging.current = false;
-    originEuler.current = getNewEuler(ev.clientX, ev.clientY);
-    mouseDownPos.current.set(ev.clientX, ev.clientY);
-    containerRef?.current?.classList.remove("grabbing");
+    originEuler.current = getNewEuler(e.clientX, e.clientY);
+    mouseDownPos.current.set(e.clientX, e.clientY);
+    domElement.classList.remove("grabbing");
   };
 
-  useEffect(() => {
-    quaternion.current = camera.quaternion;
-  }, []);
+  // update camera quaternion from euler
+  useFrame(() => {
+    const [x, y, z] = getSpringValues(spring);
+    dummyEuler.current.set(x, y, z);
+    camera.quaternion.setFromEuler(dummyEuler.current);
+  });
 
   useEffect(() => {
     document.addEventListener("mousedown", onMouseDown);
@@ -99,7 +102,7 @@ const DragControls = (props: DragControlsProps) => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
     };
-  }, [containerRef]);
+  }, [domElement]);
 
   return null;
 };

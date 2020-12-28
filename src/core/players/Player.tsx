@@ -1,18 +1,18 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Raycaster, Vector3 } from "three";
+import { Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
-import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
-import MouseFPSCamera from "../controls/MouseFPSCamera";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import {
   useCapsuleCollider,
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
+import { GyroControls } from "../controls/GyroControls";
+import ClickDragControls from "../controls/ClickDragControls";
 
 const VELOCITY_FACTOR = 300;
 const SHOW_PLAYER_HITBOX = false;
@@ -34,7 +34,7 @@ export type PlayerProps = {
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
   const { camera } = useThree();
-  const { paused, setPlayer } = useEnvironment();
+  const { setPlayer } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -47,17 +47,17 @@ const Player = (props: PlayerProps) => {
 
   // consumer
   const direction = useRef(new Vector3());
-  const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis
+
+  // set init camera look
+  const xLook = initPos.x + 100 * Math.cos(initRot);
+  const zLook = initPos.z + 100 * Math.sin(initRot);
+  camera?.lookAt(xLook, initPos.y, zLook);
 
   // setup player
   useEffect(() => {
     // store position and velocity
     bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
-
-    const xLook = initPos.x + 100 * Math.cos(initRot);
-    const zLook = initPos.z + 100 * Math.sin(initRot);
-    camera?.lookAt(xLook, initPos.y, zLook);
 
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
@@ -67,21 +67,24 @@ const Player = (props: PlayerProps) => {
   // update player every frame
   useFrame((stuff, delta) => {
     // update raycaster
-    if (position.current && quaternion.current) {
+    if (position.current && camera.quaternion) {
       raycaster.current.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(quaternion.current);
+      lookAt.applyQuaternion(camera.quaternion);
       raycaster.current.ray.direction.copy(lookAt);
     }
 
+    // update camera position
+    camera.position.copy(position.current);
+
     // get forward/back movement and left/right movement velocities
     const inputVelocity = new Vector3(0, 0, 0);
-    if (!lockControls.current && !paused) {
+    if (!lockControls.current) {
       inputVelocity.x = direction.current.x * 0.75;
       inputVelocity.z = direction.current.y;
       inputVelocity.normalize().multiplyScalar(delta * VELOCITY_FACTOR);
 
-      const moveQuaternion = quaternion.current.clone();
+      const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
@@ -97,14 +100,11 @@ const Player = (props: PlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <>
-          <NippleMovement direction={direction} />
-          <TouchFPSCamera quaternion={quaternion} position={position} />
-        </>
+        <GyroControls fallback={<TouchFPSCamera />} />
       ) : (
         <>
           <KeyboardMovement direction={direction} />
-          <MouseFPSCamera quaternion={quaternion} position={position} />
+          <ClickDragControls />
         </>
       )}
       <mesh ref={bodyRef} name="player">

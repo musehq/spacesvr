@@ -51,9 +51,6 @@ const SpringPlayer = (props: SpringPlayerProps) => {
   const lockControls = useRef(false);
   const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
 
-  // consumer
-  const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis
-
   // setup player
   useEffect(() => {
     bodyApi.position.subscribe((p) => {
@@ -74,7 +71,7 @@ const SpringPlayer = (props: SpringPlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame(({ clock }) => {
+  useFrame(() => {
     const [x, y, z, s = 1] = getSpringValues(spring);
     bodyApi?.position.set(x * s, y * s, z * s);
   });
@@ -82,15 +79,9 @@ const SpringPlayer = (props: SpringPlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <GyroControls
-          quaternion={quaternion}
-          position={position}
-          fallback={
-            <TouchFPSCamera quaternion={quaternion} position={position} />
-          }
-        />
+        <GyroControls fallback={<TouchFPSCamera />} />
       ) : (
-        <DragControls quaternion={quaternion} position={position} />
+        <DragControls />
       )}
       <mesh name="player">
         {SHOW_PLAYER_HITBOX && (

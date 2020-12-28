@@ -34,10 +34,8 @@ const Container = styled.div`
     bottom: 0;
     left: 0;
     outline: 0;
-  }
 
-  &.grabbing {
-    canvas {
+    &.grabbing {
       cursor: grabbing;
     }
   }

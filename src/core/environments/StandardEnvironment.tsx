@@ -12,9 +12,6 @@ import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import { RealisticEffects } from "../../effects";
-import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
-import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 
@@ -31,6 +28,11 @@ const Container = styled.div`
     bottom: 0;
     left: 0;
     outline: 0;
+    cursor: grab;
+
+    &.grabbing {
+      cursor: grabbing;
+    }
   }
 `;
 
@@ -97,8 +99,6 @@ export const StandardEnvironment = (
         </Canvas>
         <environmentStateContext.Provider value={state}>
           <LoadingScreen />
-          <DesktopPause />
-          {isMobile && <MobilePause />}
           <Crosshair />
         </environmentStateContext.Provider>
       </Container>

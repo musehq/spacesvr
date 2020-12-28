@@ -1,11 +1,6 @@
-import { useRef, useEffect, MutableRefObject } from "react";
-import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Vector3, Vector2, Euler } from "three";
-
-type DragFPSCameraProps = {
-  quaternion: MutableRefObject<Quaternion>;
-  position: MutableRefObject<Vector3>;
-};
+import { useRef, useEffect } from "react";
+import { useThree } from "react-three-fiber";
+import { Vector2, Euler } from "three";
 
 type Touch = {
   pos: Vector2;
@@ -27,19 +22,10 @@ const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
  * @param props
  * @constructor
  */
-const TouchFPSCamera = (props: DragFPSCameraProps) => {
-  const { quaternion, position } = props;
-
+const TouchFPSCamera = () => {
   const touchStartPos = useRef<Touch>(DefaultTouch);
   const originEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
   const { camera } = useThree();
-
-  useFrame(() => {
-    if (position.current) {
-      const { x: pX, y: pY, z: pZ } = position.current;
-      camera?.position?.set(pX, pY, pZ);
-    }
-  });
 
   const getNewEuler = (dragX: number, dragY: number): Euler => {
     const newEuler = originEuler.current.clone();
@@ -102,7 +88,6 @@ const TouchFPSCamera = (props: DragFPSCameraProps) => {
     const { clientX, clientY } = touch;
     const newEuler = getNewEuler(clientX, clientY);
     camera.quaternion.setFromEuler(newEuler);
-    quaternion.current = camera.quaternion;
   };
   const onTouchEnd = (ev: TouchEvent) => {
     const touch = getCurrentTouch(ev.changedTouches);
@@ -118,7 +103,6 @@ const TouchFPSCamera = (props: DragFPSCameraProps) => {
 
   useEffect(() => {
     camera?.lookAt(0, 2, 0);
-    quaternion.current = camera.quaternion;
   }, []);
 
   useEffect(() => {
