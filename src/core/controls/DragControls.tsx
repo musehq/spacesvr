@@ -74,7 +74,6 @@ const DragControls = () => {
     domElement.classList.add("grabbing");
   };
   const onMouseMove = (e: MouseEvent) => {
-    console.log(e.clientX, e.clientY);
     const newEuler = getNewEuler(e.clientX, e.clientY, !dragging.current);
     setSpring({ xyz: newEuler.toArray() });
   };

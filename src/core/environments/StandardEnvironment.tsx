@@ -1,6 +1,6 @@
 import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
-import Crosshair from "../ui/Crosshair";
+import Crosshair from "../hud/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
@@ -28,11 +28,7 @@ const Container = styled.div`
     bottom: 0;
     left: 0;
     outline: 0;
-    cursor: grab;
-
-    &.grabbing {
-      cursor: grabbing;
-    }
+    cursor: none;
   }
 `;
 
@@ -91,6 +87,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
+              <Crosshair />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}
@@ -99,7 +96,6 @@ export const StandardEnvironment = (
         </Canvas>
         <environmentStateContext.Provider value={state}>
           <LoadingScreen />
-          <Crosshair />
         </environmentStateContext.Provider>
       </Container>
     </BrowserChecker>

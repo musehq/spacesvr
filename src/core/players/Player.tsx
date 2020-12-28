@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
@@ -43,7 +43,9 @@ const Player = (props: PlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
+  const [raycaster] = useState(
+    new Raycaster(new Vector3(), new Vector3(), 0, 3)
+  );
 
   // consumer
   const direction = useRef(new Vector3());
@@ -67,11 +69,11 @@ const Player = (props: PlayerProps) => {
   // update player every frame
   useFrame((stuff, delta) => {
     // update raycaster
-    if (position.current && camera.quaternion) {
-      raycaster.current.ray.origin.copy(position.current);
+    if (position.current) {
+      raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
       lookAt.applyQuaternion(camera.quaternion);
-      raycaster.current.ray.direction.copy(lookAt);
+      raycaster.ray.direction.copy(lookAt);
     }
 
     // update camera position
