@@ -54,6 +54,7 @@ type StandardEnvironmentProps = {
     rot?: number;
   };
   effects?: ReactNode;
+  pauseMenu?: ReactNode;
   disableGround?: boolean;
 };
 
@@ -77,6 +78,7 @@ export const StandardEnvironment = (
     player,
     effects,
     disableGround,
+    pauseMenu,
   } = props;
 
   const state = useEnvironmentState();
@@ -97,8 +99,12 @@ export const StandardEnvironment = (
         </Canvas>
         <environmentStateContext.Provider value={state}>
           <LoadingScreen />
-          <DesktopPause />
-          {isMobile && <MobilePause />}
+          {pauseMenu || (
+            <>
+              <DesktopPause />
+              {isMobile && <MobilePause />}
+            </>
+          )}
           <Crosshair />
         </environmentStateContext.Provider>
       </Container>
