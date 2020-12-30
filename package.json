@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "private": true,
   "description": "An Environment for WebXR Spaces",
   "keywords": [
