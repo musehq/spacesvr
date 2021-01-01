@@ -6,10 +6,11 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
   src: string;
+  hideBackground: boolean;
 };
 
 export const HDRI = (props: HDRIProps) => {
-  const { src } = props;
+  const { src, hideBackground } = props;
   const { gl, scene } = useThree();
 
   // pmrem generator for hdri loading
@@ -25,13 +26,15 @@ export const HDRI = (props: HDRIProps) => {
       const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
       // sent envmap onto scene env and background
+      if (!hideBackground) {
+        scene.background = envMap;
+      }
       scene.environment = envMap;
-      scene.background = envMap;
 
       texture.dispose();
       pmremGenerator.dispose();
     });
-  }, [scene, loader, pmremGenerator]);
+  }, [src, scene, loader, pmremGenerator, hideBackground]);
 
   return null;
 };
