@@ -44,8 +44,16 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: true,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: window.devicePixelRatio || 1,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 

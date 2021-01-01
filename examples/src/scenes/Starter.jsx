@@ -1,10 +1,7 @@
 import { Vector3 } from "three";
 import { StandardEnvironment, Background, Logo, Interactable } from "spacesvr";
 
-const handleClick = () => {
-  window.open("https://www.apple.com", "_blank");
-};
-
+const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
   return (
     <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
