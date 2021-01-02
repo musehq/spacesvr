@@ -28,7 +28,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
     const press = pressedKeys.current; // [w, a, s, d]
     const yAxis = -1 * Number(press[0]) + Number(press[2]);
     const xAxis = -1 * Number(press[1]) + Number(press[3]);
-    return new Vector3(xAxis, yAxis, 0);
+    return [xAxis, yAxis, 0];
   };
 
   const onKeyDown = (ev: KeyboardEvent) => {
@@ -44,7 +44,8 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
     if (ev.key === "d" || ev.key === "D" || ev.key === "ArrowRight") {
       pressedKeys.current[3] = true;
     }
-    direction.current = calcDirection();
+    const [x, y, z] = calcDirection();
+    direction.current.set(x, y, z);
   };
   const onKeyUp = (ev: KeyboardEvent) => {
     if (ev.key === "w" || ev.key === "W" || ev.key === "ArrowUp") {
@@ -60,7 +61,8 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
       pressedKeys.current[3] = false;
     }
 
-    direction.current = calcDirection();
+    const [x, y, z] = calcDirection();
+    direction.current.set(x, y, z);
   };
 
   useEffect(() => {
@@ -71,7 +73,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
     };
-  }, [onKeyUp, onKeyDown]);
+  }, []);
 
   return <></>;
 };

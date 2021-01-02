@@ -14,7 +14,7 @@ import {
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
 
-const VELOCITY_FACTOR = 300;
+const SPEED = 3.5; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
@@ -70,7 +70,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame((stuff, delta) => {
+  useFrame(() => {
     // update raycaster
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
@@ -83,8 +83,8 @@ const Player = (props: PlayerProps) => {
     const inputVelocity = new Vector3(0, 0, 0);
     if (!lockControls.current && !paused) {
       inputVelocity.x = direction.current.x * 0.75;
-      inputVelocity.z = direction.current.y;
-      inputVelocity.normalize().multiplyScalar(delta * VELOCITY_FACTOR);
+      inputVelocity.z = direction.current.y; // forward/back
+      inputVelocity.multiplyScalar(SPEED);
 
       const moveQuaternion = quaternion.current.clone();
       moveQuaternion.x = 0;
