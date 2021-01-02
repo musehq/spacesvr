@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { Group } from "three";
 import { useEnvironment } from "../core/utils/hooks";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame } from "react-three-fiber";
 
 type InteractableProps = {
   children: ReactNode;
@@ -20,7 +20,6 @@ type InteractableProps = {
 export const Interactable = (props: InteractableProps) => {
   const { children, onClick, onHover, onUnHover } = props;
 
-  const { raycaster: defaultRaycaster } = useThree();
   const { containerRef, player, paused } = useEnvironment();
 
   const group = useRef<Group>();
@@ -29,8 +28,8 @@ export const Interactable = (props: InteractableProps) => {
   const [cursorState, setCursorState] = useState<"down" | "up">("up");
 
   useFrame(() => {
-    if (group.current) {
-      const raycaster = (player && player.raycaster) || defaultRaycaster;
+    if (group.current && Object.keys(player).length !== 0) {
+      const raycaster = player && player.raycaster;
       const intersections = raycaster.intersectObject(group.current, true);
       if (intersections && intersections.length > 0) {
         if (!hovered) {

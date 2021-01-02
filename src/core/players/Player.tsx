@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
@@ -33,7 +33,7 @@ export type PlayerProps = {
  */
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
-  const { camera } = useThree();
+  const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
   // physical body
@@ -43,7 +43,11 @@ const Player = (props: PlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
+  const [raycaster] = useState(
+    isMobile
+      ? defaultRaycaster
+      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
+  );
 
   // consumer
   const direction = useRef(new Vector3());
@@ -59,6 +63,7 @@ const Player = (props: PlayerProps) => {
     const zLook = initPos.z + 100 * Math.sin(initRot);
     camera?.lookAt(xLook, initPos.y, zLook);
 
+    // set player for environment
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
     );
@@ -68,10 +73,10 @@ const Player = (props: PlayerProps) => {
   useFrame((stuff, delta) => {
     // update raycaster
     if (position.current && quaternion.current) {
-      raycaster.current.ray.origin.copy(position.current);
+      raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
       lookAt.applyQuaternion(quaternion.current);
-      raycaster.current.ray.direction.copy(lookAt);
+      raycaster.ray.direction.copy(lookAt);
     }
 
     // get forward/back movement and left/right movement velocities
