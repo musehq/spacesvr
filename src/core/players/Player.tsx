@@ -72,7 +72,7 @@ const Player = (props: PlayerProps) => {
   // update player every frame
   useFrame((stuff, delta) => {
     // update raycaster
-    if (position.current && quaternion.current) {
+    if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
       lookAt.applyQuaternion(quaternion.current);
