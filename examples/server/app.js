@@ -12,35 +12,41 @@ const app = express();
 app.set("port", PORT);
 app.get("/", (req, res, next) => res.send("Lorem ipsum"));
 
-const httpServer = http.createServer(app);
-const peerServer = ExpressPeerServer(httpServer, {
+// Signal peer ids
+const server = http.createServer(app);
+const peerServer = ExpressPeerServer(server, {
   allow_discovery: true,
   debug: true,
 });
-const wsServer = new Websocket.Server({ port: 8080 });
 
 app.use("/signal", peerServer);
-const peers = {};
+// const peers = {};
 
 peerServer.on("connection", (client) => {
-  peers[client.id] = client;
+  // peers[client.id] = client;
   console.log("Client connected ", client.id);
 });
 
 peerServer.on("disconnect", (client) => {
-  delete peers[client.id];
+  // delete peers[client.id];
   console.log("Client disconnected ", client.id);
 });
 
-wsServer.on("connection", (socket) => {
-  // socket.on('message', message => {
-  // 	console.log('Msg from client: '+message)
-  // })
-  // socket.send();
-  wsServer.clients.forEach((wsClient) => {
-    wsClient.send(JSON.stringify(Object.keys(peers)));
-  });
+// Websocket listen
+const wsServer = new Websocket.Server({
+  httpServer: server,
+  port: 8080,
 });
 
-httpServer.listen(PORT);
+wsServer.on("connection", (socket) => {
+  // Send new peer ID
+  socket.on("message", (peer) => {
+    socket.send(peer);
+  });
+  // wsServer.clients.forEach((peer) => {
+  //   peer.send(JSON.stringify(Object.keys(peers)));
+  // });
+});
+
+server.listen(PORT);
 console.log("Peer server running @ http://localhost: ", PORT);
