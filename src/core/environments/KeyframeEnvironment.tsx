@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
@@ -13,7 +13,6 @@ import {
   KeyframeEnvironmentState,
 } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
-import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
@@ -67,7 +66,6 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
 
 type KeyframeEnvironmentProps = {
   keyframes: Keyframe[];
-  effects?: ReactNode;
 };
 
 /**
@@ -84,7 +82,7 @@ type KeyframeEnvironmentProps = {
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes, effects } = props;
+  const { children, canvasProps, physicsProps, keyframes } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -124,7 +122,6 @@ export const KeyframeEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={localState}>
               <SpringPlayer spring={spring} />
-              {effects || <RealisticEffects />}
               <SpringScaled spring={spring}>{children}</SpringScaled>
             </environmentStateContext.Provider>
           </Physics>

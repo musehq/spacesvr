@@ -83,7 +83,6 @@ export const StandardEnvironment = (
     canvasProps,
     physicsProps,
     player,
-    effects,
     disableGround,
     pauseMenu,
   } = props;
@@ -99,7 +98,6 @@ export const StandardEnvironment = (
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
               {!disableGround && <InfinitePlane height={-0.001} />}
-              {effects}
               {children}
             </environmentStateContext.Provider>
           </Physics>
