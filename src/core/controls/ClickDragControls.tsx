@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Vector2 } from "three";
 import DragControls from "./DragControls";
-import MouseFPSCamera from "./MouseFPSCamera";
+import PointerLockCamera from "./PointerLockCamera";
 
 const ClickDragControls = () => {
   const [dragging, setDragging] = useState(true);
@@ -21,7 +21,6 @@ const ClickDragControls = () => {
       );
       if (dist < 4 && dragging) {
         setDragging(false);
-        console.log("switched dragging to false");
       }
       mouseDownPos.current.set(e.clientX, e.clientY);
     },
@@ -43,7 +42,7 @@ const ClickDragControls = () => {
   return (
     <>
       {dragging && <DragControls />}
-      {!dragging && <MouseFPSCamera onUnlock={onUnlock} />}
+      {!dragging && <PointerLockCamera onUnlock={onUnlock} />}
     </>
   );
 };
