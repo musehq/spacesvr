@@ -4,7 +4,7 @@ import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
 
-const DISTANCE = 0.5;
+const DISTANCE = 0.05;
 
 const Crosshair = () => {
   const group = useRef<Group>();
@@ -15,7 +15,7 @@ const Crosshair = () => {
 
   const [spring, setSpring] = useSpring(() => ({
     xyz: [0, 0, 0],
-    config: { ...config.stiff, precision: 0.001 },
+    config: { ...config.stiff, precision: 0.0001 },
   }));
 
   useFrame(() => {
@@ -32,7 +32,7 @@ const Crosshair = () => {
   return (
     <group ref={group}>
       <mesh>
-        <sphereBufferGeometry args={[0.01, 50, 50]} />
+        <sphereBufferGeometry args={[0.001, 50, 50]} />
         <meshStandardMaterial color="red" />
       </mesh>
     </group>
