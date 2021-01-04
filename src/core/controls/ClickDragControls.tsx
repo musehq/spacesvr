@@ -1,39 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Vector2 } from "three";
+import { useCallback, useEffect, useState } from "react";
 import DragControls from "./DragControls";
 import PointerLockCamera from "./PointerLockCamera";
 
+/**
+ * ClickDragControls is a control scheme that mixes drag controls
+ * and pointer lock controls, with a double click to switch between
+ * the two
+ *
+ * @constructor
+ */
 const ClickDragControls = () => {
   const [dragging, setDragging] = useState(true);
-  const mouseDownPos = useRef<Vector2>(new Vector2(0, 0));
-
-  const onMouseDown = useCallback(
-    (e: MouseEvent) => {
-      mouseDownPos.current.set(e.clientX, e.clientY);
-    },
-    [dragging]
-  );
 
   const onMouseUp = useCallback(
     (e: MouseEvent) => {
-      const dist = mouseDownPos.current.distanceTo(
-        new Vector2(e.clientX, e.clientY)
-      );
-      if (dist < 4 && dragging) {
-        setDragging(false);
-      }
-      mouseDownPos.current.set(e.clientX, e.clientY);
+      setDragging(!dragging);
     },
     [dragging]
   );
 
   useEffect(() => {
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mouseup", onMouseUp);
+    console.log("dragging is now", dragging);
+    document.addEventListener("dblclick", onMouseUp);
 
     return () => {
-      document.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("dblclick", onMouseUp);
     };
   }, [dragging]);
 

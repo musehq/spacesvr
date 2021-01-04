@@ -2,7 +2,7 @@ import { useEffect, useCallback, useState, useMemo } from "react";
 import { useThree } from "react-three-fiber";
 import { Euler } from "three";
 
-type MouseFPSCameraProps = {
+type Props = {
   onUnlock: () => void;
 };
 
@@ -12,15 +12,15 @@ const SENSITIVITY = 0.8;
 const PI_2 = Math.PI / 2;
 
 /**
- * MouseFPSCamera controls the camera rotation, set up as a first
- * person view. It takes care of user input to set the camera rotation
- * and passed the quaternion of the camera up. Its position is attached
- * to the passed position, probably the player's position.
+ * PointerLockCamera is a react port of PointerLockControls.js from THREE,
+ * with some changes. Some parameters are listed above
  *
- * @param props
+ * https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/PointerLockControls.js
+ *
+ * @param props = { onUnlock: function to run when the pointer lock controls are unlocked }
  * @constructor
  */
-const PointerLockCamera = (props: MouseFPSCameraProps) => {
+const PointerLockCamera = (props: Props) => {
   const { onUnlock } = props;
 
   const { camera, gl } = useThree();
@@ -31,6 +31,7 @@ const PointerLockCamera = (props: MouseFPSCameraProps) => {
   const lock = () => domElement.requestPointerLock();
   const unlock = () => domElement.ownerDocument.exitPointerLock();
 
+  // update camera while controls are locked
   const onMouseMove = useCallback(
     (event: MouseEvent) => {
       if (!isLocked) return;
@@ -57,6 +58,7 @@ const PointerLockCamera = (props: MouseFPSCameraProps) => {
     [isLocked]
   );
 
+  // handle pointer lock change
   function onPointerlockChange() {
     if (domElement.ownerDocument.pointerLockElement === domElement) {
       setIsLocked(true);
@@ -66,13 +68,14 @@ const PointerLockCamera = (props: MouseFPSCameraProps) => {
     }
   }
 
+  // automatically unlock on pointer lock error
   function onPointerlockError() {
     console.error("PointerLockControls: Unable to use Pointer Lock API");
     setIsLocked(false);
     onUnlock();
   }
 
-  // event setup
+  // events setup
   useEffect(() => {
     const { ownerDocument } = domElement;
 
@@ -101,9 +104,15 @@ const PointerLockCamera = (props: MouseFPSCameraProps) => {
         false
       );
     };
-  }, [isLocked]);
+  }, [onMouseMove, isLocked]);
 
-  lock();
+  // automatically (attempt to) lock on mount, unlock on unmount
+  useEffect(() => {
+    lock();
+    return () => {
+      unlock();
+    };
+  }, []);
 
   return null;
 };

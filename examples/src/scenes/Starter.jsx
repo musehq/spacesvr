@@ -1,9 +1,7 @@
 import { Vector3 } from "three";
 import { StandardEnvironment, Background, Logo, Interactable } from "spacesvr";
 
-const handleClick = () => {
-  window.open("https://www.apple.com", "_blank");
-};
+const handleClick = () => console.log("got a click!");
 
 export default () => {
   return (
