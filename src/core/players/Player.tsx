@@ -7,12 +7,13 @@ import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
-import MouseFPSCamera from "../controls/MouseFPSCamera";
+import PointerLockControls from "../controls/PointerLockControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import {
   useCapsuleCollider,
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
+import { GyroControls } from "../controls/GyroControls";
 
 const SPEED = 3.5; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
@@ -75,7 +76,7 @@ const Player = (props: PlayerProps) => {
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(quaternion.current);
+      lookAt.applyQuaternion(camera.quaternion);
       raycaster.ray.direction.copy(lookAt);
     }
 
@@ -86,7 +87,7 @@ const Player = (props: PlayerProps) => {
       inputVelocity.z = direction.current.y; // forward/back
       inputVelocity.multiplyScalar(SPEED);
 
-      const moveQuaternion = quaternion.current.clone();
+      const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
@@ -103,13 +104,19 @@ const Player = (props: PlayerProps) => {
     <>
       {isMobile ? (
         <>
+          <GyroControls
+            quaternion={quaternion}
+            position={position}
+            fallback={
+              <TouchFPSCamera quaternion={quaternion} position={position} />
+            }
+          />
           <NippleMovement direction={direction} />
-          <TouchFPSCamera quaternion={quaternion} position={position} />
         </>
       ) : (
         <>
           <KeyboardMovement direction={direction} />
-          <MouseFPSCamera quaternion={quaternion} position={position} />
+          <PointerLockControls />
         </>
       )}
       <mesh ref={bodyRef} name="player">
