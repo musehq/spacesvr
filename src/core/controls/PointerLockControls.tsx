@@ -1,9 +1,18 @@
-import { useEffect, useCallback, useState, useMemo } from "react";
-import { useThree } from "react-three-fiber";
+import {
+  useEffect,
+  useCallback,
+  useState,
+  useMemo,
+  MutableRefObject,
+  useRef,
+} from "react";
+import { useFrame, useThree } from "react-three-fiber";
 import { Euler } from "three";
+import { useEnvironment } from "../utils/hooks";
+import * as THREE from "three";
 
 type Props = {
-  onUnlock?: () => void;
+  position: MutableRefObject<THREE.Vector3>;
 };
 
 const MIN_POLAR_ANGLE = 0; // radians
@@ -21,20 +30,33 @@ const PI_2 = Math.PI / 2;
  * @constructor
  */
 const PointerLockCamera = (props: Props) => {
-  const { onUnlock } = props;
+  const { position } = props;
 
   const { camera, gl } = useThree();
   const { domElement } = gl;
+  const { paused, setPaused, addEvent } = useEnvironment();
 
   const euler = useMemo(() => new Euler(0, 0, 0, "YXZ"), []);
-  const [isLocked, setIsLocked] = useState(false);
+  const isLocked = useRef(false);
   const lock = () => domElement.requestPointerLock();
   const unlock = () => domElement.ownerDocument.exitPointerLock();
+
+  useFrame(() => {
+    if (isLocked.current) {
+      const lookAt = new THREE.Vector3(0, 0, -1);
+      lookAt.applyQuaternion(camera.quaternion);
+      lookAt.multiply(new THREE.Vector3(1, 0, 1)).normalize();
+    }
+    if (position.current) {
+      const { x: pX, y: pY, z: pZ } = position.current;
+      camera?.position?.set(pX, pY, pZ);
+    }
+  });
 
   // update camera while controls are locked
   const onMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!isLocked) return;
+      if (!isLocked.current) return;
 
       const movementX =
         // @ts-ignore
@@ -61,11 +83,14 @@ const PointerLockCamera = (props: Props) => {
   // handle pointer lock change
   function onPointerlockChange() {
     if (domElement.ownerDocument.pointerLockElement === domElement) {
-      setIsLocked(true);
+      isLocked.current = true;
+      if (paused) {
+        setPaused(false);
+      }
     } else {
-      setIsLocked(false);
-      if (onUnlock) {
-        onUnlock();
+      isLocked.current = false;
+      if (!paused) {
+        setPaused(true);
       }
     }
   }
@@ -73,14 +98,18 @@ const PointerLockCamera = (props: Props) => {
   // automatically unlock on pointer lock error
   function onPointerlockError() {
     console.error("PointerLockControls: Unable to use Pointer Lock API");
-    setIsLocked(false);
-    if (onUnlock) {
-      onUnlock();
-    }
+    isLocked.current = false;
+    setPaused(true);
   }
 
   // events setup
   useEffect(() => {
+    setTimeout(() => {
+      if (!isLocked.current && !paused) {
+        setPaused(true);
+      }
+    }, 250);
+
     const { ownerDocument } = domElement;
 
     ownerDocument.addEventListener("mousemove", onMouseMove, false);
@@ -108,14 +137,22 @@ const PointerLockCamera = (props: Props) => {
         false
       );
     };
-  }, [onMouseMove, isLocked]);
+  }, [paused, onMouseMove, isLocked, onPointerlockChange]);
 
-  // automatically (attempt to) lock on mount, unlock on unmount
   useEffect(() => {
-    lock();
-    return () => {
-      unlock();
-    };
+    // initial camera rotation
+    if (camera) {
+      camera?.lookAt(0, 2, 0);
+    }
+
+    // lock and unlock controls based on set paused value
+    addEvent("paused", (pausedVal: boolean, overlayVal: string | undefined) => {
+      if (pausedVal) {
+        unlock();
+      } else {
+        lock();
+      }
+    });
   }, []);
 
   return null;

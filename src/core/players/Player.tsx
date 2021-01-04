@@ -116,7 +116,7 @@ const Player = (props: PlayerProps) => {
       ) : (
         <>
           <KeyboardMovement direction={direction} />
-          <PointerLockControls />
+          <PointerLockControls position={position} />
         </>
       )}
       <mesh ref={bodyRef} name="player">
