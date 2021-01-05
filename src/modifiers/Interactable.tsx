@@ -37,7 +37,7 @@ export const Interactable = (props: Props) => {
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
-  const downPos = useMemo(() => new Vector2(), []);
+  const { current: downPos } = useRef(new Vector2());
 
   // continuously update the hover state
   useFrame(() => {

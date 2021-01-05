@@ -36,7 +36,7 @@ const PointerLockCamera = (props: Props) => {
   const { domElement } = gl;
   const { paused, setPaused, addEvent } = useEnvironment();
 
-  const euler = useMemo(() => new Euler(0, 0, 0, "YXZ"), []);
+  const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
   const isLocked = useRef(false);
   const lock = () => domElement.requestPointerLock();
   const unlock = () => domElement.ownerDocument.exitPointerLock();
