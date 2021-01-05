@@ -2,10 +2,10 @@ import React from "react";
 import Peer from "peerjs";
 
 type MultiplayerProps = {
-  ss_host?: string;
-  ss_port?: number;
-  ss_path?: string;
-  ws_server?: string;
+  signalHost?: string;
+  signalPort?: number;
+  signalPath?: string;
+  socketServer?: string;
 };
 
 /**
@@ -20,10 +20,10 @@ type MultiplayerProps = {
  */
 export const Multiplayer = (props: MultiplayerProps) => {
   const {
-    ss_host = "127.0.0.1",
-    ss_port = 3001,
-    ss_path = "/signal",
-    ws_server = "ws://127.0.0.1:8080",
+    signalHost = "127.0.0.1",
+    signalPort = 3001,
+    signalPath = "/signal",
+    socketServer = "ws://127.0.0.1:8080",
   } = props;
 
   let peerId: string;
@@ -72,9 +72,9 @@ export const Multiplayer = (props: MultiplayerProps) => {
 
   // Create peer on server
   const peer = new Peer({
-    host: ss_host,
-    port: ss_port,
-    path: ss_path,
+    host: signalHost,
+    port: signalPort,
+    path: signalPath,
   });
 
   peer.on("open", (id) => {
@@ -83,7 +83,7 @@ export const Multiplayer = (props: MultiplayerProps) => {
     connectP2P(peer);
 
     // Listen for future peers
-    socket = new WebSocket(ws_server);
+    socket = new WebSocket(socketServer);
 
     // Emit the new ID
     socket.onopen = (event) => {
