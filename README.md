@@ -137,7 +137,6 @@ animations to components!
 The Standard Environment defines the following:
 
 - 2 unit tall player with WASD movement and pointer lock controls on desktop, joystick and drag controls on mobile
-- Realistic Effects with FXAA and gamma correction
 - Physics enabled, ground plane at y=0
 - Custom loading menu
 - Custom pause menu
@@ -150,7 +149,6 @@ The Standard Environment defines the following:
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
         rot: Math.PI / 2,  // initial rotation
     }}
-    effects={RealisticEffects} // custom effects component to override default effects
 />
 ```
 
@@ -161,7 +159,6 @@ The Keyframe Environment defines the following:
 - 2 unit tall floating player
 - Move with Arrow Keys, A/D movement, or Onscreen Arrows
 - Drag Controls, Gryro Controls with Mobile Drag as fallback
-- Realistic Effects with FXAA and gamma correction
 - Physics enabled, ground plane at y=0
 - Custom loading menu
 - No pause menu
@@ -174,7 +171,6 @@ The Keyframe Environment defines the following:
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
         rot: Math.PI / 2,  // initial rotation
     }}
-    effects={RealisticEffects} // custom effects component to override default effects
     keyframes={[
         { label: "home", position: new Vector3(0, 2, 5) },
         { label: "about", position: new Vector3(1, 2, 6), scale: 1.5 }
@@ -221,7 +217,10 @@ Add fog to your scene. Required rather than attaching to parent since direct par
 Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
 
 ```jsx
-<HDRI src="https://link-to-your-hdri.hdr" />
+<HDRI
+  src="https://link-to-your-hdri.hdr"
+  hideBackground={false} // set to true to only apply radiance
+/>
 ```
 
 #### Image
