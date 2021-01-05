@@ -9,7 +9,7 @@ export function createPlayerRef(
   position: MutableRefObject<Vector3>,
   velocity: MutableRefObject<Vector3>,
   lockControls: MutableRefObject<boolean>,
-  raycaster: MutableRefObject<THREE.Raycaster>
+  raycaster: THREE.Raycaster
 ): PlayerRef {
   const posVec: PlayerVec = {
     set: (vec: Vector3) => bodyApi.position.set(vec.x, vec.y, vec.z),
@@ -31,7 +31,7 @@ export function createPlayerRef(
     position: posVec,
     velocity: velVec,
     controls,
-    raycaster: raycaster.current,
+    raycaster,
   };
 
   return playerRef;
