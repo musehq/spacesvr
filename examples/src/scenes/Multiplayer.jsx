@@ -1,10 +1,10 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Networked } from "spacesvr";
+import { StandardEnvironment, Background, Logo, Multiplayer } from "spacesvr";
 
 export default () => {
   return (
     <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
-      <Networked host={"127.0.0.1"} port={3001} path={"/signal"} />
+      <Multiplayer />
       <Background color={0xffffff} />
       <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />

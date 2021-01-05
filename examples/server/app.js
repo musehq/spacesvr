@@ -8,7 +8,6 @@ process.title = "spaces-server";
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-// app.use(cors({origin: true, credentials: true}));
 app.set("port", PORT);
 app.get("/", (req, res, next) => res.send("Lorem ipsum"));
 
@@ -20,15 +19,12 @@ const peerServer = ExpressPeerServer(server, {
 });
 
 app.use("/signal", peerServer);
-// const peers = {};
 
 peerServer.on("connection", (client) => {
-  // peers[client.id] = client;
   console.log("Client connected ", client.id);
 });
 
 peerServer.on("disconnect", (client) => {
-  // delete peers[client.id];
   console.log("Client disconnected ", client.id);
 });
 
@@ -43,9 +39,6 @@ wsServer.on("connection", (socket) => {
   socket.on("message", (peer) => {
     socket.send(peer);
   });
-  // wsServer.clients.forEach((peer) => {
-  //   peer.send(JSON.stringify(Object.keys(peers)));
-  // });
 });
 
 server.listen(PORT);
