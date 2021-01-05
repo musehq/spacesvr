@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
@@ -7,14 +7,15 @@ import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
-import MouseFPSCamera from "../controls/MouseFPSCamera";
+import PointerLockControls from "../controls/PointerLockControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import {
   useCapsuleCollider,
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
+import { GyroControls } from "../controls/GyroControls";
 
-const VELOCITY_FACTOR = 300;
+const SPEED = 3.5; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
@@ -33,7 +34,7 @@ export type PlayerProps = {
  */
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
-  const { camera } = useThree();
+  const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
   // physical body
@@ -43,7 +44,11 @@ const Player = (props: PlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
+  const [raycaster] = useState(
+    isMobile
+      ? defaultRaycaster
+      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
+  );
 
   // consumer
   const direction = useRef(new Vector3());
@@ -59,29 +64,30 @@ const Player = (props: PlayerProps) => {
     const zLook = initPos.z + 100 * Math.sin(initRot);
     camera?.lookAt(xLook, initPos.y, zLook);
 
+    // set player for environment
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
     );
   }, []);
 
   // update player every frame
-  useFrame((stuff, delta) => {
+  useFrame(() => {
     // update raycaster
-    if (position.current && quaternion.current) {
-      raycaster.current.ray.origin.copy(position.current);
+    if (!isMobile) {
+      raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(quaternion.current);
-      raycaster.current.ray.direction.copy(lookAt);
+      lookAt.applyQuaternion(camera.quaternion);
+      raycaster.ray.direction.copy(lookAt);
     }
 
     // get forward/back movement and left/right movement velocities
     const inputVelocity = new Vector3(0, 0, 0);
     if (!lockControls.current && !paused) {
       inputVelocity.x = direction.current.x * 0.75;
-      inputVelocity.z = direction.current.y;
-      inputVelocity.normalize().multiplyScalar(delta * VELOCITY_FACTOR);
+      inputVelocity.z = direction.current.y; // forward/back
+      inputVelocity.multiplyScalar(SPEED);
 
-      const moveQuaternion = quaternion.current.clone();
+      const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
@@ -98,13 +104,19 @@ const Player = (props: PlayerProps) => {
     <>
       {isMobile ? (
         <>
+          <GyroControls
+            quaternion={quaternion}
+            position={position}
+            fallback={
+              <TouchFPSCamera quaternion={quaternion} position={position} />
+            }
+          />
           <NippleMovement direction={direction} />
-          <TouchFPSCamera quaternion={quaternion} position={position} />
         </>
       ) : (
         <>
           <KeyboardMovement direction={direction} />
-          <MouseFPSCamera quaternion={quaternion} position={position} />
+          <PointerLockControls position={position} />
         </>
       )}
       <mesh ref={bodyRef} name="player">

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "react-three-fiber";
 import Frame from "./misc/Frame";
 import { Material } from "three";
 
-type VideoProps = JSX.IntrinsicElements["group"] & {
+type Props = JSX.IntrinsicElements["group"] & {
   src: string;
   size: [number, number];
   framed?: boolean;
@@ -13,7 +13,7 @@ type VideoProps = JSX.IntrinsicElements["group"] & {
   material?: Material;
 };
 
-export const Video = (props: VideoProps) => {
+export const Video = (props: Props) => {
   const { src, size, framed, muted, doubleSided, material } = props;
 
   const { camera } = useThree();
@@ -22,7 +22,7 @@ export const Video = (props: VideoProps) => {
   const listener = useRef<THREE.AudioListener>();
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
 
-  const [video] = useState(() => {
+  const video = useMemo(() => {
     const v = document.createElement("video");
     // @ts-ignore
     v.playsInline = true;
@@ -31,13 +31,15 @@ export const Video = (props: VideoProps) => {
     v.src = src;
     v.muted = muted ? muted : false;
     return v;
-  });
+  }, []);
 
-  const playAudio = useCallback(() => {
+  const playVideo = useCallback(() => {
     if (video) {
       video.play();
     }
+  }, [video]);
 
+  const setupAudio = useCallback(() => {
     if (!muted && video && !speaker) {
       listener.current = new THREE.AudioListener();
       camera.add(listener.current);
@@ -51,15 +53,16 @@ export const Video = (props: VideoProps) => {
 
       setSpeaker(speak);
     }
-  }, [video, muted, speaker]);
+  }, [speaker, muted, video]);
 
   useEffect(() => {
-    playAudio();
-    document.addEventListener("click", playAudio);
+    setupAudio();
+    playVideo();
+    document.addEventListener("click", playVideo);
     return () => {
-      document.removeEventListener("click", playAudio);
+      document.removeEventListener("click", playVideo);
     };
-  }, [video, muted, speaker]);
+  }, [playVideo, setupAudio]);
 
   useEffect(() => {
     return () => {

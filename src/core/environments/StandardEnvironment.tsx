@@ -11,7 +11,6 @@ import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
-import { RealisticEffects } from "../../effects";
 import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
@@ -35,8 +34,16 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: true,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: window.devicePixelRatio || 1,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 
@@ -76,7 +83,6 @@ export const StandardEnvironment = (
     canvasProps,
     physicsProps,
     player,
-    effects,
     disableGround,
     pauseMenu,
   } = props;
@@ -92,7 +98,6 @@ export const StandardEnvironment = (
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
               {!disableGround && <InfinitePlane height={-0.001} />}
-              {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
           </Physics>

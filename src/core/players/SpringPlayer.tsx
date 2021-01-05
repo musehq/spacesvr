@@ -32,13 +32,13 @@ type SpringPlayerProps = {
 const SpringPlayer = (props: SpringPlayerProps) => {
   const { spring } = props;
 
-  const { camera } = useThree();
+  const { camera, raycaster } = useThree();
   const { setPlayer } = useEnvironment();
   const [initX, initY, initZ, initS] = getSpringValues(spring);
   const initPos = new Vector3(initX * initS, initY * initS, initZ * initS);
 
   // physical body
-  const [bodyRef, bodyApi] = useSphere(() => ({
+  const [, bodyApi] = useSphere(() => ({
     mass: 0,
     position: initPos.toArray(),
     args: 1,
@@ -49,7 +49,6 @@ const SpringPlayer = (props: SpringPlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
 
   // consumer
   const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis
