@@ -60,9 +60,9 @@ type StandardEnvironmentProps = {
     pos?: Vector3;
     rot?: number;
   };
-  effects?: ReactNode;
   pauseMenu?: ReactNode;
   disableGround?: boolean;
+  loadingScreen?: ReactNode;
 };
 
 /**
@@ -85,6 +85,7 @@ export const StandardEnvironment = (
     player,
     disableGround,
     pauseMenu,
+    loadingScreen,
   } = props;
 
   const state = useEnvironmentState();
@@ -103,7 +104,7 @@ export const StandardEnvironment = (
           </Physics>
         </Canvas>
         <environmentStateContext.Provider value={state}>
-          <LoadingScreen />
+          {loadingScreen || <LoadingScreen />}
           {pauseMenu || (
             <>
               <DesktopPause />

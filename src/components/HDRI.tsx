@@ -7,7 +7,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
   src: string;
-  hideBackground: boolean;
+  hideBackground?: boolean;
 };
 
 export const HDRI = (props: HDRIProps) => {
