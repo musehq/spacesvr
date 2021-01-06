@@ -71,7 +71,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame(() => {
+  useFrame((_, delta) => {
     // update raycaster
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
@@ -85,7 +85,7 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current && !paused) {
       inputVelocity.x = direction.current.x * 0.75;
       inputVelocity.z = direction.current.y; // forward/back
-      inputVelocity.multiplyScalar(SPEED);
+      inputVelocity.multiplyScalar(delta * 100 * SPEED);
 
       const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
