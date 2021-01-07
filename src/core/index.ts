@@ -5,4 +5,3 @@ export * from "./types";
 export * from "./environments/StandardEnvironment";
 export * from "./environments/PortalEnvironment";
 export * from "./environments/KeyframeEnvironment";
-export * from "./simulation/Multiplayer";
