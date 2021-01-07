@@ -3,8 +3,10 @@ import { StandardEnvironment, Background, Logo, Multiplayer } from "spacesvr";
 
 export default () => {
   return (
-    <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
-      <Multiplayer />
+    <StandardEnvironment
+      player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}
+      disableSimulation
+    >
       <Background color={0xffffff} />
       <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />
