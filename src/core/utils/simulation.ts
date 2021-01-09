@@ -26,18 +26,30 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPort = 3001,
     signalPath = "/signal",
     socketServer = "ws://127.0.0.1:8080",
-    disableSimulation,
+    disableSimulation = true,
   } = props;
+
+  const createPeer = (host: string, port: number, path: string): Peer => {
+    if (!disableSimulation) {
+      return new Peer({
+        host: host,
+        port: port,
+        path: path,
+      });
+    }
+    return new Peer();
+  };
 
   let dataConn: Peer.DataConnection;
   let dataConnMap: Map<string, Peer.DataConnection>;
   const peerId = useRef<string>();
   const socket = useRef<WebSocket>();
   const [connected, setConnected] = useState(false);
-  const peer = useMemo(
-    () => new Peer({ host: signalHost, port: signalPort, path: signalPath }),
-    [signalHost, signalPort, signalPath]
-  );
+  const peer = useMemo(() => createPeer(signalHost, signalPort, signalPath), [
+    signalHost,
+    signalPort,
+    signalPath,
+  ]);
 
   // Set up handlers for Data Connection between peers
   const handleDataConn = (
@@ -96,8 +108,8 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         if (!dataConnMap.size) {
           for (const pid of dataConnMap.keys()) {
             if (pid != peerId.current) {
-              if (dataConnMap.get(pid).open) {
-                dataConnMap.get(pid).send(data);
+              if (dataConnMap.get(pid)!.open) {
+                dataConnMap.get(pid)!.send(data);
               }
             }
           }
