@@ -26,22 +26,41 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPort = 3001,
     signalPath = "/signal",
     socketServer = "ws://127.0.0.1:8080",
-    disableSimulation,
+    disableSimulation = true,
   } = props;
 
+  const createPeer = (host: string, port: number, path: string): Peer => {
+    if (!disableSimulation) {
+      return new Peer({
+        host: host,
+        port: port,
+        path: path,
+      });
+    }
+    return new Peer();
+  };
+
   let dataConn: Peer.DataConnection;
+  let dataConnMap: Map<string, Peer.DataConnection>;
   const peerId = useRef<string>();
   const socket = useRef<WebSocket>();
   const [connected, setConnected] = useState(false);
-  const peer = useMemo(
-    () => new Peer({ host: signalHost, port: signalPort, path: signalPath }),
-    [signalHost, signalPort, signalPath]
-  );
+  const peer = useMemo(() => createPeer(signalHost, signalPort, signalPath), [
+    signalHost,
+    signalPort,
+    signalPath,
+  ]);
 
   // Set up handlers for Data Connection between peers
-  const handleDataConn = (dataConn: Peer.DataConnection): void => {
-    //TODO: Stream player position/rotation
+  const handleDataConn = (
+    newPeer: string,
+    dataConn: Peer.DataConnection
+  ): void => {
+    // TODO: Stream player position/rotation
     dataConn.on("open", () => {
+      if (!dataConnMap.has(newPeer)) {
+        dataConnMap.set(newPeer, dataConn);
+      }
       dataConn.send("Hello from " + peerId.current);
     });
 
@@ -50,6 +69,9 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
 
     dataConn.on("close", () => {
+      if (dataConnMap.has(newPeer)) {
+        dataConnMap.delete(newPeer);
+      }
       console.log("Closed data connection");
     });
 
@@ -62,7 +84,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   const connectPeer = (locPeer: Peer, newPeer: string): void => {
     if (peerId.current != newPeer) {
       dataConn = locPeer.connect(newPeer);
-      handleDataConn(dataConn);
+      handleDataConn(newPeer, dataConn);
       console.log("Connected with " + newPeer);
     }
   };
@@ -79,17 +101,25 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
   };
 
-  // event send example func
+  // Event send example func
   const sendEvent = useCallback(
     (type: string, data: any) => {
-      if (peer) {
-        dataConn.send(data);
+      if (peer && dataConnMap) {
+        if (!dataConnMap.size) {
+          for (const pid of dataConnMap.keys()) {
+            if (pid != peerId.current) {
+              if (dataConnMap.get(pid)!.open) {
+                dataConnMap.get(pid)!.send(data);
+              }
+            }
+          }
+        }
       }
     },
     [peer]
   );
 
-  // establish p2p connection synced with props
+  // Establish p2p connection synced with props
   useEffect(() => {
     if (disableSimulation) {
       return;
@@ -97,6 +127,8 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
 
     peer.on("open", (id) => {
       peerId.current = id;
+      dataConnMap = new Map<string, Peer.DataConnection>();
+
       // Join network of existing peers
       connectP2P(peer);
 
@@ -120,7 +152,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
 
     // P2P connection established
     peer.on("connection", (conn) => {
-      //TODO: Render position/rotation received
+      // TODO: Render position/rotation received
       conn.on("data", (data) => {
         console.log(data);
       });
