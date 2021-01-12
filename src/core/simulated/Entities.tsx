@@ -1,6 +1,5 @@
 import { useEnvironment } from "../utils/hooks";
-import { useRef, useState } from "react";
-import { Group, MeshNormalMaterial } from "three";
+import { useState } from "react";
 import { useFrame } from "react-three-fiber";
 
 const ENTITY_DATA: Entities[] = [
@@ -19,12 +18,14 @@ type Entities = {
   rotation: [number, number, number];
 };
 
-type AvatarProps = {
+type EntityAvatarProps = {
   uuid: string;
 };
 
-const EntityAvatar = (props: AvatarProps) => {
+const EntityAvatar = (props: EntityAvatarProps) => {
   const { uuid } = props;
+
+  // avatar retrieves entity information itself to not re-mount mesh every frame
   const entityData = ENTITY_DATA; // simulation.getData("players")
   const entity = entityData.find((ent) => ent.uuid == uuid);
 
@@ -33,6 +34,8 @@ const EntityAvatar = (props: AvatarProps) => {
   }
 
   const { position, rotation } = entity;
+
+  // TODO: SNAPSHOT INTERPOLATION
 
   return (
     <group name={`entity-${uuid}`}>
