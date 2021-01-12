@@ -1,10 +1,11 @@
 import { useEnvironment } from "../utils/hooks";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFrame } from "react-three-fiber";
+import { Mesh } from "three";
 
 const ENTITY_DATA: Entities[] = [
   { uuid: "1", position: [0, 6, 2], rotation: [Math.PI / 2, 0, -Math.PI / 4] },
-  { uuid: "2", position: [-2, 11, 4], rotation: [0, -Math.PI / 4, 0] },
+  { uuid: "2", position: [-2, 2, 4], rotation: [0, -Math.PI / 4, 0] },
   {
     uuid: "3",
     position: [11, 3, -2],
@@ -22,28 +23,31 @@ type EntityAvatarProps = {
   uuid: string;
 };
 
+// avatar retrieves entity information itself to not re-mount mesh every frame
 const EntityAvatar = (props: EntityAvatarProps) => {
   const { uuid } = props;
 
-  // avatar retrieves entity information itself to not re-mount mesh every frame
-  const entityData = ENTITY_DATA; // simulation.getData("players")
-  const entity = entityData.find((ent) => ent.uuid == uuid);
+  const mesh = useRef<Mesh>();
 
-  if (!entity) {
-    return null;
-  }
+  // retrieve player information every frame and update pos/rot
+  useFrame(() => {
+    const entityData = ENTITY_DATA; // simulation.getData("players")
+    const entity = entityData.find((ent) => ent.uuid == uuid);
 
-  const { position, rotation } = entity;
+    if (mesh.current && entity) {
+      // TODO: SNAPSHOT INTERPOLATION
+      // TODO: ONLY UPDATE ON CHANGE
 
-  // TODO: SNAPSHOT INTERPOLATION
+      mesh.current.position.fromArray(entity.position);
+      mesh.current.rotation.fromArray(entity.rotation);
+    }
+  });
 
   return (
-    <group name={`entity-${uuid}`}>
-      <mesh position={position} rotation={rotation}>
-        <cylinderBufferGeometry args={[0.3, 0.3, 1, 30]} />
-        <meshNormalMaterial />
-      </mesh>
-    </group>
+    <mesh name={`entity-${uuid}`} ref={mesh}>
+      <cylinderBufferGeometry args={[0.3, 0.3, 1, 30]} />
+      <meshNormalMaterial />
+    </mesh>
   );
 };
 
@@ -54,7 +58,7 @@ const Entity = () => {
 
   // every frame, check for a change in player list, re-render if there is a change
   useFrame(() => {
-    if (simulation.connected) {
+    if (!simulation.connected) {
       const entityData = ENTITY_DATA; // simulation.getData("players")
       const ids = entityData.map((ent) => ent.uuid);
       const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
@@ -64,7 +68,7 @@ const Entity = () => {
     }
   });
 
-  if (!simulation.connected) {
+  if (simulation.connected) {
     return null;
   }
 
