@@ -7,6 +7,7 @@ import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
+import Entities from "../simulated/Entities";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
@@ -97,6 +98,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
+              <Entities />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}
