@@ -34,7 +34,7 @@ export type PlayerProps = {
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
   const { camera } = useThree();
-  const { paused, setPlayer } = useEnvironment();
+  const { paused, setPlayer, simulation } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -91,6 +91,16 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current) {
       // keep y velocity intact and update velocity
       bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    }
+
+    if (simulation.connected) {
+      simulation.sendEvent(
+        "player-event",
+        JSON.stringify({
+          ...camera.position,
+          ...camera.rotation,
+        })
+      );
     }
   });
 

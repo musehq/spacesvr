@@ -52,14 +52,11 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   ]);
 
   // Set up handlers for Data Connection between peers
-  const handleDataConn = (
-    newPeer: string,
-    dataConn: Peer.DataConnection
-  ): void => {
+  const handleDataConn = (dataConn: Peer.DataConnection): void => {
     // TODO: Stream player position/rotation
     dataConn.on("open", () => {
-      if (!dataConnMap.has(newPeer)) {
-        dataConnMap.set(newPeer, dataConn);
+      if (!dataConnMap.has(dataConn.peer)) {
+        dataConnMap.set(dataConn.peer, dataConn);
       }
       dataConn.send("Hello from " + peerId.current);
     });
@@ -69,8 +66,8 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
 
     dataConn.on("close", () => {
-      if (dataConnMap.has(newPeer)) {
-        dataConnMap.delete(newPeer);
+      if (dataConnMap.has(dataConn.peer)) {
+        dataConnMap.delete(dataConn.peer);
       }
       console.log("Closed data connection");
     });
@@ -84,7 +81,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   const connectPeer = (locPeer: Peer, newPeer: string): void => {
     if (peerId.current != newPeer) {
       dataConn = locPeer.connect(newPeer);
-      handleDataConn(newPeer, dataConn);
+      handleDataConn(dataConn);
       console.log("Connected with " + newPeer);
     }
   };
@@ -104,16 +101,19 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   // Event send example func
   const sendEvent = useCallback(
     (type: string, data: any) => {
-      if (peer && dataConnMap) {
-        if (!dataConnMap.size) {
-          for (const pid of dataConnMap.keys()) {
-            if (pid != peerId.current) {
+      switch (type) {
+        case "player-event":
+          if (peer && dataConnMap) {
+            for (const pid of dataConnMap.keys()) {
               if (dataConnMap.get(pid)!.open) {
                 dataConnMap.get(pid)!.send(data);
               }
             }
           }
-        }
+          break;
+        default:
+          console.log("Invalid event type");
+          break;
       }
     },
     [peer]
@@ -125,7 +125,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       return;
     }
 
-    peer.on("open", (id) => {
+    peer.on("open", (id: string) => {
       peerId.current = id;
       dataConnMap = new Map<string, Peer.DataConnection>();
 
@@ -143,7 +143,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       };
 
       // Connect to any new peers
-      socket.current.onmessage = (event) => {
+      socket.current.onmessage = (event: MessageEvent) => {
         connectPeer(peer, event.data);
       };
 
@@ -151,25 +151,36 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
 
     // P2P connection established
-    peer.on("connection", (conn) => {
+    peer.on("connection", (conn: Peer.DataConnection) => {
       // TODO: Render position/rotation received
-      conn.on("data", (data) => {
-        console.log(data);
+      conn.on("open", () => {
+        if (!dataConnMap.has(conn.peer)) {
+          dataConnMap.set(conn.peer, conn);
+        }
+
+        conn.on("data", (data: any) => {
+          console.log(data);
+        });
       });
 
       conn.on("close", () => {
+        if (dataConnMap.has(conn.peer)) {
+          dataConnMap.delete(conn.peer);
+        }
         console.log("Closed peer");
       });
     });
 
     // Exit client
     peer.on("close", () => {
+      setConnected(false);
+      peer.disconnect();
       peer.destroy();
       console.log("Destroyed " + peerId.current);
     });
 
     // Catch peer error
-    peer.on("error", (err) => {
+    peer.on("error", (err: Error) => {
       alert(err);
     });
 
