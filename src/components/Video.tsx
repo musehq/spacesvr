@@ -29,50 +29,53 @@ export const Video = (props: Props) => {
     v.crossOrigin = "Anonymous";
     v.loop = true;
     v.src = src;
+    v.autoplay = false;
     v.muted = muted ? muted : false;
     return v;
   }, []);
 
-  const playVideo = useCallback(() => {
+  useEffect(() => {
+    const setupAudio = () => {
+      if (!muted && !video.paused && !speaker) {
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+
+        const speak = new THREE.PositionalAudio(listener);
+        speak.setMediaElementSource(video);
+        speak.setRefDistance(0.75);
+        speak.setRolloffFactor(1);
+        speak.setVolume(1);
+        speak.setDirectionalCone(180, 230, 0.1);
+
+        setSpeaker(speak);
+      }
+    };
+
+    const playVideo = () => {
+      video.play();
+      setupAudio();
+    };
+
     if (video) {
       video.play();
+      document.addEventListener("click", playVideo);
+      return () => {
+        document.removeEventListener("click", playVideo);
+      };
     }
-  }, [video]);
-
-  const setupAudio = useCallback(() => {
-    if (!muted && video && !speaker) {
-      listener.current = new THREE.AudioListener();
-      camera.add(listener.current);
-
-      const speak = new THREE.PositionalAudio(listener.current);
-      speak.setMediaElementSource(video);
-      speak.setRefDistance(0.75);
-      speak.setRolloffFactor(1);
-      speak.setVolume(1);
-      speak.setDirectionalCone(180, 230, 0.1);
-
-      setSpeaker(speak);
-    }
-  }, [speaker, muted, video]);
-
-  useEffect(() => {
-    setupAudio();
-    playVideo();
-    document.addEventListener("click", playVideo);
-    return () => {
-      document.removeEventListener("click", playVideo);
-    };
-  }, [playVideo, setupAudio]);
+  }, [speaker, video, muted]);
 
   useEffect(() => {
     return () => {
       if (listener.current) {
         camera.remove(listener.current);
         listener.current.clear();
+        listener.current = undefined;
       }
       if (speaker) {
         speaker.clear();
         speaker.disconnect();
+        setSpeaker(undefined);
       }
       if (video) {
         video.pause();

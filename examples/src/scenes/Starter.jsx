@@ -1,5 +1,11 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Interactable } from "spacesvr";
+import {
+  StandardEnvironment,
+  Background,
+  Logo,
+  Interactable,
+  Video,
+} from "spacesvr";
 
 const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
@@ -15,6 +21,12 @@ export default () => {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
+      <Video
+        src="https://dwvo2npct47gg.cloudfront.net/videos/AWGEDVD-final.mp4"
+        size={[640 / 100, 360 / 100]}
+        position={[0, 2.425, 3.076]}
+        rotation={[0, -Math.PI, 0]}
+      />
     </StandardEnvironment>
   );
 };
