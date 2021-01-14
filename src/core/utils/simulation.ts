@@ -53,7 +53,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
 
   // Set up handlers for Data Connection between peers
   const handleDataConn = (dataConn: Peer.DataConnection): void => {
-    // TODO: Stream player position/rotation
+    // Stream player position/rotation
     dataConn.on("open", () => {
       if (!dataConnMap.has(dataConn.peer)) {
         dataConnMap.set(dataConn.peer, dataConn);
@@ -69,7 +69,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       if (dataConnMap.has(dataConn.peer)) {
         dataConnMap.delete(dataConn.peer);
       }
-      console.log("Closed data connection");
+      console.log("Closed data connection " + dataConn.peer);
     });
 
     dataConn.on("error", (err) => {
@@ -105,6 +105,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         case "player-event":
           if (peer && dataConnMap) {
             for (const pid of dataConnMap.keys()) {
+              //TODO: Update and transmit player data store
               if (dataConnMap.get(pid)!.open) {
                 dataConnMap.get(pid)!.send(data);
               }
@@ -152,22 +153,22 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
 
     // P2P connection established
     peer.on("connection", (conn: Peer.DataConnection) => {
-      // TODO: Render position/rotation received
       conn.on("open", () => {
         if (!dataConnMap.has(conn.peer)) {
           dataConnMap.set(conn.peer, conn);
         }
+      });
 
-        conn.on("data", (data: any) => {
-          console.log(data);
-        });
+      // TODO: Render position/rotation received
+      conn.on("data", (data: any) => {
+        console.log(data);
       });
 
       conn.on("close", () => {
         if (dataConnMap.has(conn.peer)) {
           dataConnMap.delete(conn.peer);
         }
-        console.log("Closed peer");
+        console.log("Closed data connection " + conn.peer);
       });
     });
 
@@ -176,7 +177,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       setConnected(false);
       peer.disconnect();
       peer.destroy();
-      console.log("Destroyed " + peerId.current);
+      console.log("Closed peer " + peerId.current);
     });
 
     // Catch peer error
