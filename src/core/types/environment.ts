@@ -12,7 +12,7 @@ export enum Environment {
 }
 
 export type EnvironmentStateProps = {
-  simulation: SimulationState;
+  simulation?: SimulationState;
 };
 
 export type EnvironmentProps = {
@@ -32,7 +32,7 @@ export interface EnvironmentState {
   events: EnvironmentEvent[];
   player: PlayerRef;
   setPlayer: (p: PlayerRef) => void;
-  simulation: SimulationState;
+  simulation?: SimulationState;
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
 }
 

@@ -93,12 +93,14 @@ const Player = (props: PlayerProps) => {
       bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
     }
 
-    if (simulation.connected) {
+    // p2p stream position and rotation
+    if (simulation && simulation.connected) {
       simulation.sendEvent(
-        "player-event",
+        "player",
         JSON.stringify({
-          ...camera.position,
-          ...camera.rotation,
+          peerId: simulation.peerId,
+          position: camera.position,
+          rotation: camera.rotation,
         })
       );
     }
