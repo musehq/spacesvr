@@ -1,4 +1,3 @@
-import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
@@ -91,7 +90,7 @@ export const StandardEnvironment = (
   const state = useEnvironmentState();
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
@@ -114,6 +113,6 @@ export const StandardEnvironment = (
           <Crosshair />
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

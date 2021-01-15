@@ -1,5 +1,4 @@
 import { ReactNode, useState } from "react";
-import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
 import ShirtsLoading from "../overlays/PortalLoadingScreen";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
@@ -116,7 +115,7 @@ export const PortalEnvironment = (
   ];
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
@@ -138,6 +137,6 @@ export const PortalEnvironment = (
           {isMobile && <MobilePause />}
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

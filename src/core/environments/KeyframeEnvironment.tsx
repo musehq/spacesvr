@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -115,7 +114,7 @@ export const KeyframeEnvironment = (
   };
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
@@ -131,6 +130,6 @@ export const KeyframeEnvironment = (
           <KeyframeControlDisplay />
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };
