@@ -98,7 +98,6 @@ const Player = (props: PlayerProps) => {
       simulation.sendEvent(
         "player",
         JSON.stringify({
-          peerId: simulation.peerId,
           position: camera.position,
           rotation: camera.rotation,
         })

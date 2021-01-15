@@ -58,7 +58,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     // Track remote position/rotation
     dataConn.on("data", (data: any) => {
       const obj = JSON.parse(data);
-      simulationData.set(obj.peerId, {
+      simulationData.set(dataConn.peer, {
         position: [obj.position.x, obj.position.y, obj.position.z],
         rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
       });
@@ -104,7 +104,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
   };
 
-  // Event send example func
+  // Send event
   const sendEvent = useCallback(
     (type: string, data: any) => {
       switch (type) {
@@ -119,6 +119,23 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
           break;
         default:
           console.log("Invalid event type");
+          break;
+      }
+    },
+    [peer]
+  );
+
+  // Get player data
+  const getData = useCallback(
+    (type: string) => {
+      switch (type) {
+        case "players":
+          if (simulationData) {
+            return simulationData;
+          }
+          break;
+        default:
+          console.log("Invalid data type");
           break;
       }
     },
@@ -167,7 +184,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
 
       conn.on("data", (data: any) => {
         const obj = JSON.parse(data);
-        simulationData.set(obj.peerId, {
+        simulationData.set(conn.peer, {
           position: [obj.position.x, obj.position.y, obj.position.z],
           rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
         });
@@ -214,8 +231,8 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalHost,
     signalPort,
     signalPath,
-    peerId: peer.id,
     connected,
     sendEvent,
+    getData,
   };
 };

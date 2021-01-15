@@ -26,18 +26,18 @@ type EntityAvatarProps = {
 // avatar retrieves entity information itself to not re-mount mesh every frame
 const EntityAvatar = (props: EntityAvatarProps) => {
   const { uuid } = props;
+  const { simulation } = useEnvironment();
 
   const mesh = useRef<Mesh>();
 
   // retrieve player information every frame and update pos/rot
   useFrame(() => {
-    const entityData = ENTITY_DATA; // simulation.getData("players")
-    const entity = entityData.find((ent) => ent.uuid == uuid);
+    const entityData = simulation.getData("players");
+    const entity = entityData.get(uuid);
 
     if (mesh.current && entity) {
       // TODO: SNAPSHOT INTERPOLATION
       // TODO: ONLY UPDATE ON CHANGE
-
       mesh.current.position.fromArray(entity.position);
       mesh.current.rotation.fromArray(entity.rotation);
     }
@@ -58,9 +58,9 @@ const Entity = () => {
 
   // every frame, check for a change in player list, re-render if there is a change
   useFrame(() => {
-    if (!simulation.connected) {
-      const entityData = ENTITY_DATA; // simulation.getData("players")
-      const ids = entityData.map((ent) => ent.uuid);
+    if (simulation.connected) {
+      const entityData = simulation.getData("players");
+      const ids = Object.keys(entityData);
       const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
       if (!sameIds) {
         setEntityIds(ids);
@@ -68,7 +68,7 @@ const Entity = () => {
     }
   });
 
-  if (simulation.connected) {
+  if (!simulation.connected) {
     return null;
   }
 
