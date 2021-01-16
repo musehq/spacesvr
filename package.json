@@ -46,7 +46,7 @@
     "@emotion/styled": "^10.0.27",
     "@react-three/cannon": "^0.5.3",
     "@react-three/drei": "^2.2.10",
-    "@react-three/xr": "^1.1.0",
+    "@react-three/xr": "^1.1.1",
     "nipplejs": "^0.8.7",
     "node-fetch": "^2.6.1",
     "react-device-detect": "^1.13.1",

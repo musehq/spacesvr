@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
@@ -12,9 +11,9 @@ import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
 import MobilePause from "../overlays/MobilePause";
-import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import { VRCanvas } from "@react-three/xr";
 
 const Container = styled.div`
   position: absolute;
@@ -93,7 +92,7 @@ export const StandardEnvironment = (
     <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
-        <Canvas {...defaultCanvasProps} {...canvasProps}>
+        <VRCanvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
@@ -101,13 +100,13 @@ export const StandardEnvironment = (
               {children}
             </environmentStateContext.Provider>
           </Physics>
-        </Canvas>
+        </VRCanvas>
         <environmentStateContext.Provider value={state}>
           {loadingScreen || <LoadingScreen />}
           {pauseMenu || (
             <>
-              <DesktopPause />
-              {isMobile && <MobilePause />}
+              {state.device === "desktop" && <DesktopPause />}
+              {state.device === "mobile" && <MobilePause />}
             </>
           )}
           <Crosshair />
