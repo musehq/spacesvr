@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
+    "start-ssl": "HTTPS=true SSL_CRT_FILE=cert.crt SSL_KEY_FILE=cert.key react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-app-rewired eject"
   },

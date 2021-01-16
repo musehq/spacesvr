@@ -35,3 +35,5 @@ yarn-error.log*
 staging
 dist
 *.tgz
+*.key
+*.crt
