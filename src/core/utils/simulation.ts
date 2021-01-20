@@ -52,34 +52,34 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   // Set up handlers for Data Connection between peers
   const handleDataConn = (dataConn: Peer.DataConnection): void => {
     dataConn.on("open", () => {
-      if (!dataConnMap.has(dataConn.peer)) {
+      if (dataConnMap && !dataConnMap.has(dataConn.peer)) {
         dataConnMap.set(dataConn.peer, dataConn);
       }
     });
 
     // Track remote position/rotation
     dataConn.on("data", (data: any) => {
-      const obj = JSON.parse(data);
-      simulationData.set(dataConn.peer, {
-        position: [obj.position.x, obj.position.y, obj.position.z],
-        rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
-      });
+      if (simulationData) {
+        const obj = JSON.parse(data);
+        simulationData.set(dataConn.peer, {
+          position: [obj.position.x, obj.position.y, obj.position.z],
+          rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
+        });
+      }
     });
 
     dataConn.on("close", () => {
-      if (dataConnMap.has(dataConn.peer)) {
+      if (dataConnMap && dataConnMap.has(dataConn.peer)) {
         dataConnMap.delete(dataConn.peer);
       }
 
-      if (simulationData.has(dataConn.peer)) {
+      if (simulationData && simulationData.has(dataConn.peer)) {
         simulationData.delete(dataConn.peer);
       }
-
-      console.log("Closed data connection " + dataConn.peer);
     });
 
     dataConn.on("error", (err) => {
-      alert(err);
+      console.log(err);
     });
   };
 
@@ -88,14 +88,12 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     if (peerId.current != newPeer) {
       dataConn = locPeer.connect(newPeer);
       handleDataConn(dataConn);
-      console.log("Connected with " + newPeer);
     }
   };
 
   // Connect P2P
   const connectP2P = (locPeer: Peer): void => {
     locPeer.listAllPeers((peers) => {
-      console.log(peers);
       if (peers && peers.length) {
         for (const p of peers) {
           connectPeer(locPeer, p);
@@ -130,7 +128,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     (type: string) => {
       switch (type) {
         case "entities":
-          if (simulationData) {
+          if (peer && simulationData) {
             return simulationData;
           }
           break;
@@ -179,29 +177,29 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     // P2P connection established
     peer.on("connection", (conn: Peer.DataConnection) => {
       conn.on("open", () => {
-        if (!dataConnMap.has(conn.peer)) {
+        if (dataConnMap && !dataConnMap.has(conn.peer)) {
           dataConnMap.set(conn.peer, conn);
         }
       });
 
       conn.on("data", (data: any) => {
         const obj = JSON.parse(data);
-        simulationData.set(conn.peer, {
-          position: [obj.position.x, obj.position.y, obj.position.z],
-          rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
-        });
+        if (simulationData) {
+          simulationData.set(conn.peer, {
+            position: [obj.position.x, obj.position.y, obj.position.z],
+            rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
+          });
+        }
       });
 
       conn.on("close", () => {
-        if (dataConnMap.has(conn.peer)) {
+        if (dataConnMap && dataConnMap.has(conn.peer)) {
           dataConnMap.delete(conn.peer);
         }
 
-        if (simulationData.has(conn.peer)) {
+        if (simulationData && simulationData.has(conn.peer)) {
           simulationData.delete(conn.peer);
         }
-
-        console.log("Closed data connection " + conn.peer);
       });
     });
 
@@ -210,12 +208,11 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       setConnected(false);
       peer.disconnect();
       peer.destroy();
-      console.log("Closed peer " + peerId.current);
     });
 
     // Catch peer error
     peer.on("error", (err: Error) => {
-      alert(err);
+      console.log(err);
     });
 
     return () => {
