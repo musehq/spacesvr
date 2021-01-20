@@ -1,6 +1,6 @@
 import Peer from "peerjs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SimulationState } from "../types/simulation";
+import { Entity, SimulationState } from "../types/simulation";
 
 export type SimulationProps = {
   signalHost?: string;
@@ -26,12 +26,12 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPort = 3001,
     signalPath = "/signal",
     socketServer = "ws://127.0.0.1:8080",
-    disableSimulation = true,
+    disableSimulation,
   } = props;
 
   let dataConn: Peer.DataConnection;
   let dataConnMap: Map<string, Peer.DataConnection>;
-  let simulationData: Map<string, any>;
+  let simulationData: Map<string, Entity>;
 
   const peerId = useRef<string>();
   const socket = useRef<WebSocket>();
@@ -62,8 +62,6 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         position: [obj.position.x, obj.position.y, obj.position.z],
         rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
       });
-
-      console.log(simulationData);
     });
 
     dataConn.on("close", () => {
@@ -126,10 +124,10 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
   );
 
   // Get player data
-  const getData = useCallback(
+  const fetch = useCallback(
     (type: string) => {
       switch (type) {
-        case "players":
+        case "entities":
           if (simulationData) {
             return simulationData;
           }
@@ -138,6 +136,8 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
           console.log("Invalid data type");
           break;
       }
+
+      return new Map<string, Entity>();
     },
     [peer]
   );
@@ -188,8 +188,6 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
           position: [obj.position.x, obj.position.y, obj.position.z],
           rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
         });
-
-        console.log(simulationData);
       });
 
       conn.on("close", () => {
@@ -233,6 +231,6 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPath,
     connected,
     sendEvent,
-    getData,
+    fetch,
   };
 };

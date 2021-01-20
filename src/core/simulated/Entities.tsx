@@ -3,22 +3,6 @@ import { useRef, useState } from "react";
 import { useFrame } from "react-three-fiber";
 import { Mesh } from "three";
 
-const ENTITY_DATA: Entities[] = [
-  { uuid: "1", position: [0, 6, 2], rotation: [Math.PI / 2, 0, -Math.PI / 4] },
-  { uuid: "2", position: [-2, 2, 4], rotation: [0, -Math.PI / 4, 0] },
-  {
-    uuid: "3",
-    position: [11, 3, -2],
-    rotation: [-Math.PI, Math.PI / 2, 0],
-  },
-];
-
-type Entities = {
-  uuid: string;
-  position: [number, number, number];
-  rotation: [number, number, number];
-};
-
 type EntityAvatarProps = {
   uuid: string;
 };
@@ -32,12 +16,13 @@ const EntityAvatar = (props: EntityAvatarProps) => {
 
   // retrieve player information every frame and update pos/rot
   useFrame(() => {
-    const entityData = simulation.getData("players");
+    const entityData = simulation.fetch("entities");
     const entity = entityData.get(uuid);
 
     if (mesh.current && entity) {
       // TODO: SNAPSHOT INTERPOLATION
       // TODO: ONLY UPDATE ON CHANGE
+
       mesh.current.position.fromArray(entity.position);
       mesh.current.rotation.fromArray(entity.rotation);
     }
@@ -51,7 +36,7 @@ const EntityAvatar = (props: EntityAvatarProps) => {
   );
 };
 
-const Entity = () => {
+const Entities = () => {
   const { simulation } = useEnvironment();
 
   const [entityIds, setEntityIds] = useState<Array<string>>([]);
@@ -59,8 +44,8 @@ const Entity = () => {
   // every frame, check for a change in player list, re-render if there is a change
   useFrame(() => {
     if (simulation.connected) {
-      const entityData = simulation.getData("players");
-      const ids = Object.keys(entityData);
+      const entities = simulation.fetch("entities");
+      const ids = Array.from(entities.keys());
       const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
       if (!sameIds) {
         setEntityIds(ids);
@@ -81,4 +66,4 @@ const Entity = () => {
   );
 };
 
-export default Entity;
+export default Entities;
