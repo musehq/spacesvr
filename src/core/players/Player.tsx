@@ -44,6 +44,7 @@ const Player = (props: PlayerProps) => {
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
   const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
+  const prevNetworkSend = useRef<number>(0);
 
   // consumer
   const direction = useRef(new Vector3());
@@ -65,7 +66,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame((stuff, delta) => {
+  useFrame(({ clock }, delta) => {
     // update raycaster
     if (position.current && quaternion.current) {
       raycaster.current.ray.origin.copy(position.current);
@@ -95,13 +96,17 @@ const Player = (props: PlayerProps) => {
 
     // p2p stream position and rotation
     if (simulation && simulation.connected) {
-      simulation.sendEvent(
-        "player",
-        JSON.stringify({
-          position: camera.position,
-          rotation: camera.rotation,
-        })
-      );
+      const networkDelta = clock.getElapsedTime() - prevNetworkSend.current;
+      if (networkDelta > 1 / simulation.frequency) {
+        simulation.sendEvent(
+          "player",
+          JSON.stringify({
+            position: camera.position,
+            rotation: camera.rotation,
+          })
+        );
+        prevNetworkSend.current = clock.getElapsedTime();
+      }
     }
   });
 

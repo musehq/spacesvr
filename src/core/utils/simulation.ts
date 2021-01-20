@@ -7,6 +7,7 @@ export type SimulationProps = {
   signalPort?: number;
   signalPath?: string;
   socketServer?: string;
+  frequency?: number;
   disableSimulation?: boolean;
 };
 
@@ -26,6 +27,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPort = 3001,
     signalPath = "/signal",
     socketServer = "ws://127.0.0.1:8080",
+    frequency = 20,
     disableSimulation,
   } = props;
 
@@ -231,6 +233,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     signalPath,
     connected,
     sendEvent,
+    frequency,
     fetch,
   };
 };
