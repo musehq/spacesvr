@@ -60,5 +60,3 @@ export const Logo = (props: LogoProps) => {
     </group>
   );
 };
-
-useGLTF.preload(FILE_URL, DRACO_URL);
