@@ -7,9 +7,9 @@ import { DoubleSide, Color } from "three";
 import glsl from "babel-plugin-glsl/macro";
 
 type Props = {
-  scale: number;
-  perception: number;
-  vAlign: "top" | "center" | "bottom";
+  size?: number;
+  perception?: number;
+  vAlign?: "top" | "center" | "bottom";
 } & JSX.IntrinsicElements["group"];
 
 const RADIUS = 4;
@@ -23,7 +23,7 @@ const RADIUS = 4;
  * @constructor
  */
 export const Idea = (props: Props) => {
-  const { scale = 1, perception = 0, vAlign = "bottom", ...restProps } = props;
+  const { size = 1, perception = 0, vAlign = "bottom", ...restProps } = props;
 
   const material = useRef<typeof Material>();
 
@@ -41,7 +41,7 @@ export const Idea = (props: Props) => {
 
   return (
     <group {...restProps}>
-      <group scale={[scale * 0.2, scale * 0.2, scale * 0.2]}>
+      <group scale={[size * 0.2, size * 0.2, size * 0.2]}>
         <Sphere args={[RADIUS, 128, 128]} position-y={posY}>
           <Material
             // @ts-ignore

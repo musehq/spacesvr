@@ -14,6 +14,7 @@ import { InfinitePlane } from "../../components/";
 import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import PauseMenu from "../hud/PauseMenu";
 
 const Container = styled.div`
   position: absolute;
@@ -88,6 +89,7 @@ export const StandardEnvironment = (
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
               <Crosshair />
+              <PauseMenu />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}
