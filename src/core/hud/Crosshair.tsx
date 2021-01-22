@@ -1,10 +1,11 @@
-import { Group, PerspectiveCamera, Raycaster, Vector3 } from "three";
+import { Group, Raycaster, Vector3 } from "three";
 import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
 
 const DISTANCE = 0.05;
+const SCALE = 0.001;
 
 const Crosshair = () => {
   const group = useRef<Group>();
@@ -25,16 +26,22 @@ const Crosshair = () => {
       setSpring({ xyz: dummyVector.current.toArray() });
 
       const [x, y, z] = getSpringValues(spring);
-      group.current.position.set(x, y, z);
+      group.current.position.set(x / SCALE, y / SCALE, z / SCALE);
     }
   });
 
   return (
-    <group ref={group}>
-      <mesh>
-        <sphereBufferGeometry args={[0.001, 50, 50]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
+    <group scale={[SCALE, SCALE, SCALE]}>
+      <group ref={group}>
+        <mesh position-z={0.25}>
+          <sphereBufferGeometry args={[1, 50, 50]} />
+          <meshStandardMaterial color="black" />
+        </mesh>
+        <mesh position-z={-0.25}>
+          <sphereBufferGeometry args={[1, 50, 50]} />
+          <meshStandardMaterial color="white" />
+        </mesh>
+      </group>
     </group>
   );
 };

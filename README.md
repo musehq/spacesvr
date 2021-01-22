@@ -243,8 +243,8 @@ Quickly add an image to your scene
 Pure Idea, Unmediated
 
 ```jsx
-<Logo
-  scale={1}
+<Idea
+  size={1}
   vAlign="bottom" // top, center, bottom
   perception // 0-1, how perceptive idea is
 />

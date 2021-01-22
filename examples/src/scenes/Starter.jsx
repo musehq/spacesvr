@@ -12,6 +12,7 @@ export default () => {
       </Interactable>
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />
+      <pointLight position={[0, 10, 0]} />
       <mesh rotation-x={-Math.PI / 2}>
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
