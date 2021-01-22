@@ -13,6 +13,7 @@ import {
   PlayerRef,
   PortalEnvironmentState,
   KeyframeEnvironmentState,
+  EnvironmentStateProps,
 } from "../types";
 import { useProgress } from "@react-three/drei";
 
@@ -32,7 +33,11 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
   return useEnvironment<KeyframeEnvironmentState>();
 }
 
-export function useEnvironmentState(): EnvironmentState {
+export function useEnvironmentState(
+  props: EnvironmentStateProps
+): EnvironmentState {
+  const { simulation } = props;
+
   const [paused, setPausedState] = useState(true);
   const [overlay, setOverlayState] = useState(null);
   const container = useRef<HTMLDivElement>(null);
@@ -89,6 +94,7 @@ export function useEnvironmentState(): EnvironmentState {
     setPaused,
     setPlayer,
     addEvent,
+    simulation,
   };
 
   return context;

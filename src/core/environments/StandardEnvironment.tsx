@@ -7,6 +7,7 @@ import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
+import Entities from "../simulated/Entities";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
@@ -17,6 +18,7 @@ import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import { useSimulationState } from "../utils/simulation";
 
 const Container = styled.div`
   position: absolute;
@@ -55,6 +57,7 @@ type StandardEnvironmentProps = {
   };
   effects?: ReactNode;
   disableGround?: boolean;
+  disableSimulation?: boolean;
 };
 
 /**
@@ -74,12 +77,18 @@ export const StandardEnvironment = (
     children,
     canvasProps,
     physicsProps,
+    simulationProps,
     player,
     effects,
     disableGround,
+    disableSimulation,
   } = props;
 
-  const state = useEnvironmentState();
+  const simulation = useSimulationState({
+    ...simulationProps,
+    disableSimulation,
+  });
+  const state = useEnvironmentState({ simulation });
 
   return (
     <BrowserChecker>
@@ -89,6 +98,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
+              <Entities />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}

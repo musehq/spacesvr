@@ -34,7 +34,7 @@ export type PlayerProps = {
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
   const { camera } = useThree();
-  const { paused, setPlayer } = useEnvironment();
+  const { paused, setPlayer, simulation } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -44,6 +44,7 @@ const Player = (props: PlayerProps) => {
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
   const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
+  const prevNetworkSend = useRef<number>(0);
 
   // consumer
   const direction = useRef(new Vector3());
@@ -65,7 +66,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame((stuff, delta) => {
+  useFrame(({ clock }, delta) => {
     // update raycaster
     if (position.current && quaternion.current) {
       raycaster.current.ray.origin.copy(position.current);
@@ -91,6 +92,21 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current) {
       // keep y velocity intact and update velocity
       bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    }
+
+    // p2p stream position and rotation
+    if (simulation && simulation.connected) {
+      const networkDelta = clock.getElapsedTime() - prevNetworkSend.current;
+      if (networkDelta > 1 / simulation.frequency) {
+        simulation.sendEvent(
+          "player",
+          JSON.stringify({
+            position: camera.position,
+            rotation: camera.rotation,
+          })
+        );
+        prevNetworkSend.current = clock.getElapsedTime();
+      }
     }
   });
 
