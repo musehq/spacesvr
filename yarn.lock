@@ -1806,6 +1806,11 @@ compare-versions@^3.6.0:
   resolved "https://registry.yarnpkg.com/compare-versions/-/compare-versions-3.6.0.tgz#1a5689913685e5a87637b8d3ffca75514ec41d62"
   integrity sha512-W6Af2Iw1z4CB7q4uU4hv646dW9GQuBM+YpC0UvUCWSD8w90SJjp+ujJuXaEMtAXBtSqGfMPuFOVn4/+FlaqfBA==
 
+component-material@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/component-material/-/component-material-1.0.6.tgz#a4020fd731c0f4c0651e94cd8fa9fa4322257cba"
+  integrity sha512-LOAQ4RxjpFZ4RWd35PSELOySu2OCvG0EBdgoHUJHRjvD8+O+wicVOF8yVz0kKzo/0bmkhW2WbkohensXW9QLJQ==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -2537,6 +2542,11 @@ glsl-inject-defines@^1.0.1:
     glsl-token-inject-block "^1.0.0"
     glsl-token-string "^1.0.1"
     glsl-tokenizer "^2.0.2"
+
+glsl-noise-simplex@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/glsl-noise-simplex/-/glsl-noise-simplex-0.0.2.tgz#3b739419de8e7ba5481d4e234d6b2d6516d64e69"
+  integrity sha512-ZZ3MNpDB5iA13jdd6/CtHCidR/lJ4nlXd572jU6/CSSUZhHFmtgvItt75J9MWthXz1ZWa7e68LQosPFx7oksTg==
 
 glsl-noise@^0.0.0:
   version "0.0.0"

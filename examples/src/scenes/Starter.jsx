@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Interactable } from "spacesvr";
+import { StandardEnvironment, Background, Idea, Interactable } from "spacesvr";
 
 const handleClick = () => console.log("got a click!");
 
@@ -8,7 +8,7 @@ export default () => {
     <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
       <Background color={0xffffff} />
       <Interactable onClick={handleClick}>
-        <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
+        <Idea />
       </Interactable>
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />
