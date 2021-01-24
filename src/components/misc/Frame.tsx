@@ -11,7 +11,7 @@ type FrameProps = {
 
 const frameWidth = 0.3;
 const frameDepth = 0.1;
-const borderThickness = 0.2;
+const borderThicknessMult = 0.01;
 const borderDepth = 0.2;
 const meshOffset = 0.0005;
 
@@ -28,6 +28,8 @@ const Frame = (props: FrameProps) => {
       }),
     []
   );
+
+  const borderThickness = borderThicknessMult * Math.max(width, height);
 
   return (
     <group>
