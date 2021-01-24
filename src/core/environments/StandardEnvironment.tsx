@@ -58,6 +58,7 @@ type StandardEnvironmentProps = {
   player?: {
     pos?: Vector3;
     rot?: number;
+    speed?: number;
   };
   pauseMenu?: ReactNode;
   disableGround?: boolean;
@@ -96,7 +97,11 @@ export const StandardEnvironment = (
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
-              <Player initPos={player?.pos} initRot={player?.rot} />
+              <Player
+                initPos={player?.pos}
+                initRot={player?.rot}
+                speed={player?.speed}
+              />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {children}
             </environmentStateContext.Provider>

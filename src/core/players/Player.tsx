@@ -15,12 +15,13 @@ import {
 } from "./colliders/CapsuleCollider";
 import { GyroControls } from "../controls/GyroControls";
 
-const SPEED = 3.5; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
+const SPEED = 3.2; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
   initPos?: Vector3;
   initRot?: number;
+  speed?: number;
 };
 
 /**
@@ -33,7 +34,7 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
+  const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
   const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
@@ -85,7 +86,7 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current && !paused) {
       inputVelocity.x = direction.current.x * 0.75;
       inputVelocity.z = direction.current.y; // forward/back
-      inputVelocity.multiplyScalar(delta * 100 * SPEED);
+      inputVelocity.multiplyScalar(delta * 100 * speed);
 
       const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
