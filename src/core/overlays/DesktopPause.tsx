@@ -2,8 +2,6 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../utils/hooks";
 
-const { NEXT_PUBLIC_VERSION } = process.env;
-
 const Container = styled.div<{ paused: boolean }>`
   width: 100%;
   height: 100%;
@@ -46,6 +44,7 @@ const Window = styled.div`
   background-image: url("https://spaces-gallery-assets.s3-us-west-1.amazonaws.com/images/pauseMenuBg.png");
   background-position: center;
   background-size: cover;
+  font-family: sans-serif;
 `;
 
 const Continue = styled.div`
@@ -55,7 +54,7 @@ const Continue = styled.div`
   cursor: pointer;
   text-align: center;
   font-size: 1.3em;
-  font-family: "Lato", sans-serif;
+  font-family: "Quicksand", sans-serif;
   transition: opacity 0.15s linear;
   margin-top: 20px;
   background: white;
@@ -96,7 +95,7 @@ const Header = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: "Lato", sans-serif;
+  font-family: "Quicksand", sans-serif;
 `;
 
 const Title = styled.div`
@@ -110,7 +109,7 @@ const Text = styled.div`
   width: 100%;
   height: auto;
   margin: 10px 0;
-  font-family: "Space Mono", monospace;
+  font-family: "Roboto", sans-serif, monospace;
   font-size: 0.7em;
   text-align: center;
   display: flex;
@@ -130,16 +129,14 @@ const DesktopPause = () => {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v {NEXT_PUBLIC_VERSION}</Version>
+        <Version>v1.2.26</Version>
         <Instagram
-          onClick={() => {
-            window.open("https://www.instagram.com/spaces3.0");
-          }}
+          onClick={() => window.open("https://www.instagram.com/musehq")}
         >
-          @spaces3.0
+          @musehq
         </Instagram>
         <Header>
-          <Title>SPACES</Title>
+          <Title>muse</Title>
         </Header>
         <Text>
           <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>

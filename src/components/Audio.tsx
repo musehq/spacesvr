@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { useEffect, useRef } from "react";
 import { useThree } from "react-three-fiber";
 import { useEnvironment } from "../core/utils/hooks";
-import { Vector3 } from "three";
+import { AudioAnalyser, Vector3 } from "three";
 import { PositionalAudioHelper } from "three/examples/jsm/helpers/PositionalAudioHelper";
 
 type AudioProps = {
@@ -12,6 +12,7 @@ type AudioProps = {
   rollOff?: number;
   volume?: number;
   helper?: boolean;
+  setAudioAnalyser?: (aa: AudioAnalyser) => void;
 };
 
 export const Audio = (props: AudioProps) => {
@@ -22,6 +23,7 @@ export const Audio = (props: AudioProps) => {
     rollOff = 1,
     volume = 7,
     helper,
+    setAudioAnalyser,
   } = props;
   const { paused, container } = useEnvironment();
 
@@ -66,6 +68,10 @@ export const Audio = (props: AudioProps) => {
       }
       speaker.current.setRolloffFactor(rollOff);
       speaker.current.setVolume(volume);
+
+      if (setAudioAnalyser) {
+        setAudioAnalyser(new AudioAnalyser(speaker.current, 512));
+      }
 
       if (helper) {
         const helper = new PositionalAudioHelper(speaker.current);

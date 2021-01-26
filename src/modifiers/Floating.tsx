@@ -4,7 +4,7 @@ import { Group } from "three";
 
 type FloatingProps = {
   height?: number;
-  speed?: 1;
+  speed?: number;
   children: ReactNode;
 };
 
