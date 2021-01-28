@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Vector3 } from "three";
 import {
   StandardEnvironment,
@@ -8,12 +7,9 @@ import {
   Audio,
   Image,
 } from "spacesvr";
-import ReactivePrimitive from "../components/ReactivePrimitive";
 
 const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
-  const [aa, setAA] = useState();
-
   return (
     <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
       <Background color={0xffffff} />
@@ -32,23 +28,14 @@ export default () => {
       {/*  position={[0, 2.425, 3.076]}*/}
       {/*  rotation={[0, -Math.PI, 0]}*/}
       {/*/>*/}
-      <Audio
-        url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3"
-        setAudioAnalyser={setAA}
-      />
+      <Audio url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3" />
       <Image
         src="https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8333.jpg"
-        size={[(1132 / 1500) * 3.2, 3.2]}
+        size={[4.4, 4.4]}
         position={[-6, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
       />
-      {aa && (
-        <ReactivePrimitive
-          url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/ab.jpg"
-          aa={aa}
-        />
-      )}
     </StandardEnvironment>
   );
 };
