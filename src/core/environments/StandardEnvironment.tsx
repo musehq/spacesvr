@@ -20,6 +20,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  pointer-events: none;
 
   canvas {
     position: absolute;
@@ -68,14 +69,7 @@ type StandardEnvironmentProps = {
 export const StandardEnvironment = (
   props: EnvironmentProps & StandardEnvironmentProps
 ) => {
-  const {
-    children,
-    canvasProps,
-    physicsProps,
-    player,
-    effects,
-    disableGround,
-  } = props;
+  const { children, canvasProps, physicsProps, player, disableGround } = props;
 
   const state = useEnvironmentState();
 
@@ -89,15 +83,14 @@ export const StandardEnvironment = (
               <Player initPos={player?.pos} initRot={player?.rot} />
               <Crosshair />
               {!disableGround && <InfinitePlane height={-0.001} />}
-              {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={state}>
-          <LoadingScreen />
-        </environmentStateContext.Provider>
       </Container>
+      <environmentStateContext.Provider value={state}>
+        <LoadingScreen />
+      </environmentStateContext.Provider>
     </BrowserChecker>
   );
 };

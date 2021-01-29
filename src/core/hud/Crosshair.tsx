@@ -1,4 +1,4 @@
-import { Group, PerspectiveCamera, Raycaster, Vector3 } from "three";
+import { Group, Raycaster, Vector3 } from "three";
 import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";

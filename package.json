@@ -52,6 +52,8 @@
     "babel-plugin-glsl": "^1.0.0",
     "babel-plugin-macros": "^2.8.0",
     "copyfiles": "^2.4.0",
+    "glsl-y-hsv": "https://github.com/yuichiroharai/glsl-y-hsv.git",
+    "glslify": "^7.1.1",
     "nipplejs": "^0.8.7",
     "node-fetch": "^2.6.1",
     "react-device-detect": "^1.13.1",
