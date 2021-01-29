@@ -26,11 +26,14 @@ export const frag = glsl`
        vec3 color = tex.rgb;
        vec2 uv = vUv;
        
-       float a = 0.85 + (noise(vec3(uv, time / 2.0)) + 1.0) / 2.0;
+       float a = 0.35 + (noise(vec3(uv, time / 2.0)) + 1.0) / 2.0;
        a = min(a, 1.0);
        
        color = rgb2hsv(color);
-       color.y += noise(vec3(uv, -time / 2.0));
+       color.y -= noise(vec3(uv, -time / 2.0));
+       color.y = max(0.,color.y);
+       color.z += (noise(vec3(uv, time / 2.0) + 1000.) + 1.) / 2.;
+       color.z = min(1.,color.z);
        color = hsv2rgb(color);
        
        gl_FragColor = vec4( color, a);
