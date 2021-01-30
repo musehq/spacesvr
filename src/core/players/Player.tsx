@@ -92,7 +92,7 @@ const Player = (props: PlayerProps) => {
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
-      inputVelocity.y = velocity.current.y;
+      inputVelocity.y = Math.min(velocity.current.y, 0);
     }
 
     if (!lockControls.current) {

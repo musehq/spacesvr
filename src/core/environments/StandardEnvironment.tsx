@@ -35,7 +35,7 @@ const Container = styled.div`
 const defaultCanvasProps: Partial<ContainerProps> = {
   gl: {
     powerPreference: "high-performance",
-    antialias: true,
+    antialias: false,
     depth: true,
     alpha: false,
     stencil: false,
@@ -49,6 +49,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 const defaultPhysicsProps: Partial<ProviderProps> = {
   size: 50,
   allowSleep: false,
+  gravity: [0, -9.8 * 2, 0],
   defaultContactMaterial: {
     friction: 0,
   },
