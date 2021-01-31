@@ -7,6 +7,7 @@ import { Idea } from "../../../components/Idea";
 import { Floating } from "../../../modifiers/Floating";
 import { Billboard } from "@react-three/drei";
 import Menu from "./components/Menu";
+import { FacePlayer } from "../../../modifiers/FacePlayer";
 
 const DISTANCE = 0.05;
 const SCALE = 0.001;
@@ -20,18 +21,23 @@ const PauseMenu = () => {
   const [raycaster] = useState(new Raycaster());
 
   const [spring, setSpring] = useSpring(() => ({
-    xyz: [0, 0, 0],
+    xyzab: [0, 0, 0, 0, 0],
     config: { tension: 800, friction: 35, precision: 0.0001 },
   }));
 
   useFrame(() => {
     if (!group.current) return;
 
-    raycaster.setFromCamera({ x: -0.8, y: -0.7 }, camera);
-    raycaster.ray.at(DISTANCE, dummyVector.current);
-    setSpring({ xyz: dummyVector.current.toArray() });
+    const [x, y, z, a, b] = getSpringValues(spring);
 
-    const [x, y, z] = getSpringValues(spring);
+    raycaster.setFromCamera({ x: a, y: b }, camera);
+    raycaster.ray.at(DISTANCE, dummyVector.current);
+
+    const newAB = open ? [-0.8, 0.7] : [-0.8 * 6, 0.7 * 6];
+    dummyVector.current.y += open ? 0 : 0.1;
+
+    setSpring({ xyzab: [...dummyVector.current.toArray(), ...newAB] });
+
     group.current.position.set(x / SCALE, y / SCALE, z / SCALE);
   });
 
@@ -52,14 +58,12 @@ const PauseMenu = () => {
     <group scale={[SCALE, SCALE, SCALE]}>
       <group ref={group}>
         <Floating height={1}>
-          {open && (
-            <group>
-              <Idea size={2} />
-              <Billboard args={[0, 0]}>
-                <Menu position-x={2} />
-              </Billboard>
-            </group>
-          )}
+          <group>
+            <Idea size={2} />
+            <FacePlayer>
+              <Menu position-x={2} position-y={-2} />
+            </FacePlayer>
+          </group>
         </Floating>
       </group>
     </group>

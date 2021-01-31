@@ -1124,9 +1124,9 @@
   integrity sha512-/Ak6AcY4KfBMSnqOxQ2drQZVXDAAwfnUi2/PxPepz9tSAl6GC5o7H5WnDRJqXClRcw8n4Q+Dm9uSl8L5mvV96A==
 
 "@react-three/drei@^2.2.10":
-  version "2.2.10"
-  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-2.2.10.tgz#cf2ab0603fa64510f99bd75bbbf585eff011444a"
-  integrity sha512-Nc+tk10LuYF1BS3MPUbC6174dPf9RCCpo8UqTRumLQkZbeDcFPXYPhh4q/ThR9qos5uhl1obrx13ka6qofJC5Q==
+  version "2.2.22"
+  resolved "https://registry.yarnpkg.com/@react-three/drei/-/drei-2.2.22.tgz#0ea91fe3f475436f9a3bb6ad5d11fd233aaabaee"
+  integrity sha512-tJUMLkoR1BSO7oDYCROPKzmogm5HEpIztHednaroiZqsUmMdLJPZqV8DntdD0ZiGU6nyrEzfwY8PM+YcM4gpgA==
   dependencies:
     "@babel/runtime" "^7.11.2"
     "@react-spring/web" "^9.0.0-rc.3"
@@ -4689,9 +4689,9 @@ use-error-boundary@^2.0.4:
   integrity sha512-bBDGoJSrdWCAQdjGKQHT7+j5iTQwqT2v6j1LROfvu1N9PoE9X0kJFzWp5dbr+lnoDMQSeeDj8MgUO0jtbDeNcg==
 
 use-memo-one@^1.1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.1.tgz#39e6f08fe27e422a7d7b234b5f9056af313bd22c"
-  integrity sha512-oFfsyun+bP7RX8X2AskHNTxu+R3QdE/RC5IefMbqptmACAA/gfol1KDD5KRzPsGMa62sWxGZw+Ui43u6x4ddoQ==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.2.tgz#0c8203a329f76e040047a35a1197defe342fab20"
+  integrity sha512-u2qFKtxLsia/r8qG0ZKkbytbztzRb317XCkT7yP8wxL0tZ/CzK2G+WWie5vWvpyeP7+YoPIwbJoIHJ4Ba4k0oQ==
 
 util-deprecate@~1.0.1:
   version "1.0.2"
@@ -4898,6 +4898,6 @@ yoga-layout-prebuilt@^1.9.6:
     "@types/yoga-layout" "1.9.2"
 
 zustand@^3.0.3:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.1.4.tgz#684bb863e27b5a04b551c621a0aa73a5ccafc368"
-  integrity sha512-DB/r73Dm3YsUEo9KilbGWsKXQLOrM41aYItznvD68f44P2hYo+FY65D7N8m2ojKVzg6eIPgXZWqkFO60Utko8A==
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.3.1.tgz#de5c4b51112b84e0f819d8b3f336fbfbc087d758"
+  integrity sha512-o0rgrBsi29nCkPHdhtkAHisCIlmRUoXOV+1AmDMeCgkGG0i5edFSpGU0KiZYBvFmBYycnck4Z07JsLYDjSET9g==
