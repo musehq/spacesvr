@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
+import { isMobile } from "react-device-detect";
 
 const DISTANCE = 0.05;
 const SCALE = 0.001;
@@ -20,7 +21,7 @@ const Crosshair = () => {
   }));
 
   useFrame(() => {
-    if (group.current) {
+    if (!isMobile && group.current) {
       raycaster.setFromCamera(mouse, camera);
       raycaster.ray.at(DISTANCE, dummyVector.current);
       setSpring({ xyz: dummyVector.current.toArray() });
@@ -29,6 +30,10 @@ const Crosshair = () => {
       group.current.position.set(x / SCALE, y / SCALE, z / SCALE);
     }
   });
+
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <group scale={[SCALE, SCALE, SCALE]}>

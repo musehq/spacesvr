@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import BrowserChecker from "../utils/BrowserChecker";
+import BrowserChecker from "../overlays/BrowserChecker";
 import styled from "@emotion/styled";
 import ShirtsLoading from "../overlays/PortalLoadingScreen";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";

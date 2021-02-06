@@ -6,8 +6,10 @@ import { Interactable } from "../../../../modifiers/Interactable";
 import { animated, useSpring } from "react-spring/three";
 import { useState } from "react";
 
-const FONT_SIZE = 1;
+const FONT_SIZE = 0.75;
 const ITEM_HEIGHT = FONT_SIZE * 2.5;
+const ITEM_PADDING = ITEM_HEIGHT * 0.05;
+const SUBTITLE_HEIGHT = FONT_SIZE * 0.9;
 
 type MenuItem = {
   text: string;
@@ -22,25 +24,39 @@ const Item = (props: { num: number; item: MenuItem; width: number }) => {
 
   const { posZ, scale } = useSpring({
     posZ: hovered ? 3.5 : 0.2,
-    scale: hovered ? 3 : 1,
+    scale: hovered ? 1 : 0,
+    color: hovered ? 0x111111 : 0x000000,
   });
 
   return (
-    <animated.group position-y={(num + 1) * ITEM_HEIGHT} position-z={posZ}>
+    <animated.group
+      position-y={(num + 1) * (ITEM_HEIGHT + ITEM_PADDING) + SUBTITLE_HEIGHT}
+      position-z={posZ}
+    >
       <Interactable
         onClick={action}
         onHover={() => setHovered(true)}
         onUnHover={() => setHovered(false)}
       >
-        <Text
-          maxWidth={width}
-          color={"black"}
-          fontSize={1.5}
-          font="https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf"
-        >
-          {text.toUpperCase()}
-        </Text>
+        <mesh position-z={-0.01} name="hover-detect">
+          <planeBufferGeometry args={[width, ITEM_HEIGHT]} />
+          <meshStandardMaterial transparent={true} opacity={0} />
+        </mesh>
       </Interactable>
+      <animated.group scale-x={scale} position-x={-width / 2}>
+        <mesh position-z={-0.01} position-x={width / 2}>
+          <planeBufferGeometry args={[width, ITEM_HEIGHT]} />
+          <meshStandardMaterial color="#cccccc" />
+        </mesh>
+      </animated.group>
+      <Text
+        maxWidth={width}
+        color="black"
+        fontSize={FONT_SIZE * 1.5}
+        font="https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf"
+      >
+        {text.toUpperCase()}
+      </Text>
     </animated.group>
   );
 };
@@ -53,8 +69,9 @@ const Menu = (props: GroupProps) => {
     { text: "Tutorial", action: () => console.log("mute audio") },
   ];
 
-  const WIDTH = 12;
-  const HEIGHT = (menuItems.length + 1) * ITEM_HEIGHT;
+  const WIDTH = FONT_SIZE * 12;
+  const HEIGHT =
+    (menuItems.length + 1) * (ITEM_HEIGHT + ITEM_PADDING) + SUBTITLE_HEIGHT;
 
   return (
     <group {...props}>
@@ -66,6 +83,18 @@ const Menu = (props: GroupProps) => {
         {menuItems.map((item, i) => (
           <Item key={item.text} num={i} item={item} width={WIDTH} />
         ))}
+        <Text
+          name="subtitle"
+          anchorY="bottom"
+          position-y={SUBTITLE_HEIGHT / 2}
+          position-z={0.01}
+          maxWidth={WIDTH}
+          color="#333"
+          fontSize={FONT_SIZE}
+          font="https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf"
+        >
+          muse
+        </Text>
       </group>
     </group>
   );
