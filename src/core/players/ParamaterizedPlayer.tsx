@@ -80,15 +80,9 @@ const ParamaterizedPlayer = (props: ParamaterizedPlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <GyroControls
-          quaternion={quaternion}
-          position={position}
-          fallback={
-            <TouchFPSCamera quaternion={quaternion} position={position} />
-          }
-        />
+        <GyroControls fallback={<TouchFPSCamera />} />
       ) : (
-        <DragControls quaternion={quaternion} position={position} />
+        <DragControls />
       )}
       <mesh name="player">
         {SHOW_PLAYER_HITBOX && (

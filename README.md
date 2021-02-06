@@ -238,14 +238,15 @@ Quickly add an image to your scene
 />
 ```
 
-#### Logo
+#### Idea
 
-Adds a cool Spaces Logo
+Pure Idea, Unmediated
 
 ```jsx
-<Logo
-  floating // makes logo slowly float
-  rotating // makes logo slowly rotate
+<Idea
+  size={1}
+  vAlign="bottom" // top, center, bottom
+  perception // 0-1, how perceptive idea is
 />
 ```
 

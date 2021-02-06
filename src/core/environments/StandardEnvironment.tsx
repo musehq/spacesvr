@@ -1,6 +1,6 @@
-import BrowserChecker from "../utils/BrowserChecker";
+import BrowserChecker from "../overlays/BrowserChecker";
 import styled from "@emotion/styled";
-import Crosshair from "../hud/Crosshair";
+import Crosshair from "../tools/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
@@ -9,11 +9,12 @@ import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeConta
 import Player from "../players/Player";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
-import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import PauseMenu from "../tools/PauseMenu";
+import LoadingScreen from "../overlays/LoadingScreen";
 
 const Container = styled.div`
   position: absolute;
@@ -87,12 +88,13 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
               <Player initPos={player?.pos} initRot={player?.rot} />
-              <Crosshair />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
+          <Crosshair />
+          <PauseMenu />
         </Canvas>
         <environmentStateContext.Provider value={state}>
           <LoadingScreen />

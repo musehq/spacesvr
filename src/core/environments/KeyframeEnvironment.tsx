@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import BrowserChecker from "../utils/BrowserChecker";
+import BrowserChecker from "../overlays/BrowserChecker";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -12,13 +12,13 @@ import {
   Keyframe,
   KeyframeEnvironmentState,
 } from "../types";
-import LoadingScreen from "../overlays/LoadingScreen";
 import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
-import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
+import { KeyframeControlDisplay } from "../tools/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
+import LoadingScreen from "../overlays/LoadingScreen";
 
 const Container = styled.div`
   position: absolute;
