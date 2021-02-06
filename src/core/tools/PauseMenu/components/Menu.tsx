@@ -5,16 +5,12 @@ import { Interactable } from "../../../../modifiers/Interactable";
 // @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { useState } from "react";
+import { MenuItem, useMenuFunctionality } from "../utils/hooks";
 
-const FONT_SIZE = 0.75;
-const ITEM_HEIGHT = FONT_SIZE * 2.5;
-const ITEM_PADDING = ITEM_HEIGHT * 0.05;
+const FONT_SIZE = 0.7;
+const ITEM_HEIGHT = FONT_SIZE * 3;
+const ITEM_PADDING = ITEM_HEIGHT * 0.1;
 const SUBTITLE_HEIGHT = FONT_SIZE * 0.9;
-
-type MenuItem = {
-  text: string;
-  action: () => void;
-};
 
 const Item = (props: { num: number; item: MenuItem; width: number }) => {
   const { num, item, width } = props;
@@ -53,6 +49,7 @@ const Item = (props: { num: number; item: MenuItem; width: number }) => {
         maxWidth={width}
         color="black"
         fontSize={FONT_SIZE * 1.5}
+        textAlign="center"
         font="https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf"
       >
         {text.toUpperCase()}
@@ -62,12 +59,7 @@ const Item = (props: { num: number; item: MenuItem; width: number }) => {
 };
 
 const Menu = (props: GroupProps) => {
-  const menuItems: MenuItem[] = [
-    { text: "Enter VR", action: () => console.log("try to enter vr") },
-    { text: "Mute Audio", action: () => console.log("mute audio") },
-    { text: "Fullscreen", action: () => console.log("mute audio") },
-    { text: "Tutorial", action: () => console.log("mute audio") },
-  ];
+  const { menuItems } = useMenuFunctionality();
 
   const WIDTH = FONT_SIZE * 12;
   const HEIGHT =

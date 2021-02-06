@@ -8,6 +8,7 @@ type Props = {
   children: ReactNode;
   pos?: [number, number];
   face?: boolean;
+  distance?: number;
 };
 
 const SCALE = 0.0025;
@@ -22,8 +23,8 @@ const DISTANCE = 0.05;
  * @param props
  * @constructor
  */
-const Tool = (props: Props) => {
-  const { children, pos, face = true } = props;
+export const Tool = (props: Props) => {
+  const { children, pos, face = true, distance = DISTANCE } = props;
 
   const { camera, size } = useThree();
 
@@ -44,7 +45,7 @@ const Tool = (props: Props) => {
 
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
-      dummyVector.set(xPos, 0.04 * pos[1], -DISTANCE);
+      dummyVector.set(xPos, 0.04 * pos[1], -distance);
       const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
@@ -81,5 +82,3 @@ const hashSpringSeed = (seed: number): [number, number] => {
   const f = (((seed * 10000) % 100) - 50) / 50;
   return [t * 40, f * 13];
 };
-
-export default Tool;

@@ -10,6 +10,7 @@ const SCALE = 0.001;
 
 const Crosshair = () => {
   const group = useRef<Group>();
+  const parent = useRef<Group>();
 
   const dummyVector = useRef(new Vector3());
   const { camera, mouse } = useThree();
@@ -17,13 +18,14 @@ const Crosshair = () => {
 
   const [spring, setSpring] = useSpring(() => ({
     xyz: [0, 0, 0],
-    config: { ...config.stiff, precision: 0.0001 },
+    config: { tension: 220 * 40, friction: 21 * 40, precision: 0.001 },
   }));
 
   useFrame(() => {
     if (!isMobile && group.current) {
       raycaster.setFromCamera(mouse, camera);
       raycaster.ray.at(DISTANCE, dummyVector.current);
+      dummyVector.current.sub(camera.position);
       setSpring({ xyz: dummyVector.current.toArray() });
 
       const [x, y, z] = getSpringValues(spring);
@@ -31,12 +33,18 @@ const Crosshair = () => {
     }
   });
 
+  useFrame(() => {
+    if (parent.current) {
+      parent.current.position.copy(camera.position);
+    }
+  }, 1);
+
   if (isMobile) {
     return null;
   }
 
   return (
-    <group scale={[SCALE, SCALE, SCALE]}>
+    <group ref={parent} scale={[SCALE, SCALE, SCALE]}>
       <group ref={group}>
         <mesh position-z={0.25}>
           <sphereBufferGeometry args={[1, 50, 50]} />

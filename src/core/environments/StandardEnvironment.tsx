@@ -14,7 +14,6 @@ import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import PauseMenu from "../tools/PauseMenu";
-import Tool from "../../modifiers/Tool";
 import LoadingScreen from "../overlays/LoadingScreen";
 
 const Container = styled.div`
@@ -95,15 +94,7 @@ export const StandardEnvironment = (
             </environmentStateContext.Provider>
           </Physics>
           <Crosshair />
-          <Tool pos={[-1, 1]} face>
-            <PauseMenu />
-          </Tool>
-          <Tool pos={[1, -1]} face>
-            <mesh>
-              <boxBufferGeometry args={[1, 1, 1]} />
-              <meshStandardMaterial color="red" />
-            </mesh>
-          </Tool>
+          <PauseMenu />
         </Canvas>
         <environmentStateContext.Provider value={state}>
           <LoadingScreen />
