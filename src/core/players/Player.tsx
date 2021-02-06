@@ -2,7 +2,6 @@ import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
-
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
 import KeyboardMovement from "../controls/KeyboardMovement";
@@ -13,13 +12,15 @@ import {
 } from "./colliders/CapsuleCollider";
 import { GyroControls } from "../controls/GyroControls";
 import ClickDragControls from "../controls/ClickDragControls";
+import NippleMovement from "../controls/NippleMovement";
 
-const VELOCITY_FACTOR = 300;
+const SPEED = 3.2; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
   initPos?: Vector3;
   initRot?: number;
+  speed?: number;
 };
 
 /**
@@ -32,8 +33,8 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
-  const { camera } = useThree();
+  const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
+  const { camera, raycaster: defaultRaycaster } = useThree();
   const { setPlayer } = useEnvironment();
 
   // physical body
@@ -44,7 +45,9 @@ const Player = (props: PlayerProps) => {
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
   const [raycaster] = useState(
-    new Raycaster(new Vector3(), new Vector3(), 0, 3)
+    isMobile
+      ? defaultRaycaster
+      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
   );
 
   // consumer
@@ -61,15 +64,20 @@ const Player = (props: PlayerProps) => {
     bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
 
+    const xLook = initPos.x + 100 * Math.cos(initRot);
+    const zLook = initPos.z + 100 * Math.sin(initRot);
+    camera?.lookAt(xLook, initPos.y, zLook);
+
+    // set player for environment
     setPlayer(
       createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
     );
   }, []);
 
   // update player every frame
-  useFrame((stuff, delta) => {
+  useFrame((_, delta) => {
     // update raycaster
-    if (position.current) {
+    if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
       lookAt.applyQuaternion(camera.quaternion);
@@ -83,14 +91,14 @@ const Player = (props: PlayerProps) => {
     const inputVelocity = new Vector3(0, 0, 0);
     if (!lockControls.current) {
       inputVelocity.x = direction.current.x * 0.75;
-      inputVelocity.z = direction.current.y;
-      inputVelocity.normalize().multiplyScalar(delta * VELOCITY_FACTOR);
+      inputVelocity.z = direction.current.y; // forward/back
+      inputVelocity.multiplyScalar(delta * 100 * speed);
 
       const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
-      inputVelocity.y = velocity.current.y;
+      inputVelocity.y = Math.min(velocity.current.y, 0);
     }
 
     if (!lockControls.current) {
@@ -102,7 +110,10 @@ const Player = (props: PlayerProps) => {
   return (
     <>
       {isMobile ? (
-        <GyroControls fallback={<TouchFPSCamera />} />
+        <>
+          <GyroControls fallback={<TouchFPSCamera />} />
+          <NippleMovement direction={direction} />
+        </>
       ) : (
         <>
           <KeyboardMovement direction={direction} />

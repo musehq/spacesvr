@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Raycaster, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
 import { useEnvironment } from "../utils/hooks";
@@ -30,11 +30,11 @@ type ParamaterizedPlayerProps = {
 const ParamaterizedPlayer = (props: ParamaterizedPlayerProps) => {
   const { positionFunc } = props;
 
-  const { camera } = useThree();
+  const { camera, raycaster } = useThree();
   const { setPlayer } = useEnvironment();
 
   // physical body
-  const [bodyRef, bodyApi] = useSphere(() => ({
+  const [, bodyApi] = useSphere(() => ({
     mass: 0,
     position: [0, 0, 0],
     args: 1,
@@ -45,7 +45,6 @@ const ParamaterizedPlayer = (props: ParamaterizedPlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const raycaster = useRef(new Raycaster(new Vector3(), new Vector3(), 0, 3));
 
   // consumer
   const quaternion = useRef(new Quaternion(0, 0, 0, 0)); // rad on y axis

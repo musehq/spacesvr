@@ -9,12 +9,6 @@ type FrameProps = {
   material?: Material;
 };
 
-const frameWidth = 0.3;
-const frameDepth = 0.1;
-const borderThickness = 0.2;
-const borderDepth = 0.2;
-const meshOffset = 0.0005;
-
 const Frame = (props: FrameProps) => {
   const { back, width, height, material: passedMaterial } = props;
 
@@ -28,6 +22,14 @@ const Frame = (props: FrameProps) => {
       }),
     []
   );
+
+  const size = Math.max(width, height);
+
+  const frameDepth = 0.1;
+  const frameWidth = 0.075 * size;
+  const borderDepth = 0.2;
+  const borderThickness = 0.05 * size;
+  const meshOffset = 0.0005;
 
   return (
     <group>

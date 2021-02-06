@@ -1,6 +1,5 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import BrowserChecker from "../overlays/BrowserChecker";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -12,13 +11,12 @@ import {
   Keyframe,
   KeyframeEnvironmentState,
 } from "../types";
-import { RealisticEffects } from "../../effects";
+import LoadingScreen from "../overlays/LoadingScreen";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../tools/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
-import LoadingScreen from "../overlays/LoadingScreen";
 
 const Container = styled.div`
   position: absolute;
@@ -38,8 +36,16 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: true,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: window.devicePixelRatio || 1,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 
@@ -53,7 +59,6 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
 
 type KeyframeEnvironmentProps = {
   keyframes: Keyframe[];
-  effects?: ReactNode;
 };
 
 /**
@@ -70,7 +75,7 @@ type KeyframeEnvironmentProps = {
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes, effects } = props;
+  const { children, canvasProps, physicsProps, keyframes } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -103,14 +108,13 @@ export const KeyframeEnvironment = (
   };
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={localState}>
               <SpringPlayer spring={spring} />
-              {effects || <RealisticEffects />}
               <SpringScaled spring={spring}>{children}</SpringScaled>
             </environmentStateContext.Provider>
           </Physics>
@@ -120,6 +124,6 @@ export const KeyframeEnvironment = (
           <KeyframeControlDisplay />
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

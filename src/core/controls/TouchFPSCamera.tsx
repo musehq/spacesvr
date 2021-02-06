@@ -1,16 +1,12 @@
-import { useRef, useEffect } from "react";
-import { useThree } from "react-three-fiber";
-import { Vector2, Euler } from "three";
-
-type Touch = {
-  pos: Vector2;
-  id: number;
-};
-
-const DefaultTouch = {
-  pos: new Vector2(0, 0),
-  id: -1,
-};
+import { useRef, useEffect, MutableRefObject } from "react";
+import { useFrame, useThree } from "react-three-fiber";
+import { Quaternion, Vector3, Vector2, Euler } from "three";
+import {
+  Touch,
+  DefaultTouch,
+  getCurrentTouch,
+  tappedNipple,
+} from "../utils/touch";
 
 const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
 
@@ -40,26 +36,6 @@ const TouchFPSCamera = () => {
     return newEuler;
   };
 
-  const tappedNipple = (ev: TouchEvent) => {
-    // get the relevant touched element (casted as an Element)
-    const ele = ev.touches[ev.touches.length - 1].target as Element;
-    return (
-      ele.classList.contains("nipple-container") ||
-      ele.classList.contains("front") ||
-      ele.classList.contains("back")
-    );
-  };
-
-  const getCurrentTouch = (touches: TouchList) => {
-    const len = touches.length;
-    for (let i = 0; i < len; i++) {
-      if (touchStartPos.current.id === touches[i].identifier) {
-        return touches[i];
-      }
-    }
-    return undefined;
-  };
-
   // touch move scripts
   const onTouchStart = (ev: TouchEvent) => {
     if (touchStartPos.current.id !== -1) {
@@ -79,7 +55,7 @@ const TouchFPSCamera = () => {
   };
 
   const onTouchMove = (ev: TouchEvent) => {
-    const touch = getCurrentTouch(ev.touches);
+    const touch = getCurrentTouch(touchStartPos.current.id, ev.touches);
 
     if (!touch) {
       return;
@@ -90,7 +66,7 @@ const TouchFPSCamera = () => {
     camera.quaternion.setFromEuler(newEuler);
   };
   const onTouchEnd = (ev: TouchEvent) => {
-    const touch = getCurrentTouch(ev.changedTouches);
+    const touch = getCurrentTouch(touchStartPos.current.id, ev.changedTouches);
 
     if (!touch) {
       return;

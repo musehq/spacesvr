@@ -1,4 +1,3 @@
-import BrowserChecker from "../overlays/BrowserChecker";
 import styled from "@emotion/styled";
 import Crosshair from "../tools/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
@@ -10,8 +9,8 @@ import Player from "../players/Player";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import { InfinitePlane } from "../../components/";
-import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
+import { isMobile } from "react-device-detect";
 import { ReactNode } from "react";
 import PauseMenu from "../tools/PauseMenu";
 import LoadingScreen from "../overlays/LoadingScreen";
@@ -34,14 +33,23 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: false,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: window.devicePixelRatio || 1,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
   size: 50,
   allowSleep: false,
+  gravity: [0, -9.8 * 2, 0],
   defaultContactMaterial: {
     friction: 0,
   },
@@ -51,9 +59,11 @@ type StandardEnvironmentProps = {
   player?: {
     pos?: Vector3;
     rot?: number;
+    speed?: number;
   };
-  effects?: ReactNode;
+  pauseMenu?: ReactNode;
   disableGround?: boolean;
+  loadingScreen?: ReactNode;
 };
 
 /**
@@ -74,22 +84,26 @@ export const StandardEnvironment = (
     canvasProps,
     physicsProps,
     player,
-    effects,
     disableGround,
+    pauseMenu,
+    loadingScreen,
   } = props;
 
   const state = useEnvironmentState();
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
-              <Player initPos={player?.pos} initRot={player?.rot} />
+              <Player
+                initPos={player?.pos}
+                initRot={player?.rot}
+                speed={player?.speed}
+              />
               {!disableGround && <InfinitePlane height={-0.001} />}
-              {effects || <RealisticEffects />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
@@ -100,6 +114,6 @@ export const StandardEnvironment = (
           <LoadingScreen />
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

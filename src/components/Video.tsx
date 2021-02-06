@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "react-three-fiber";
 import Frame from "./misc/Frame";
 import { Material } from "three";
 
-type VideoProps = JSX.IntrinsicElements["group"] & {
+type Props = JSX.IntrinsicElements["group"] & {
   src: string;
   size: [number, number];
   framed?: boolean;
@@ -13,7 +13,7 @@ type VideoProps = JSX.IntrinsicElements["group"] & {
   material?: Material;
 };
 
-export const Video = (props: VideoProps) => {
+export const Video = (props: Props) => {
   const { src, size, framed, muted, doubleSided, material } = props;
 
   const { camera } = useThree();
@@ -21,31 +21,26 @@ export const Video = (props: VideoProps) => {
   const [width, height] = size;
   const listener = useRef<THREE.AudioListener>();
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
-  const [video] = useState(() => {
+
+  const video = useMemo(() => {
     const v = document.createElement("video");
     // @ts-ignore
     v.playsInline = true;
     v.crossOrigin = "Anonymous";
     v.loop = true;
     v.src = src;
+    v.autoplay = false;
     v.muted = muted ? muted : false;
-    if (v.muted) {
-      v.play();
-    }
     return v;
-  });
+  }, []);
 
   useEffect(() => {
-    const onClick = () => {
-      if (video) {
-        video.play();
-      }
+    const setupAudio = () => {
+      if (!muted && !video.paused && !speaker) {
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
 
-      if (!muted && video && !speaker) {
-        listener.current = new THREE.AudioListener();
-        camera.add(listener.current);
-
-        const speak = new THREE.PositionalAudio(listener.current);
+        const speak = new THREE.PositionalAudio(listener);
         speak.setMediaElementSource(video);
         speak.setRefDistance(0.75);
         speak.setRolloffFactor(1);
@@ -56,11 +51,38 @@ export const Video = (props: VideoProps) => {
       }
     };
 
-    document.addEventListener("click", onClick);
-    return () => {
-      document.removeEventListener("click", onClick);
+    const playVideo = () => {
+      video.play();
+      setupAudio();
     };
-  }, [video, muted, speaker]);
+
+    if (video) {
+      video.play();
+      document.addEventListener("click", playVideo);
+      return () => {
+        document.removeEventListener("click", playVideo);
+      };
+    }
+  }, [speaker, video, muted]);
+
+  useEffect(() => {
+    return () => {
+      if (listener.current) {
+        camera.remove(listener.current);
+        listener.current.clear();
+        listener.current = undefined;
+      }
+      if (speaker) {
+        speaker.clear();
+        speaker.disconnect();
+        setSpeaker(undefined);
+      }
+      if (video) {
+        video.pause();
+        video.remove();
+      }
+    };
+  }, []);
 
   return (
     <group {...props}>
