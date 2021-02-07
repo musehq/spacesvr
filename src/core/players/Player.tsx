@@ -14,7 +14,7 @@ import { GyroControls } from "../controls/GyroControls";
 import ClickDragControls from "../controls/ClickDragControls";
 import NippleMovement from "../controls/NippleMovement";
 
-const SPEED = 3.2; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
+const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
@@ -53,20 +53,16 @@ const Player = (props: PlayerProps) => {
   // consumer
   const direction = useRef(new Vector3());
 
-  // set init camera look
   const xLook = initPos.x + 100 * Math.cos(initRot);
   const zLook = initPos.z + 100 * Math.sin(initRot);
   camera?.lookAt(xLook, initPos.y, zLook);
+  camera.position.copy(initPos);
 
   // setup player
   useEffect(() => {
     // store position and velocity
     bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
     bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
-
-    const xLook = initPos.x + 100 * Math.cos(initRot);
-    const zLook = initPos.z + 100 * Math.sin(initRot);
-    camera?.lookAt(xLook, initPos.y, zLook);
 
     // set player for environment
     setPlayer(
@@ -106,6 +102,8 @@ const Player = (props: PlayerProps) => {
       bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
     }
   });
+
+  useFrame(({ gl, scene, camera }) => gl.render(scene, camera), 100);
 
   return (
     <>

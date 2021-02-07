@@ -1,6 +1,6 @@
-import { useRef, useEffect, MutableRefObject } from "react";
-import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Vector3, Vector2, Euler } from "three";
+import { useRef, useEffect } from "react";
+import { useThree } from "react-three-fiber";
+import { Vector2, Euler } from "three";
 import {
   Touch,
   DefaultTouch,
@@ -93,8 +93,7 @@ const TouchFPSCamera = () => {
     };
   }, []);
 
-  // @ts-ignore
-  return <></>;
+  return null;
 };
 
 export default TouchFPSCamera;

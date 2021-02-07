@@ -1,7 +1,7 @@
 import { Group, Raycaster, Vector3 } from "three";
 import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { config, useSpring } from "react-spring";
+import { useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
 import { isMobile } from "react-device-detect";
 
@@ -12,8 +12,8 @@ const Crosshair = () => {
   const group = useRef<Group>();
   const parent = useRef<Group>();
 
-  const dummyVector = useRef(new Vector3());
   const { camera, mouse } = useThree();
+  const dummyVector = useRef(new Vector3());
   const [raycaster] = useState(new Raycaster());
 
   const [spring, setSpring] = useSpring(() => ({

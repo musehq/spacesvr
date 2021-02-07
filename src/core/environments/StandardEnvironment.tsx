@@ -10,7 +10,6 @@ import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import { InfinitePlane } from "../../components/";
 import GlobalStyles from "../styles/GlobalStyles";
-import { isMobile } from "react-device-detect";
 import { ReactNode } from "react";
 import PauseMenu from "../tools/PauseMenu";
 import LoadingScreen from "../overlays/LoadingScreen";
@@ -35,7 +34,7 @@ const Container = styled.div`
 const defaultCanvasProps: Partial<ContainerProps> = {
   gl: {
     powerPreference: "high-performance",
-    antialias: false,
+    antialias: true,
     depth: true,
     alpha: false,
     stencil: false,
@@ -44,6 +43,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   shadowMap: false,
   pixelRatio: window.devicePixelRatio || 1,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -108,10 +108,10 @@ export const StandardEnvironment = (
             </environmentStateContext.Provider>
           </Physics>
           <Crosshair />
-          <PauseMenu />
+          {pauseMenu || <PauseMenu />}
         </Canvas>
         <environmentStateContext.Provider value={state}>
-          <LoadingScreen />
+          {loadingScreen || <LoadingScreen />}
         </environmentStateContext.Provider>
       </Container>
     </>

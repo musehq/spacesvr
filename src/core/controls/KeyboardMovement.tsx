@@ -75,7 +75,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
     };
   }, []);
 
-  return <></>;
+  return null;
 };
 
 export default KeyboardMovement;

@@ -53,7 +53,7 @@
     "node-fetch": "^2.6.1",
     "react-device-detect": "^1.13.1",
     "react-spring": "^8.0.27",
-    "react-three-fiber": "^5.1.4",
+    "react-three-fiber": "^5.3.18",
     "shopify-buy": "^2.11.0"
   },
   "peerDependencies": {
@@ -79,6 +79,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
+    "glsl-noise-simplex": "^0.0.2",
     "glslify-loader": "^2.0.0",
     "gltf-pipeline": "^3.0.0",
     "husky": "^4.2.5",
