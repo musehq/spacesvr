@@ -47,7 +47,7 @@
     "@react-three/cannon": "^0.5.3",
     "@react-three/drei": "^3.4.0",
     "@react-three/postprocessing": "^1.4.1",
-    "@react-three/xr": "^1.1.0",
+    "@react-three/xr": "^1.1.1",
     "component-material": "^1.0.6",
     "nipplejs": "^0.8.7",
     "node-fetch": "^2.6.1",

@@ -16,6 +16,8 @@ export type EnvironmentProps = {
 };
 
 export interface EnvironmentState {
+  device: Device;
+  setDevice: (d: Device) => void;
   type: Environment;
   paused: boolean;
   player: PlayerRef;
@@ -32,3 +34,5 @@ export interface EnvironmentEvent {
   name: string;
   callback: (...args: any[]) => void;
 }
+
+export type Device = "desktop" | "mobile" | "xr";

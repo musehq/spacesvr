@@ -13,8 +13,10 @@ import {
   PlayerRef,
   PortalEnvironmentState,
   KeyframeEnvironmentState,
+  Device,
 } from "../types";
 import { useProgress } from "@react-three/drei";
+import { isMobile } from "react-device-detect";
 
 export const environmentStateContext = createContext<EnvironmentState>(
   {} as EnvironmentState
@@ -33,6 +35,7 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
 }
 
 export function useEnvironmentState(): EnvironmentState {
+  const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
   const [paused, setPausedState] = useState(true);
   const [overlay, setOverlayState] = useState(null);
   const container = useRef<HTMLDivElement>(null);
@@ -79,6 +82,8 @@ export function useEnvironmentState(): EnvironmentState {
   );
 
   const context: EnvironmentState = {
+    device,
+    setDevice,
     type: Environment.STANDARD,
     paused,
     overlay,

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Raycaster, Vector3 } from "three";
+import { Camera, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../utils/hooks";
 import { createPlayerRef } from "../utils/player";
@@ -11,6 +11,8 @@ import {
   VisibleCapsuleCollider,
 } from "./colliders/CapsuleCollider";
 import { GyroControls } from "../controls/GyroControls";
+import VRControllerMovement from "../controls/VRControllerMovement";
+import { DefaultXRControllers } from "@react-three/xr";
 import ClickDragControls from "../controls/ClickDragControls";
 import NippleMovement from "../controls/NippleMovement";
 
@@ -34,8 +36,8 @@ export type PlayerProps = {
  */
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
-  const { camera, raycaster: defaultRaycaster } = useThree();
-  const { setPlayer } = useEnvironment();
+  const { camera, raycaster: defaultRaycaster, gl } = useThree();
+  const { device, setDevice, setPlayer } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -72,11 +74,17 @@ const Player = (props: PlayerProps) => {
 
   // update player every frame
   useFrame((_, delta) => {
+    if (gl.xr.isPresenting && device !== "xr") {
+      setDevice("xr");
+    }
+
+    const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+
     // update raycaster
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
       const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(camera.quaternion);
+      lookAt.applyQuaternion(cam.quaternion);
       raycaster.ray.direction.copy(lookAt);
     }
 
@@ -90,7 +98,7 @@ const Player = (props: PlayerProps) => {
       inputVelocity.z = direction.current.y; // forward/back
       inputVelocity.multiplyScalar(delta * 100 * speed);
 
-      const moveQuaternion = camera.quaternion.clone();
+      const moveQuaternion = cam.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
@@ -107,15 +115,22 @@ const Player = (props: PlayerProps) => {
 
   return (
     <>
-      {isMobile ? (
+      {device === "mobile" && (
         <>
           <GyroControls fallback={<TouchFPSCamera />} />
           <NippleMovement direction={direction} />
         </>
-      ) : (
+      )}
+      {device === "desktop" && (
         <>
           <KeyboardMovement direction={direction} />
           <ClickDragControls />
+        </>
+      )}
+      {device === "xr" && (
+        <>
+          <VRControllerMovement position={position} direction={direction} />
+          <DefaultXRControllers />
         </>
       )}
       <mesh ref={bodyRef} name="player">

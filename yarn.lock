@@ -1117,7 +1117,7 @@
     postprocessing "^6.17.1"
     react-merge-refs "^1.1.0"
 
-"@react-three/xr@^1.1.0":
+"@react-three/xr@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@react-three/xr/-/xr-1.1.1.tgz#4a69f492433e57ab4efcc8184438b48ea6953254"
   integrity sha512-5e6cnzAG4zja7iILRZJKpVhUiizOYf8XXSaY5rURuMsdI/CAZXdoDK0L91DxAMo8/zxh+4O8K5Fc6HyBWJDJ+g==
