@@ -10,7 +10,7 @@ import { EnvironmentProps } from "../types";
 import { InfinitePlane } from "../../components/";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
-import PauseMenu from "../tools/PauseMenu";
+import Navigator from "../tools/Navigator";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { VRCanvas } from "@react-three/xr";
 
@@ -64,7 +64,7 @@ type StandardEnvironmentProps = {
     rot?: number;
     speed?: number;
   };
-  pauseMenu?: ReactNode;
+  navigator?: ReactNode;
   disableGround?: boolean;
   loadingScreen?: ReactNode;
 };
@@ -88,7 +88,7 @@ export const StandardEnvironment = (
     physicsProps,
     player,
     disableGround,
-    pauseMenu,
+    navigator,
     loadingScreen,
   } = props;
 
@@ -107,7 +107,7 @@ export const StandardEnvironment = (
                 speed={player?.speed}
               />
               <Crosshair />
-              {pauseMenu || <PauseMenu />}
+              {navigator || <Navigator />}
               {!disableGround && <InfinitePlane height={-0.001} />}
               {children}
             </environmentStateContext.Provider>

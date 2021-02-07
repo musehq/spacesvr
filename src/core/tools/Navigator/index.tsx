@@ -7,7 +7,7 @@ import { Tool } from "../../../modifiers/Tool";
 import { animated, useSpring } from "react-spring/three";
 import { config } from "react-spring";
 
-const PauseMenu = () => {
+const Navigator = () => {
   const [open, setOpen] = useState(true);
 
   const onKeyPress = (e: KeyboardEvent) => {
@@ -40,4 +40,4 @@ const PauseMenu = () => {
   );
 };
 
-export default PauseMenu;
+export default Navigator;
