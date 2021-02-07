@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Idea } from "../../../components/Idea";
 import { Floating } from "../../../modifiers/Floating";
-import Menu from "./components/Menu";
 import { Tool } from "../../../modifiers/Tool";
+import Menu from "./panels/Menu";
 // @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { config } from "react-spring";
