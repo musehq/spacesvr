@@ -73,7 +73,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (gl.xr.isPresenting && device !== "xr") {
       setDevice("xr");
     }
@@ -96,7 +96,7 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current) {
       inputVelocity.x = direction.current.x * 0.75;
       inputVelocity.z = direction.current.y; // forward/back
-      inputVelocity.multiplyScalar(delta * 100 * speed);
+      inputVelocity.multiplyScalar(speed);
 
       const moveQuaternion = cam.quaternion.clone();
       moveQuaternion.x = 0;

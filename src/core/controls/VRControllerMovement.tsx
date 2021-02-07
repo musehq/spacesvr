@@ -1,6 +1,6 @@
 import { useController } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
-import { Quaternion, Vector3 } from "three";
+import { Vector3 } from "three";
 import { useFrame, useThree } from "react-three-fiber";
 import { Group } from "three";
 
@@ -18,19 +18,19 @@ type VRControllerMovementProps = {
  * @constructor
  */
 
-const ROTATION_SPEED = 0.02;
+const ROTATION_SPEED = 2;
 const MOVEMENT_SPEED = 1;
 
 const VRControllerMovement = (props: VRControllerMovementProps) => {
   const { position, direction } = props;
 
-  const { camera, gl } = useThree();
+  const { camera } = useThree();
   const group = useRef<Group>();
 
   const left = useController("left");
   const right = useController("right");
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (position.current) {
       const { x: pX, y: pY, z: pZ } = position.current;
       group.current?.position?.set(pX, pY, pZ);
@@ -51,7 +51,7 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
       // rotate the camera parent
       const [, , x] = right.inputSource.gamepad.axes;
       if (group.current) {
-        group.current.rotation.y -= x * ROTATION_SPEED;
+        group.current.rotation.y -= x * ROTATION_SPEED * delta;
       }
     }
   });

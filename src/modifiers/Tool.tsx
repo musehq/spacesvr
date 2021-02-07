@@ -1,8 +1,9 @@
 import React, { ReactNode, useRef } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Group, Vector3 } from "three";
+import { Camera, Group, Vector3 } from "three";
 import { useSpring } from "react-spring";
 import { getSpringValues } from "../core/utils/spring";
+import { useEnvironment } from "../core";
 
 type Props = {
   children: ReactNode;
@@ -26,7 +27,8 @@ const DISTANCE = 0.05;
 export const Tool = (props: Props) => {
   const { children, pos, face = true, distance = DISTANCE } = props;
 
-  const { camera, size } = useThree();
+  const { camera, size, gl } = useThree();
+  const { device } = useEnvironment();
 
   const group = useRef<Group>();
   const parent = useRef<Group>();
@@ -43,10 +45,12 @@ export const Tool = (props: Props) => {
   useFrame(() => {
     if (!group.current) return;
 
+    const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
       dummyVector.set(xPos, 0.04 * pos[1], -distance);
-      const moveQuaternion = camera.quaternion.clone();
+      const moveQuaternion = cam.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       dummyVector.applyQuaternion(moveQuaternion);
@@ -55,7 +59,7 @@ export const Tool = (props: Props) => {
     }
 
     if (face) {
-      group.current.lookAt(camera.position);
+      group.current.lookAt(cam.position);
     }
 
     const [x, y, z] = getSpringValues(spring);
@@ -64,7 +68,8 @@ export const Tool = (props: Props) => {
 
   useFrame(() => {
     if (parent.current) {
-      parent.current.position.copy(camera.position);
+      const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+      parent.current.position.copy(cam.position);
     }
   }, 1);
 

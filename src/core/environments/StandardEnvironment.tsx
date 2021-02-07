@@ -8,8 +8,6 @@ import Player from "../players/Player";
 import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
 import { EnvironmentProps } from "../types";
 import { InfinitePlane } from "../../components/";
-import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import PauseMenu from "../tools/PauseMenu";
@@ -46,6 +44,9 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   noEvents: true,
+  // disable default enter vr button
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onCreated: () => {},
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -105,12 +106,12 @@ export const StandardEnvironment = (
                 initRot={player?.rot}
                 speed={player?.speed}
               />
+              <Crosshair />
+              {pauseMenu || <PauseMenu />}
               {!disableGround && <InfinitePlane height={-0.001} />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
-          <Crosshair />
-          {pauseMenu || <PauseMenu />}
         </VRCanvas>
         <environmentStateContext.Provider value={state}>
           {loadingScreen || <LoadingScreen />}
