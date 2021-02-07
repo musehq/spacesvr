@@ -82,7 +82,11 @@ export function useEnvironmentState(): EnvironmentState {
   );
 
   const context: EnvironmentState = {
-    device,
+    device: {
+      xr: device === "xr",
+      mobile: device === "mobile",
+      desktop: device === "desktop",
+    },
     setDevice,
     type: Environment.STANDARD,
     paused,

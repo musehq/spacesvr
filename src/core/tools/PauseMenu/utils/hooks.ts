@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { XRSession } from "three";
+import { useEnvironment } from "../../../utils/hooks";
 
 export type MenuItem = {
   text: string;
@@ -76,10 +77,12 @@ const useFullscreenMenuItem = (): MenuItem | undefined => {
 
 export const useVRMenuItem = (): MenuItem | undefined => {
   const { gl } = useThree();
+  const { setDevice } = useEnvironment();
 
   // @ts-ignore
   const xr = navigator.xr;
 
+  const session = useRef<XRSession>();
   const [text, setText] = useState("Enter VR");
   const [supported, setSupported] = useState(false);
 
@@ -102,28 +105,27 @@ export const useVRMenuItem = (): MenuItem | undefined => {
   }
 
   const action = () => {
-    let currentSession: XRSession | null = null;
-    async function onSessionStarted(session: XRSession) {
-      session.addEventListener("end", onSessionEnded);
-      await gl.xr.setSession(session);
+    async function onSessionStarted(sesh: XRSession) {
+      sesh.addEventListener("end", onSessionEnded);
+      await gl.xr.setSession(sesh);
       setText("Exit VR");
-      currentSession = session;
+      setDevice("xr");
+      session.current = sesh;
     }
 
     function onSessionEnded() {
-      currentSession?.removeEventListener("end", onSessionEnded);
+      session.current?.removeEventListener("end", onSessionEnded);
       setText("Enter VR");
-      currentSession = null;
+      session.current = undefined;
     }
 
-    if (currentSession === null) {
+    if (session.current === undefined) {
       const sessionInit = {
         optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking"],
       };
       xr.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
     } else {
-      // @ts-ignore
-      currentSession?.end();
+      session.current?.end();
     }
   };
 

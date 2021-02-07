@@ -37,7 +37,7 @@ export type PlayerProps = {
 const Player = (props: PlayerProps) => {
   const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
-  const { device, setDevice, setPlayer } = useEnvironment();
+  const { device, setPlayer } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -74,11 +74,7 @@ const Player = (props: PlayerProps) => {
 
   // update player every frame
   useFrame(() => {
-    if (gl.xr.isPresenting && device !== "xr") {
-      setDevice("xr");
-    }
-
-    const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+    const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     // update raycaster
     if (!isMobile) {
@@ -115,19 +111,19 @@ const Player = (props: PlayerProps) => {
 
   return (
     <>
-      {device === "mobile" && (
+      {device.mobile && (
         <>
           <GyroControls fallback={<TouchFPSCamera />} />
           <NippleMovement direction={direction} />
         </>
       )}
-      {device === "desktop" && (
+      {device.desktop && (
         <>
           <KeyboardMovement direction={direction} />
           <ClickDragControls />
         </>
       )}
-      {device === "xr" && (
+      {device.xr && (
         <>
           <VRControllerMovement position={position} direction={direction} />
           <DefaultXRControllers />

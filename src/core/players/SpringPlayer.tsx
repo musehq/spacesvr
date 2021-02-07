@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Raycaster, Vector3 } from "three";
+import { Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
 import { createPlayerRef } from "../utils/player";

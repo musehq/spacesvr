@@ -16,7 +16,7 @@ export type EnvironmentProps = {
 };
 
 export interface EnvironmentState {
-  device: Device;
+  device: DeviceState;
   setDevice: (d: Device) => void;
   type: Environment;
   paused: boolean;
@@ -36,3 +36,9 @@ export interface EnvironmentEvent {
 }
 
 export type Device = "desktop" | "mobile" | "xr";
+
+export type DeviceState = {
+  xr: boolean;
+  mobile: boolean;
+  desktop: boolean;
+};

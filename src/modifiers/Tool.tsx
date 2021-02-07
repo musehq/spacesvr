@@ -45,7 +45,7 @@ export const Tool = (props: Props) => {
   useFrame(() => {
     if (!group.current) return;
 
-    const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+    const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
@@ -68,7 +68,7 @@ export const Tool = (props: Props) => {
 
   useFrame(() => {
     if (parent.current) {
-      const cam: Camera = device === "xr" ? gl.xr.getCamera(camera) : camera;
+      const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
       parent.current.position.copy(cam.position);
     }
   }, 1);
