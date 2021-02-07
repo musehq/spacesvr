@@ -12,24 +12,21 @@ import { useFrame, useThree } from "react-three-fiber";
 import { isMobile } from "react-device-detect";
 
 type Props = {
+  children: ReactNode;
   onClick?: () => void;
   onHover?: () => void;
   onUnHover?: () => void;
-  children: ReactNode;
 };
 
 /**
  *
- * Interactable adds on click and hover methods to any group of Object3D's.
- *
- * This is a bit convoluted for the sake of working with the ClickDragControls
- * (i.e. the test for a double click)
+ * Interactable adds on click and hover methods to any group of Object3D's
  *
  * @param props
  * @constructor
  */
 export const Interactable = (props: Props) => {
-  const { onClick, onHover, onUnHover, children } = props;
+  const { children, onClick, onHover, onUnHover } = props;
 
   const { raycaster: defaultRaycaster, gl } = useThree();
   const { domElement } = gl;
@@ -71,7 +68,7 @@ export const Interactable = (props: Props) => {
     const dist = downPos.distanceTo(
       new Vector2(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
     );
-    if (onClick && dist < 5) {
+    if (onClick && dist < 5 && hovered) {
       onClick();
     }
   };
