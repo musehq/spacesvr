@@ -42,7 +42,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   },
   concurrent: true,
   shadowMap: false,
-  pixelRatio: window.devicePixelRatio || 1,
+  pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
 };
 

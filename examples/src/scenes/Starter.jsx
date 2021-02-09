@@ -31,7 +31,7 @@ export default () => {
       <Audio url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3" />
       <Image
         src="https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8333.jpg"
-        size={[4.4, 4.4]}
+        size={[3, 3]}
         position={[-6, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed

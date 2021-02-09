@@ -9,6 +9,17 @@ type FrameProps = {
   material?: Material;
 };
 
+/**
+ *
+ * Builds a frame for a mesh with a texture (image, video, etc.)
+ *
+ * In the code, the frame is the back panel and the border is the
+ * four meshes that make up the top, left, right, and bottom sides
+ * of the border.
+ *
+ * @param props
+ * @constructor
+ */
 const Frame = (props: FrameProps) => {
   const { back, width, height, material: passedMaterial } = props;
 
@@ -23,18 +34,16 @@ const Frame = (props: FrameProps) => {
     []
   );
 
-  const size = Math.max(width, height);
-
-  const frameDepth = 0.1;
-  const frameWidth = 0.075 * size;
-  const borderDepth = 0.2;
-  const borderThickness = 0.05 * size;
+  const frameDepth = 0.025;
+  const frameWidth = 0.06;
+  const borderDepth = 0.05;
+  const borderThickness = 0.05;
   const meshOffset = 0.0005;
 
   return (
     <group>
       {back && (
-        <mesh position-z={[-0.1 - meshOffset]} material={material}>
+        <mesh position-z={[-frameDepth - meshOffset]} material={material}>
           <boxBufferGeometry
             attach="geometry"
             args={[width + frameWidth, height + frameWidth, frameDepth]}
