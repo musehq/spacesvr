@@ -22,6 +22,9 @@ export type PlayerProps = {
   initPos?: Vector3;
   initRot?: number;
   speed?: number;
+  controls?: {
+    disableGyro?: boolean;
+  };
 };
 
 /**
@@ -34,7 +37,12 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
+  const {
+    initPos = new Vector3(0, 0, 0),
+    initRot = 0,
+    speed = SPEED,
+    controls,
+  } = props;
   const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
@@ -105,13 +113,17 @@ const Player = (props: PlayerProps) => {
     <>
       {isMobile ? (
         <>
-          <GyroControls
-            quaternion={quaternion}
-            position={position}
-            fallback={
-              <TouchFPSCamera quaternion={quaternion} position={position} />
-            }
-          />
+          {controls?.disableGyro ? (
+            <TouchFPSCamera quaternion={quaternion} position={position} />
+          ) : (
+            <GyroControls
+              quaternion={quaternion}
+              position={position}
+              fallback={
+                <TouchFPSCamera quaternion={quaternion} position={position} />
+              }
+            />
+          )}
           <NippleMovement direction={direction} />
         </>
       ) : (

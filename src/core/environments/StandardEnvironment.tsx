@@ -60,6 +60,9 @@ type StandardEnvironmentProps = {
     pos?: Vector3;
     rot?: number;
     speed?: number;
+    controls?: {
+      disableGyro?: boolean;
+    };
   };
   pauseMenu?: ReactNode;
   disableGround?: boolean;
@@ -102,6 +105,7 @@ export const StandardEnvironment = (
                 initPos={player?.pos}
                 initRot={player?.rot}
                 speed={player?.speed}
+                controls={player?.controls}
               />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {children}
