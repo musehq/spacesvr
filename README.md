@@ -147,7 +147,8 @@ The Standard Environment defines the following:
     physicsProps={{...}} // props to be passed along to cannon.js
     player={{
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
-        rot: Math.PI / 2,  // initial rotation
+        rot: 0,  // initial rotation,
+        speed: 3.2 // meters per second (~1.4 walking, ~2.2 jogging)
     }}
 />
 ```

@@ -15,12 +15,16 @@ import {
 } from "./colliders/CapsuleCollider";
 import { GyroControls } from "../controls/GyroControls";
 
-const SPEED = 3.5; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
+const SPEED = 3.2; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
   initPos?: Vector3;
   initRot?: number;
+  speed?: number;
+  controls?: {
+    disableGyro?: boolean;
+  };
 };
 
 /**
@@ -33,7 +37,12 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 0, 0), initRot = 0 } = props;
+  const {
+    initPos = new Vector3(0, 0, 0),
+    initRot = 0,
+    speed = SPEED,
+    controls,
+  } = props;
   const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
 
@@ -71,7 +80,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame(() => {
+  useFrame((_, delta) => {
     // update raycaster
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
@@ -85,13 +94,13 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current && !paused) {
       inputVelocity.x = direction.current.x * 0.75;
       inputVelocity.z = direction.current.y; // forward/back
-      inputVelocity.multiplyScalar(SPEED);
+      inputVelocity.multiplyScalar(delta * 100 * speed);
 
       const moveQuaternion = camera.quaternion.clone();
       moveQuaternion.x = 0;
       moveQuaternion.z = 0;
       inputVelocity.applyQuaternion(moveQuaternion);
-      inputVelocity.y = velocity.current.y;
+      inputVelocity.y = Math.min(velocity.current.y, 0);
     }
 
     if (!lockControls.current) {
@@ -104,13 +113,17 @@ const Player = (props: PlayerProps) => {
     <>
       {isMobile ? (
         <>
-          <GyroControls
-            quaternion={quaternion}
-            position={position}
-            fallback={
-              <TouchFPSCamera quaternion={quaternion} position={position} />
-            }
-          />
+          {controls?.disableGyro ? (
+            <TouchFPSCamera quaternion={quaternion} position={position} />
+          ) : (
+            <GyroControls
+              quaternion={quaternion}
+              position={position}
+              fallback={
+                <TouchFPSCamera quaternion={quaternion} position={position} />
+              }
+            />
+          )}
           <NippleMovement direction={direction} />
         </>
       ) : (

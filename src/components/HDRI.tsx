@@ -7,7 +7,7 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
   src: string;
-  hideBackground: boolean;
+  hideBackground?: boolean;
 };
 
 export const HDRI = (props: HDRIProps) => {
@@ -29,13 +29,12 @@ export const HDRI = (props: HDRIProps) => {
       const envMap = new THREE.WebGLCubeRenderTarget(
         4096,
         opts
-      ).fromEquirectangularTexture(gl, texture);
+      ).fromEquirectangularTexture(gl, texture).texture;
 
       // sent envmap onto scene env and background
       if (!hideBackground) {
         scene.background = envMap;
       }
-      // @ts-ignore
       scene.environment = envMap;
 
       texture.dispose();

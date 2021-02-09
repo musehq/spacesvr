@@ -95,12 +95,17 @@ export function useEnvironmentState(): EnvironmentState {
 }
 
 export const useControlledProgress = () => {
-  const TIMEOUT = 750;
+  const TIMEOUT = 750; // minimum time to wait before moving to 100
+  const AFTER_TIME = 100; // extra time to prevent bouncing at reaching 100
+  const STUCK_TIMEOUT = 5500; // for safari, when stuck at a value above 50
 
   const { progress, total } = useProgress();
 
   const startTime = useRef(new Date());
   const controlledProgress = useRef(0);
+  const finished = useRef(false);
+  const [, setForceRender] = useState(0);
+
   useEffect(() => {
     const newTime = new Date();
     const timeElapsed = newTime.getTime() - startTime.current.getTime();
@@ -109,7 +114,30 @@ export const useControlledProgress = () => {
       timeElapsed < TIMEOUT ? 99 : 100
     );
     if (diff > 0) {
-      controlledProgress.current = progress;
+      if (progress === 100) {
+        finished.current = true;
+        // if progress 100, check in AFTER_TIME ms to make sure it hasn't
+        // bounced back down
+        setTimeout(() => {
+          if (finished.current) {
+            controlledProgress.current = progress;
+            // set state to force re render
+            setForceRender(Math.random());
+          }
+        }, AFTER_TIME);
+      } else {
+        finished.current = false;
+        controlledProgress.current = progress;
+
+        // once above 50, skip progress is stuck then skip loading
+        if (progress > 50) {
+          setTimeout(() => {
+            if (controlledProgress.current === progress) {
+              setSkip(true);
+            }
+          }, STUCK_TIMEOUT);
+        }
+      }
     }
   }, [progress]);
 
@@ -127,4 +155,25 @@ export const useControlledProgress = () => {
   }, [counter]);
 
   return skip ? 100 : Math.floor(controlledProgress.current);
+};
+
+/**
+ * Check validity of browser to run 3d experiences,
+ * Automatically blacklists Facebook & Instagram in-app
+ * browsers
+ *
+ * @param keywords
+ */
+export const useValidBrowser = (keywords?: string[]) => {
+  const [valid, setValid] = useState(true);
+
+  const INVALID_KEYWORDS = ["FBAN", "FBAV", "Instagram"].concat(keywords || []);
+
+  useEffect(() => {
+    const ua = navigator.userAgent || navigator.vendor || "";
+    const valid = INVALID_KEYWORDS.filter((val) => ua.includes(val));
+    setValid(valid.length === 0);
+  }, []);
+
+  return valid;
 };

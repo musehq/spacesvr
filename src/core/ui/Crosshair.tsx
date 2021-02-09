@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { isMobile } from "react-device-detect";
 
 const Element = styled.div`
   position: fixed;
@@ -25,6 +26,10 @@ const Element = styled.div`
 `;
 
 const Crosshair = () => {
+  if (isMobile) {
+    return null;
+  }
+
   return <Element />;
 };
 

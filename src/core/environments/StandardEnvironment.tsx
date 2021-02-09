@@ -1,4 +1,3 @@
-import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
@@ -50,6 +49,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 const defaultPhysicsProps: Partial<ProviderProps> = {
   size: 50,
   allowSleep: false,
+  gravity: [0, -9.8 * 2, 0],
   defaultContactMaterial: {
     friction: 0,
   },
@@ -59,10 +59,14 @@ type StandardEnvironmentProps = {
   player?: {
     pos?: Vector3;
     rot?: number;
+    speed?: number;
+    controls?: {
+      disableGyro?: boolean;
+    };
   };
-  effects?: ReactNode;
   pauseMenu?: ReactNode;
   disableGround?: boolean;
+  loadingScreen?: ReactNode;
 };
 
 /**
@@ -85,25 +89,31 @@ export const StandardEnvironment = (
     player,
     disableGround,
     pauseMenu,
+    loadingScreen,
   } = props;
 
   const state = useEnvironmentState();
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <environmentStateContext.Provider value={state}>
-              <Player initPos={player?.pos} initRot={player?.rot} />
+              <Player
+                initPos={player?.pos}
+                initRot={player?.rot}
+                speed={player?.speed}
+                controls={player?.controls}
+              />
               {!disableGround && <InfinitePlane height={-0.001} />}
               {children}
             </environmentStateContext.Provider>
           </Physics>
         </Canvas>
         <environmentStateContext.Provider value={state}>
-          <LoadingScreen />
+          {loadingScreen || <LoadingScreen />}
           {pauseMenu || (
             <>
               <DesktopPause />
@@ -113,6 +123,6 @@ export const StandardEnvironment = (
           <Crosshair />
         </environmentStateContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };
