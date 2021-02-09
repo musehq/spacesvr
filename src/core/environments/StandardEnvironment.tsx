@@ -35,7 +35,7 @@ const Container = styled.div`
 const defaultCanvasProps: Partial<ContainerProps> = {
   gl: {
     powerPreference: "high-performance",
-    antialias: false,
+    antialias: true,
     depth: true,
     alpha: false,
     stencil: false,
