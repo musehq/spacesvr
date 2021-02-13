@@ -170,7 +170,7 @@ The Keyframe Environment defines the following:
     physicsProps={{...}} // props to be passed along to cannon.js
     player={{
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
-        rot: Math.PI / 2,  // initial rotation
+        rot: Math.PI / 2,  // initial rotation,
     }}
     keyframes={[
         { label: "home", position: new Vector3(0, 2, 5) },
@@ -191,10 +191,10 @@ An arrow icon
 
 #### Audio
 
-A positional audio component that will play the passed in audio url.
+A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
 
 ```jsx
-<Audio url="https://link-to-your-audio.mp3" position={new Vector3(0, 4, 0)} />
+<Audio url="https://link-to-your-audio.mp3" position={[0, 4, 0]} volume={1} />
 ```
 
 #### Background
@@ -231,9 +231,8 @@ Quickly add an image to your scene
 ```jsx
 <Image
   src="https://link-to-your-image.png"
-  size={[width, height]}
+  size={1} // size, default normalized to longest side = 1
   framed // adds a frame
-  doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
 />
 ```
@@ -246,18 +245,6 @@ Adds a cool Spaces Logo
 <Logo
   floating // makes logo slowly float
   rotating // makes logo slowly rotate
-/>
-```
-
-#### Shop
-
-Given Shopify credentials, will populate space with products available for sale.
-
-```jsx
-<Shop
-  domain="shopify-domain.myshopify.com"
-  token="YOUR_SHOPIFY_STOREFRONT_ACCESS_TOKEN"
-  itemSize={4} // size of the products on display
 />
 ```
 
@@ -280,15 +267,15 @@ a json file, which can be done here: https://gero3.github.io/facetype.js/
 
 #### Video
 
-Add a video file to your space with positional audio
+Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
 
 ```jsx
 <Video
   src="https://link-to-your-video.mp4"
-  size={[width, height]}
+  size={1} // size, default normalized to longest side = 1
+  volume={1}
   muted // mutes the video
   framed // adds a frame
-  doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
 />
 ```

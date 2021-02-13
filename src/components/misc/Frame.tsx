@@ -6,7 +6,6 @@ import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtil
 type FrameProps = {
   width: number;
   height: number;
-  back?: boolean;
   material?: Material;
 };
 
@@ -22,7 +21,7 @@ type FrameProps = {
  * @constructor
  */
 const Frame = (props: FrameProps) => {
-  const { back, width, height, material: passedMaterial } = props;
+  const { width, height, material: passedMaterial } = props;
 
   const material = useMemo(
     () =>
@@ -89,10 +88,7 @@ const Frame = (props: FrameProps) => {
       0
     );
 
-    const geos = [topFrame, bottomFrame, leftFrame, rightFrame];
-    if (back) {
-      geos.push(backPanel);
-    }
+    const geos = [backPanel, topFrame, bottomFrame, leftFrame, rightFrame];
 
     const geo = BufferGeometryUtils.mergeBufferGeometries(geos);
 
