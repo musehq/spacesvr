@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import * as THREE from "three";
-import { Material } from "three";
+import { BoxBufferGeometry, BufferGeometry, Material } from "three";
+import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 type FrameProps = {
   width: number;
@@ -40,58 +41,71 @@ const Frame = (props: FrameProps) => {
   const borderThickness = 0.05;
   const meshOffset = 0.0005;
 
-  return (
-    <group>
-      {back && (
-        <mesh position-z={[-frameDepth - meshOffset]} material={material}>
-          <boxBufferGeometry
-            attach="geometry"
-            args={[width + frameWidth, height + frameWidth, frameDepth]}
-          />
-        </mesh>
-      )}
-      {/* top */}
-      <mesh
-        position-y={height / 2 + frameWidth / 2 - borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[width + frameWidth, borderThickness, borderDepth]}
-        />
-      </mesh>
-      {/* bottom */}
-      <mesh
-        position-y={-height / 2 - frameWidth / 2 + borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[width + frameWidth, borderThickness, borderDepth]}
-        />
-      </mesh>
-      {/* left */}
-      <mesh
-        position-x={-width / 2 - frameWidth / 2 + borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[borderThickness, height + frameWidth, borderDepth]}
-        />
-      </mesh>
-      {/* right */}
-      <mesh
-        position-x={width / 2 + frameWidth / 2 - borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[borderThickness, height + frameWidth, borderDepth]}
-        />
-      </mesh>
-    </group>
-  );
+  const geometry = useMemo<BufferGeometry>(() => {
+    const backPanel = new BoxBufferGeometry(
+      width + frameWidth,
+      height + frameWidth,
+      frameDepth
+    );
+    backPanel.translate(0, 0, -frameDepth - meshOffset);
+
+    const topFrame = new BoxBufferGeometry(
+      width + frameWidth,
+      borderThickness,
+      borderDepth
+    );
+    topFrame.translate(0, height / 2 + frameWidth / 2 - borderThickness / 2, 0);
+
+    const bottomFrame = new BoxBufferGeometry(
+      width + frameWidth,
+      borderThickness,
+      borderDepth
+    );
+    bottomFrame.translate(
+      0,
+      -height / 2 - frameWidth / 2 + borderThickness / 2,
+      0
+    );
+
+    const leftFrame = new BoxBufferGeometry(
+      borderThickness,
+      height + frameWidth,
+      borderDepth
+    );
+    leftFrame.translate(
+      -width / 2 - frameWidth / 2 + borderThickness / 2,
+      0,
+      0
+    );
+
+    const rightFrame = new BoxBufferGeometry(
+      borderThickness,
+      height + frameWidth,
+      borderDepth
+    );
+    rightFrame.translate(
+      width / 2 + frameWidth / 2 - borderThickness / 2,
+      0,
+      0
+    );
+
+    const geos = [topFrame, bottomFrame, leftFrame, rightFrame];
+    if (back) {
+      geos.push(backPanel);
+    }
+
+    const geo = BufferGeometryUtils.mergeBufferGeometries(geos);
+
+    backPanel.dispose();
+    topFrame.dispose();
+    bottomFrame.dispose();
+    leftFrame.dispose();
+    rightFrame.dispose();
+
+    return geo;
+  }, [width, height]);
+
+  return <mesh geometry={geometry} material={material} />;
 };
 
 export default Frame;
