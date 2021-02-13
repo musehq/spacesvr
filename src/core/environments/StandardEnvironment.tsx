@@ -15,6 +15,7 @@ import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import { ResizeObserver } from "@juggle/resize-observer";
 
 const Container = styled.div`
   position: absolute;
@@ -44,6 +45,8 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   shadowMap: false,
   pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {

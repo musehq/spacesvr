@@ -17,6 +17,7 @@ import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
+import { ResizeObserver } from "@juggle/resize-observer";
 
 const Container = styled.div`
   position: absolute;
@@ -51,8 +52,10 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   },
   concurrent: true,
   shadowMap: false,
-  pixelRatio: window.devicePixelRatio || 1,
+  pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
