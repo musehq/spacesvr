@@ -10,7 +10,7 @@
      Sleek, powerful front-end framework for quickly creating cross-platform VR Websites.
 </h5>
 <p align="center">
-    <a href="https://spacesvr.io">spacesvr.io</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place/muse">muse.place/muse</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
 <br/>
 <br/>
