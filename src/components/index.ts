@@ -6,7 +6,6 @@ export * from "./HDRI";
 export * from "./Image";
 export * from "./InfinitePlane";
 export * from "./Logo";
-export * from "./Shop";
 export * from "./Text";
 export * from "./Video";
 export * from "./Fog";
