@@ -11,7 +11,6 @@ import { EnvironmentProps } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
@@ -117,12 +116,7 @@ export const StandardEnvironment = (
         </Canvas>
         <environmentStateContext.Provider value={state}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu || (
-            <>
-              <DesktopPause />
-              {isMobile && <MobilePause />}
-            </>
-          )}
+          {pauseMenu || <DesktopPause />}
           <Crosshair />
         </environmentStateContext.Provider>
       </Container>

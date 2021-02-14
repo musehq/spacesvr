@@ -12,7 +12,6 @@ import { Vector3 } from "three";
 import ParamaterizedPlayer from "../players/ParamaterizedPlayer";
 import Player from "../players/Player";
 import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 
@@ -134,7 +133,6 @@ export const PortalEnvironment = (
           {children2d}
           <ShirtsLoading setFixedPath={setFixedPath} />
           <DesktopPause />
-          {isMobile && <MobilePause />}
         </environmentStateContext.Provider>
       </Container>
     </>

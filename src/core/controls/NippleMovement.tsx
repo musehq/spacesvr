@@ -47,7 +47,7 @@ const NippleMovement = (props: NippleMovementProps) => {
         position: { left: "50%", top: "50%" },
         color: "gray",
         size: 120,
-        restOpacity: 0.5,
+        restOpacity: 0.75,
       });
 
       nipple.current.on("move", (evt, data) => {
