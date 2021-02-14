@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import * as THREE from "three";
 import { useLoader } from "react-three-fiber";
 import { Material } from "three";
@@ -10,7 +11,7 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   material?: Material;
 };
 
-export const Image = (props: ImageProps) => {
+const UnsuspensedImage = (props: ImageProps) => {
   const { src, size = 1, framed, material } = props;
 
   const texture = useLoader(THREE.TextureLoader, src);
@@ -29,5 +30,13 @@ export const Image = (props: ImageProps) => {
       </mesh>
       {framed && <Frame width={WIDTH} height={HEIGHT} material={material} />}
     </group>
+  );
+};
+
+export const Image = (props: ImageProps) => {
+  return (
+    <Suspense fallback={null}>
+      <UnsuspensedImage {...props} />
+    </Suspense>
   );
 };
