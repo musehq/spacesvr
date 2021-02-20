@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
+import {
+  useEnvironmentState,
+  EnvironmentContext,
+} from "../contexts/environment";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -80,7 +83,6 @@ type KeyframeEnvironmentProps = {
  * Pause Menu: Spaces Edition
  *
  */
-
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
@@ -122,16 +124,16 @@ export const KeyframeEnvironment = (
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <environmentStateContext.Provider value={localState}>
+            <EnvironmentContext.Provider value={localState}>
               <SpringPlayer spring={spring} />
               <SpringScaled spring={spring}>{children}</SpringScaled>
-            </environmentStateContext.Provider>
+            </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={localState}>
+        <EnvironmentContext.Provider value={localState}>
           <LoadingScreen />
           <KeyframeControlDisplay />
-        </environmentStateContext.Provider>
+        </EnvironmentContext.Provider>
       </Container>
     </>
   );

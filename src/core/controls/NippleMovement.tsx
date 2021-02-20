@@ -1,7 +1,7 @@
 import { useRef, useEffect, MutableRefObject } from "react";
 import { Vector3 } from "three";
 import nipplejs, { JoystickManager } from "nipplejs";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 
 type NippleMovementProps = {
   direction: MutableRefObject<Vector3>;

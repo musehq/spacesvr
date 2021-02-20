@@ -2,7 +2,7 @@ import { useRef, useEffect, MutableRefObject } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { config, useSpring } from "react-spring";
 import { Quaternion, Vector3, Vector2, Euler } from "three";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import { getSpringValues } from "../utils/spring";
 
 type DragControlsProps = {
