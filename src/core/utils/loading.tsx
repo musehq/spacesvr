@@ -1,5 +1,5 @@
 import { ReactNode, useContext } from "react";
-import { LoadingContext } from "../contexts";
+import { LoadingContext } from "../contexts/loading";
 import { AssetUrls, Assets, AssetType } from "../types";
 
 /**

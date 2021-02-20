@@ -2,6 +2,7 @@ import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { PlayerRef } from "./player";
 import { MutableRefObject, ReactNode } from "react";
+import { AssetUrls } from "./loading";
 
 export enum Environment {
   STANDARD,
@@ -11,6 +12,7 @@ export enum Environment {
 
 export type EnvironmentProps = {
   children: ReactNode;
+  assets?: AssetUrls;
   canvasProps?: Partial<ContainerProps>;
   physicsProps?: Partial<ProviderProps>;
 };

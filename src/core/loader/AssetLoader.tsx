@@ -1,5 +1,5 @@
 import { Suspense, useContext } from "react";
-import { LoadingContext } from "../contexts";
+import { LoadingContext } from "../contexts/loading";
 import EnvAsset from "./loaders/EnvAsset";
 import { getAssetType } from "../utils/loading";
 import ImageAsset from "./loaders/ImageAsset";

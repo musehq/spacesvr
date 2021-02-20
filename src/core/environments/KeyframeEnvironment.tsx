@@ -21,6 +21,9 @@ import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
 import { ResizeObserver } from "@juggle/resize-observer";
+import { MountOnLoad } from "../utils/loading";
+import { LoadingContext, useLoadingState } from "../contexts";
+import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -86,7 +89,7 @@ type KeyframeEnvironmentProps = {
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes } = props;
+  const { children, canvasProps, physicsProps, keyframes, assets } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -118,6 +121,8 @@ export const KeyframeEnvironment = (
     },
   };
 
+  const loadState = useLoadingState(assets);
+
   return (
     <>
       <GlobalStyles />
@@ -125,15 +130,22 @@ export const KeyframeEnvironment = (
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={localState}>
-              <SpringPlayer spring={spring} />
-              <SpringScaled spring={spring}>{children}</SpringScaled>
+              <LoadingContext.Provider value={loadState}>
+                <MountOnLoad>
+                  <SpringPlayer spring={spring} />
+                  <SpringScaled spring={spring}>{children}</SpringScaled>
+                </MountOnLoad>
+              </LoadingContext.Provider>
             </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <EnvironmentContext.Provider value={localState}>
-          <LoadingScreen />
-          <KeyframeControlDisplay />
-        </EnvironmentContext.Provider>
+        <LoadingContext.Provider value={loadState}>
+          <AssetLoader />
+          <EnvironmentContext.Provider value={localState}>
+            <LoadingScreen />
+            <KeyframeControlDisplay />
+          </EnvironmentContext.Provider>
+        </LoadingContext.Provider>
       </Container>
     </>
   );

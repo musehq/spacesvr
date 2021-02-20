@@ -10,14 +10,14 @@ import {
   useEnvironmentState,
   EnvironmentContext,
 } from "../contexts/environment";
-import { AssetUrls, EnvironmentProps } from "../types";
+import { EnvironmentProps } from "../types/environment";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { LoadingContext, useLoadingState } from "../contexts";
+import { LoadingContext, useLoadingState } from "../contexts/loading";
 import { MountOnLoad } from "../utils/loading";
 import AssetLoader from "../loader/AssetLoader";
 
@@ -71,7 +71,6 @@ type StandardEnvironmentProps = {
       disableGyro?: boolean;
     };
   };
-  assets?: AssetUrls;
   pauseMenu?: ReactNode;
   disableGround?: boolean;
   loadingScreen?: ReactNode;
@@ -100,6 +99,10 @@ export const StandardEnvironment = (
     loadingScreen,
   } = props;
 
+  const initialCamera = player?.pos
+    ? (player.pos.toArray() as [number, number, number])
+    : defaultCanvasProps?.camera?.position;
+
   const envState = useEnvironmentState();
   const loadState = useLoadingState(assets);
 
@@ -107,7 +110,11 @@ export const StandardEnvironment = (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
-        <Canvas {...defaultCanvasProps} {...canvasProps}>
+        <Canvas
+          {...defaultCanvasProps}
+          {...canvasProps}
+          camera={{ position: initialCamera }}
+        >
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={envState}>
               <LoadingContext.Provider value={loadState}>
