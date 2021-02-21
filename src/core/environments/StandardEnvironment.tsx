@@ -99,10 +99,6 @@ export const StandardEnvironment = (
     loadingScreen,
   } = props;
 
-  const initialCamera = player?.pos
-    ? (player.pos.toArray() as [number, number, number])
-    : defaultCanvasProps?.camera?.position;
-
   const envState = useEnvironmentState();
   const loadState = useLoadingState(assets);
 
@@ -110,11 +106,7 @@ export const StandardEnvironment = (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
-        <Canvas
-          {...defaultCanvasProps}
-          {...canvasProps}
-          camera={{ position: initialCamera }}
-        >
+        <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <LoadingContext.Provider value={loadState}>
               <EnvironmentContext.Provider value={envState}>

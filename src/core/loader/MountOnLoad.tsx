@@ -13,11 +13,10 @@ import { ReactNode, useContext } from "react";
 export const MountOnLoad = (props: { children: ReactNode }) => {
   const { children } = props;
 
-  const { legacyLoader, percentage } = useContext(LoadingContext);
+  const { legacyLoader, progress } = useContext(LoadingContext);
 
-  if (!legacyLoader && percentage !== 1) {
+  if (!legacyLoader && progress !== 100) {
     return null;
   }
-
   return <>{children}</>;
 };

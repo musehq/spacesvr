@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { proxy, subscribe, useProxy } from "valtio";
 import { Asset, AssetUrls, LoadingState } from "../types";
-import { getPercentage, transformAssetList } from "../utils/loading";
+import {
+  getProgress,
+  transformAssetList,
+  useLegacyProgress,
+} from "../utils/loading";
 
 export const LoadingContext = createContext<LoadingState>({} as LoadingState);
 
@@ -21,13 +25,14 @@ export const useLoadingState = (assetList?: AssetUrls) => {
   const legacyLoader = assetList === undefined;
 
   const assets = useMemo(() => proxy(transformAssetList(assetList)), []);
-  const [percentage, setPercentage] = useState(legacyLoader ? 1 : 0);
+  const [progress, setProgress] = useState(legacyLoader ? 100 : 0);
+  const legacyProgress = useLegacyProgress();
 
   // subscribe to updates to keep percentage value up to date
   useEffect(() => {
     if (!legacyLoader) {
       const unsubscribe = subscribe(assets, () =>
-        setPercentage(getPercentage(assets))
+        setProgress(getProgress(assets))
       );
 
       return () => {
@@ -36,5 +41,9 @@ export const useLoadingState = (assetList?: AssetUrls) => {
     }
   }, [legacyLoader, assets]);
 
-  return { legacyLoader, assets, percentage };
+  return {
+    legacyLoader,
+    assets,
+    progress: legacyLoader ? legacyProgress : progress,
+  };
 };

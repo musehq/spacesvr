@@ -16,6 +16,6 @@ export interface Assets {
 
 export type LoadingState = {
   legacyLoader: boolean;
-  percentage: number;
+  progress: number;
   assets: Assets;
 };

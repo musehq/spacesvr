@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { useControlledProgress } from "../utils/hooks";
 import { useContext } from "react";
 import { LoadingContext } from "../contexts/loading";
 
@@ -22,12 +21,10 @@ const Container = styled.div<{ finished: boolean }>`
 `;
 
 const LoadingScreen = () => {
-  const { legacyLoader, percentage } = useContext(LoadingContext);
-  const progress = useControlledProgress();
-
-  const prog = legacyLoader ? progress : percentage * 100;
-
-  return <Container finished={prog == 100}>{Math.round(prog)}%</Container>;
+  const { progress } = useContext(LoadingContext);
+  return (
+    <Container finished={progress === 100}>{Math.round(progress)}%</Container>
+  );
 };
 
 export default LoadingScreen;
