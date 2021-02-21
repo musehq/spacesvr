@@ -93,6 +93,29 @@ Under the hood it enables cannon physics and react-three-fiber code with a canva
 to do is wrap your [react-three-fiber](https://github.com/react-spring/react-three-fiber)
 code in an environment and you will be able to navigate your space on mobile and desktop!
 
+### assets
+
+The `Environment` component comes out of the box with a loader and a loading overlay, using
+Drei's `useProgress` hook.
+
+However, this hook is unreliable for 3D files, especially with iOS and Safari. So if you want to ensure your assets are loaded correctly, pass an array
+of asset urls to the `assets` prop in the `Environment` component and use the `useAsset` hook
+to retrieve the data from that asset. Currently supported assets are `hdr, png, jpg, glb, gltf`.
+
+```jsx
+<StandardEnvironment assets={["https://link-to-model.glb", "https://link-to-texture.png"]}>
+    <Suspense fallback={null}>
+        <Model />
+    </Suspense>
+</StandardEnvironment>
+
+// in <Model/>
+const Model = () =>
+    const asset = useAsset("https://link-to-model.glb");
+    return <primitive object={asset.data.scene} />
+}
+```
+
 #### the useEnvironment Hook.
 
 The `useEnvironment` hook is your direct access to the environment state. It can be used anywhere
@@ -100,7 +123,7 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 
 ```jsx
 {
-  type: Environment; // the type of environment, { STANDARD, TRACK, PORTAL }
+  type: Environment; // the type of environment, { STANDARD, TRACK }
   paused: boolean; // whether the pointer lock controls are engaged
   setPaused: (p: boolean, overlay?: string) => void; // set the paused state, along with overlay
   player: PlayerRef;
@@ -157,7 +180,7 @@ The Standard Environment defines the following:
 
 The Keyframe Environment defines the following:
 
-- 2 unit tall floating player
+- 1 unit tall floating player
 - Move with Arrow Keys, A/D movement, or Onscreen Arrows
 - Drag Controls, Gryro Controls with Mobile Drag as fallback
 - Physics enabled, ground plane at y=0
@@ -251,7 +274,9 @@ Adds a cool Spaces Logo
 #### Text
 
 A 3D text component with a default font of Myriad Pro. Custom fonts need to be converted to
-a json file, which can be done here: https://gero3.github.io/facetype.js/
+a json file, which can be done here: https://gero3.github.io/facetype.js/. Note: this is
+expensive, so if you want a lot of text look at Drei's Text component, extended from
+Troika-3d-Text.
 
 ```jsx
 <Text
