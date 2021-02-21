@@ -10,7 +10,7 @@ import DragControls from "../controls/DragControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import { getSpringValues } from "../utils/spring";
 import { AnimatedValue } from "react-spring";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 
 const SHOW_PLAYER_HITBOX = false;
 

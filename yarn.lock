@@ -1082,9 +1082,9 @@
     "@react-spring/shared" "9.0.0-rc.3"
 
 "@react-three/cannon@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-0.5.3.tgz#b1849bf240629b4293155b4e611bf4417b44281c"
-  integrity sha512-/Ak6AcY4KfBMSnqOxQ2drQZVXDAAwfnUi2/PxPepz9tSAl6GC5o7H5WnDRJqXClRcw8n4Q+Dm9uSl8L5mvV96A==
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-0.5.5.tgz#9baa8b04642ada77e1bbcd9da91d7b62c3e7b716"
+  integrity sha512-dBzmvfnEmXUVdj3s7z12YWVx8MTa2nILskCKLZByu+RCun1cToH5u7BPYozahIpOjeddD2DGnBglx5xQtrqF4g==
 
 "@react-three/drei@^2.2.10":
   version "2.2.13"
@@ -3696,6 +3696,11 @@ prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+proxy-compare@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-1.1.6.tgz#dd7737be611a9d7142fae10dbc6d0ceb74ad6da0"
+  integrity sha512-V65euKrKgKjVyEh5+4nVlAf4dHJ6Q0cF77MCeZiJaOldAl9lndy/u270SJneHiz3UkVcSIhxfOKY7aFkrMyo5g==
+
 psl@^1.1.28:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.8.0.tgz#9326f8bcfb013adcc005fdff056acce020e51c24"
@@ -4169,11 +4174,6 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
-
-shopify-buy@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.11.0.tgz#0f7cb52741395e4ae778c336f32ddf3fe67c2f35"
-  integrity sha512-bGjS1b/VCPvCjazSstlKwgLtK1WBotWom06/12loja8yfo/cWkLuJsakBbQe1uEIDiOLhKaR0M0CAXZFheYDug==
 
 side-channel@^1.0.2, side-channel@^1.0.3:
   version "1.0.4"
@@ -4679,6 +4679,13 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+valtio@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-0.7.0.tgz#26752b6df2aac710630878c41a0a494f42ab94ba"
+  integrity sha512-ekxeojLsUiiNwMRRC8NcD1vGRtcMgsZMrePVgjaZszKzLFWJ84uBhtLa5QvwnuuhgU2Mbnaq4IyQHjkNqCi1YA==
+  dependencies:
+    proxy-compare "1.1.6"
 
 verror@1.10.0:
   version "1.10.0"

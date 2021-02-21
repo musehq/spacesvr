@@ -3,7 +3,7 @@ import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";

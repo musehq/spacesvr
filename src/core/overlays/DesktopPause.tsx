@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
 
 const Container = styled.div<{ paused: boolean }>`
