@@ -21,7 +21,7 @@ import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { MountOnLoad } from "../utils/loading";
+import { MountOnLoad } from "../loader/MountOnLoad";
 import { LoadingContext, useLoadingState } from "../contexts";
 import AssetLoader from "../loader/AssetLoader";
 

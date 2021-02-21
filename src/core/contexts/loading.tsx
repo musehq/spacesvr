@@ -1,9 +1,15 @@
-import { createContext, useEffect, useState } from "react";
-import { AssetUrls, LoadingState } from "../types";
-import { proxy, subscribe } from "valtio";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { proxy, subscribe, useProxy } from "valtio";
+import { Asset, AssetUrls, LoadingState } from "../types";
 import { getPercentage, transformAssetList } from "../utils/loading";
 
 export const LoadingContext = createContext<LoadingState>({} as LoadingState);
+
+export function useAsset(url: string): Asset {
+  const { assets } = useContext(LoadingContext);
+  const snapshot = useProxy(assets);
+  return snapshot[url];
+}
 
 /**
  * Loading State Context. If no asset strings are passed, the app
@@ -14,7 +20,7 @@ export const LoadingContext = createContext<LoadingState>({} as LoadingState);
 export const useLoadingState = (assetList?: AssetUrls) => {
   const legacyLoader = assetList === undefined;
 
-  const assets = proxy(transformAssetList(assetList));
+  const assets = useMemo(() => proxy(transformAssetList(assetList)), []);
   const [percentage, setPercentage] = useState(legacyLoader ? 1 : 0);
 
   // subscribe to updates to keep percentage value up to date

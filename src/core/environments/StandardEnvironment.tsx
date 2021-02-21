@@ -18,7 +18,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { LoadingContext, useLoadingState } from "../contexts/loading";
-import { MountOnLoad } from "../utils/loading";
+import { MountOnLoad } from "../loader/MountOnLoad";
 import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
@@ -116,8 +116,8 @@ export const StandardEnvironment = (
           camera={{ position: initialCamera }}
         >
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <EnvironmentContext.Provider value={envState}>
-              <LoadingContext.Provider value={loadState}>
+            <LoadingContext.Provider value={loadState}>
+              <EnvironmentContext.Provider value={envState}>
                 <MountOnLoad>
                   <Player
                     initPos={player?.pos}
@@ -128,8 +128,8 @@ export const StandardEnvironment = (
                   {!disableGround && <InfinitePlane height={-0.001} />}
                   {children}
                 </MountOnLoad>
-              </LoadingContext.Provider>
-            </EnvironmentContext.Provider>
+              </EnvironmentContext.Provider>
+            </LoadingContext.Provider>
           </Physics>
         </Canvas>
         <LoadingContext.Provider value={loadState}>

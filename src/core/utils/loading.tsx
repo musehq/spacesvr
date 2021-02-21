@@ -1,27 +1,4 @@
-import { ReactNode, useContext } from "react";
-import { LoadingContext } from "../contexts/loading";
-import { AssetUrls, Assets, AssetType } from "../types";
-
-/**
- * Mounts its children only once the environment's assets
- * have finished downloading.
- *
- * Or, if using the legacy loader, mounts immediately
- *
- * @param props
- * @constructor
- */
-export const MountOnLoad = (props: { children: ReactNode }) => {
-  const { children } = props;
-
-  const { legacyLoader, percentage } = useContext(LoadingContext);
-
-  if (!legacyLoader && percentage !== 1) {
-    return null;
-  }
-
-  return <>{children}</>;
-};
+import { Assets, AssetType, AssetUrls } from "../types";
 
 /**
  * Calculates loading percentage as a fraction of
@@ -35,7 +12,6 @@ export const getPercentage = (assets: Assets): number => {
 
   let numLoaded = 0;
   for (let i = 0; i < urls.length; i++) {
-    console.log(assets[urls[i]]);
     numLoaded += Number(assets[urls[i]].loaded);
   }
 

@@ -1,21 +1,22 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useTexture } from "@react-three/drei";
-import { Assets } from "../../types/loading";
+import { LoadingContext } from "../../contexts";
+import { ref } from "valtio";
 
 type Props = {
   url: string;
-  assets: Assets;
 };
 
 const ImageAsset = (props: Props) => {
-  const { url, assets } = props;
+  const { url } = props;
+  const { assets } = useContext(LoadingContext);
 
   const texture = useTexture(url);
 
   useEffect(() => {
     if (texture) {
       assets[url].loaded = true;
-      assets[url].data = texture;
+      assets[url].data = ref(texture);
     }
   }, [texture]);
 

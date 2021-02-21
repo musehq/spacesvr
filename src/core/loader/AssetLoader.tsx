@@ -1,10 +1,11 @@
 import { Suspense, useContext } from "react";
 import { LoadingContext } from "../contexts/loading";
 import EnvAsset from "./loaders/EnvAsset";
-import { getAssetType } from "../utils/loading";
 import ImageAsset from "./loaders/ImageAsset";
 import ModelAsset from "./loaders/ModelAsset";
 import { useProxy } from "valtio";
+import UnhandledAsset from "./loaders/UnhandledAsset";
+import { getAssetType } from "../utils/loading";
 
 const AssetLoader = () => {
   const { assets, percentage } = useContext(LoadingContext);
@@ -21,21 +22,14 @@ const AssetLoader = () => {
     <Suspense fallback={null}>
       {urls.map((url) => {
         const type = getAssetType(url);
-        const props = { key: url, url, assets };
 
         // already loaded
         if (snapshot[url].loaded) return null;
 
-        if (type === "env") return <EnvAsset {...props} />;
-        if (type === "image") return <ImageAsset {...props} />;
-        if (type === "model") return <ModelAsset {...props} />;
-
-        // not a valid asset
-        if (!snapshot[url].loaded) {
-          assets[url].loaded = true;
-        }
-
-        return null;
+        if (type === "env") return <EnvAsset key={url} url={url} />;
+        if (type === "image") return <ImageAsset key={url} url={url} />;
+        if (type === "model") return <ModelAsset key={url} url={url} />;
+        else return <UnhandledAsset key={url} url={url} />;
       })}
     </Suspense>
   );
