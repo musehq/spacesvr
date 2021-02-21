@@ -8,11 +8,11 @@ import UnhandledAsset from "./loaders/UnhandledAsset";
 import { getAssetType } from "../utils/loading";
 
 const AssetLoader = () => {
-  const { assets, percentage } = useContext(LoadingContext);
+  const { assets, progress } = useContext(LoadingContext);
 
   const snapshot = useProxy(assets);
 
-  if (percentage === 1) {
+  if (progress === 100) {
     return null;
   }
 
