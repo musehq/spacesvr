@@ -320,6 +320,20 @@ Makes its children float up and down
 </Floating>
 ```
 
+#### Spinning
+
+Makes its children spin
+
+```jsx
+<Spinning
+  xSpeed={0} // speed to spin around axis
+  ySpeed={1} // y axis is 1 by default
+  zSpeed={0} // 0 = no spin on axis
+>
+  <Stuff />
+</Spinning>
+```
+
 #### Interactable
 
 Makes its children react to onclick and on hover methods
