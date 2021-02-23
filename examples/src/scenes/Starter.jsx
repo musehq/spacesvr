@@ -24,7 +24,11 @@ export default () => {
   return (
     <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
       <Background color={0xffffff} />
-      <Interactable onClick={handleClick}>
+      <Interactable
+        onClick={handleClick}
+        onHover={() => console.log("hover")}
+        onUnHover={() => console.log("un hover")}
+      >
         <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       </Interactable>
       <fog attach="fog" args={[0xffffff, 10, 90]} />
