@@ -56,7 +56,7 @@ const Player = (props: PlayerProps) => {
   const [raycaster] = useState(
     isMobile
       ? defaultRaycaster
-      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
+      : new Raycaster(new Vector3(), new Vector3(), 0, 1.5)
   );
 
   // consumer
