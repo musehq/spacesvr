@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { Suspense } from "react";
 import * as THREE from "three";
 import { useLoader } from "react-three-fiber";
 import { Material } from "three";
@@ -6,36 +6,37 @@ import Frame from "./misc/Frame";
 
 type ImageProps = JSX.IntrinsicElements["group"] & {
   src: string;
-  size: [number, number];
+  size?: number;
   framed?: boolean;
-  doubleSided?: boolean;
   material?: Material;
 };
 
-export const Image = (props: ImageProps) => {
-  const { src, size, framed, doubleSided, material } = props;
+const UnsuspensedImage = (props: ImageProps) => {
+  const { src, size = 1, framed, material } = props;
 
   const texture = useLoader(THREE.TextureLoader, src);
-  const image = useRef<THREE.Mesh>();
-  const [width, height] = size;
+
+  const { width = 1, height = 1 } = texture.image;
+
+  const max = Math.max(width, height);
+  const WIDTH = (width / max) * size;
+  const HEIGHT = (height / max) * size;
 
   return (
     <group {...props}>
-      <mesh castShadow ref={image}>
-        <planeBufferGeometry args={[width, height]} />
-        <meshStandardMaterial
-          map={texture}
-          side={doubleSided ? THREE.DoubleSide : undefined}
-        />
+      <mesh>
+        <planeBufferGeometry args={[WIDTH, HEIGHT]} />
+        <meshStandardMaterial map={texture} />
       </mesh>
-      {framed && (
-        <Frame
-          back={!doubleSided}
-          width={width}
-          height={height}
-          material={material}
-        />
-      )}
+      {framed && <Frame width={WIDTH} height={HEIGHT} material={material} />}
     </group>
+  );
+};
+
+export const Image = (props: ImageProps) => {
+  return (
+    <Suspense fallback={null}>
+      <UnsuspensedImage {...props} />
+    </Suspense>
   );
 };

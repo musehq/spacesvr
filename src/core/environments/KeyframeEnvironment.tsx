@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
+import {
+  useEnvironmentState,
+  EnvironmentContext,
+} from "../contexts/environment";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -17,6 +20,10 @@ import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
+import { ResizeObserver } from "@juggle/resize-observer";
+import { MountOnLoad } from "../loader/MountOnLoad";
+import { LoadingContext, useLoadingState } from "../contexts";
+import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -51,8 +58,10 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   },
   concurrent: true,
   shadowMap: false,
-  pixelRatio: window.devicePixelRatio || 1,
+  pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -77,11 +86,10 @@ type KeyframeEnvironmentProps = {
  * Pause Menu: Spaces Edition
  *
  */
-
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes } = props;
+  const { children, canvasProps, physicsProps, keyframes, assets } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -113,22 +121,31 @@ export const KeyframeEnvironment = (
     },
   };
 
+  const loadState = useLoadingState(assets);
+
   return (
     <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <environmentStateContext.Provider value={localState}>
-              <SpringPlayer spring={spring} />
-              <SpringScaled spring={spring}>{children}</SpringScaled>
-            </environmentStateContext.Provider>
+            <EnvironmentContext.Provider value={localState}>
+              <LoadingContext.Provider value={loadState}>
+                <MountOnLoad>
+                  <SpringPlayer spring={spring} />
+                  <SpringScaled spring={spring}>{children}</SpringScaled>
+                </MountOnLoad>
+              </LoadingContext.Provider>
+            </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={localState}>
-          <LoadingScreen />
-          <KeyframeControlDisplay />
-        </environmentStateContext.Provider>
+        <LoadingContext.Provider value={loadState}>
+          <AssetLoader />
+          <EnvironmentContext.Provider value={localState}>
+            <LoadingScreen />
+            <KeyframeControlDisplay />
+          </EnvironmentContext.Provider>
+        </LoadingContext.Provider>
       </Container>
     </>
   );

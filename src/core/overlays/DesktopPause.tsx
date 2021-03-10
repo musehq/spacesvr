@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
+import { keyframes } from "@emotion/core";
 
 const Container = styled.div<{ paused: boolean }>`
   width: 100%;
@@ -28,6 +29,15 @@ const ClickContainer = styled.div`
   z-index: -1;
 `;
 
+const hueRotate = keyframes`
+  from{
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+`;
+
 const Window = styled.div`
   width: 90%;
   max-width: 400px;
@@ -41,10 +51,12 @@ const Window = styled.div`
   justify-content: center;
   position: relative;
   border-radius: 3%;
-  background-image: url("https://spaces-gallery-assets.s3-us-west-1.amazonaws.com/images/pauseMenuBg.png");
+  background-image: url("https://d27rt3a60hh1lx.cloudfront.net/images/muse-bg.jpg");
   background-position: center;
   background-size: cover;
   font-family: sans-serif;
+  animation: ${hueRotate} 15s ease infinite;
+  box-sizing: border-box;
 `;
 
 const Continue = styled.div`
@@ -115,6 +127,10 @@ const Text = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  & > p {
+    margin: 0.2em;
+  }
 `;
 
 const DesktopPause = () => {
@@ -129,7 +145,7 @@ const DesktopPause = () => {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.2.29</Version>
+        <Version>v1.3.1</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >

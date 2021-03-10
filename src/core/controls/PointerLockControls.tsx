@@ -1,7 +1,7 @@
 import { useEffect, useCallback, MutableRefObject, useRef } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Euler } from "three";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import * as THREE from "three";
 
 type Props = {

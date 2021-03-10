@@ -1,8 +1,9 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Vector2 } from "three";
-import { useEnvironment } from "../core/utils/hooks";
+import { useEnvironment } from "../core/contexts/environment";
 import { useFrame, useThree } from "react-three-fiber";
 import { isMobile } from "react-device-detect";
+import { useLimiter } from "../services/limiter";
 
 type Props = {
   onClick?: () => void;
@@ -31,24 +32,27 @@ export const Interactable = (props: Props) => {
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
   const { current: downPos } = useRef(new Vector2());
+  const limiter = useLimiter(30);
 
   // continuously update the hover state
-  useFrame(() => {
-    if (group.current && player && player.raycaster) {
-      const { raycaster } = player;
-      const intersections = raycaster.intersectObject(group.current, true);
-      if (intersections && intersections.length > 0) {
-        if (!hovered) {
-          setHovered(true);
-          if (onHover) {
-            onHover();
-          }
+  useFrame(({ clock }) => {
+    if (!group.current || !limiter.isReady(clock) || !player?.raycaster) {
+      return;
+    }
+
+    const { raycaster } = player;
+    const intersections = raycaster.intersectObject(group.current, true);
+    if (intersections && intersections.length > 0) {
+      if (!hovered) {
+        setHovered(true);
+        if (onHover) {
+          onHover();
         }
-      } else if (hovered) {
-        setHovered(false);
-        if (onUnHover) {
-          onUnHover();
-        }
+      }
+    } else if (hovered) {
+      setHovered(false);
+      if (onUnHover) {
+        onUnHover();
       }
     }
   });

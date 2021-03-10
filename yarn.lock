@@ -864,10 +864,17 @@
     "@babel/helper-validator-option" "^7.12.1"
     "@babel/plugin-transform-typescript" "^7.12.1"
 
-"@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.3.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.11.2", "@babel/runtime@^7.3.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.4":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.12.1":
+  version "7.12.13"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.13.tgz#0a21452352b02542db0ffb928ac2d3ca7cb6d66d"
+  integrity sha512-8+3UMPBrjFa/6TtKi/7sehPKqfAm4g6K+YQjyyFOLUTxzOngcRZTlAVY8sc2CORJYqdHQY8gRPHmn+qo15rCBw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1029,6 +1036,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@juggle/resize-observer@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.2.0.tgz#5e0b448d27fe3091bae6216456512c5904d05661"
+  integrity sha512-fsLxt0CHx2HCV9EL8lDoVkwHffsA0snUpddYjdLyXcG5E41xaamn9ZyQqOE9TUJdrRlH8/hjIf+UdOdDeKCUgg==
+
 "@react-spring/animated@9.0.0-rc.3":
   version "9.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/@react-spring/animated/-/animated-9.0.0-rc.3.tgz#e792cb76aacecfc78db2be6020ac11ce96503eb5"
@@ -1070,9 +1082,9 @@
     "@react-spring/shared" "9.0.0-rc.3"
 
 "@react-three/cannon@^0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-0.5.3.tgz#b1849bf240629b4293155b4e611bf4417b44281c"
-  integrity sha512-/Ak6AcY4KfBMSnqOxQ2drQZVXDAAwfnUi2/PxPepz9tSAl6GC5o7H5WnDRJqXClRcw8n4Q+Dm9uSl8L5mvV96A==
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-0.5.5.tgz#9baa8b04642ada77e1bbcd9da91d7b62c3e7b716"
+  integrity sha512-dBzmvfnEmXUVdj3s7z12YWVx8MTa2nILskCKLZByu+RCun1cToH5u7BPYozahIpOjeddD2DGnBglx5xQtrqF4g==
 
 "@react-three/drei@^2.2.10":
   version "2.2.13"
@@ -3684,6 +3696,11 @@ prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+proxy-compare@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-1.1.6.tgz#dd7737be611a9d7142fae10dbc6d0ceb74ad6da0"
+  integrity sha512-V65euKrKgKjVyEh5+4nVlAf4dHJ6Q0cF77MCeZiJaOldAl9lndy/u270SJneHiz3UkVcSIhxfOKY7aFkrMyo5g==
+
 psl@^1.1.28:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.8.0.tgz#9326f8bcfb013adcc005fdff056acce020e51c24"
@@ -3770,9 +3787,9 @@ react-spring@^8.0.27:
     prop-types "^15.5.8"
 
 react-three-fiber@^5.1.4:
-  version "5.3.10"
-  resolved "https://registry.yarnpkg.com/react-three-fiber/-/react-three-fiber-5.3.10.tgz#3c4786280ab69111ef5e0b7b49bdf154d6936e22"
-  integrity sha512-qC9h5XfnEK5QX3AX7VAt8QjlA1RmvI8ZkY/dwVcTDHh211ied5hW0iq2Fo1GjU9pwo4SWZ3P8RINew6as1BMCg==
+  version "5.3.18"
+  resolved "https://registry.yarnpkg.com/react-three-fiber/-/react-three-fiber-5.3.18.tgz#50a37d344b631bc932ec0b22ddc8e678e5c9590b"
+  integrity sha512-5OHh2/Dq/V+5CeFSthVFADoN9S0Y7P5TMRtVg57eJSsJsL5BEO/rLhuS0xb7lHJn674jCdLnAAn3nMcsNU0HXA==
   dependencies:
     "@babel/runtime" "^7.12.1"
     react-merge-refs "^1.1.0"
@@ -3781,7 +3798,7 @@ react-three-fiber@^5.1.4:
     resize-observer-polyfill "^1.5.1"
     scheduler "0.20.1"
     tiny-emitter "^2.1.0"
-    use-asset "^0.1.5"
+    use-asset "^1.0.2"
     utility-types "^3.10.0"
 
 react-use-measure@^2.0.3:
@@ -3791,10 +3808,10 @@ react-use-measure@^2.0.3:
   dependencies:
     debounce "^1.2.0"
 
-react@0.0.0-experimental-4ead6b530:
-  version "0.0.0-experimental-4ead6b530"
-  resolved "https://registry.yarnpkg.com/react/-/react-0.0.0-experimental-4ead6b530.tgz#88cdae012012a758dd039a63104758c6351115df"
-  integrity sha512-tpbYm6FEuC1L6tCVXIKYAhgGAkS8DShzKpmXosowZvLqeByeLQQe77Ef6bi5HdEkFm2v0lZffLWckSM8R4TToA==
+react@17.0.1:
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
+  integrity sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -4157,11 +4174,6 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
-
-shopify-buy@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.11.0.tgz#0f7cb52741395e4ae778c336f32ddf3fe67c2f35"
-  integrity sha512-bGjS1b/VCPvCjazSstlKwgLtK1WBotWom06/12loja8yfo/cWkLuJsakBbQe1uEIDiOLhKaR0M0CAXZFheYDug==
 
 side-channel@^1.0.2, side-channel@^1.0.3:
   version "1.0.4"
@@ -4623,10 +4635,10 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-use-asset@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/use-asset/-/use-asset-0.1.5.tgz#196b6edf9f162bb900e0990888da3215514dec29"
-  integrity sha512-h1SDwd1OTbFPM076CiDrTOGk+9xVKBO6WRBo8Max/Bi9QxkNZqjOLO5VGEXwFPeXv2hkyDZv2V3RFI2cbkWLHw==
+use-asset@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/use-asset/-/use-asset-1.0.2.tgz#d98a506ba480d113639de60631f89907794ead84"
+  integrity sha512-ewqcm1+SmRIpIhanbP2Kdt03u7IQfxGixi3dq2AP90GK5J0fFXBeSp4hO43tx3HG5AXvh6U4hQ00x4JXr5Dhiw==
   dependencies:
     fast-deep-equal "^3.1.3"
 
@@ -4667,6 +4679,13 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+valtio@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-0.7.0.tgz#26752b6df2aac710630878c41a0a494f42ab94ba"
+  integrity sha512-ekxeojLsUiiNwMRRC8NcD1vGRtcMgsZMrePVgjaZszKzLFWJ84uBhtLa5QvwnuuhgU2Mbnaq4IyQHjkNqCi1YA==
+  dependencies:
+    proxy-compare "1.1.6"
 
 verror@1.10.0:
   version "1.10.0"

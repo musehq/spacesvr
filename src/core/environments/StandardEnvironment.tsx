@@ -6,15 +6,20 @@ import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
-import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import { EnvironmentProps } from "../types";
+import {
+  useEnvironmentState,
+  EnvironmentContext,
+} from "../contexts/environment";
+import { EnvironmentProps } from "../types/environment";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
-import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
+import { ResizeObserver } from "@juggle/resize-observer";
+import { LoadingContext, useLoadingState } from "../contexts/loading";
+import { MountOnLoad } from "../loader/MountOnLoad";
+import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -42,8 +47,10 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   },
   concurrent: true,
   shadowMap: false,
-  pixelRatio: window.devicePixelRatio || 1,
+  pixelRatio: [1, 2],
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -73,10 +80,9 @@ type StandardEnvironmentProps = {
  *
  * Standard environment should be your first choice for an environment
  *
- * Player Type: First Person w/ WASD, Joystick controls
+ * Player Type: First Person w/ WASD, Joystick controls, Gyro Controls
  * Physics: Enabled with default y=0 floor plane
- * Loading Screen: Spaces Edition
- * Pause Menu: Spaces Edition
+ * Loading Screen & Pause Menu
  *
  */
 export const StandardEnvironment = (
@@ -88,40 +94,44 @@ export const StandardEnvironment = (
     physicsProps,
     player,
     disableGround,
+    assets,
     pauseMenu,
     loadingScreen,
   } = props;
 
-  const state = useEnvironmentState();
+  const envState = useEnvironmentState();
+  const loadState = useLoadingState(assets);
 
   return (
     <>
       <GlobalStyles />
-      <Container ref={state.containerRef}>
+      <Container ref={envState.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <environmentStateContext.Provider value={state}>
-              <Player
-                initPos={player?.pos}
-                initRot={player?.rot}
-                speed={player?.speed}
-                controls={player?.controls}
-              />
-              {!disableGround && <InfinitePlane height={-0.001} />}
-              {children}
-            </environmentStateContext.Provider>
+            <LoadingContext.Provider value={loadState}>
+              <EnvironmentContext.Provider value={envState}>
+                <MountOnLoad>
+                  <Player
+                    initPos={player?.pos}
+                    initRot={player?.rot}
+                    speed={player?.speed}
+                    controls={player?.controls}
+                  />
+                  {!disableGround && <InfinitePlane height={-0.001} />}
+                  {children}
+                </MountOnLoad>
+              </EnvironmentContext.Provider>
+            </LoadingContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={state}>
-          {loadingScreen || <LoadingScreen />}
-          {pauseMenu || (
-            <>
-              <DesktopPause />
-              {isMobile && <MobilePause />}
-            </>
-          )}
-          <Crosshair />
-        </environmentStateContext.Provider>
+        <LoadingContext.Provider value={loadState}>
+          <AssetLoader />
+          <EnvironmentContext.Provider value={envState}>
+            {loadingScreen || <LoadingScreen />}
+            {pauseMenu || <DesktopPause />}
+            <Crosshair />
+          </EnvironmentContext.Provider>
+        </LoadingContext.Provider>
       </Container>
     </>
   );

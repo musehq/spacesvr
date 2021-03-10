@@ -3,7 +3,7 @@ import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
@@ -56,7 +56,7 @@ const Player = (props: PlayerProps) => {
   const [raycaster] = useState(
     isMobile
       ? defaultRaycaster
-      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
+      : new Raycaster(new Vector3(), new Vector3(), 0, 1.5)
   );
 
   // consumer
