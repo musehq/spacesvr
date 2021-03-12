@@ -67,7 +67,7 @@ const Menu = (props: GroupProps) => {
     (menuItems.length + 1) * (ITEM_HEIGHT + ITEM_PADDING) + SUBTITLE_HEIGHT;
 
   return (
-    <group {...props}>
+    <group {...props} position-y={(-HEIGHT / 4) * 0.9}>
       <group position-y={-HEIGHT / 2} position-x={WIDTH / 2}>
         <mesh position-y={HEIGHT / 2}>
           <planeBufferGeometry args={[WIDTH, HEIGHT]} />
