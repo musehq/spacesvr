@@ -3,7 +3,7 @@ import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Group, Vector3 } from "three";
 import { useSpring } from "react-spring";
 import { getSpringValues } from "../core/utils/spring";
-import { useEnvironment } from "../core";
+import { useEnvironment } from "../core/contexts/environment";
 
 type Props = {
   children: ReactNode;

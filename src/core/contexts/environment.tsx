@@ -1,19 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
-import {
-  Device,
-  Environment,
-  EnvironmentEvent,
-  EnvironmentState,
-  KeyframeEnvironmentState,
-  PlayerRef,
-} from "../types";
+import { createContext, useContext, useState } from "react";
+import { Device, EnvironmentState, KeyframeEnvironmentState } from "../types";
 import { isMobile } from "react-device-detect";
+import { useControlledProgress } from "../utils/loading";
 
 export const EnvironmentContext = createContext<EnvironmentState>(
   {} as EnvironmentState
@@ -34,68 +22,28 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
  */
 export function useEnvironmentState(): EnvironmentState {
   const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
-  const [paused, setPausedState] = useState(true);
-  const [overlay, setOverlayState] = useState(null);
-  const container = useRef<HTMLDivElement>(null);
-  const events = useRef<EnvironmentEvent[]>([]);
-  const player = useRef<PlayerRef>({} as PlayerRef);
-
-  const setPaused = useCallback(
-    (p, o) => {
-      setPausedState(p);
-
-      if (!p) {
-        // if unpausing, set paused overlay to undefined by default
-        setOverlayState(o || null);
-      }
-
-      if (p && o) {
-        // if pausing, only set closed overlay if passed ins
-        setOverlayState(o);
-      }
-
-      events.current.map((ev: EnvironmentEvent) => {
-        if (ev.name === "paused") {
-          ev.callback.apply(null, [p, o]);
-        }
-      });
-    },
-    [events]
-  );
-
-  const setPlayer = (p: PlayerRef) => {
-    player.current = p;
+  const deviceState = {
+    mobile: device === "mobile",
+    desktop: device === "desktop",
+    xr: device === "xr",
   };
 
-  const addEvent = useCallback(
-    (name: string, callback: (...args: any[]) => void) => {
-      const event: EnvironmentEvent = {
-        name,
-        callback,
-      };
+  const [pointerLocked, setPointerLocked] = useState(false);
+  const [overlay, setOverlay] = useState<string | null>(null);
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
-      events.current.push(event);
-    },
-    []
-  );
+  const progress = useControlledProgress();
 
   const context: EnvironmentState = {
-    device: {
-      mobile: device === "mobile",
-      desktop: device === "desktop",
-      xr: device === "xr",
-    },
+    progress,
+    device: deviceState,
     setDevice,
-    type: Environment.STANDARD,
-    paused,
+    pointerLocked,
+    setPointerLocked,
     overlay,
-    player: player.current,
-    containerRef: container,
-    container: container.current,
-    events: events.current,
-    setPaused,
-    setPlayer,
-    addEvent,
+    setOverlay,
+    container,
+    setContainer,
   };
 
   return context;

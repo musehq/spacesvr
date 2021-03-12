@@ -1,9 +1,8 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useMemo, ReactNode, useLayoutEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Raycaster, Vector3 } from "three";
-import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
-import { createPlayerRef } from "../utils/player";
+import { createPlayerState } from "../utils/player";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import {
@@ -15,13 +14,15 @@ import VRControllerMovement from "../controls/VRControllerMovement";
 import { DefaultXRControllers } from "@react-three/xr";
 import ClickDragControls from "../controls/ClickDragControls";
 import NippleMovement from "../controls/NippleMovement";
+import { PlayerContext } from "../contexts/player";
+import { useSpringVelocity } from "./utils/velocity";
 
 const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
-  initPos?: Vector3;
-  initRot?: number;
+  pos?: Vector3;
+  rot?: number;
   speed?: number;
   controls?: {
     disableGyro?: boolean;
@@ -37,88 +38,71 @@ export type PlayerProps = {
  *
  * @constructor
  */
-const Player = (props: PlayerProps) => {
+const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
   const {
-    initPos = new Vector3(0, 0, 0),
-    initRot = 0,
+    children,
+    pos = new Vector3(),
+    rot = 0,
     speed = SPEED,
     controls,
   } = props;
+
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
-  const { device, paused, setPlayer } = useEnvironment();
+  const { device, pointerLocked } = useEnvironment();
+  const [bodyRef, bodyApi] = useCapsuleCollider({ initPos: pos });
+  const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
-  // physical body
-  const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
-
-  // producer
-  const position = useRef(new Vector3(0, 0, 0));
-  const velocity = useRef(new Vector3(0, 0, 0));
+  // local state
+  const position = useRef(new Vector3());
+  const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
-  const [raycaster] = useState(
-    isMobile
-      ? defaultRaycaster
-      : new Raycaster(new Vector3(), new Vector3(), 0, 1.5)
+  const raycaster = useMemo(
+    () => new Raycaster(new Vector3(), new Vector3(), 0, 1.5),
+    []
   );
 
-  // consumer
-  const direction = useRef(new Vector3());
-
-  const xLook = initPos.x + 100 * Math.cos(initRot);
-  const zLook = initPos.z + 100 * Math.sin(initRot);
-  camera?.lookAt(xLook, initPos.y, zLook);
-  camera.position.copy(initPos);
-
-  // setup player
-  useEffect(() => {
+  useLayoutEffect(() => {
     // store position and velocity
-    bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
-    bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
+    bodyApi.position.subscribe((p) => position.current.fromArray(p));
+    bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
 
-    // set player for environment
-    setPlayer(
-      createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
-    );
+    // initial look and position
+    const xLook = pos.x + 100 * Math.cos(rot);
+    const zLook = pos.z + 100 * Math.sin(rot);
+    camera.lookAt(xLook, pos.y, zLook);
+    camera.position.copy(pos);
   }, []);
 
-  // update player every frame
   useFrame(() => {
     const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     // update raycaster
-    if (!isMobile) {
-      raycaster.ray.origin.copy(position.current);
-      const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(cam.quaternion);
-      raycaster.ray.direction.copy(lookAt);
-    }
+    raycaster.ray.origin.copy(position.current);
+    const lookAt = new Vector3(0, 0, -1);
+    lookAt.applyQuaternion(cam.quaternion);
+    raycaster.ray.direction.copy(lookAt);
 
     // update camera position
     camera.position.copy(position.current);
 
-    // get forward/back movement and left/right movement velocities
-    const inputVelocity = new Vector3(0, 0, 0);
+    // update velocity
     if (!lockControls.current) {
-      inputVelocity.x = direction.current.x * 0.75;
-      inputVelocity.z = direction.current.y; // forward/back
-      inputVelocity.multiplyScalar(speed);
-
-      const moveQuaternion = cam.quaternion.clone();
-      moveQuaternion.x = 0;
-      moveQuaternion.z = 0;
-      inputVelocity.applyQuaternion(moveQuaternion);
-      inputVelocity.y = Math.min(velocity.current.y, 0);
-    }
-
-    if (!lockControls.current) {
-      // keep y velocity intact and update velocity
-      bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+      updateVelocity(camera, velocity.current);
     }
   });
 
   useFrame(({ gl, scene, camera }) => gl.render(scene, camera), 100);
 
+  const state = createPlayerState(
+    bodyApi,
+    position,
+    velocity,
+    lockControls,
+    device.mobile || !pointerLocked ? defaultRaycaster : raycaster
+  );
+
   return (
-    <>
+    <PlayerContext.Provider value={state}>
       {device.mobile && (
         <>
           {controls?.disableGyro ? (
@@ -144,7 +128,8 @@ const Player = (props: PlayerProps) => {
       <mesh ref={bodyRef} name="player">
         {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
       </mesh>
-    </>
+      {children}
+    </PlayerContext.Provider>
   );
 };
 

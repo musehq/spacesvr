@@ -9,7 +9,8 @@ import {
 import { Group, Vector2 } from "three";
 import { useEnvironment } from "../core/contexts/environment";
 import { useFrame, useThree } from "react-three-fiber";
-import { isMobile } from "react-device-detect";
+import { useLimiter } from "../services/limiter";
+import { usePlayer } from "../core/contexts/player";
 
 type Props = {
   children: ReactNode;
@@ -28,32 +29,35 @@ type Props = {
 export const Interactable = (props: Props) => {
   const { children, onClick, onHover, onUnHover } = props;
 
-  const { raycaster: defaultRaycaster, gl } = useThree();
+  const { gl } = useThree();
   const { domElement } = gl;
-  const { player } = useEnvironment();
+  const { device } = useEnvironment();
+  const { raycaster } = usePlayer();
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
   const downPos = useMemo(() => new Vector2(), []);
   const clickQueued = useRef(false);
+  const limiter = useLimiter(30);
 
   // continuously update the hover state
-  useFrame(() => {
-    if (group.current) {
-      const raycaster = (player && player.raycaster) || defaultRaycaster;
-      const intersections = raycaster.intersectObject(group.current, true);
-      if (intersections && intersections.length > 0) {
-        if (!hovered) {
-          setHovered(true);
-          if (onHover) {
-            onHover();
-          }
+  useFrame(({ clock }) => {
+    if (!group.current || !limiter.isReady(clock)) {
+      return;
+    }
+
+    const intersections = raycaster.intersectObject(group.current, true);
+    if (intersections && intersections.length > 0) {
+      if (!hovered) {
+        setHovered(true);
+        if (onHover) {
+          onHover();
         }
-      } else if (hovered) {
-        setHovered(false);
-        if (onUnHover) {
-          onUnHover();
-        }
+      }
+    } else if (hovered) {
+      setHovered(false);
+      if (onUnHover) {
+        onUnHover();
       }
     }
   });
@@ -102,7 +106,7 @@ export const Interactable = (props: Props) => {
   };
 
   useEffect(() => {
-    if (isMobile) {
+    if (device.mobile) {
       domElement.addEventListener("touchstart", onTouchStart);
       domElement.addEventListener("touchend", onTouchEnd);
     } else {
@@ -112,7 +116,7 @@ export const Interactable = (props: Props) => {
     }
 
     return () => {
-      if (isMobile) {
+      if (device.mobile) {
         domElement.removeEventListener("touchstart", onTouchStart);
         domElement.removeEventListener("touchend", onTouchEnd);
       } else {

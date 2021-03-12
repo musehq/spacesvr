@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DragControls from "./DragControls";
 import PointerLockCamera from "./PointerLockCamera";
 
@@ -12,15 +12,8 @@ import PointerLockCamera from "./PointerLockCamera";
 const ClickDragControls = () => {
   const [dragging, setDragging] = useState(true);
 
-  const onMouseUp = useCallback(
-    (e: MouseEvent) => {
-      setDragging(!dragging);
-    },
-    [dragging]
-  );
-
   useEffect(() => {
-    console.log("dragging is now", dragging);
+    const onMouseUp = () => setDragging(!dragging);
     document.addEventListener("dblclick", onMouseUp);
 
     return () => {

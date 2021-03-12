@@ -27,7 +27,6 @@ const PointerLockCamera = (props: Props) => {
 
   const { camera, gl } = useThree();
   const { domElement } = gl;
-  const { paused, setPaused, addEvent } = useEnvironment();
 
   const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
   const isLocked = useRef(false);
@@ -77,14 +76,8 @@ const PointerLockCamera = (props: Props) => {
   function onPointerlockChange() {
     if (domElement.ownerDocument.pointerLockElement === domElement) {
       isLocked.current = true;
-      if (paused) {
-        setPaused(false);
-      }
     } else {
       isLocked.current = false;
-      if (!paused) {
-        setPaused(true);
-      }
     }
   }
 
@@ -92,16 +85,15 @@ const PointerLockCamera = (props: Props) => {
   function onPointerlockError() {
     console.error("PointerLockControls: Unable to use Pointer Lock API");
     isLocked.current = false;
-    setPaused(true);
   }
 
   // events setup
   useEffect(() => {
-    setTimeout(() => {
-      if (!isLocked.current && !paused) {
-        setPaused(true);
-      }
-    }, 250);
+    // setTimeout(() => {
+    //   if (!isLocked.current && !pointerLocked) {
+    //     pointerLocked(true);
+    //   }
+    // }, 250);
 
     const { ownerDocument } = domElement;
 
@@ -130,22 +122,13 @@ const PointerLockCamera = (props: Props) => {
         false
       );
     };
-  }, [paused, onMouseMove, isLocked, onPointerlockChange]);
+  }, [onMouseMove, isLocked, onPointerlockChange]);
 
   useEffect(() => {
     // initial camera rotation
     if (camera) {
       camera?.lookAt(0, 2, 0);
     }
-
-    // lock and unlock controls based on set paused value
-    addEvent("paused", (pausedVal: boolean, overlayVal: string | undefined) => {
-      if (pausedVal) {
-        unlock();
-      } else {
-        lock();
-      }
-    });
   }, []);
 
   return null;

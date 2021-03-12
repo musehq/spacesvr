@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
-import { useContext } from "react";
-import { LoadingContext } from "../contexts/loading";
+import { useEnvironment } from "../contexts/environment";
 
 const Container = styled.div<{ finished: boolean }>`
   width: 100%;
@@ -21,7 +20,8 @@ const Container = styled.div<{ finished: boolean }>`
 `;
 
 const LoadingScreen = () => {
-  const { progress } = useContext(LoadingContext);
+  const { progress } = useEnvironment();
+
   return (
     <Container finished={progress === 100}>{Math.round(progress)}%</Container>
   );

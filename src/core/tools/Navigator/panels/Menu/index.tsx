@@ -45,6 +45,7 @@ const Item = (props: { num: number; item: MenuItem; width: number }) => {
           <meshStandardMaterial color="#cccccc" />
         </mesh>
       </animated.group>
+      {/* @ts-ignore */}
       <Text
         maxWidth={width}
         color="black"
@@ -75,6 +76,7 @@ const Menu = (props: GroupProps) => {
         {menuItems.map((item, i) => (
           <Item key={item.text} num={i} item={item} width={WIDTH} />
         ))}
+        {/* @ts-ignore */}
         <Text
           name="subtitle"
           anchorY="bottom"

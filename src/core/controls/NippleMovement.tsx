@@ -24,10 +24,10 @@ const NippleMovement = (props: NippleMovementProps) => {
 
   const nipple = useRef<JoystickManager>();
   const nippleContainer = useRef<HTMLElement>();
-  const { containerRef } = useEnvironment();
+  const { container } = useEnvironment();
 
   useEffect(() => {
-    if (containerRef.current) {
+    if (container) {
       nippleContainer.current = document.createElement("div");
       nippleContainer.current.style.position = "fixed";
       nippleContainer.current.style.left = "0";
@@ -39,7 +39,7 @@ const NippleMovement = (props: NippleMovementProps) => {
       nippleContainer.current.style.zIndex = "5";
       // add class identifier to nippleContainer to identify touchEvents
       nippleContainer.current.classList.add("nipple-container");
-      containerRef.current.appendChild(nippleContainer.current);
+      container.appendChild(nippleContainer.current);
 
       nipple.current = nipplejs.create({
         zone: nippleContainer.current,
@@ -64,7 +64,7 @@ const NippleMovement = (props: NippleMovementProps) => {
         }
       };
     }
-  }, []);
+  }, [container]);
 
   return null;
 };

@@ -42,6 +42,7 @@ export const Idea = (props: Props) => {
   return (
     <group {...restProps}>
       <group scale={[size * 0.2, size * 0.2, size * 0.2]}>
+        {/* @ts-ignore */}
         <Sphere args={[RADIUS, 128, 128]} position-y={posY}>
           <Material
             // @ts-ignore

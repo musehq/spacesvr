@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { useThree } from "react-three-fiber";
+import { useEnvironment } from "../contexts/environment";
 import { Euler } from "three";
 
 type Props = {
@@ -23,6 +24,7 @@ const PI_2 = Math.PI / 2;
 const PointerLockCamera = (props: Props) => {
   const { onUnlock } = props;
 
+  const { setPointerLocked } = useEnvironment();
   const { camera, gl } = useThree();
   const { domElement } = gl;
 
@@ -77,6 +79,9 @@ const PointerLockCamera = (props: Props) => {
 
   // events setup
   useEffect(() => {
+    // keep lock state up to date with env state
+    setPointerLocked(isLocked);
+
     const { ownerDocument } = domElement;
 
     ownerDocument.addEventListener("mousemove", onMouseMove, false);
