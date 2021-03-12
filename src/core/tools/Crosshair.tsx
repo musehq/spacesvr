@@ -1,18 +1,21 @@
-import { Group, Raycaster, Vector3 } from "three";
+import { Group, Raycaster, Vector2, Vector3 } from "three";
 import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
 import { isMobile } from "react-device-detect";
+import { useEnvironment } from "../contexts/environment";
 
 const DISTANCE = 0.05;
 const SCALE = 0.001;
+const CENTER_VECTOR = new Vector2();
 
 const Crosshair = () => {
   const group = useRef<Group>();
   const parent = useRef<Group>();
 
   const { camera, mouse } = useThree();
+  const { pointerLocked } = useEnvironment();
   const dummyVector = useRef(new Vector3());
   const [raycaster] = useState(new Raycaster());
 
@@ -23,7 +26,7 @@ const Crosshair = () => {
 
   useFrame(() => {
     if (!isMobile && group.current) {
-      raycaster.setFromCamera(mouse, camera);
+      raycaster.setFromCamera(pointerLocked ? CENTER_VECTOR : mouse, camera);
       raycaster.ray.at(DISTANCE, dummyVector.current);
       dummyVector.current.sub(camera.position);
       setSpring({ xyz: dummyVector.current.toArray() });

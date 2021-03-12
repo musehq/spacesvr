@@ -115,6 +115,7 @@ const PointerLockCamera = (props: Props) => {
   useEffect(() => {
     lock();
     return () => {
+      setPointerLocked(false);
       unlock();
     };
   }, []);
