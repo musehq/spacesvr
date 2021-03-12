@@ -5,7 +5,7 @@ const handleClick = () => console.log("got a click!");
 
 export default () => {
   return (
-    <StandardEnvironment player={{ pos: new Vector3(5, 2, 0), rot: Math.PI }}>
+    <StandardEnvironment playerProps={{ pos: [5, 2, 0], rot: Math.PI }}>
       <Background color={0xffffff} />
       <Interactable onClick={handleClick}>
         <Idea />

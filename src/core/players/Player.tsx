@@ -1,4 +1,4 @@
-import { useRef, useMemo, ReactNode, useLayoutEffect } from "react";
+import { useRef, useMemo, ReactNode, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Raycaster, Vector3 } from "three";
 import { useEnvironment } from "../contexts/environment";
@@ -21,7 +21,7 @@ const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
-  pos?: Vector3;
+  pos?: number[];
   rot?: number;
   speed?: number;
   controls?: {
@@ -39,17 +39,11 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
-  const {
-    children,
-    pos = new Vector3(),
-    rot = 0,
-    speed = SPEED,
-    controls,
-  } = props;
+  const { children, pos = [0, 2, 0], rot = 0, speed = SPEED, controls } = props;
 
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
   const { device, pointerLocked } = useEnvironment();
-  const [bodyRef, bodyApi] = useCapsuleCollider({ initPos: pos });
+  const [_, bodyApi] = useCapsuleCollider(pos);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state
@@ -61,16 +55,15 @@ const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
     []
   );
 
-  useLayoutEffect(() => {
+  // initial camera rotation
+  const xLook = pos[0] + 100 * Math.cos(rot);
+  const zLook = pos[2] + 100 * Math.sin(rot);
+  camera.lookAt(xLook, pos[1], zLook);
+
+  useEffect(() => {
     // store position and velocity
     bodyApi.position.subscribe((p) => position.current.fromArray(p));
     bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
-
-    // initial look and position
-    const xLook = pos.x + 100 * Math.cos(rot);
-    const zLook = pos.z + 100 * Math.sin(rot);
-    camera.lookAt(xLook, pos.y, zLook);
-    camera.position.copy(pos);
   }, []);
 
   useFrame(() => {
@@ -125,9 +118,9 @@ const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
           <DefaultXRControllers />
         </>
       )}
-      <mesh ref={bodyRef} name="player">
+      <group name="player">
         {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
-      </mesh>
+      </group>
       {children}
     </PlayerContext.Provider>
   );

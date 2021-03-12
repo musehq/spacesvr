@@ -1,9 +1,4 @@
 import { ShapeType, useCompoundBody } from "@react-three/cannon";
-import { Vector3 } from "three";
-
-type CapsuleColliderProps = {
-  initPos?: Vector3;
-};
 
 // height of 0.9 (eye level) for a perceived height of 1
 const HEIGHT = 0.9;
@@ -16,12 +11,10 @@ const sphere1 = { ...sphereProps, position: [0, -(HEIGHT - RADIUS), 0] };
 const sphere2 = { ...sphereProps, position: [0, -(HEIGHT / 2), 0] };
 const sphere3 = { ...sphereProps, position: [0, -RADIUS, 0] };
 
-export const useCapsuleCollider = (props: CapsuleColliderProps) => {
-  const { initPos = new Vector3(0, 0, 0) } = props;
-
+export const useCapsuleCollider = (initPos: number[]) => {
   const compoundBody = useCompoundBody(() => ({
     mass: 62,
-    position: initPos.toArray(),
+    position: initPos,
     segments: 8,
     fixedRotation: true,
     type: "Dynamic",
@@ -34,8 +27,8 @@ export const useCapsuleCollider = (props: CapsuleColliderProps) => {
 export const VisibleCapsuleCollider = () => {
   const createSphere = (sphere: any) => (
     <mesh position={sphere.position}>
-      <sphereBufferGeometry args={sphere.args} attach="geometry" />
-      <meshStandardMaterial color="red" attach="material" wireframe={true} />
+      <sphereBufferGeometry args={sphere.args} />
+      <meshStandardMaterial color="red" wireframe={true} />
     </mesh>
   );
 
