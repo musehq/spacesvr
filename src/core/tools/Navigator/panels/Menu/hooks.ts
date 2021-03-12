@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { XRSession } from "three";
-import { useEnvironment } from "../../../../utils/hooks";
+import { useEnvironment } from "../../../../contexts/environment";
 
 export type MenuItem = {
   text: string;

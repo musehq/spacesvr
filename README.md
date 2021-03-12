@@ -10,7 +10,7 @@
      Sleek, powerful front-end framework for quickly creating cross-platform VR Websites.
 </h5>
 <p align="center">
-    <a href="https://spacesvr.io">spacesvr.io</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place/muse">muse.place/muse</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
 <br/>
 <br/>
@@ -93,6 +93,29 @@ Under the hood it enables cannon physics and react-three-fiber code with a canva
 to do is wrap your [react-three-fiber](https://github.com/react-spring/react-three-fiber)
 code in an environment and you will be able to navigate your space on mobile and desktop!
 
+### assets
+
+The `Environment` component comes out of the box with a loader and a loading overlay, using
+Drei's `useProgress` hook.
+
+However, this hook is unreliable for 3D files, especially with iOS and Safari. So if you want to ensure your assets are loaded correctly, pass an array
+of asset urls to the `assets` prop in the `Environment` component and use the `useAsset` hook
+to retrieve the data from that asset. Currently supported assets are `hdr, png, jpg, glb, gltf`.
+
+```jsx
+<StandardEnvironment assets={["https://link-to-model.glb", "https://link-to-texture.png"]}>
+    <Suspense fallback={null}>
+        <Model />
+    </Suspense>
+</StandardEnvironment>
+
+// in <Model/>
+const Model = () =>
+    const asset = useAsset("https://link-to-model.glb");
+    return <primitive object={asset.data.scene} />
+}
+```
+
 #### the useEnvironment Hook.
 
 The `useEnvironment` hook is your direct access to the environment state. It can be used anywhere
@@ -100,7 +123,7 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 
 ```jsx
 {
-  type: Environment; // the type of environment, { STANDARD, TRACK, PORTAL }
+  type: Environment; // the type of environment, { STANDARD, TRACK }
   paused: boolean; // whether the pointer lock controls are engaged
   setPaused: (p: boolean, overlay?: string) => void; // set the paused state, along with overlay
   player: PlayerRef;
@@ -157,7 +180,7 @@ The Standard Environment defines the following:
 
 The Keyframe Environment defines the following:
 
-- 2 unit tall floating player
+- 1 unit tall floating player
 - Move with Arrow Keys, A/D movement, or Onscreen Arrows
 - Drag Controls, Gryro Controls with Mobile Drag as fallback
 - Physics enabled, ground plane at y=0
@@ -170,7 +193,7 @@ The Keyframe Environment defines the following:
     physicsProps={{...}} // props to be passed along to cannon.js
     player={{
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
-        rot: Math.PI / 2,  // initial rotation
+        rot: Math.PI / 2,  // initial rotation,
     }}
     keyframes={[
         { label: "home", position: new Vector3(0, 2, 5) },
@@ -191,10 +214,10 @@ An arrow icon
 
 #### Audio
 
-A positional audio component that will play the passed in audio url.
+A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
 
 ```jsx
-<Audio url="https://link-to-your-audio.mp3" position={new Vector3(0, 4, 0)} />
+<Audio url="https://link-to-your-audio.mp3" position={[0, 4, 0]} volume={1} />
 ```
 
 #### Background
@@ -231,9 +254,8 @@ Quickly add an image to your scene
 ```jsx
 <Image
   src="https://link-to-your-image.png"
-  size={[width, height]}
+  size={1} // size, default normalized to longest side = 1
   framed // adds a frame
-  doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
 />
 ```
@@ -250,22 +272,12 @@ Pure Idea, Unmediated
 />
 ```
 
-#### Shop
-
-Given Shopify credentials, will populate space with products available for sale.
-
-```jsx
-<Shop
-  domain="shopify-domain.myshopify.com"
-  token="YOUR_SHOPIFY_STOREFRONT_ACCESS_TOKEN"
-  itemSize={4} // size of the products on display
-/>
-```
-
 #### Text
 
 A 3D text component with a default font of Myriad Pro. Custom fonts need to be converted to
-a json file, which can be done here: https://gero3.github.io/facetype.js/
+a json file, which can be done here: https://gero3.github.io/facetype.js/. Note: this is
+expensive, so if you want a lot of text look at Drei's Text component, extended from
+Troika-3d-Text.
 
 ```jsx
 <Text
@@ -281,15 +293,15 @@ a json file, which can be done here: https://gero3.github.io/facetype.js/
 
 #### Video
 
-Add a video file to your space with positional audio
+Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
 
 ```jsx
 <Video
   src="https://link-to-your-video.mp4"
-  size={[width, height]}
+  size={1} // size, default normalized to longest side = 1
+  volume={1}
   muted // mutes the video
   framed // adds a frame
-  doubleSided // removes back face of frame and creates two opposite facing images
   material={THREE.Material} // custom material for the frame
 />
 ```
@@ -307,6 +319,20 @@ Makes its children float up and down
 >
   <Stuff />
 </Floating>
+```
+
+#### Spinning
+
+Makes its children spin
+
+```jsx
+<Spinning
+  xSpeed={0} // speed to spin around axis
+  ySpeed={1} // y axis is 1 by default
+  zSpeed={0} // 0 = no spin on axis
+>
+  <Stuff />
+</Spinning>
 ```
 
 #### Interactable

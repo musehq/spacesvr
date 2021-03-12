@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "react-three-fiber";
 import Frame from "./misc/Frame";
-import { Material } from "three";
+import { Material, Vector2 } from "three";
 
 type Props = JSX.IntrinsicElements["group"] & {
   src: string;
-  size: [number, number];
+  size?: number;
   framed?: boolean;
   muted?: boolean;
-  doubleSided?: boolean;
+  volume?: number;
   material?: Material;
 };
 
 export const Video = (props: Props) => {
-  const { src, size, framed, muted, doubleSided, material } = props;
+  const { src, size = 1, framed, muted, volume = 1, material } = props;
 
   const { camera } = useThree();
 
-  const [width, height] = size;
   const listener = useRef<THREE.AudioListener>();
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
+  const [dims, setDims] = useState<Vector2 | null>();
 
   const video = useMemo(() => {
     const v = document.createElement("video");
@@ -44,7 +44,7 @@ export const Video = (props: Props) => {
         speak.setMediaElementSource(video);
         speak.setRefDistance(0.75);
         speak.setRolloffFactor(1);
-        speak.setVolume(1);
+        speak.setVolume(volume);
         speak.setDirectionalCone(180, 230, 0.1);
 
         setSpeaker(speak);
@@ -52,12 +52,17 @@ export const Video = (props: Props) => {
     };
 
     const playVideo = () => {
-      video.play();
+      video
+        .play()
+        .then(() => setDims(new Vector2(video.videoWidth, video.videoHeight)));
+
       setupAudio();
     };
 
     if (video) {
-      video.play();
+      video
+        .play()
+        .then(() => setDims(new Vector2(video.videoWidth, video.videoHeight)));
       document.addEventListener("click", playVideo);
       return () => {
         document.removeEventListener("click", playVideo);
@@ -84,25 +89,24 @@ export const Video = (props: Props) => {
     };
   }, []);
 
+  if (!dims || !video) {
+    return null;
+  }
+
+  const max = Math.max(dims.x, dims.y);
+  const width = (dims.x / max) * size;
+  const height = (dims.y / max) * size;
+
   return (
     <group {...props}>
-      {video && (
-        <mesh scale={[width, height, 1]}>
-          <planeBufferGeometry attach="geometry" args={[1, 1]} />
-          <meshBasicMaterial>
-            <videoTexture attach="map" args={[video]} />
-          </meshBasicMaterial>
-        </mesh>
-      )}
+      <mesh>
+        <planeBufferGeometry attach="geometry" args={[width, height]} />
+        <meshBasicMaterial>
+          <videoTexture attach="map" args={[video]} />
+        </meshBasicMaterial>
+      </mesh>
       {speaker && <primitive object={speaker} />}
-      {framed && (
-        <Frame
-          back={!doubleSided}
-          width={width}
-          height={height}
-          material={material}
-        />
-      )}
+      {framed && <Frame width={width} height={height} material={material} />}
     </group>
   );
 };

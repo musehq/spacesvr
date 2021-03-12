@@ -1029,6 +1029,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@juggle/resize-observer@^3.2.0":
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.0.tgz#2e7a2935adbfae46f9efbd1e1455254ee7ea2219"
+  integrity sha512-P1v2nvK7z2gOLVM/bveIRLG9L99uEahTGgTltyF03zixZAjI9YmKLj5Z9MpS9wBIUt5WDoQORT2lXvLOIF89iA==
+
 "@react-spring/animated@9.0.0-rc.3":
   version "9.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/@react-spring/animated/-/animated-9.0.0-rc.3.tgz#e792cb76aacecfc78db2be6020ac11ce96503eb5"
@@ -1108,14 +1113,6 @@
     react "^16.13.1"
     three "^0.122.0"
     use-error-boundary "^2.0.4"
-
-"@react-three/postprocessing@^1.4.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@react-three/postprocessing/-/postprocessing-1.5.1.tgz#4612381fdcc996c0c58668f141b73d9599a6c9b0"
-  integrity sha512-zrfDIES0osRkRGw3PuwW4e1G7Zi9qxuEckX/vwuUutFB1oDacRA2P41AwoazR5Qi6qPPlX1dKn33+eLh3JBkHQ==
-  dependencies:
-    postprocessing "^6.17.1"
-    react-merge-refs "^1.1.0"
 
 "@react-three/xr@^1.1.1":
   version "1.1.1"
@@ -3395,11 +3392,6 @@ nipplejs@^0.8.7:
   resolved "https://registry.yarnpkg.com/nipplejs/-/nipplejs-0.8.7.tgz#da14db793bbe22f9ccb98aad7dbea2d0abf7cdb6"
   integrity sha512-B3uSKnWIGWHfrd6oDpLW1xiYleY8+ACVIlLNZeVChBBGDeDiKm4YjetVxlP3O2FvS3Fqf24E/9FrjM3Thc6WDg==
 
-node-fetch@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
-  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
-
 node-releases@^1.1.67:
   version "1.1.67"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.67.tgz#28ebfcccd0baa6aad8e8d4d8fe4cbc49ae239c12"
@@ -3657,11 +3649,6 @@ please-upgrade-node@^3.2.0:
   dependencies:
     semver-compare "^1.0.0"
 
-postprocessing@^6.17.1:
-  version "6.20.3"
-  resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-6.20.3.tgz#17cc47bf3a4a4fd0c3e918a2e71292a0958f3349"
-  integrity sha512-Fm68mijfc/DBm0kGiXg3ws8zLgfwdH2XmiS4b/j2JXOsK7Flaq4VylycGgJcf2y6Q/y+zM+ZgtNvJAAcjmgYzA==
-
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
@@ -3712,6 +3699,11 @@ prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
     react-is "^16.8.1"
+
+proxy-compare@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/proxy-compare/-/proxy-compare-1.1.6.tgz#dd7737be611a9d7142fae10dbc6d0ceb74ad6da0"
+  integrity sha512-V65euKrKgKjVyEh5+4nVlAf4dHJ6Q0cF77MCeZiJaOldAl9lndy/u270SJneHiz3UkVcSIhxfOKY7aFkrMyo5g==
 
 psl@^1.1.28:
   version "1.8.0"
@@ -4186,11 +4178,6 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
-
-shopify-buy@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.11.0.tgz#0f7cb52741395e4ae778c336f32ddf3fe67c2f35"
-  integrity sha512-bGjS1b/VCPvCjazSstlKwgLtK1WBotWom06/12loja8yfo/cWkLuJsakBbQe1uEIDiOLhKaR0M0CAXZFheYDug==
 
 side-channel@^1.0.2, side-channel@^1.0.3:
   version "1.0.4"
@@ -4696,6 +4683,13 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+valtio@^0.7.0:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/valtio/-/valtio-0.7.1.tgz#427578f984efa9c2b6d5471c8a36c74ebafdb416"
+  integrity sha512-5z8HYqcO4GSzz/9Tho+WuJMIkIuXEz0VI5gkF2nslgPeFr6emiUY854aTZX1gt41sxs0d83ZURM68fE/SjyAOA==
+  dependencies:
+    proxy-compare "1.1.6"
 
 verror@1.10.0:
   version "1.10.0"

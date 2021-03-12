@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 import { createPlayerRef } from "../utils/player";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
@@ -23,6 +23,9 @@ export type PlayerProps = {
   initPos?: Vector3;
   initRot?: number;
   speed?: number;
+  controls?: {
+    disableGyro?: boolean;
+  };
 };
 
 /**
@@ -35,9 +38,14 @@ export type PlayerProps = {
  * @constructor
  */
 const Player = (props: PlayerProps) => {
-  const { initPos = new Vector3(0, 0, 0), initRot = 0, speed = SPEED } = props;
+  const {
+    initPos = new Vector3(0, 0, 0),
+    initRot = 0,
+    speed = SPEED,
+    controls,
+  } = props;
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
-  const { device, setPlayer } = useEnvironment();
+  const { device, paused, setPlayer } = useEnvironment();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -49,7 +57,7 @@ const Player = (props: PlayerProps) => {
   const [raycaster] = useState(
     isMobile
       ? defaultRaycaster
-      : new Raycaster(new Vector3(), new Vector3(), 0, 3)
+      : new Raycaster(new Vector3(), new Vector3(), 0, 1.5)
   );
 
   // consumer
@@ -113,7 +121,11 @@ const Player = (props: PlayerProps) => {
     <>
       {device.mobile && (
         <>
-          <GyroControls fallback={<TouchFPSCamera />} />
+          {controls?.disableGyro ? (
+            <TouchFPSCamera />
+          ) : (
+            <GyroControls fallback={<TouchFPSCamera />} />
+          )}
           <NippleMovement direction={direction} />
         </>
       )}

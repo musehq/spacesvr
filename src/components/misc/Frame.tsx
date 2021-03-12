@@ -1,16 +1,27 @@
 import { useMemo } from "react";
 import * as THREE from "three";
-import { Material } from "three";
+import { BoxBufferGeometry, BufferGeometry, Material } from "three";
+import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 type FrameProps = {
   width: number;
   height: number;
-  back?: boolean;
   material?: Material;
 };
 
+/**
+ *
+ * Builds a frame for a mesh with a texture (image, video, etc.)
+ *
+ * In the code, the frame is the back panel and the border is the
+ * four meshes that make up the top, left, right, and bottom sides
+ * of the border.
+ *
+ * @param props
+ * @constructor
+ */
 const Frame = (props: FrameProps) => {
-  const { back, width, height, material: passedMaterial } = props;
+  const { width, height, material: passedMaterial } = props;
 
   const material = useMemo(
     () =>
@@ -23,66 +34,74 @@ const Frame = (props: FrameProps) => {
     []
   );
 
-  const size = Math.max(width, height);
-
-  const frameDepth = 0.1;
-  const frameWidth = 0.075 * size;
-  const borderDepth = 0.2;
-  const borderThickness = 0.05 * size;
+  const frameDepth = 0.025;
+  const frameWidth = 0.06;
+  const borderDepth = 0.05;
+  const borderThickness = 0.05;
   const meshOffset = 0.0005;
 
-  return (
-    <group>
-      {back && (
-        <mesh position-z={[-0.1 - meshOffset]} material={material}>
-          <boxBufferGeometry
-            attach="geometry"
-            args={[width + frameWidth, height + frameWidth, frameDepth]}
-          />
-        </mesh>
-      )}
-      {/* top */}
-      <mesh
-        position-y={height / 2 + frameWidth / 2 - borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[width + frameWidth, borderThickness, borderDepth]}
-        />
-      </mesh>
-      {/* bottom */}
-      <mesh
-        position-y={-height / 2 - frameWidth / 2 + borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[width + frameWidth, borderThickness, borderDepth]}
-        />
-      </mesh>
-      {/* left */}
-      <mesh
-        position-x={-width / 2 - frameWidth / 2 + borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[borderThickness, height + frameWidth, borderDepth]}
-        />
-      </mesh>
-      {/* right */}
-      <mesh
-        position-x={width / 2 + frameWidth / 2 - borderThickness / 2}
-        material={material}
-      >
-        <boxBufferGeometry
-          attach="geometry"
-          args={[borderThickness, height + frameWidth, borderDepth]}
-        />
-      </mesh>
-    </group>
-  );
+  const geometry = useMemo<BufferGeometry>(() => {
+    const backPanel = new BoxBufferGeometry(
+      width + frameWidth,
+      height + frameWidth,
+      frameDepth
+    );
+    backPanel.translate(0, 0, -frameDepth - meshOffset);
+
+    const topFrame = new BoxBufferGeometry(
+      width + frameWidth,
+      borderThickness,
+      borderDepth
+    );
+    topFrame.translate(0, height / 2 + frameWidth / 2 - borderThickness / 2, 0);
+
+    const bottomFrame = new BoxBufferGeometry(
+      width + frameWidth,
+      borderThickness,
+      borderDepth
+    );
+    bottomFrame.translate(
+      0,
+      -height / 2 - frameWidth / 2 + borderThickness / 2,
+      0
+    );
+
+    const leftFrame = new BoxBufferGeometry(
+      borderThickness,
+      height + frameWidth,
+      borderDepth
+    );
+    leftFrame.translate(
+      -width / 2 - frameWidth / 2 + borderThickness / 2,
+      0,
+      0
+    );
+
+    const rightFrame = new BoxBufferGeometry(
+      borderThickness,
+      height + frameWidth,
+      borderDepth
+    );
+    rightFrame.translate(
+      width / 2 + frameWidth / 2 - borderThickness / 2,
+      0,
+      0
+    );
+
+    const geos = [backPanel, topFrame, bottomFrame, leftFrame, rightFrame];
+
+    const geo = BufferGeometryUtils.mergeBufferGeometries(geos);
+
+    backPanel.dispose();
+    topFrame.dispose();
+    bottomFrame.dispose();
+    leftFrame.dispose();
+    rightFrame.dispose();
+
+    return geo;
+  }, [width, height]);
+
+  return <mesh geometry={geometry} material={material} />;
 };
 
 export default Frame;

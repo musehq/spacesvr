@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { Group, Vector2 } from "three";
-import { useEnvironment } from "../core/utils/hooks";
+import { useEnvironment } from "../core/contexts/environment";
 import { useFrame, useThree } from "react-three-fiber";
 import { isMobile } from "react-device-detect";
 
