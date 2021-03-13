@@ -50,7 +50,7 @@
 
 #### codesandbox
 
-Visit [this code sandbox](https://codesandbox.io/s/polished-meadow-erzku?fontsize=14&hidenavigation=1&theme=dark) to instantly play with the package
+Visit [this code sandbox](https://codesandbox.io/s/e9w29) to instantly play with the package
 
 #### npm
 
