@@ -1,4 +1,4 @@
-import { useRef, useMemo, ReactNode, useEffect } from "react";
+import { useRef, useMemo, ReactNode, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Raycaster, Vector3 } from "three";
 import { useEnvironment } from "../contexts/environment";
@@ -38,15 +38,18 @@ export type PlayerProps = {
  *
  * @constructor
  */
-const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
+export default function Player(
+  props: { children: ReactNode[] | ReactNode } & PlayerProps
+) {
   const { children, pos = [0, 2, 0], rot = 0, speed = SPEED, controls } = props;
 
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
   const { device, pointerLocked } = useEnvironment();
-  const [_, bodyApi] = useCapsuleCollider(pos);
+  const [, bodyApi] = useCapsuleCollider(pos);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state
+  const [setup, setSetup] = useState(false);
   const position = useRef(new Vector3());
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
@@ -56,9 +59,13 @@ const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
   );
 
   // initial camera rotation
-  const xLook = pos[0] + 100 * Math.cos(rot);
-  const zLook = pos[2] + 100 * Math.sin(rot);
-  camera.lookAt(xLook, pos[1], zLook);
+  // i know this is ugly but it doesn't work in the use effect
+  if (!setup) {
+    const xLook = pos[0] + 100 * Math.cos(rot);
+    const zLook = pos[2] + 100 * Math.sin(rot);
+    camera.lookAt(xLook, pos[1], zLook);
+    setSetup(true);
+  }
 
   useEffect(() => {
     // store position and velocity
@@ -124,6 +131,4 @@ const Player = (props: { children: ReactNode[] | ReactNode } & PlayerProps) => {
       {children}
     </PlayerContext.Provider>
   );
-};
-
-export default Player;
+}

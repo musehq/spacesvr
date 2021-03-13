@@ -21,7 +21,7 @@ const PI_2 = Math.PI / 2;
  * @param props = { onUnlock: function to run when the pointer lock controls are unlocked }
  * @constructor
  */
-const PointerLockCamera = (props: Props) => {
+export default function PointerLockCamera(props: Props) {
   const { onUnlock } = props;
 
   const { setPointerLocked } = useEnvironment();
@@ -121,6 +121,4 @@ const PointerLockCamera = (props: Props) => {
   }, []);
 
   return null;
-};
-
-export default PointerLockCamera;
+}

@@ -1,11 +1,11 @@
 import { GroupProps } from "react-three-fiber";
 import { Text } from "@react-three/drei";
 import * as THREE from "three";
-import { Interactable } from "../../../../../modifiers/Interactable";
+import { Interactable } from "../../../../modifiers/Interactable";
 // @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { useState } from "react";
-import { MenuItem, useMenuFunctionality } from "./hooks";
+import { MenuItem, useMenuFunctionality } from "../utils/hooks";
 
 const FONT_SIZE = 0.7;
 const ITEM_HEIGHT = FONT_SIZE * 3;

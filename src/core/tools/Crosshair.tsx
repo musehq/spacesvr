@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { useSpring } from "react-spring";
 import { getSpringValues } from "../utils/spring";
-import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 
 const DISTANCE = 0.05;
@@ -15,7 +14,7 @@ const Crosshair = () => {
   const parent = useRef<Group>();
 
   const { camera, mouse } = useThree();
-  const { pointerLocked } = useEnvironment();
+  const { device, pointerLocked } = useEnvironment();
   const dummyVector = useRef(new Vector3());
   const [raycaster] = useState(new Raycaster());
 
@@ -25,15 +24,17 @@ const Crosshair = () => {
   }));
 
   useFrame(() => {
-    if (!isMobile && group.current) {
-      raycaster.setFromCamera(pointerLocked ? CENTER_VECTOR : mouse, camera);
-      raycaster.ray.at(DISTANCE, dummyVector.current);
-      dummyVector.current.sub(camera.position);
-      setSpring({ xyz: dummyVector.current.toArray() });
-
-      const [x, y, z] = getSpringValues(spring);
-      group.current.position.set(x / SCALE, y / SCALE, z / SCALE);
+    if (device.mobile || !group.current) {
+      return;
     }
+
+    raycaster.setFromCamera(pointerLocked ? CENTER_VECTOR : mouse, camera);
+    raycaster.ray.at(DISTANCE, dummyVector.current);
+    dummyVector.current.sub(camera.position);
+    setSpring({ xyz: dummyVector.current.toArray() });
+
+    const [x, y, z] = getSpringValues(spring);
+    group.current.position.set(x / SCALE, y / SCALE, z / SCALE);
   });
 
   useFrame(() => {
@@ -42,7 +43,7 @@ const Crosshair = () => {
     }
   }, 1);
 
-  if (isMobile) {
+  if (device.mobile) {
     return null;
   }
 

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { XRSession } from "three";
-import { useEnvironment } from "../../../../contexts/environment";
+import { useEnvironment } from "../../../contexts/environment";
+import { setOnboarded } from "./onboard";
+import { useNavigator } from "./context";
 
 export type MenuItem = {
   text: string;
@@ -13,11 +15,18 @@ type MenuFunctionality = {
 };
 
 export const useMenuFunctionality = (): MenuFunctionality => {
+  const { setStage } = useNavigator();
   const fullscreenMenuItem = useFullscreenMenuItem();
   const vrMenuItem = useVRMenuItem();
 
   const menuItems: MenuItem[] = [
-    { text: "Tutorial", action: () => console.log("mute audio") },
+    {
+      text: "Tutorial",
+      action: () => {
+        setOnboarded(false);
+        setStage("welcome");
+      },
+    },
   ];
 
   if (fullscreenMenuItem !== undefined) menuItems.push(fullscreenMenuItem);
@@ -75,7 +84,7 @@ const useFullscreenMenuItem = (): MenuItem | undefined => {
   };
 };
 
-export const useVRMenuItem = (): MenuItem | undefined => {
+const useVRMenuItem = (): MenuItem | undefined => {
   const { gl } = useThree();
   const { setDevice } = useEnvironment();
 
