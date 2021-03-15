@@ -83,7 +83,7 @@ export const StandardEnvironment = (
     disableGround,
   } = props;
 
-  const simulation = useSimulationState({ ...simulationProps });
+  const simulation = useSimulationState(simulationProps);
   const state = useEnvironmentState({ simulation });
 
   return (

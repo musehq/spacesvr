@@ -20,7 +20,9 @@ export type SimulationProps = {
  * @param props
  * @constructor
  */
-export const useSimulationState = (props: SimulationProps): SimulationState => {
+export const useSimulationState = (
+  props?: SimulationProps
+): SimulationState => {
   const {
     signalHost = "127.0.0.1",
     signalPort = 3001,
@@ -234,7 +236,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         peer.destroy();
       }
     };
-  }, [peer]);
+  }, [peer, props]);
 
   return {
     signalHost,
