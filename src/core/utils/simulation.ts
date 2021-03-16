@@ -21,15 +21,13 @@ export type SimulationProps = {
  * @constructor
  */
 export const useSimulationState = (
-  props?: SimulationProps
+  props = {} as SimulationProps
 ): SimulationState => {
-  const {
-    signalHost = "127.0.0.1",
-    signalPort = 3001,
-    signalPath = "/signal",
-    socketServer = "ws://127.0.0.1:3002",
-    frequency = 20,
-  } = props;
+  const { signalHost, signalPort, signalPath, socketServer, frequency } = props;
+
+  // Check props to enable simulation
+  // TODO: Assert all SimulationProps specified
+  const enabled = Object.keys(props).length;
 
   // Manage player and network data
   let dataConn: Peer.DataConnection;
@@ -41,7 +39,7 @@ export const useSimulationState = (
   const socket = useRef<WebSocket>();
   const [connected, setConnected] = useState(false);
   const peer = useMemo(() => {
-    if (props) {
+    if (enabled) {
       return new Peer({
         host: signalHost,
         port: signalPort,
@@ -170,7 +168,7 @@ export const useSimulationState = (
 
   // Make connections synced with props
   useEffect(() => {
-    if (!props) {
+    if (!enabled) {
       return;
     }
 
