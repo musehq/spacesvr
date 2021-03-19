@@ -18,7 +18,7 @@ import MobilePause from "../overlays/MobilePause";
 import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
-import { useSimulationState } from "../utils/simulation";
+import { useSimulationState, SimulationProps } from "../utils/simulation";
 
 const Container = styled.div`
   position: absolute;
@@ -57,7 +57,7 @@ type StandardEnvironmentProps = {
   };
   effects?: ReactNode;
   disableGround?: boolean;
-  disableSimulation?: boolean;
+  simulationProps?: SimulationProps;
 };
 
 /**
@@ -81,13 +81,9 @@ export const StandardEnvironment = (
     player,
     effects,
     disableGround,
-    disableSimulation,
   } = props;
 
-  const simulation = useSimulationState({
-    ...simulationProps,
-    disableSimulation,
-  });
+  const simulation = useSimulationState(simulationProps);
   const state = useEnvironmentState({ simulation });
 
   return (

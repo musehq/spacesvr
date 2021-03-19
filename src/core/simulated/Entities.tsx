@@ -20,6 +20,7 @@ const EntityAvatar = (props: EntityAvatarProps) => {
     const entity = entityData.get(uuid);
 
     if (mesh.current && entity) {
+      // TODO: REMOVE MESHES ON DC
       // TODO: SNAPSHOT INTERPOLATION
       // TODO: ONLY UPDATE ON CHANGE
 

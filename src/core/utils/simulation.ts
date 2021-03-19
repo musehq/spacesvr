@@ -8,7 +8,6 @@ export type SimulationProps = {
   signalPath?: string;
   socketServer?: string;
   frequency?: number;
-  disableSimulation?: boolean;
 };
 
 /**
@@ -21,25 +20,26 @@ export type SimulationProps = {
  * @param props
  * @constructor
  */
-export const useSimulationState = (props: SimulationProps): SimulationState => {
-  const {
-    signalHost = "127.0.0.1",
-    signalPort = 3001,
-    signalPath = "/signal",
-    socketServer = "ws://127.0.0.1:8080",
-    frequency = 20,
-    disableSimulation,
-  } = props;
+export const useSimulationState = (
+  props = {} as SimulationProps
+): SimulationState => {
+  const { signalHost, signalPort, signalPath, socketServer, frequency } = props;
 
+  // Check props to enable simulation
+  // TODO: Assert all SimulationProps specified
+  const enabled = Object.keys(props).length;
+
+  // Manage player and network data
   let dataConn: Peer.DataConnection;
   let dataConnMap: Map<string, Peer.DataConnection>;
   let simulationData: Map<string, Entity>;
 
+  // Setup sources
   const peerId = useRef<string>();
   const socket = useRef<WebSocket>();
   const [connected, setConnected] = useState(false);
   const peer = useMemo(() => {
-    if (!disableSimulation) {
+    if (enabled) {
       return new Peer({
         host: signalHost,
         port: signalPort,
@@ -47,9 +47,9 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       });
     }
     return new Peer();
-  }, [signalHost, signalPort, signalPath, disableSimulation]);
+  }, [signalHost, signalPort, signalPath]);
 
-  // Set up handlers for Data Connection between peers
+  // Handle DataConnection between peers
   const handleDataConn = (dataConn: Peer.DataConnection): void => {
     dataConn.on("open", () => {
       if (dataConnMap && !dataConnMap.has(dataConn.peer)) {
@@ -57,7 +57,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
       }
     });
 
-    // Track remote position/rotation
+    // Track remote player position and rotation
     dataConn.on("data", (data: any) => {
       if (simulationData) {
         const obj = JSON.parse(data);
@@ -83,7 +83,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     });
   };
 
-  // Connect clients
+  // Connect a client
   const connectPeer = (locPeer: Peer, newPeer: string): void => {
     if (peerId.current != newPeer) {
       dataConn = locPeer.connect(newPeer);
@@ -91,7 +91,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     }
   };
 
-  // Connect P2P
+  // Connect all clients
   const connectP2P = (locPeer: Peer): void => {
     locPeer.listAllPeers((peers) => {
       if (peers && peers.length) {
@@ -100,6 +100,30 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         }
       }
     });
+  };
+
+  // Connect client WebSocket
+  const connectWS = (wss: string): void => {
+    socket.current = new WebSocket(wss);
+
+    // Emit the new ID
+    socket.current.onopen = (event: Event) => {
+      if (peerId.current && socket.current) {
+        socket.current.send(peerId.current);
+      }
+    };
+
+    // Catch WebSocket errors and close
+    socket.current.onerror = (event: Event) => {
+      if (socket.current) {
+        socket.current.close();
+      }
+    };
+
+    // Connect to any new peers
+    socket.current.onmessage = (event: MessageEvent) => {
+      connectPeer(peer, event.data);
+    };
   };
 
   // Send event
@@ -142,34 +166,22 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
     [peer]
   );
 
-  // Establish p2p connection synced with props
+  // Make connections synced with props
   useEffect(() => {
-    if (disableSimulation) {
+    if (!enabled) {
       return;
     }
 
     peer.on("open", (id: string) => {
       peerId.current = id;
       dataConnMap = new Map<string, Peer.DataConnection>();
-      simulationData = new Map<string, any>();
+      simulationData = new Map<string, Entity>();
 
       // Join network of existing peers
       connectP2P(peer);
 
-      // Listen for future peers
-      socket.current = new WebSocket(socketServer);
-
-      // Emit the new ID
-      socket.current.onopen = () => {
-        if (peerId.current && socket.current) {
-          socket.current.send(peerId.current);
-        }
-      };
-
-      // Connect to any new peers
-      socket.current.onmessage = (event: MessageEvent) => {
-        connectPeer(peer, event.data);
-      };
+      // WebSocket listen for future peers
+      connectWS(socketServer);
 
       setConnected(true);
     });
@@ -222,7 +234,7 @@ export const useSimulationState = (props: SimulationProps): SimulationState => {
         peer.destroy();
       }
     };
-  }, [peer, disableSimulation]);
+  }, [peer, props]);
 
   return {
     signalHost,
