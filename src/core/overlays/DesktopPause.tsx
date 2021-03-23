@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../utils/hooks";
-
-const { NEXT_PUBLIC_VERSION } = process.env;
+import { useEnvironment } from "../contexts/environment";
+import { keyframes } from "@emotion/core";
 
 const Container = styled.div<{ paused: boolean }>`
   width: 100%;
@@ -30,6 +29,15 @@ const ClickContainer = styled.div`
   z-index: -1;
 `;
 
+const hueRotate = keyframes`
+  from{
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+`;
+
 const Window = styled.div`
   width: 90%;
   max-width: 400px;
@@ -43,9 +51,12 @@ const Window = styled.div`
   justify-content: center;
   position: relative;
   border-radius: 3%;
-  background-image: url("https://spaces-gallery-assets.s3-us-west-1.amazonaws.com/images/pauseMenuBg.png");
+  background-image: url("https://d27rt3a60hh1lx.cloudfront.net/images/muse-bg.jpg");
   background-position: center;
   background-size: cover;
+  font-family: sans-serif;
+  animation: ${hueRotate} 15s ease infinite;
+  box-sizing: border-box;
 `;
 
 const Continue = styled.div`
@@ -55,7 +66,7 @@ const Continue = styled.div`
   cursor: pointer;
   text-align: center;
   font-size: 1.3em;
-  font-family: "Lato", sans-serif;
+  font-family: "Quicksand", sans-serif;
   transition: opacity 0.15s linear;
   margin-top: 20px;
   background: white;
@@ -96,7 +107,7 @@ const Header = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: "Lato", sans-serif;
+  font-family: "Quicksand", sans-serif;
 `;
 
 const Title = styled.div`
@@ -110,12 +121,16 @@ const Text = styled.div`
   width: 100%;
   height: auto;
   margin: 10px 0;
-  font-family: "Space Mono", monospace;
+  font-family: "Roboto", sans-serif, monospace;
   font-size: 0.7em;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  & > p {
+    margin: 0.2em;
+  }
 `;
 
 const DesktopPause = () => {
@@ -130,16 +145,14 @@ const DesktopPause = () => {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v {NEXT_PUBLIC_VERSION}</Version>
+        <Version>v1.3.3</Version>
         <Instagram
-          onClick={() => {
-            window.open("https://www.instagram.com/spaces3.0");
-          }}
+          onClick={() => window.open("https://www.instagram.com/musehq")}
         >
-          @spaces3.0
+          @musehq
         </Instagram>
         <Header>
-          <Title>SPACES</Title>
+          <Title>muse</Title>
         </Header>
         <Text>
           <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>

@@ -1,4 +1,3 @@
-import BrowserChecker from "../utils/BrowserChecker";
 import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
@@ -8,17 +7,21 @@ import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
 import Entities from "../simulated/Entities";
-import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import { EnvironmentProps } from "../types";
+import {
+  useEnvironmentState,
+  EnvironmentContext,
+} from "../contexts/environment";
+import { EnvironmentProps } from "../types/environment";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
-import { RealisticEffects } from "../../effects";
 import DesktopPause from "../overlays/DesktopPause";
-import MobilePause from "../overlays/MobilePause";
-import { isMobile } from "react-device-detect";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { useSimulationState, SimulationProps } from "../utils/simulation";
+import { ResizeObserver } from "@juggle/resize-observer";
+import { LoadingContext, useLoadingState } from "../contexts/loading";
+import { MountOnLoad } from "../loader/MountOnLoad";
+import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -37,14 +40,25 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
-  camera: { position: [0, 2, 0], near: 0.01, far: 100 },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: true,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: [1, 2],
+  camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
   size: 50,
   allowSleep: false,
+  gravity: [0, -9.8 * 2, 0],
   defaultContactMaterial: {
     friction: 0,
   },
@@ -54,20 +68,24 @@ type StandardEnvironmentProps = {
   player?: {
     pos?: Vector3;
     rot?: number;
+    speed?: number;
+    controls?: {
+      disableGyro?: boolean;
+    };
   };
-  effects?: ReactNode;
+  pauseMenu?: ReactNode;
   disableGround?: boolean;
   simulationProps?: SimulationProps;
+  loadingScreen?: ReactNode;
 };
 
 /**
  *
  * Standard environment should be your first choice for an environment
  *
- * Player Type: First Person w/ WASD, Joystick controls
+ * Player Type: First Person w/ WASD, Joystick controls, Gyro Controls
  * Physics: Enabled with default y=0 floor plane
- * Loading Screen: Spaces Edition
- * Pause Menu: Spaces Edition
+ * Loading Screen & Pause Menu
  *
  */
 export const StandardEnvironment = (
@@ -79,35 +97,48 @@ export const StandardEnvironment = (
     physicsProps,
     simulationProps,
     player,
-    effects,
     disableGround,
+    assets,
+    pauseMenu,
+    loadingScreen,
   } = props;
 
   const simulation = useSimulationState(simulationProps);
-  const state = useEnvironmentState({ simulation });
+  const envState = useEnvironmentState({ simulation });
+  const loadState = useLoadingState(assets);
 
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
-      <Container ref={state.containerRef}>
+      <Container ref={envState.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <environmentStateContext.Provider value={state}>
-              <Player initPos={player?.pos} initRot={player?.rot} />
-              <Entities />
-              {!disableGround && <InfinitePlane height={-0.001} />}
-              {effects || <RealisticEffects />}
-              {children}
-            </environmentStateContext.Provider>
+            <LoadingContext.Provider value={loadState}>
+              <EnvironmentContext.Provider value={envState}>
+                <MountOnLoad>
+                  <Player
+                    initPos={player?.pos}
+                    initRot={player?.rot}
+                    speed={player?.speed}
+                    controls={player?.controls}
+                  />
+                  <Entities />
+                  {!disableGround && <InfinitePlane height={-0.001} />}
+                  {children}
+                </MountOnLoad>
+              </EnvironmentContext.Provider>
+            </LoadingContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={state}>
-          <LoadingScreen />
-          <DesktopPause />
-          {isMobile && <MobilePause />}
-          <Crosshair />
-        </environmentStateContext.Provider>
+        <LoadingContext.Provider value={loadState}>
+          <AssetLoader />
+          <EnvironmentContext.Provider value={envState}>
+            {loadingScreen || <LoadingScreen />}
+            {pauseMenu || <DesktopPause />}
+            <Crosshair />
+          </EnvironmentContext.Provider>
+        </LoadingContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

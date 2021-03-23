@@ -4,6 +4,7 @@ import { PlayerRef } from "./player";
 import { MutableRefObject, ReactNode } from "react";
 import { SimulationState } from "./simulation";
 import { SimulationProps } from "../utils/simulation";
+import { AssetUrls } from "./loading";
 
 export enum Environment {
   STANDARD,
@@ -17,6 +18,7 @@ export type EnvironmentStateProps = {
 
 export type EnvironmentProps = {
   children: ReactNode;
+  assets?: AssetUrls;
   canvasProps?: Partial<ContainerProps>;
   physicsProps?: Partial<ProviderProps>;
   simulationProps?: SimulationProps;

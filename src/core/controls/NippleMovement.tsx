@@ -1,7 +1,7 @@
 import { useRef, useEffect, MutableRefObject } from "react";
 import { Vector3 } from "three";
 import nipplejs, { JoystickManager } from "nipplejs";
-import { useEnvironment } from "../utils/hooks";
+import { useEnvironment } from "../contexts/environment";
 
 type NippleMovementProps = {
   direction: MutableRefObject<Vector3>;
@@ -24,11 +24,11 @@ const NippleMovement = (props: NippleMovementProps) => {
 
   const nipple = useRef<JoystickManager>();
   const nippleContainer = useRef<HTMLElement>();
-  const { container } = useEnvironment();
+  const { containerRef } = useEnvironment();
 
   useEffect(() => {
-    if (container) {
-      nippleContainer.current = document.createElement("divs");
+    if (containerRef.current) {
+      nippleContainer.current = document.createElement("div");
       nippleContainer.current.style.position = "fixed";
       nippleContainer.current.style.left = "0";
       nippleContainer.current.style.bottom = "0";
@@ -39,7 +39,7 @@ const NippleMovement = (props: NippleMovementProps) => {
       nippleContainer.current.style.zIndex = "5";
       // add class identifier to nippleContainer to identify touchEvents
       nippleContainer.current.classList.add("nipple-container");
-      container.appendChild(nippleContainer.current);
+      containerRef.current.appendChild(nippleContainer.current);
 
       nipple.current = nipplejs.create({
         zone: nippleContainer.current,
@@ -47,7 +47,7 @@ const NippleMovement = (props: NippleMovementProps) => {
         position: { left: "50%", top: "50%" },
         color: "gray",
         size: 120,
-        restOpacity: 0.5,
+        restOpacity: 0.75,
       });
 
       nipple.current.on("move", (evt, data) => {
@@ -66,7 +66,7 @@ const NippleMovement = (props: NippleMovementProps) => {
     }
   }, []);
 
-  return <></>;
+  return null;
 };
 
 export default NippleMovement;

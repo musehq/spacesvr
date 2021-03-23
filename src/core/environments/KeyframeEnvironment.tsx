@@ -1,6 +1,8 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { useEnvironmentState, environmentStateContext } from "../utils/hooks";
-import BrowserChecker from "../utils/BrowserChecker";
+import { useCallback, useEffect, useState } from "react";
+import {
+  useEnvironmentState,
+  EnvironmentContext,
+} from "../contexts/environment";
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
@@ -13,12 +15,15 @@ import {
   KeyframeEnvironmentState,
 } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
-import { RealisticEffects } from "../../effects";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
 import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
+import { ResizeObserver } from "@juggle/resize-observer";
+import { MountOnLoad } from "../loader/MountOnLoad";
+import { LoadingContext, useLoadingState } from "../contexts";
+import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -44,9 +49,19 @@ const Container = styled.div`
 `;
 
 const defaultCanvasProps: Partial<ContainerProps> = {
-  shadowMap: true,
-  gl: { alpha: false },
-  camera: { position: [0, 2, 0], near: 0.01, far: 100 },
+  gl: {
+    powerPreference: "high-performance",
+    antialias: true,
+    depth: true,
+    alpha: false,
+    stencil: false,
+  },
+  concurrent: true,
+  shadowMap: false,
+  pixelRatio: [1, 2],
+  camera: { position: [0, 2, 0], near: 0.01, far: 150 },
+  resize: { polyfill: ResizeObserver },
+  noEvents: true,
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -59,7 +74,6 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
 
 type KeyframeEnvironmentProps = {
   keyframes: Keyframe[];
-  effects?: ReactNode;
 };
 
 /**
@@ -72,11 +86,10 @@ type KeyframeEnvironmentProps = {
  * Pause Menu: Spaces Edition
  *
  */
-
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes, effects } = props;
+  const { children, canvasProps, physicsProps, keyframes, assets } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -97,6 +110,7 @@ export const KeyframeEnvironment = (
   const state = useEnvironmentState();
   const localState: KeyframeEnvironmentState = {
     ...state,
+    paused: false,
     type: Environment.KEYFRAME,
     keyframes: {
       getCurrent: useCallback(() => keyframes[keyframeIndex], [keyframeIndex]),
@@ -107,24 +121,32 @@ export const KeyframeEnvironment = (
     },
   };
 
+  const loadState = useLoadingState(assets);
+
   return (
-    <BrowserChecker>
+    <>
       <GlobalStyles />
       <Container ref={state.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <environmentStateContext.Provider value={localState}>
-              <SpringPlayer spring={spring} />
-              {effects || <RealisticEffects />}
-              <SpringScaled spring={spring}>{children}</SpringScaled>
-            </environmentStateContext.Provider>
+            <EnvironmentContext.Provider value={localState}>
+              <LoadingContext.Provider value={loadState}>
+                <MountOnLoad>
+                  <SpringPlayer spring={spring} />
+                  <SpringScaled spring={spring}>{children}</SpringScaled>
+                </MountOnLoad>
+              </LoadingContext.Provider>
+            </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <environmentStateContext.Provider value={localState}>
-          <LoadingScreen />
-          <KeyframeControlDisplay />
-        </environmentStateContext.Provider>
+        <LoadingContext.Provider value={loadState}>
+          <AssetLoader />
+          <EnvironmentContext.Provider value={localState}>
+            <LoadingScreen />
+            <KeyframeControlDisplay />
+          </EnvironmentContext.Provider>
+        </LoadingContext.Provider>
       </Container>
-    </BrowserChecker>
+    </>
   );
 };

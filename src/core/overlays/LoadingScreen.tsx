@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
-import { useControlledProgress } from "../utils/hooks";
+import { useContext } from "react";
+import { LoadingContext } from "../contexts/loading";
 
-const Container = styled.div<{ finished: boolean; landing: boolean }>`
+const Container = styled.div<{ finished: boolean }>`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -20,12 +21,9 @@ const Container = styled.div<{ finished: boolean; landing: boolean }>`
 `;
 
 const LoadingScreen = () => {
-  const progress = useControlledProgress();
-
+  const { progress } = useContext(LoadingContext);
   return (
-    <Container finished={progress == 100} landing={false}>
-      {progress}%
-    </Container>
+    <Container finished={progress === 100}>{Math.round(progress)}%</Container>
   );
 };
 

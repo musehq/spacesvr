@@ -1,10 +1,11 @@
 import { ReactNode, useRef } from "react";
 import { useFrame } from "react-three-fiber";
 import { Group } from "three";
+import { useLimiter } from "../services/limiter";
 
 type FloatingProps = {
   height?: number;
-  speed?: 1;
+  speed?: number;
   children: ReactNode;
 };
 
@@ -13,13 +14,14 @@ export const Floating = (props: FloatingProps) => {
 
   const group = useRef<Group>();
   const seed = useRef(Math.random());
+  const limiter = useLimiter(75);
 
   useFrame(({ clock }) => {
-    if (group.current) {
-      group.current.position.y =
-        height *
-        Math.sin(clock.getElapsedTime() * speed * 0.4 + seed.current * 10000);
-    }
+    if (!group.current || !limiter.isReady(clock)) return;
+
+    group.current.position.y =
+      height *
+      Math.sin(clock.getElapsedTime() * speed * 0.4 + seed.current * 10000);
   });
 
   return <group ref={group}>{children}</group>;
