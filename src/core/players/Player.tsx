@@ -2,8 +2,9 @@ import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
-
 import { useEnvironment } from "../contexts/environment";
+import { useSimulation } from "../contexts/simulation";
+import { useLimiter } from "../../services/limiter";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
@@ -44,7 +45,9 @@ const Player = (props: PlayerProps) => {
     controls,
   } = props;
   const { camera, raycaster: defaultRaycaster } = useThree();
-  const { paused, setPlayer, simulation } = useEnvironment();
+  const { paused, setPlayer } = useEnvironment();
+  const { connected, frequency, sendEvent } = useSimulation();
+  const simulationLimiter = useLimiter(frequency);
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -53,7 +56,6 @@ const Player = (props: PlayerProps) => {
   const position = useRef(new Vector3(0, 0, 0));
   const velocity = useRef(new Vector3(0, 0, 0));
   const lockControls = useRef(false);
-  const prevNetworkSend = useRef(0);
   const [raycaster] = useState(
     isMobile
       ? defaultRaycaster
@@ -110,18 +112,14 @@ const Player = (props: PlayerProps) => {
     }
 
     // p2p stream position and rotation
-    if (simulation && simulation.connected) {
-      const networkDelta = clock.getElapsedTime() - prevNetworkSend.current;
-      if (networkDelta > 1 / simulation.frequency) {
-        simulation.sendEvent(
-          "player",
-          JSON.stringify({
-            position: camera.position,
-            rotation: camera.rotation,
-          })
-        );
-        prevNetworkSend.current = clock.getElapsedTime();
-      }
+    if (connected && simulationLimiter.isReady(clock)) {
+      sendEvent(
+        "player",
+        JSON.stringify({
+          position: camera.position,
+          rotation: camera.rotation,
+        })
+      );
     }
   });
 

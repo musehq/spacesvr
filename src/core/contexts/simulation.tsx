@@ -1,14 +1,22 @@
 import Peer from "peerjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Entity, SimulationState } from "../types/simulation";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  createContext,
+  useContext,
+} from "react";
+import { Entity, SimulationState, SimulationProps } from "../types/simulation";
 
-export type SimulationProps = {
-  signalHost?: string;
-  signalPort?: number;
-  signalPath?: string;
-  socketServer?: string;
-  frequency?: number;
-};
+export const SimulationContext = createContext<SimulationState>(
+  {} as SimulationState
+);
+
+export function useSimulation(): SimulationState {
+  return useContext(SimulationContext);
+}
 
 /**
  * Simulation creates a P2P mesh
@@ -23,7 +31,13 @@ export type SimulationProps = {
 export const useSimulationState = (
   props = {} as SimulationProps
 ): SimulationState => {
-  const { signalHost, signalPort, signalPath, socketServer, frequency } = props;
+  const {
+    signalHost,
+    signalPort,
+    signalPath,
+    socketServer,
+    frequency = 20,
+  } = props;
 
   // Check props to enable simulation
   // TODO: Assert all SimulationProps specified
@@ -237,9 +251,6 @@ export const useSimulationState = (
   }, [peer, props]);
 
   return {
-    signalHost,
-    signalPort,
-    signalPath,
     connected,
     sendEvent,
     frequency,

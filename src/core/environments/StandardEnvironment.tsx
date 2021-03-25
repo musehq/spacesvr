@@ -11,13 +11,14 @@ import {
   useEnvironmentState,
   EnvironmentContext,
 } from "../contexts/environment";
+import { useSimulationState, SimulationContext } from "../contexts/simulation";
 import { EnvironmentProps } from "../types/environment";
+import { SimulationProps } from "../types/simulation";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
-import { useSimulationState, SimulationProps } from "../utils/simulation";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { LoadingContext, useLoadingState } from "../contexts/loading";
 import { MountOnLoad } from "../loader/MountOnLoad";
@@ -103,8 +104,8 @@ export const StandardEnvironment = (
     loadingScreen,
   } = props;
 
-  const simulation = useSimulationState(simulationProps);
-  const envState = useEnvironmentState({ simulation });
+  const simState = useSimulationState(simulationProps);
+  const envState = useEnvironmentState();
   const loadState = useLoadingState(assets);
 
   return (
@@ -115,17 +116,19 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <LoadingContext.Provider value={loadState}>
               <EnvironmentContext.Provider value={envState}>
-                <MountOnLoad>
-                  <Player
-                    initPos={player?.pos}
-                    initRot={player?.rot}
-                    speed={player?.speed}
-                    controls={player?.controls}
-                  />
-                  <Entities />
-                  {!disableGround && <InfinitePlane height={-0.001} />}
-                  {children}
-                </MountOnLoad>
+                <SimulationContext.Provider value={simState}>
+                  <MountOnLoad>
+                    <Player
+                      initPos={player?.pos}
+                      initRot={player?.rot}
+                      speed={player?.speed}
+                      controls={player?.controls}
+                    />
+                    <Entities />
+                    {!disableGround && <InfinitePlane height={-0.001} />}
+                    {children}
+                  </MountOnLoad>
+                </SimulationContext.Provider>
               </EnvironmentContext.Provider>
             </LoadingContext.Provider>
           </Physics>

@@ -1,4 +1,4 @@
-import { useEnvironment } from "../utils/hooks";
+import { useSimulation } from "../contexts/simulation";
 import { useRef, useState } from "react";
 import { useFrame } from "react-three-fiber";
 import { Mesh } from "three";
@@ -10,13 +10,13 @@ type EntityAvatarProps = {
 // avatar retrieves entity information itself to not re-mount mesh every frame
 const EntityAvatar = (props: EntityAvatarProps) => {
   const { uuid } = props;
-  const { simulation } = useEnvironment();
+  const { fetch } = useSimulation();
 
   const mesh = useRef<Mesh>();
 
   // retrieve player information every frame and update pos/rot
   useFrame(() => {
-    const entityData = simulation.fetch("entities");
+    const entityData = fetch("entities");
     const entity = entityData.get(uuid);
 
     if (mesh.current && entity) {
@@ -38,14 +38,14 @@ const EntityAvatar = (props: EntityAvatarProps) => {
 };
 
 const Entities = () => {
-  const { simulation } = useEnvironment();
+  const { connected, fetch } = useSimulation();
 
   const [entityIds, setEntityIds] = useState<Array<string>>([]);
 
   // every frame, check for a change in player list, re-render if there is a change
   useFrame(() => {
-    if (simulation.connected) {
-      const entities = simulation.fetch("entities");
+    if (connected) {
+      const entities = fetch("entities");
       const ids = Array.from(entities.keys());
       const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
       if (!sameIds) {
@@ -54,7 +54,7 @@ const Entities = () => {
     }
   });
 
-  if (!simulation.connected) {
+  if (!connected) {
     return null;
   }
 

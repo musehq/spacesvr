@@ -3,7 +3,7 @@ import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeConta
 import { PlayerRef } from "./player";
 import { MutableRefObject, ReactNode } from "react";
 import { SimulationState } from "./simulation";
-import { SimulationProps } from "../utils/simulation";
+import { SimulationProps } from "../types/simulation";
 import { AssetUrls } from "./loading";
 
 export enum Environment {
@@ -12,16 +12,11 @@ export enum Environment {
   PORTAL,
 }
 
-export type EnvironmentStateProps = {
-  simulation?: SimulationState;
-};
-
 export type EnvironmentProps = {
   children: ReactNode;
   assets?: AssetUrls;
   canvasProps?: Partial<ContainerProps>;
   physicsProps?: Partial<ProviderProps>;
-  simulationProps?: SimulationProps;
 };
 
 export interface EnvironmentState {
@@ -34,7 +29,6 @@ export interface EnvironmentState {
   events: EnvironmentEvent[];
   player: PlayerRef;
   setPlayer: (p: PlayerRef) => void;
-  simulation: SimulationState;
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
 }
 
