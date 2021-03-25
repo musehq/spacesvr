@@ -144,6 +144,22 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 }
 ```
 
+### simulation
+
+Your worlds can now run in a simulation! To enable it you can run a
+server out of `examples/server/app.js` and pass the corresponding parameters as `simulationProps` to the
+`StandardEnvironment` component
+
+```jsx
+{
+    signalHost?: string;
+    signalPort?: number;
+    signalPath?: string;
+    socketServer?: string;
+    frequency?: number; // number of times per second to update
+}
+```
+
 #### modifiers.
 
 Modifiers, add functionality to any 3d component in different ways. For example, the `Floating`

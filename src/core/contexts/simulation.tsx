@@ -36,12 +36,12 @@ export const useSimulationState = (
     signalPort,
     signalPath,
     socketServer,
-    frequency = 20,
+    frequency = 30,
   } = props;
 
   // Check props to enable simulation
   // TODO: Assert all SimulationProps specified
-  const enabled = Object.keys(props).length;
+  const enabled = Object.keys(props).length > 0;
 
   // Manage player and network data
   let dataConn: Peer.DataConnection;
@@ -187,6 +187,8 @@ export const useSimulationState = (
     }
 
     peer.on("open", (id: string) => {
+      if (!socketServer) return;
+
       peerId.current = id;
       dataConnMap = new Map<string, Peer.DataConnection>();
       simulationData = new Map<string, Entity>();
