@@ -50,7 +50,15 @@
 
 #### codesandbox
 
-Visit [this code sandbox](https://codesandbox.io/s/e9w29) to instantly play with the package
+Visit the codesandbox to instantly play with the package
+
+https://codesandbox.io/s/e9w29
+
+### Starter Repo
+
+Clone the starter repo to give yourself a solid starting point
+
+https://github.com/spacesvr/spacesvr-starter
 
 #### npm
 

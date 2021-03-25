@@ -145,7 +145,7 @@ const DesktopPause = () => {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.3.3</Version>
+        <Version>v1.3.5</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >
