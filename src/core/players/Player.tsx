@@ -2,8 +2,9 @@ import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Quaternion, Raycaster, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
-
 import { useEnvironment } from "../contexts/environment";
+import { useSimulation } from "../contexts/simulation";
+import { useLimiter } from "../../services/limiter";
 import { createPlayerRef } from "../utils/player";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
@@ -45,6 +46,8 @@ const Player = (props: PlayerProps) => {
   } = props;
   const { camera, raycaster: defaultRaycaster } = useThree();
   const { paused, setPlayer } = useEnvironment();
+  const { connected, frequency, sendEvent } = useSimulation();
+  const simulationLimiter = useLimiter(frequency);
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider({ initPos });
@@ -80,7 +83,7 @@ const Player = (props: PlayerProps) => {
   }, []);
 
   // update player every frame
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     // update raycaster
     if (!isMobile) {
       raycaster.ray.origin.copy(position.current);
@@ -106,6 +109,17 @@ const Player = (props: PlayerProps) => {
     if (!lockControls.current) {
       // keep y velocity intact and update velocity
       bodyApi?.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    }
+
+    // p2p stream position and rotation
+    if (connected && simulationLimiter.isReady(clock)) {
+      sendEvent(
+        "player",
+        JSON.stringify({
+          position: camera.position,
+          rotation: camera.rotation,
+        })
+      );
     }
   });
 

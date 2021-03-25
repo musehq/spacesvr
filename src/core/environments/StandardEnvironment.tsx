@@ -6,11 +6,14 @@ import { Canvas } from "react-three-fiber";
 import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player from "../players/Player";
+import Entities from "../simulated/Entities";
 import {
   useEnvironmentState,
   EnvironmentContext,
 } from "../contexts/environment";
+import { useSimulationState, SimulationContext } from "../contexts/simulation";
 import { EnvironmentProps } from "../types/environment";
+import { SimulationProps } from "../types/simulation";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/";
 import DesktopPause from "../overlays/DesktopPause";
@@ -73,6 +76,7 @@ type StandardEnvironmentProps = {
   };
   pauseMenu?: ReactNode;
   disableGround?: boolean;
+  simulationProps?: SimulationProps;
   loadingScreen?: ReactNode;
 };
 
@@ -92,6 +96,7 @@ export const StandardEnvironment = (
     children,
     canvasProps,
     physicsProps,
+    simulationProps,
     player,
     disableGround,
     assets,
@@ -99,6 +104,7 @@ export const StandardEnvironment = (
     loadingScreen,
   } = props;
 
+  const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
   const loadState = useLoadingState(assets);
 
@@ -110,16 +116,19 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <LoadingContext.Provider value={loadState}>
               <EnvironmentContext.Provider value={envState}>
-                <MountOnLoad>
-                  <Player
-                    initPos={player?.pos}
-                    initRot={player?.rot}
-                    speed={player?.speed}
-                    controls={player?.controls}
-                  />
-                  {!disableGround && <InfinitePlane height={-0.001} />}
-                  {children}
-                </MountOnLoad>
+                <SimulationContext.Provider value={simState}>
+                  <MountOnLoad>
+                    <Player
+                      initPos={player?.pos}
+                      initRot={player?.rot}
+                      speed={player?.speed}
+                      controls={player?.controls}
+                    />
+                    <Entities />
+                    {!disableGround && <InfinitePlane height={-0.001} />}
+                    {children}
+                  </MountOnLoad>
+                </SimulationContext.Provider>
               </EnvironmentContext.Provider>
             </LoadingContext.Provider>
           </Physics>
