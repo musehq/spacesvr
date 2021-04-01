@@ -1,3 +1,4 @@
+// @ts-ignore
 import Peer from "peerjs";
 import {
   useCallback,
@@ -92,7 +93,7 @@ export const useSimulationState = (
       }
     });
 
-    dataConn.on("error", (err) => {
+    dataConn.on("error", (err: any) => {
       console.log(err);
     });
   };
@@ -107,7 +108,7 @@ export const useSimulationState = (
 
   // Connect all clients
   const connectP2P = (locPeer: Peer): void => {
-    locPeer.listAllPeers((peers) => {
+    locPeer.listAllPeers((peers: any) => {
       if (peers && peers.length) {
         for (const p of peers) {
           connectPeer(locPeer, p);
