@@ -106,7 +106,7 @@ export const Interactable = (props: Props) => {
         domElement.removeEventListener("mouseup", onMouseUp);
       }
     };
-  }, [onMouseUp, onTouchEnd]);
+  }, [onMouseUp, onTouchEnd, onClick]);
 
   return <group ref={group}>{children}</group>;
 };
