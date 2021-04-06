@@ -58,6 +58,7 @@ export const useSimulationState = (
         host: signalHost,
         port: signalPort,
         path: signalPath,
+        secure: signalPort === 443,
       });
     }
     return new Peer();
