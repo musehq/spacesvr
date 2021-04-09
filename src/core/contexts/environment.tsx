@@ -6,12 +6,12 @@ import {
   useState,
 } from "react";
 import {
-  Environment,
+  Device,
   EnvironmentEvent,
   EnvironmentState,
   KeyframeEnvironmentState,
-  PlayerRef,
 } from "../types";
+import { isMobile } from "react-device-detect";
 
 export const EnvironmentContext = createContext<EnvironmentState>(
   {} as EnvironmentState
@@ -31,11 +31,11 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
  *
  */
 export function useEnvironmentState(): EnvironmentState {
+  const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
   const [paused, setPausedState] = useState(true);
   const [overlay, setOverlayState] = useState(null);
   const container = useRef<HTMLDivElement>(null);
   const events = useRef<EnvironmentEvent[]>([]);
-  const player = useRef<PlayerRef>({} as PlayerRef);
 
   const setPaused = useCallback(
     (p, o) => {
@@ -60,10 +60,6 @@ export function useEnvironmentState(): EnvironmentState {
     [events]
   );
 
-  const setPlayer = (p: PlayerRef) => {
-    player.current = p;
-  };
-
   const addEvent = useCallback(
     (name: string, callback: (...args: any[]) => void) => {
       const event: EnvironmentEvent = {
@@ -76,16 +72,21 @@ export function useEnvironmentState(): EnvironmentState {
     []
   );
 
+  const deviceState = {
+    mobile: device === "mobile",
+    desktop: device === "desktop",
+    xr: device === "xr",
+  };
+
   const context: EnvironmentState = {
-    type: Environment.STANDARD,
+    device: deviceState,
+    setDevice,
     paused,
     overlay,
-    player: player.current,
     containerRef: container,
     container: container.current,
     events: events.current,
     setPaused,
-    setPlayer,
     addEvent,
   };
 

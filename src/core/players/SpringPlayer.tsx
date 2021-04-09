@@ -1,16 +1,16 @@
 import { useRef, useEffect } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Raycaster, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
-import { createPlayerRef } from "../utils/player";
+import { createPlayerState } from "../utils/player";
 import { GyroControls } from "../controls/GyroControls";
 import { useSphere } from "@react-three/cannon";
 import DragControls from "../controls/DragControls";
 import TouchFPSCamera from "../controls/TouchFPSCamera";
 import { getSpringValues } from "../utils/spring";
 import { AnimatedValue } from "react-spring";
-import { useEnvironment } from "../contexts/environment";
+import { PlayerContext } from "../contexts/player";
 
 const SHOW_PLAYER_HITBOX = false;
 
@@ -33,7 +33,6 @@ const SpringPlayer = (props: SpringPlayerProps) => {
   const { spring } = props;
 
   const { camera, raycaster } = useThree();
-  const { setPlayer } = useEnvironment();
   const [initX, initY, initZ, initS] = getSpringValues(spring);
   const initPos = new Vector3(initX * initS, initY * initS, initZ * initS);
 
@@ -66,10 +65,6 @@ const SpringPlayer = (props: SpringPlayerProps) => {
     camera?.lookAt(xLook, initPos.y, zLook);
 
     camera?.position.set(initPos.x, initPos.y, initPos.z);
-
-    setPlayer(
-      createPlayerRef(bodyApi, position, velocity, lockControls, raycaster)
-    );
   }, []);
 
   // update player every frame
@@ -78,18 +73,20 @@ const SpringPlayer = (props: SpringPlayerProps) => {
     bodyApi?.position.set(x * s, y * s, z * s);
   });
 
+  const state = createPlayerState(
+    bodyApi,
+    position,
+    velocity,
+    lockControls,
+    raycaster
+  );
+
   return (
-    <>
+    <PlayerContext.Provider value={state}>
       {isMobile ? (
-        <GyroControls
-          quaternion={quaternion}
-          position={position}
-          fallback={
-            <TouchFPSCamera quaternion={quaternion} position={position} />
-          }
-        />
+        <GyroControls fallback={<TouchFPSCamera />} />
       ) : (
-        <DragControls quaternion={quaternion} position={position} />
+        <DragControls />
       )}
       <mesh name="player">
         {SHOW_PLAYER_HITBOX && (
@@ -99,7 +96,7 @@ const SpringPlayer = (props: SpringPlayerProps) => {
           </>
         )}
       </mesh>
-    </>
+    </PlayerContext.Provider>
   );
 };
 

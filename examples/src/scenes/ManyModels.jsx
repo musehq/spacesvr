@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Image } from "spacesvr";
+import { StandardEnvironment, Background, Logo, Image, Audio } from "spacesvr";
 import Building from "../models/Building";
 import MichaelModel from "../models/MichaelModel";
 import PinkWhiteDurag from "../models/PinkWhiteDurag";
@@ -16,10 +16,7 @@ export default () => {
   ];
 
   return (
-    <StandardEnvironment
-      player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}
-      assets={assets}
-    >
+    <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
       <Background color={0xffffff} />
       <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       <ambientLight />
@@ -37,8 +34,8 @@ export default () => {
         framed
       />
       <Building position={[4, 0, 0]} />
-      <MichaelModel position={[2, 0, 0]} />
-      <PinkWhiteDurag position={[9, 0, 0]} />
+      <MichaelModel position={[2, 0, 0]} scale={[5, 5, 5]} />
+      <PinkWhiteDurag position={[9, 0, 0]} scale={[5, 5, 5]} />
       <ShoppingCart position={[-6, 0, 0]} />
     </StandardEnvironment>
   );

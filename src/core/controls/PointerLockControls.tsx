@@ -1,12 +1,8 @@
-import { useEffect, useCallback, MutableRefObject, useRef } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Euler } from "three";
 import { useEnvironment } from "../contexts/environment";
 import * as THREE from "three";
-
-type Props = {
-  position: MutableRefObject<THREE.Vector3>;
-};
 
 const MIN_POLAR_ANGLE = 0; // radians
 const MAX_POLAR_ANGLE = Math.PI; // radians
@@ -22,9 +18,7 @@ const PI_2 = Math.PI / 2;
  * @param props = { onUnlock: function to run when the pointer lock controls are unlocked }
  * @constructor
  */
-const PointerLockCamera = (props: Props) => {
-  const { position } = props;
-
+const PointerLockCamera = () => {
   const { camera, gl } = useThree();
   const { domElement } = gl;
   const { paused, setPaused, addEvent } = useEnvironment();
@@ -39,10 +33,6 @@ const PointerLockCamera = (props: Props) => {
       const lookAt = new THREE.Vector3(0, 0, -1);
       lookAt.applyQuaternion(camera.quaternion);
       lookAt.multiply(new THREE.Vector3(1, 0, 1)).normalize();
-    }
-    if (position.current) {
-      const { x: pX, y: pY, z: pZ } = position.current;
-      camera?.position?.set(pX, pY, pZ);
     }
   });
 
