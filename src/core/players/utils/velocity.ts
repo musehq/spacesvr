@@ -28,7 +28,7 @@ export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
     // keep y velocity intact and update velocity
     setSpring({ xyz: inputVelocity.toArray() });
     const [x, y, z] = getSpringValues(spring);
-    bodyApi?.velocity.set(x, y, z);
+    bodyApi.velocity.set(x, y, z);
   };
 
   return {

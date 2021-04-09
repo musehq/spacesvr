@@ -6,11 +6,12 @@ import {
   useState,
 } from "react";
 import {
-  Environment,
+  Device,
   EnvironmentEvent,
   EnvironmentState,
   KeyframeEnvironmentState,
 } from "../types";
+import { isMobile } from "react-device-detect";
 
 export const EnvironmentContext = createContext<EnvironmentState>(
   {} as EnvironmentState
@@ -30,6 +31,7 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
  *
  */
 export function useEnvironmentState(): EnvironmentState {
+  const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
   const [paused, setPausedState] = useState(true);
   const [overlay, setOverlayState] = useState(null);
   const container = useRef<HTMLDivElement>(null);
@@ -70,7 +72,15 @@ export function useEnvironmentState(): EnvironmentState {
     []
   );
 
+  const deviceState = {
+    mobile: device === "mobile",
+    desktop: device === "desktop",
+    xr: device === "xr",
+  };
+
   const context: EnvironmentState = {
+    device: deviceState,
+    setDevice,
     paused,
     overlay,
     containerRef: container,

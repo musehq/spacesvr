@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
+import Overlay from "../../modifiers/Overlay";
+import { useFsMenuItem, useVRMenuItem } from "../utils/menu";
 
 const Container = styled.div<{ paused: boolean }>`
   width: 100%;
@@ -133,35 +135,63 @@ const Text = styled.div`
   }
 `;
 
+const MenuButton = styled.button`
+  color: white;
+  border: 1px solid white;
+  border-radius: 2px;
+  //position: absolute;
+  //left: 60px;
+  //bottom: 24px;
+  background: rgba(255, 255, 255, 0);
+  padding: 5px 10px;
+  margin: 8px 0;
+  transition: background 0.15s linear;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+`;
+
 const DesktopPause = () => {
   const { paused, overlay, setPaused } = useEnvironment();
   const closeOverlay = () => setPaused(false);
+  const vrMenu = useVRMenuItem();
+  const fsMenu = useFsMenuItem();
 
   if (overlay) {
     return null;
   }
 
   return (
-    <Container paused={paused}>
-      <ClickContainer onClick={closeOverlay} />
-      <Window>
-        <Version>v1.4.3</Version>
-        <Instagram
-          onClick={() => window.open("https://www.instagram.com/musehq")}
-        >
-          @musehq
-        </Instagram>
-        <Header>
-          <Title>muse</Title>
-        </Header>
-        <Text>
-          <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
-          <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
-          <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
-        </Text>
-      </Window>
-      <Continue onClick={closeOverlay}>continue</Continue>
-    </Container>
+    <Overlay>
+      <Container paused={paused}>
+        <ClickContainer onClick={closeOverlay} />
+        <Window>
+          <Version>v1.4.3</Version>
+          <Instagram
+            onClick={() => window.open("https://www.instagram.com/musehq")}
+          >
+            @musehq
+          </Instagram>
+          <Header>
+            <Title>muse</Title>
+          </Header>
+          <Text>
+            <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
+            <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
+            <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
+          </Text>
+          {vrMenu && (
+            <MenuButton onClick={vrMenu.action}>{vrMenu.text}</MenuButton>
+          )}
+          {fsMenu && (
+            <MenuButton onClick={fsMenu.action}>{fsMenu.text}</MenuButton>
+          )}
+        </Window>
+        <Continue onClick={closeOverlay}>continue</Continue>
+      </Container>
+    </Overlay>
   );
 };
 

@@ -16,6 +16,8 @@ export type EnvironmentProps = {
 
 export interface EnvironmentState {
   paused: boolean;
+  device: DeviceState;
+  setDevice: (d: Device) => void;
   setPaused: (p: boolean, overlay?: string) => void;
   overlay: string | null;
   container: HTMLDivElement | null;
@@ -28,3 +30,11 @@ export interface EnvironmentEvent {
   name: string;
   callback: (...args: any[]) => void;
 }
+
+export type Device = "desktop" | "mobile" | "xr";
+
+export type DeviceState = {
+  xr: boolean;
+  mobile: boolean;
+  desktop: boolean;
+};

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import { Canvas } from "react-three-fiber";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import Player, { PlayerProps } from "../players/Player";
 import Entities from "../simulated/Entities";
@@ -19,6 +18,7 @@ import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
+import { VRCanvas } from "@react-three/xr";
 
 const Container = styled.div`
   position: absolute;
@@ -50,6 +50,9 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
   noEvents: true,
+  // disable default enter vr button
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onCreated: () => {},
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -99,7 +102,7 @@ export const StandardEnvironment = (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
-        <Canvas {...defaultCanvasProps} {...canvasProps}>
+        <VRCanvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={envState}>
               <SimulationContext.Provider value={simState}>
@@ -107,14 +110,15 @@ export const StandardEnvironment = (
                   <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}
                   {children}
+                  {!pauseMenu && <DesktopPause />}
                 </Player>
               </SimulationContext.Provider>
             </EnvironmentContext.Provider>
           </Physics>
-        </Canvas>
+        </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu || <DesktopPause />}
+          {pauseMenu && <DesktopPause />}
           <Crosshair />
         </EnvironmentContext.Provider>
       </Container>
