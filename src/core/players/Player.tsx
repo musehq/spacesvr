@@ -75,8 +75,8 @@ export default function Player(
   // setup player
   useEffect(() => {
     // store position and velocity
-    bodyApi.position.subscribe((p) => position.current.set(p[0], p[1], p[2]));
-    bodyApi.velocity.subscribe((v) => velocity.current.set(v[0], v[1], v[2]));
+    bodyApi.position.subscribe((p) => position.current.fromArray(p));
+    bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
   }, []);
 
   useFrame(({ clock }) => {
@@ -93,7 +93,7 @@ export default function Player(
 
     // update velocity
     if (!lockControls.current) {
-      updateVelocity(cam, velocity.current);
+      updateVelocity(camera, velocity.current);
     }
 
     // p2p stream position and rotation
@@ -107,6 +107,8 @@ export default function Player(
       );
     }
   });
+
+  useFrame(({ gl, scene, camera }) => gl.render(scene, camera), 100);
 
   const state = createPlayerState(
     bodyApi,
@@ -140,9 +142,9 @@ export default function Player(
           <DefaultXRControllers />
         </>
       )}
-      <mesh name="player" ref={bodyRef}>
+      <group name="player" ref={bodyRef}>
         {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
-      </mesh>
+      </group>
       {children}
     </PlayerContext.Provider>
   );
