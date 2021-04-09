@@ -3,9 +3,11 @@ import { Camera, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
 import { useSpring } from "react-spring";
 import { getSpringValues } from "../../utils/spring";
+import { useEnvironment } from "../../contexts/environment";
 
 export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
   const direction = useRef(new Vector3());
+  const { device } = useEnvironment();
 
   const [spring, setSpring] = useSpring(() => ({
     xyz: [0, 0, 0],
@@ -26,9 +28,13 @@ export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
     inputVelocity.y = Math.min(velocity.y, 0);
 
     // keep y velocity intact and update velocity
-    setSpring({ xyz: inputVelocity.toArray() });
-    const [x, y, z] = getSpringValues(spring);
-    bodyApi.velocity.set(x, y, z);
+    if (device.xr) {
+      bodyApi.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    } else {
+      setSpring({ xyz: inputVelocity.toArray() });
+      const [x, y, z] = getSpringValues(spring);
+      bodyApi.velocity.set(x, y, z);
+    }
   };
 
   return {

@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState, ReactNode, useMemo } from "react";
 import { useFrame, useThree } from "react-three-fiber";
 import { Camera, Raycaster, Vector3 } from "three";
-import { isMobile } from "react-device-detect";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import PointerLockControls from "../controls/PointerLockControls";
@@ -83,17 +82,19 @@ export default function Player(
     const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     // update raycaster
-    raycaster.ray.origin.copy(position.current);
-    const lookAt = new Vector3(0, 0, -1);
-    lookAt.applyQuaternion(cam.quaternion);
-    raycaster.ray.direction.copy(lookAt);
+    if (device.desktop) {
+      raycaster.ray.origin.copy(position.current);
+      const lookAt = new Vector3(0, 0, -1);
+      lookAt.applyQuaternion(cam.quaternion);
+      raycaster.ray.direction.copy(lookAt);
+    }
 
     // update camera position
     camera.position.copy(position.current);
 
     // update velocity
     if (!lockControls.current) {
-      updateVelocity(camera, velocity.current);
+      updateVelocity(cam, velocity.current);
     }
 
     // p2p stream position and rotation
