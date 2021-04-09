@@ -5,3 +5,4 @@ export * from "./contexts";
 export * from "./types";
 export * from "./environments/StandardEnvironment";
 export * from "./environments/KeyframeEnvironment";
+export * from "./utils";

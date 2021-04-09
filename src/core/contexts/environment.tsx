@@ -10,7 +10,6 @@ import {
   EnvironmentEvent,
   EnvironmentState,
   KeyframeEnvironmentState,
-  PlayerRef,
 } from "../types";
 
 export const EnvironmentContext = createContext<EnvironmentState>(
@@ -35,7 +34,6 @@ export function useEnvironmentState(): EnvironmentState {
   const [overlay, setOverlayState] = useState(null);
   const container = useRef<HTMLDivElement>(null);
   const events = useRef<EnvironmentEvent[]>([]);
-  const player = useRef<PlayerRef>({} as PlayerRef);
 
   const setPaused = useCallback(
     (p, o) => {
@@ -60,10 +58,6 @@ export function useEnvironmentState(): EnvironmentState {
     [events]
   );
 
-  const setPlayer = (p: PlayerRef) => {
-    player.current = p;
-  };
-
   const addEvent = useCallback(
     (name: string, callback: (...args: any[]) => void) => {
       const event: EnvironmentEvent = {
@@ -77,15 +71,12 @@ export function useEnvironmentState(): EnvironmentState {
   );
 
   const context: EnvironmentState = {
-    type: Environment.STANDARD,
     paused,
     overlay,
-    player: player.current,
     containerRef: container,
     container: container.current,
     events: events.current,
     setPaused,
-    setPlayer,
     addEvent,
   };
 

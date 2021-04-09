@@ -1,71 +1,5 @@
-import { Assets, AssetType, AssetUrls } from "../types";
 import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@react-three/drei";
-
-/**
- * Calculates loading percentage as a fraction of
- * the number of assets loaded over the total
- *
- * @param assets
- */
-export const getProgress = (assets: Assets): number => {
-  const urls = Object.keys(assets);
-  const total = urls.length;
-
-  let numLoaded = 0;
-  for (let i = 0; i < urls.length; i++) {
-    numLoaded += Number(assets[urls[i]].loaded);
-  }
-
-  return (numLoaded / total) * 100;
-};
-
-/**
- * Transforms input assets (arr of strings) into an
- * Assets object
- *
- * @param assetList
- */
-export const transformAssetList = (assetList?: AssetUrls): Assets => {
-  if (assetList === undefined) {
-    return {};
-  }
-
-  const assets: Assets = {};
-
-  for (const url of assetList) {
-    assets[url] = {
-      url,
-      loaded: false,
-      type: getAssetType(url),
-      error: false,
-      data: undefined,
-    };
-  }
-
-  return assets;
-};
-
-/**
- * Gets the asset type based on the url
- *
- * @param url
- */
-export const getAssetType = (url: string): AssetType => {
-  if (url.endsWith(".glb") || url.endsWith(".gltf")) {
-    return "model";
-  }
-
-  if (url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith("jpeg")) {
-    return "image";
-  }
-
-  if (url.endsWith(".hdr")) {
-    return "env";
-  }
-
-  return null;
-};
 
 /**
  * A modified version of the controlled progress hooks that adds
@@ -73,12 +7,13 @@ export const getAssetType = (url: string): AssetType => {
  * - a delay after it reaches 100 in case it goes back down
  * - a timeout when it reaches > 50%, marked as stuck
  */
-export const useLegacyProgress = () => {
-  const TIMEOUT = 750; // minimum time to wait before moving to 100
+export const useControlledProgress = () => {
+  const TIMEOUT = 2000; // minimum time to wait before moving to 100
   const AFTER_TIME = 100; // extra time to prevent bouncing at reaching 100
   const STUCK_TIMEOUT = 5500; // for safari, when stuck at a value above 50
 
-  const { progress, total } = useProgress();
+  const asdf = useProgress();
+  const { progress, total } = asdf;
 
   const startTime = useRef(new Date());
   const controlledProgress = useRef(0);

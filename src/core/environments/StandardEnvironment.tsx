@@ -3,9 +3,8 @@ import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
-import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
-import Player from "../players/Player";
+import Player, { PlayerProps } from "../players/Player";
 import Entities from "../simulated/Entities";
 import {
   useEnvironmentState,
@@ -15,14 +14,11 @@ import { useSimulationState, SimulationContext } from "../contexts/simulation";
 import { EnvironmentProps } from "../types/environment";
 import { SimulationProps } from "../types/simulation";
 import LoadingScreen from "../overlays/LoadingScreen";
-import { InfinitePlane } from "../../components/";
+import { InfinitePlane } from "../../components/InfinitePlane";
 import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { LoadingContext, useLoadingState } from "../contexts/loading";
-import { MountOnLoad } from "../loader/MountOnLoad";
-import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -66,14 +62,7 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
 };
 
 type StandardEnvironmentProps = {
-  player?: {
-    pos?: Vector3;
-    rot?: number;
-    speed?: number;
-    controls?: {
-      disableGyro?: boolean;
-    };
-  };
+  playerProps?: PlayerProps;
   pauseMenu?: ReactNode;
   disableGround?: boolean;
   simulationProps?: SimulationProps;
@@ -97,16 +86,14 @@ export const StandardEnvironment = (
     canvasProps,
     physicsProps,
     simulationProps,
-    player,
+    playerProps,
     disableGround,
-    assets,
     pauseMenu,
     loadingScreen,
   } = props;
 
   const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
-  const loadState = useLoadingState(assets);
 
   return (
     <>
@@ -114,33 +101,22 @@ export const StandardEnvironment = (
       <Container ref={envState.containerRef}>
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <LoadingContext.Provider value={loadState}>
-              <EnvironmentContext.Provider value={envState}>
-                <SimulationContext.Provider value={simState}>
-                  <MountOnLoad>
-                    <Player
-                      initPos={player?.pos}
-                      initRot={player?.rot}
-                      speed={player?.speed}
-                      controls={player?.controls}
-                    />
-                    <Entities />
-                    {!disableGround && <InfinitePlane height={-0.001} />}
-                    {children}
-                  </MountOnLoad>
-                </SimulationContext.Provider>
-              </EnvironmentContext.Provider>
-            </LoadingContext.Provider>
+            <EnvironmentContext.Provider value={envState}>
+              <SimulationContext.Provider value={simState}>
+                <Player {...playerProps}>
+                  <Entities />
+                  {!disableGround && <InfinitePlane height={-0.001} />}
+                  {children}
+                </Player>
+              </SimulationContext.Provider>
+            </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <LoadingContext.Provider value={loadState}>
-          <AssetLoader />
-          <EnvironmentContext.Provider value={envState}>
-            {loadingScreen || <LoadingScreen />}
-            {pauseMenu || <DesktopPause />}
-            <Crosshair />
-          </EnvironmentContext.Provider>
-        </LoadingContext.Provider>
+        <EnvironmentContext.Provider value={envState}>
+          {loadingScreen || <LoadingScreen />}
+          {pauseMenu || <DesktopPause />}
+          <Crosshair />
+        </EnvironmentContext.Provider>
       </Container>
     </>
   );

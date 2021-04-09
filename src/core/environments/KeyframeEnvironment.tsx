@@ -8,12 +8,7 @@ import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
 import { Canvas } from "react-three-fiber";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
-import {
-  Environment,
-  EnvironmentProps,
-  Keyframe,
-  KeyframeEnvironmentState,
-} from "../types";
+import { EnvironmentProps, Keyframe, KeyframeEnvironmentState } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import GlobalStyles from "../styles/GlobalStyles";
 import SpringPlayer from "../players/SpringPlayer";
@@ -21,9 +16,6 @@ import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { MountOnLoad } from "../loader/MountOnLoad";
-import { LoadingContext, useLoadingState } from "../contexts";
-import AssetLoader from "../loader/AssetLoader";
 
 const Container = styled.div`
   position: absolute;
@@ -89,7 +81,7 @@ type KeyframeEnvironmentProps = {
 export const KeyframeEnvironment = (
   props: EnvironmentProps & KeyframeEnvironmentProps
 ) => {
-  const { children, canvasProps, physicsProps, keyframes, assets } = props;
+  const { children, canvasProps, physicsProps, keyframes } = props;
 
   const [keyframeIndex, setKeyframeIndex] = useState(0);
   const scale = keyframes[keyframeIndex].scale || 1;
@@ -111,7 +103,6 @@ export const KeyframeEnvironment = (
   const localState: KeyframeEnvironmentState = {
     ...state,
     paused: false,
-    type: Environment.KEYFRAME,
     keyframes: {
       getCurrent: useCallback(() => keyframes[keyframeIndex], [keyframeIndex]),
       setCurrent: (i: number) => setKeyframeIndex(i),
@@ -121,8 +112,6 @@ export const KeyframeEnvironment = (
     },
   };
 
-  const loadState = useLoadingState(assets);
-
   return (
     <>
       <GlobalStyles />
@@ -130,22 +119,15 @@ export const KeyframeEnvironment = (
         <Canvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={localState}>
-              <LoadingContext.Provider value={loadState}>
-                <MountOnLoad>
-                  <SpringPlayer spring={spring} />
-                  <SpringScaled spring={spring}>{children}</SpringScaled>
-                </MountOnLoad>
-              </LoadingContext.Provider>
+              <SpringPlayer spring={spring} />
+              <SpringScaled spring={spring}>{children}</SpringScaled>
             </EnvironmentContext.Provider>
           </Physics>
         </Canvas>
-        <LoadingContext.Provider value={loadState}>
-          <AssetLoader />
-          <EnvironmentContext.Provider value={localState}>
-            <LoadingScreen />
-            <KeyframeControlDisplay />
-          </EnvironmentContext.Provider>
-        </LoadingContext.Provider>
+        <EnvironmentContext.Provider value={localState}>
+          <LoadingScreen />
+          <KeyframeControlDisplay />
+        </EnvironmentContext.Provider>
       </Container>
     </>
   );
