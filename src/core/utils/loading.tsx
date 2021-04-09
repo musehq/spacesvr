@@ -12,8 +12,7 @@ export const useControlledProgress = () => {
   const AFTER_TIME = 100; // extra time to prevent bouncing at reaching 100
   const STUCK_TIMEOUT = 5500; // for safari, when stuck at a value above 50
 
-  const asdf = useProgress();
-  const { progress, total } = asdf;
+  const { progress, total } = useProgress();
 
   const startTime = useRef(new Date());
   const controlledProgress = useRef(0);
