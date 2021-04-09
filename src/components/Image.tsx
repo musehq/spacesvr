@@ -26,7 +26,7 @@ const UnsuspensedImage = (props: ImageProps) => {
     <group {...props}>
       <mesh>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
-        <meshStandardMaterial map={texture} />
+        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
       </mesh>
       {framed && <Frame width={WIDTH} height={HEIGHT} material={material} />}
     </group>

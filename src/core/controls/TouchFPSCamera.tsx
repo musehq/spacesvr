@@ -1,17 +1,12 @@
-import { useRef, useEffect, MutableRefObject } from "react";
-import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Vector3, Vector2, Euler } from "three";
+import { useRef, useEffect } from "react";
+import { useThree } from "react-three-fiber";
+import { Vector2, Euler } from "three";
 import {
   Touch,
   DefaultTouch,
   getCurrentTouch,
   tappedNipple,
 } from "../utils/touch";
-
-type DragFPSCameraProps = {
-  quaternion: MutableRefObject<Quaternion>;
-  position: MutableRefObject<Vector3>;
-};
 
 const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
 
@@ -23,19 +18,10 @@ const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
  * @param props
  * @constructor
  */
-const TouchFPSCamera = (props: DragFPSCameraProps) => {
-  const { quaternion, position } = props;
-
+const TouchFPSCamera = () => {
   const touchStartPos = useRef<Touch>(DefaultTouch);
   const originEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
   const { camera } = useThree();
-
-  useFrame(() => {
-    if (position.current) {
-      const { x: pX, y: pY, z: pZ } = position.current;
-      camera?.position?.set(pX, pY, pZ);
-    }
-  });
 
   const getNewEuler = (dragX: number, dragY: number): Euler => {
     const newEuler = originEuler.current.clone();
@@ -78,7 +64,6 @@ const TouchFPSCamera = (props: DragFPSCameraProps) => {
     const { clientX, clientY } = touch;
     const newEuler = getNewEuler(clientX, clientY);
     camera.quaternion.setFromEuler(newEuler);
-    quaternion.current = camera.quaternion;
   };
   const onTouchEnd = (ev: TouchEvent) => {
     const touch = getCurrentTouch(touchStartPos.current.id, ev.changedTouches);
@@ -93,11 +78,6 @@ const TouchFPSCamera = (props: DragFPSCameraProps) => {
   };
 
   useEffect(() => {
-    camera?.lookAt(0, 2, 0);
-    quaternion.current = camera.quaternion;
-  }, []);
-
-  useEffect(() => {
     document.addEventListener("touchstart", onTouchStart);
     document.addEventListener("touchmove", onTouchMove);
     document.addEventListener("touchend", onTouchEnd);
@@ -109,8 +89,7 @@ const TouchFPSCamera = (props: DragFPSCameraProps) => {
     };
   }, []);
 
-  // @ts-ignore
-  return <></>;
+  return null;
 };
 
 export default TouchFPSCamera;

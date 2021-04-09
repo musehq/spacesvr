@@ -2,24 +2,24 @@ import styled from "@emotion/styled";
 import Crosshair from "../ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import { Canvas } from "react-three-fiber";
-import { Vector3 } from "three";
 import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
-import Player from "../players/Player";
+import Player, { PlayerProps } from "../players/Player";
+import Entities from "../simulated/Entities";
 import {
   useEnvironmentState,
   EnvironmentContext,
 } from "../contexts/environment";
+import { useSimulationState, SimulationContext } from "../contexts/simulation";
 import { EnvironmentProps } from "../types/environment";
+import { SimulationProps } from "../types/simulation";
 import LoadingScreen from "../overlays/LoadingScreen";
-import { InfinitePlane } from "../../components/";
+import { InfinitePlane } from "../../components/InfinitePlane";
 import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { LoadingContext, useLoadingState } from "../contexts/loading";
-import { MountOnLoad } from "../loader/MountOnLoad";
-import AssetLoader from "../loader/AssetLoader";
+import { VRCanvas } from "@react-three/xr";
+import { Overlay } from "../../modifiers";
 
 const Container = styled.div`
   position: absolute;
@@ -51,6 +51,9 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
   noEvents: true,
+  // disable default enter vr button
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onCreated: () => {},
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -63,16 +66,10 @@ const defaultPhysicsProps: Partial<ProviderProps> = {
 };
 
 type StandardEnvironmentProps = {
-  player?: {
-    pos?: Vector3;
-    rot?: number;
-    speed?: number;
-    controls?: {
-      disableGyro?: boolean;
-    };
-  };
+  playerProps?: PlayerProps;
   pauseMenu?: ReactNode;
   disableGround?: boolean;
+  simulationProps?: SimulationProps;
   loadingScreen?: ReactNode;
 };
 
@@ -92,46 +89,42 @@ export const StandardEnvironment = (
     children,
     canvasProps,
     physicsProps,
-    player,
+    simulationProps,
+    playerProps,
     disableGround,
-    assets,
     pauseMenu,
     loadingScreen,
   } = props;
 
+  const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
-  const loadState = useLoadingState(assets);
 
   return (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
-        <Canvas {...defaultCanvasProps} {...canvasProps}>
+        <VRCanvas {...defaultCanvasProps} {...canvasProps}>
           <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <LoadingContext.Provider value={loadState}>
-              <EnvironmentContext.Provider value={envState}>
-                <MountOnLoad>
-                  <Player
-                    initPos={player?.pos}
-                    initRot={player?.rot}
-                    speed={player?.speed}
-                    controls={player?.controls}
-                  />
+            <EnvironmentContext.Provider value={envState}>
+              <SimulationContext.Provider value={simState}>
+                <Player {...playerProps}>
+                  <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}
                   {children}
-                </MountOnLoad>
-              </EnvironmentContext.Provider>
-            </LoadingContext.Provider>
+                  {pauseMenu ? (
+                    <Overlay>{pauseMenu}</Overlay>
+                  ) : (
+                    <DesktopPause />
+                  )}
+                </Player>
+              </SimulationContext.Provider>
+            </EnvironmentContext.Provider>
           </Physics>
-        </Canvas>
-        <LoadingContext.Provider value={loadState}>
-          <AssetLoader />
-          <EnvironmentContext.Provider value={envState}>
-            {loadingScreen || <LoadingScreen />}
-            {pauseMenu || <DesktopPause />}
-            <Crosshair />
-          </EnvironmentContext.Provider>
-        </LoadingContext.Provider>
+        </VRCanvas>
+        <EnvironmentContext.Provider value={envState}>
+          {loadingScreen || <LoadingScreen />}
+          <Crosshair />
+        </EnvironmentContext.Provider>
       </Container>
     </>
   );

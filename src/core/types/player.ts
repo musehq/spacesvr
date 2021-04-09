@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Vector3 } from "three";
 
-export type PlayerRef = {
+export type PlayerState = {
   position: PlayerVec;
   velocity: PlayerVec;
   controls: PlayerControls;

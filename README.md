@@ -50,7 +50,15 @@
 
 #### codesandbox
 
-Visit [this code sandbox](https://codesandbox.io/s/polished-meadow-erzku?fontsize=14&hidenavigation=1&theme=dark) to instantly play with the package
+Visit the codesandbox to instantly play with the package
+
+https://codesandbox.io/s/e9w29
+
+### Starter Repo
+
+Clone the starter repo to give yourself a solid starting point
+
+https://github.com/spacesvr/spacesvr-starter
 
 #### npm
 
@@ -93,29 +101,6 @@ Under the hood it enables cannon physics and react-three-fiber code with a canva
 to do is wrap your [react-three-fiber](https://github.com/react-spring/react-three-fiber)
 code in an environment and you will be able to navigate your space on mobile and desktop!
 
-### assets
-
-The `Environment` component comes out of the box with a loader and a loading overlay, using
-Drei's `useProgress` hook.
-
-However, this hook is unreliable for 3D files, especially with iOS and Safari. So if you want to ensure your assets are loaded correctly, pass an array
-of asset urls to the `assets` prop in the `Environment` component and use the `useAsset` hook
-to retrieve the data from that asset. Currently supported assets are `hdr, png, jpg, glb, gltf`.
-
-```jsx
-<StandardEnvironment assets={["https://link-to-model.glb", "https://link-to-texture.png"]}>
-    <Suspense fallback={null}>
-        <Model />
-    </Suspense>
-</StandardEnvironment>
-
-// in <Model/>
-const Model = () =>
-    const asset = useAsset("https://link-to-model.glb");
-    return <primitive object={asset.data.scene} />
-}
-```
-
 #### the useEnvironment Hook.
 
 The `useEnvironment` hook is your direct access to the environment state. It can be used anywhere
@@ -123,16 +108,41 @@ inside an `Environment` component and gives you an `EnvironmentState`, defined a
 
 ```jsx
 {
-  type: Environment; // the type of environment, { STANDARD, TRACK }
   paused: boolean; // whether the pointer lock controls are engaged
   setPaused: (p: boolean, overlay?: string) => void; // set the paused state, along with overlay
-  player: PlayerRef;
   overlay: string | null; // null if no overlay enabled or string with id of currenly open overlay
+  device: { xr: boolean; mobile: boolean; desktop: boolean; } // flags for user's current device state
   containerRef: MutableRefObject<HTMLDivElement | null>; // ref to html container (parent of Canvas)
-  container: HTMLDivElement | null;
-  events: EnvironmentEvent[];
-  setPlayer: (p: PlayerRef) => void;
-  addEvent: (name: string, callback: (...args: any[]) => void) => void;
+}
+```
+
+#### the usePlayer Hook.
+
+The `usePlayer` hook is your direct access to the player state. It can be used anywhere
+inside an `Environment` component and gives you an `PlayerState`, defined as:
+
+```jsx
+{
+  position: PlayerVec; // extends .set(v: Vector3) and .get() abilities to player's position
+  velocity: PlayerVec; // extends .set(v: Vector3) and .get() abilities to player's velocity
+  controls: PlayerControls; // allows you to .lock(), .unlock(), and check whether it .isLocked()
+  raycaster: THREE.Raycaster; // reference to player's raycaster updated to appropriate device type (not xr yet)
+}
+```
+
+### simulation
+
+Your worlds can now run in a simulation! To enable it you can run a
+server out of `examples/server/app.js` and pass the corresponding parameters as `simulationProps` to the
+`StandardEnvironment` component
+
+```jsx
+{
+    signalHost?: string;
+    signalPort?: number;
+    signalPath?: string;
+    socketServer?: string;
+    frequency?: number; // number of times per second to update
 }
 ```
 
@@ -168,11 +178,13 @@ The Standard Environment defines the following:
 <StandardEnvironment
     canvasProps={{...}} // props to be passed along to the r3f canvas
     physicsProps={{...}} // props to be passed along to cannon.js
-    player={{
+    playerProps={{
         pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
         rot: 0,  // initial rotation,
         speed: 3.2 // meters per second (~1.4 walking, ~2.2 jogging)
     }}
+    disableGround={false} // disable ground physics plane
+    simulationProps={{...}} // props to be passed to simulation
 />
 ```
 
@@ -217,7 +229,13 @@ An arrow icon
 A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
 
 ```jsx
-<Audio url="https://link-to-your-audio.mp3" position={[0, 4, 0]} volume={1} />
+<Audio
+  url="https://link-to-your-audio.mp3"
+  position={[0, 4, 0]}
+  volume={1}
+  rollOff={1}
+  dCone={new Vector3(coneInnerAngle, coneOuterAngle, coneOuterGain)} // defaults should be fine
+/>
 ```
 
 #### Background
@@ -320,20 +338,6 @@ Makes its children float up and down
 </Floating>
 ```
 
-#### Spinning
-
-Makes its children spin
-
-```jsx
-<Spinning
-  xSpeed={0} // speed to spin around axis
-  ySpeed={1} // y axis is 1 by default
-  zSpeed={0} // 0 = no spin on axis
->
-  <Stuff />
-</Spinning>
-```
-
 #### Interactable
 
 Makes its children react to onclick and on hover methods
@@ -346,6 +350,44 @@ Makes its children react to onclick and on hover methods
 >
   <Stuff />
 </Interactable>
+```
+
+#### Overlay
+
+Allows for raw html to be placed inside an `Environment` component for access to
+environment state, player state, and renderer state.
+
+```jsx
+function Stuff() {
+  const { size } = useThree();
+  const { position } = usePlayer();
+
+  return (
+    <div>
+      <h1>Current player position is {position.velocity.get()}</h1>
+    </div>
+  );
+}
+
+<StandardEnvironment>
+  <Overlay>
+    <Stuff />
+  </Overlay>
+</StandardEnvironment>;
+```
+
+#### Spinning
+
+Makes its children spin
+
+```jsx
+<Spinning
+  xSpeed={0} // speed to spin around axis
+  ySpeed={1} // y axis is 1 by default
+  zSpeed={0} // 0 = no spin on axis
+>
+  <Stuff />
+</Spinning>
 ```
 
 # Examples

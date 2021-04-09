@@ -20,8 +20,6 @@ import { getSpringValues } from "../utils/spring";
 const ALPHA_SENSITIVITY = 0.008;
 
 type GyroControlsProps = {
-  quaternion: MutableRefObject<Quaternion>;
-  position: MutableRefObject<Vector3>;
   fallback: ReactNode;
 };
 
@@ -37,7 +35,7 @@ type GyroControlsProps = {
  * @constructor
  */
 export const GyroControls = (props: GyroControlsProps) => {
-  const { quaternion, position, fallback } = props;
+  const { fallback } = props;
 
   const { camera } = useThree();
 
@@ -81,12 +79,6 @@ export const GyroControls = (props: GyroControlsProps) => {
       const [a] = getSpringValues(spring);
       controls.alphaOffset = -a * ALPHA_SENSITIVITY;
       controls.update();
-      quaternion.current = camera.quaternion;
-    }
-
-    if (position.current) {
-      const { x: pX, y: pY, z: pZ } = position.current;
-      camera?.position?.set(pX, pY, pZ);
     }
   });
 

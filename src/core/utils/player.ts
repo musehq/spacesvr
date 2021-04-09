@@ -2,37 +2,29 @@ import { Vector3 } from "three";
 import { Api } from "@react-three/cannon";
 import { MutableRefObject } from "react";
 import * as THREE from "three";
-import { PlayerControls, PlayerRef, PlayerVec } from "../types";
+import { PlayerState } from "../types/player";
 
-export function createPlayerRef(
+export function createPlayerState(
   bodyApi: Api[1],
   position: MutableRefObject<Vector3>,
   velocity: MutableRefObject<Vector3>,
   lockControls: MutableRefObject<boolean>,
   raycaster: THREE.Raycaster
-): PlayerRef {
-  const posVec: PlayerVec = {
-    set: (vec: Vector3) => bodyApi.position.set(vec.x, vec.y, vec.z),
-    get: () => position.current,
-  };
-
-  const velVec: PlayerVec = {
-    set: (vec: Vector3) => bodyApi.velocity.set(vec.x, vec.y, vec.z),
-    get: () => velocity.current,
-  };
-
-  const controls: PlayerControls = {
-    lock: () => (lockControls.current = true),
-    unlock: () => (lockControls.current = false),
-    isLocked: () => lockControls.current,
-  };
-
-  const playerRef: PlayerRef = {
-    position: posVec,
-    velocity: velVec,
-    controls,
+): PlayerState {
+  return {
+    position: {
+      set: (pos: Vector3) => bodyApi.position.copy(pos),
+      get: () => position.current,
+    },
+    velocity: {
+      set: (vec: Vector3) => bodyApi.velocity.copy(vec),
+      get: () => velocity.current,
+    },
+    controls: {
+      lock: () => (lockControls.current = true),
+      unlock: () => (lockControls.current = false),
+      isLocked: () => lockControls.current,
+    },
     raycaster,
   };
-
-  return playerRef;
 }

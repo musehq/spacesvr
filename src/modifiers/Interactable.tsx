@@ -4,6 +4,7 @@ import { useEnvironment } from "../core/contexts/environment";
 import { useFrame, useThree } from "react-three-fiber";
 import { isMobile } from "react-device-detect";
 import { useLimiter } from "../services/limiter";
+import { usePlayer } from "../core/contexts/player";
 
 type Props = {
   onClick?: () => void;
@@ -27,7 +28,7 @@ export const Interactable = (props: Props) => {
 
   const { gl } = useThree();
   const { domElement } = gl;
-  const { player } = useEnvironment();
+  const { raycaster } = usePlayer();
 
   const group = useRef<Group>();
   const [hovered, setHovered] = useState(false);
@@ -36,11 +37,8 @@ export const Interactable = (props: Props) => {
 
   // continuously update the hover state
   useFrame(({ clock }) => {
-    if (!group.current || !limiter.isReady(clock) || !player?.raycaster) {
-      return;
-    }
+    if (!group.current || !limiter.isReady(clock) || !raycaster) return;
 
-    const { raycaster } = player;
     const intersections = raycaster.intersectObject(group.current, true);
     if (intersections && intersections.length > 0) {
       if (!hovered) {
@@ -106,7 +104,7 @@ export const Interactable = (props: Props) => {
         domElement.removeEventListener("mouseup", onMouseUp);
       }
     };
-  }, [onMouseUp, onTouchEnd]);
+  }, [onMouseUp, onTouchEnd, onClick]);
 
   return <group ref={group}>{children}</group>;
 };
