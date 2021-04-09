@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Image } from "spacesvr";
+import { StandardEnvironment, Background, Logo, Image, Audio } from "spacesvr";
 import Building from "../models/Building";
 import MichaelModel from "../models/MichaelModel";
 import PinkWhiteDurag from "../models/PinkWhiteDurag";

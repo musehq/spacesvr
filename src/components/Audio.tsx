@@ -9,15 +9,17 @@ type AudioProps = {
   rollOff?: number;
   volume?: number;
   setAudioAnalyser?: (aa: AudioAnalyser) => void;
+  fftSize?: 64 | 128 | 256 | 512 | 1024;
 } & GroupProps;
 
 export const Audio = (props: AudioProps) => {
   const {
     url,
-    dCone,
+    dCone = new Vector3(180, 230, 0.1),
     rollOff = 1,
-    volume = 7,
+    volume = 1,
     setAudioAnalyser,
+    fftSize = 128,
     ...restProps
   } = props;
 
@@ -43,12 +45,12 @@ export const Audio = (props: AudioProps) => {
         const speak = new THREE.PositionalAudio(listener);
         speak.setMediaElementSource(audio);
         speak.setRefDistance(0.75);
-        speak.setRolloffFactor(1);
-        speak.setVolume(1);
-        speak.setDirectionalCone(180, 230, 0.1);
+        speak.setRolloffFactor(rollOff);
+        speak.setVolume(volume);
+        speak.setDirectionalCone(dCone.x, dCone.y, dCone.z);
 
         if (setAudioAnalyser) {
-          setAudioAnalyser(new AudioAnalyser(speak, 512));
+          setAudioAnalyser(new AudioAnalyser(speak, fftSize));
         }
 
         setSpeaker(speak);
@@ -67,6 +69,14 @@ export const Audio = (props: AudioProps) => {
       };
     }
   }, [speaker, audio]);
+
+  useEffect(() => {
+    if (!speaker) return;
+
+    speaker.setRolloffFactor(rollOff);
+    speaker.setVolume(volume);
+    speaker.setDirectionalCone(dCone.x, dCone.y, dCone.z);
+  }, [dCone, rollOff, volume]);
 
   return (
     <group {...restProps}>{speaker && <primitive object={speaker} />}</group>
