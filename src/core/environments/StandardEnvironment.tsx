@@ -19,6 +19,7 @@ import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { VRCanvas } from "@react-three/xr";
+import { Overlay } from "../../modifiers";
 
 const Container = styled.div`
   position: absolute;
@@ -110,7 +111,11 @@ export const StandardEnvironment = (
                   <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}
                   {children}
-                  {!pauseMenu && <DesktopPause />}
+                  {pauseMenu ? (
+                    <Overlay>{pauseMenu}</Overlay>
+                  ) : (
+                    <DesktopPause />
+                  )}
                 </Player>
               </SimulationContext.Provider>
             </EnvironmentContext.Provider>
@@ -118,7 +123,6 @@ export const StandardEnvironment = (
         </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu && <DesktopPause />}
           <Crosshair />
         </EnvironmentContext.Provider>
       </Container>
