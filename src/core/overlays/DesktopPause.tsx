@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
-import Overlay from "../../modifiers/Overlay";
+import { Overlay } from "../../modifiers/Overlay";
 import { useFsMenuItem, useVRMenuItem } from "../utils/menu";
 
 const Container = styled.div<{ paused: boolean }>`

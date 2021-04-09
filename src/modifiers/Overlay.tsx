@@ -4,14 +4,12 @@ import { ReactNode } from "react";
 import { useEnvironment } from "../core/contexts/environment";
 
 type Props = {
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
 };
 
-const Overlay = (props: Props) => {
+export const Overlay = (props: Props) => {
   const { children } = props;
   const { containerRef } = useEnvironment();
 
   return <Html>{createPortal(children, containerRef.current)}</Html>;
 };
-
-export default Overlay;
