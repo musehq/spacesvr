@@ -111,8 +111,6 @@ export default function Player(
     }
   });
 
-  useFrame(({ gl, scene, camera }) => gl.render(scene, camera), 100);
-
   const state = createPlayerState(
     bodyApi,
     position,
