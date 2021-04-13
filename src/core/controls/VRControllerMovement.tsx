@@ -1,4 +1,4 @@
-import { useController } from "@react-three/xr";
+import { DefaultXRControllers, useController } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
 import { Vector3 } from "three";
 import { useFrame, useThree } from "react-three-fiber";
@@ -55,6 +55,7 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
 
   return (
     <group ref={group}>
+      <DefaultXRControllers />
       <primitive object={camera} />
     </group>
   );

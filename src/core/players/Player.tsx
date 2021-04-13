@@ -21,7 +21,6 @@ import VRControllerMovement from "../controls/VRControllerMovement";
 
 const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
 const SHOW_PLAYER_HITBOX = false;
-const Z_VEC = new Vector3();
 
 export type PlayerProps = {
   pos?: number[];
@@ -44,7 +43,7 @@ export type PlayerProps = {
 export default function Player(
   props: { children: ReactNode[] | ReactNode } & PlayerProps
 ) {
-  const { children, pos = [0, 2, 0], rot = 0, speed = SPEED, controls } = props;
+  const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
 
   const { camera, raycaster: defaultRaycaster, gl } = useThree();
   const { device } = useEnvironment();
@@ -58,7 +57,10 @@ export default function Player(
   const position = useRef(new Vector3());
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
-  const raycaster = useMemo(() => new Raycaster(Z_VEC, Z_VEC, 0, 1.5), []);
+  const raycaster = useMemo(
+    () => new Raycaster(new Vector3(), new Vector3(), 0, 1.5),
+    []
+  );
   const { connected, frequency, sendEvent } = useSimulation();
   const simulationLimiter = useLimiter(frequency);
 
@@ -140,7 +142,6 @@ export default function Player(
       {device.xr && (
         <>
           <VRControllerMovement position={position} direction={direction} />
-          <DefaultXRControllers />
         </>
       )}
       <group name="player" ref={bodyRef}>
