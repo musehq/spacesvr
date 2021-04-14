@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, ReactNode, useMemo } from "react";
 import { useFrame, useThree } from "react-three-fiber";
-import { Camera, Raycaster, Vector3 } from "three";
+import { Camera, Quaternion, Raycaster, Vector3 } from "three";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import PointerLockControls from "../controls/PointerLockControls";
@@ -53,7 +53,6 @@ export default function Player(
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state
-  const [setup, setSetup] = useState(false);
   const position = useRef(new Vector3());
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
@@ -64,20 +63,16 @@ export default function Player(
   const { connected, frequency, sendEvent } = useSimulation();
   const simulationLimiter = useLimiter(frequency);
 
-  // initial camera rotation
-  // i know this is ugly but it doesn't work in the use effect
-  if (!setup) {
-    const xLook = pos[0] + 100 * Math.cos(rot);
-    const zLook = pos[2] + 100 * Math.sin(rot);
-    camera.lookAt(xLook, pos[1], zLook);
-    setSetup(true);
-  }
-
   // setup player
   useEffect(() => {
     // store position and velocity
     bodyApi.position.subscribe((p) => position.current.fromArray(p));
     bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
+
+    // rotation happens before position move
+    camera.rotation.setFromQuaternion(
+      new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), rot)
+    );
   }, []);
 
   useFrame(({ clock }) => {
