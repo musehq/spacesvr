@@ -59,7 +59,7 @@ const defaultCanvasProps: Partial<ContainerProps> = {
 const defaultPhysicsProps: Partial<ProviderProps> = {
   size: 50,
   allowSleep: false,
-  gravity: [0, -9.8 * 2, 0],
+  gravity: [0, -9.8, 0],
   defaultContactMaterial: {
     friction: 0,
   },
