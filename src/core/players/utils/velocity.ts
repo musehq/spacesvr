@@ -18,16 +18,15 @@ export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
     moveQuaternion.x = 0;
     moveQuaternion.z = 0;
     dummy.applyQuaternion(moveQuaternion);
-    dummy.y = Math.min(velocity.y, 0);
+    dummy.y = Math.min(velocity.y, 0.4);
 
     // keep y velocity intact and update velocity
     if (!device.desktop) {
       bodyApi.velocity.set(dummy.x, dummy.y, dummy.z);
     } else {
-      const newX = MathUtils.lerp(velocity.x, dummy.x, 0.15);
-      const newY = MathUtils.lerp(velocity.y, dummy.y, 0.15);
-      const newZ = MathUtils.lerp(velocity.z, dummy.z, 0.15);
-      bodyApi.velocity.set(newX, newY, newZ);
+      const newX = MathUtils.lerp(velocity.x, dummy.x, 0.25);
+      const newZ = MathUtils.lerp(velocity.z, dummy.z, 0.25);
+      bodyApi.velocity.set(newX, dummy.y, newZ);
     }
   };
 
