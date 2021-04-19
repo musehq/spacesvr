@@ -51,7 +51,6 @@ const defaultCanvasProps: Partial<ContainerProps> = {
   shadows: false,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
-  linear: true,
   dpr: 1,
   raycaster: {
     enabled: isMobile,
