@@ -19,9 +19,9 @@ import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { VRCanvas } from "@react-three/xr";
 import { Overlay } from "../../modifiers";
-import { AdaptiveDPR } from "../utils/dpr";
 import { isMobile } from "react-device-detect";
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
+import { AdaptiveDpr } from "@react-three/drei";
 
 const Container = styled.div`
   position: absolute;
@@ -114,7 +114,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={envState}>
               <SimulationContext.Provider value={simState}>
-                {adaptiveDPR && <AdaptiveDPR />}
+                {adaptiveDPR && <AdaptiveDpr />}
                 <Player {...playerProps}>
                   <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}

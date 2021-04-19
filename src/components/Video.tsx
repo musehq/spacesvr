@@ -60,9 +60,10 @@ export const Video = (props: Props) => {
     };
 
     if (video) {
-      video
-        .play()
-        .then(() => setDims(new Vector2(video.videoWidth, video.videoHeight)));
+      video.play().then(() => {
+        setDims(new Vector2(video.videoWidth, video.videoHeight));
+        setupAudio();
+      });
       document.addEventListener("click", playVideo);
       return () => {
         document.removeEventListener("click", playVideo);
