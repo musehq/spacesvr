@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { useThree } from "react-three-fiber";
+import { useThree } from "@react-three/fiber";
 import Frame from "./misc/Frame";
 import { Material, Vector2 } from "three";
 
@@ -16,7 +16,7 @@ type Props = JSX.IntrinsicElements["group"] & {
 export const Video = (props: Props) => {
   const { src, size = 1, framed, muted, volume = 1, material } = props;
 
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   const listener = useRef<THREE.AudioListener>();
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();

@@ -1,6 +1,6 @@
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
-import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { MutableRefObject, ReactNode } from "react";
+import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
 
 export enum Environment {
   STANDARD,

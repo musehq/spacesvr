@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { config, useSpring } from "react-spring";
 import { Vector2, Euler } from "three";
 import { useEnvironment } from "../contexts/environment";
@@ -20,7 +20,7 @@ const DragControls = () => {
   const setEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
   const mouseDownPos = useRef<Vector2>(new Vector2(0, 0));
   const dragging = useRef(false);
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
   const { containerRef } = useEnvironment();
 
   const [spring, setSpring] = useSpring(() => ({

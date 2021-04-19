@@ -1,12 +1,12 @@
 import { useEnvironment } from "../contexts/environment";
-import { useThree } from "react-three-fiber";
+import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
 import { useEffect, useRef, useState } from "react";
 
 type MenuItem = { text: string; action: () => void };
 
 export const useVRMenuItem = (): MenuItem | undefined => {
-  const { gl } = useThree();
+  const gl = useThree((state) => state.gl);
   const { setDevice } = useEnvironment();
 
   // @ts-ignore

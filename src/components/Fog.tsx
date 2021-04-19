@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useThree } from "react-three-fiber";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 type FogProps = {
@@ -11,7 +11,7 @@ type FogProps = {
 export const Fog = (props: FogProps) => {
   const { color, near, far } = props;
 
-  const { scene } = useThree();
+  const scene = useThree((state) => state.scene);
 
   useEffect(() => {
     scene.fog = new THREE.Fog(color, near, far);

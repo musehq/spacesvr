@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 
-import { useThree } from "react-three-fiber";
-import { UnsignedByteType } from "three";
-import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
+import {
+  NearestFilter,
+  RGBAFormat,
+  UnsignedByteType,
+  WebGLCubeRenderTarget,
+} from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
@@ -12,7 +16,8 @@ type HDRIProps = {
 
 export const HDRI = (props: HDRIProps) => {
   const { src, hideBackground } = props;
-  const { gl, scene } = useThree();
+  const gl = useThree((state) => state.gl);
+  const scene = useThree((state) => state.scene);
 
   // actual file loader
   const loader = new RGBELoader();
@@ -21,12 +26,12 @@ export const HDRI = (props: HDRIProps) => {
   useEffect(() => {
     loader.load(src, (texture) => {
       const opts = {
-        format: THREE.RGBAFormat,
+        format: RGBAFormat,
         generateMipmaps: false,
-        magFilter: THREE.NearestFilter,
-        minFilter: THREE.NearestFilter,
+        magFilter: NearestFilter,
+        minFilter: NearestFilter,
       };
-      const envMap = new THREE.WebGLCubeRenderTarget(
+      const envMap = new WebGLCubeRenderTarget(
         4096,
         opts
       ).fromEquirectangularTexture(gl, texture).texture;

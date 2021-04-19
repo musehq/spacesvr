@@ -32,7 +32,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: [".eslintrc.js", "next.config.js", "tailwind.config.js"],
+      files: [".eslintrc.js", "next.config.js"],
       env: {
         node: true,
       },

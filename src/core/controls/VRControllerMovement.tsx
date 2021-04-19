@@ -1,7 +1,7 @@
 import { DefaultXRControllers, useController } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
 import { Vector3 } from "three";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Group } from "three";
 
 type VRControllerMovementProps = {
@@ -24,7 +24,7 @@ const MOVEMENT_SPEED = 1;
 const VRControllerMovement = (props: VRControllerMovementProps) => {
   const { position, direction } = props;
 
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
   const group = useRef<Group>();
 
   const left = useController("left");

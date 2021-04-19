@@ -1,4 +1,4 @@
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { ReactNode, useRef } from "react";
 import { AnimatedValue } from "react-spring";
 import { getSpringValues } from "../core/utils/spring";

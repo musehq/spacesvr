@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import * as THREE from "three";
-import { useLoader } from "react-three-fiber";
+import { useLoader } from "@react-three/fiber";
 import { Material } from "three";
 import Frame from "./misc/Frame";
 

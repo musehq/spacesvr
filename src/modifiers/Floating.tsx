@@ -1,5 +1,5 @@
 import { ReactNode, useRef } from "react";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { Group } from "three";
 import { useLimiter } from "../services/limiter";
 

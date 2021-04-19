@@ -6,8 +6,7 @@ import {
 import styled from "@emotion/styled";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import { Canvas } from "react-three-fiber";
-import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
+import { Canvas } from "@react-three/fiber";
 import { EnvironmentProps, Keyframe, KeyframeEnvironmentState } from "../types";
 import LoadingScreen from "../overlays/LoadingScreen";
 import GlobalStyles from "../styles/GlobalStyles";
@@ -16,6 +15,8 @@ import { KeyframeControlDisplay } from "../ui/KeyframeControlDisplay/";
 import { config, useSpring } from "react-spring";
 import { SpringScaled } from "../../modifiers/SpringScaled";
 import { ResizeObserver } from "@juggle/resize-observer";
+import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
+import { isMobile } from "react-device-detect";
 
 const Container = styled.div`
   position: absolute;
@@ -26,11 +27,6 @@ const Container = styled.div`
   canvas {
     position: absolute;
     cursor: grab;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    outline: 0;
   }
 
   &.grabbing {
@@ -48,12 +44,15 @@ const defaultCanvasProps: Partial<ContainerProps> = {
     alpha: false,
     stencil: false,
   },
-  concurrent: true,
-  shadowMap: false,
-  pixelRatio: [1, 2],
+  mode: "concurrent",
+  shadows: false,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
-  noEvents: true,
+  linear: true,
+  dpr: 1,
+  raycaster: {
+    enabled: !isMobile,
+  },
 };
 
 const defaultPhysicsProps: Partial<ProviderProps> = {

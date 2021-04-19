@@ -1,13 +1,7 @@
 import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
-import {
-  MutableRefObject,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useFrame, useThree } from "react-three-fiber";
-import { Quaternion, Vector2, Vector3 } from "three";
+import { ReactNode, useEffect, useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Vector2 } from "three";
 import { config, useSpring } from "react-spring";
 import {
   Touch,
@@ -37,7 +31,7 @@ type GyroControlsProps = {
 export const GyroControls = (props: GyroControlsProps) => {
   const { fallback } = props;
 
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   const [controls, setControls] = useState<DeviceOrientationControls>();
   const [enableGyro, setEnableGyro] = useState(false);

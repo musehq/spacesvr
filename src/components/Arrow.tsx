@@ -1,4 +1,4 @@
-import { useLoader } from "react-three-fiber";
+import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
 type ArrowProps = { dark?: boolean } & JSX.IntrinsicElements["group"];

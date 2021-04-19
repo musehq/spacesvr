@@ -1,7 +1,6 @@
-import { useMemo } from "react";
-import { FontLoader, Vector3 } from "three";
-import { useLoader, useUpdate } from "react-three-fiber";
-import * as THREE from "three";
+import { useEffect, useMemo, useRef } from "react";
+import { FontLoader, Vector3, Mesh } from "three";
+import { useLoader } from "@react-three/fiber";
 
 const FONT_FILE = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Coolvetica.json";
 
@@ -30,6 +29,7 @@ export const Text = (props: TextProps) => {
   } = props;
 
   const font = useLoader(FontLoader, fontFile || FONT_FILE);
+  const mesh = useRef<Mesh>();
 
   const config = useMemo(
     () => ({
@@ -46,18 +46,17 @@ export const Text = (props: TextProps) => {
     [font]
   );
 
-  const mesh = useUpdate(
-    (self: any) => {
-      const size = new Vector3();
-      self.geometry.computeBoundingBox();
-      self.geometry.boundingBox.getSize(size);
-      self.position.x =
-        hAlign === "center" ? -size.x / 2 : hAlign === "right" ? 0 : -size.x;
-      self.position.y =
-        vAlign === "center" ? -size.y / 2 : vAlign === "top" ? 0 : -size.y;
-    },
-    [text]
-  );
+  useEffect(() => {
+    if (!mesh.current) return;
+
+    const size = new Vector3();
+    mesh.current.geometry.computeBoundingBox();
+    mesh.current.geometry?.boundingBox?.getSize(size);
+    mesh.current.position.x =
+      hAlign === "center" ? -size.x / 2 : hAlign === "right" ? 0 : -size.x;
+    mesh.current.position.y =
+      vAlign === "center" ? -size.y / 2 : vAlign === "top" ? 0 : -size.y;
+  }, [text]);
 
   return (
     <group {...restProps} scale={[0.1 * size, 0.1 * size, 0.1]}>

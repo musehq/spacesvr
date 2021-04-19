@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, ReactNode, useMemo } from "react";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Camera, Quaternion, Raycaster, Vector3 } from "three";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
@@ -45,7 +45,10 @@ export default function Player(
 ) {
   const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
 
-  const { camera, raycaster: defaultRaycaster, gl } = useThree();
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
+  const defaultRaycaster = useThree((state) => state.raycaster);
+
   const { device } = useEnvironment();
 
   // physical body
