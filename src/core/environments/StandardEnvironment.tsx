@@ -114,7 +114,7 @@ export const StandardEnvironment = (
           <Physics {...defaultPhysicsProps} {...physicsProps}>
             <EnvironmentContext.Provider value={envState}>
               <SimulationContext.Provider value={simState}>
-                {!adaptiveDPR && <AdaptiveDPR />}
+                {adaptiveDPR && <AdaptiveDPR />}
                 <Player {...playerProps}>
                   <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}
