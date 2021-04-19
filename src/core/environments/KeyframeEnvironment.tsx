@@ -44,7 +44,6 @@ const defaultCanvasProps: Partial<ContainerProps> = {
     alpha: false,
     stencil: false,
   },
-  mode: "concurrent",
   shadows: false,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },

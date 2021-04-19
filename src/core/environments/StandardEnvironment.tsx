@@ -47,7 +47,6 @@ const defaultCanvasProps: Partial<ContainerProps> = {
     alpha: false,
     stencil: false,
   },
-  mode: "concurrent",
   shadows: false,
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
@@ -105,14 +104,16 @@ export const StandardEnvironment = (
   const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
 
+  console.log("re-render env");
+
   return (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
         <VRCanvas {...defaultCanvasProps} {...canvasProps}>
-          <Physics {...defaultPhysicsProps} {...physicsProps}>
-            <EnvironmentContext.Provider value={envState}>
-              <SimulationContext.Provider value={simState}>
+          <EnvironmentContext.Provider value={envState}>
+            <SimulationContext.Provider value={simState}>
+              <Physics {...defaultPhysicsProps} {...physicsProps}>
                 {adaptiveDPR && <AdaptiveDpr />}
                 <Player {...playerProps}>
                   <Entities />
@@ -124,9 +125,9 @@ export const StandardEnvironment = (
                     <DesktopPause />
                   )}
                 </Player>
-              </SimulationContext.Provider>
-            </EnvironmentContext.Provider>
-          </Physics>
+              </Physics>
+            </SimulationContext.Provider>
+          </EnvironmentContext.Provider>
         </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
