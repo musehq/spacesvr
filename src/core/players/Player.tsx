@@ -102,8 +102,13 @@ export default function Player(
       sendEvent(
         "player",
         JSON.stringify({
-          position: camera.position,
-          rotation: camera.rotation,
+          position: camera.position
+            .toArray()
+            .map((p) => parseFloat(p.toPrecision(3))),
+          rotation: camera.rotation
+            .toArray()
+            .slice(0, 3)
+            .map((r) => parseFloat(r.toPrecision(3))),
         })
       );
     }
