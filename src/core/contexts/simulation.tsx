@@ -45,7 +45,6 @@ export const useSimulationState = (
   const enabled = Object.keys(props).length > 0;
 
   // Manage player and network data
-  const dataConn = useRef<Peer.DataConnection>();
   const dataConnMap = useRef<Map<string, Peer.DataConnection>>();
   const simulationData = useRef<Map<string, Entity>>();
 
@@ -65,39 +64,62 @@ export const useSimulationState = (
     return new Peer();
   }, [signalHost, signalPort, signalPath]);
 
-  // Handle DataConnection between peers
-  const handleDataConn = (connection: Peer.DataConnection): void => {
-    connection.on("open", () => {
-      if (dataConnMap.current && !dataConnMap.current.has(connection.peer)) {
-        dataConnMap.current.set(connection.peer, connection);
-      }
-    });
-
-    // Track remote player position and rotation
-    connection.on("data", (data: any) => {
-      if (simulationData.current) {
-        const obj = JSON.parse(data);
-        simulationData.current.set(connection.peer, {
+  const updateSimulationData = (
+    dataConn: Peer.DataConnection,
+    data: any
+  ): void => {
+    if (simulationData.current) {
+      const obj = JSON.parse(data);
+      if (simulationData.current.has(dataConn.peer)) {
+        [
+          ["x", "_x"],
+          ["y", "_y"],
+          ["z", "_z"],
+        ].forEach((key, idx) => {
+          simulationData.current!.get(dataConn.peer)!.position[idx] =
+            obj.position[key[0]];
+          simulationData.current!.get(dataConn.peer)!.rotation[idx] =
+            obj.rotation[key[1]];
+        });
+      } else {
+        simulationData.current.set(dataConn.peer, {
           position: [obj.position.x, obj.position.y, obj.position.z],
           rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
         });
       }
-    });
+    }
+  };
 
-    connection.on("close", () => {
-      if (dataConnMap.current && dataConnMap.current.has(connection.peer)) {
-        dataConnMap.current.delete(connection.peer);
-      }
-
-      if (
-        simulationData.current &&
-        simulationData.current.has(connection.peer)
-      ) {
-        simulationData.current.delete(connection.peer);
+  // Handle DataConnection between peers
+  const handleDataConn = (dataConn: Peer.DataConnection): void => {
+    dataConn.on("open", () => {
+      if (dataConnMap.current) {
+        if (!dataConnMap.current.has(dataConn.peer)) {
+          dataConnMap.current.set(dataConn.peer, dataConn);
+        }
       }
     });
 
-    connection.on("error", (err: any) => {
+    // Track remote player position and rotation
+    dataConn.on("data", (data: any) => {
+      updateSimulationData(dataConn, data);
+    });
+
+    dataConn.on("close", () => {
+      if (dataConnMap.current) {
+        if (dataConnMap.current.has(dataConn.peer)) {
+          dataConnMap.current.delete(dataConn.peer);
+        }
+      }
+
+      if (simulationData.current) {
+        if (simulationData.current.has(dataConn.peer)) {
+          simulationData.current.delete(dataConn.peer);
+        }
+      }
+    });
+
+    dataConn.on("error", (err: any) => {
       console.log(err);
     });
   };
@@ -105,8 +127,7 @@ export const useSimulationState = (
   // Connect a client
   const connectPeer = (locPeer: Peer, newPeer: string): void => {
     if (peerId.current != newPeer) {
-      dataConn.current = locPeer.connect(newPeer);
-      handleDataConn(dataConn.current);
+      handleDataConn(locPeer.connect(newPeer));
     }
   };
 
@@ -208,32 +229,8 @@ export const useSimulationState = (
     });
 
     // P2P connection established
-    peer.on("connection", (conn: Peer.DataConnection) => {
-      conn.on("open", () => {
-        if (dataConnMap.current && !dataConnMap.current.has(conn.peer)) {
-          dataConnMap.current.set(conn.peer, conn);
-        }
-      });
-
-      conn.on("data", (data: any) => {
-        const obj = JSON.parse(data);
-        if (simulationData.current) {
-          simulationData.current.set(conn.peer, {
-            position: [obj.position.x, obj.position.y, obj.position.z],
-            rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
-          });
-        }
-      });
-
-      conn.on("close", () => {
-        if (dataConnMap.current && dataConnMap.current.has(conn.peer)) {
-          dataConnMap.current.delete(conn.peer);
-        }
-
-        if (simulationData.current && simulationData.current.has(conn.peer)) {
-          simulationData.current.delete(conn.peer);
-        }
-      });
+    peer.on("connection", (dataConn: Peer.DataConnection) => {
+      handleDataConn(dataConn);
     });
 
     // Exit client

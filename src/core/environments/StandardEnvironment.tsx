@@ -104,8 +104,6 @@ export const StandardEnvironment = (
   const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
 
-  console.log("re-render env");
-
   return (
     <>
       <GlobalStyles />
