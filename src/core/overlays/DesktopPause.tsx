@@ -2,8 +2,6 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
-import { Overlay } from "../../modifiers/Overlay";
-import { useFsMenuItem, useVRMenuItem } from "../utils/menu";
 
 const Container = styled.div<{ paused: boolean }>`
   width: 100%;
@@ -154,44 +152,40 @@ const MenuButton = styled.button`
 `;
 
 const DesktopPause = () => {
-  const { paused, overlay, setPaused } = useEnvironment();
+  const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
-  const vrMenu = useVRMenuItem();
-  const fsMenu = useFsMenuItem();
 
   if (overlay) {
     return null;
   }
 
   return (
-    <Overlay>
-      <Container paused={paused}>
-        <ClickContainer onClick={closeOverlay} />
-        <Window>
-          <Version>v1.6.4</Version>
-          <Instagram
-            onClick={() => window.open("https://www.instagram.com/musehq")}
-          >
-            @musehq
-          </Instagram>
-          <Header>
-            <Title>muse</Title>
-          </Header>
-          <Text>
-            <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
-            <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
-            <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
-          </Text>
-          {vrMenu && (
-            <MenuButton onClick={vrMenu.action}>{vrMenu.text}</MenuButton>
-          )}
-          {fsMenu && (
-            <MenuButton onClick={fsMenu.action}>{fsMenu.text}</MenuButton>
-          )}
-        </Window>
-        <Continue onClick={closeOverlay}>continue</Continue>
-      </Container>
-    </Overlay>
+    <Container paused={paused}>
+      <ClickContainer onClick={closeOverlay} />
+      <Window>
+        <Version>v1.6.4</Version>
+        <Instagram
+          onClick={() => window.open("https://www.instagram.com/musehq")}
+        >
+          @musehq
+        </Instagram>
+        <Header>
+          <Title>muse</Title>
+        </Header>
+        <Text>
+          <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
+          <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
+          <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
+        </Text>
+        {menuItems.map(
+          (menuItem) =>
+            menuItem && (
+              <MenuButton onClick={menuItem.action}>{menuItem.text}</MenuButton>
+            )
+        )}
+      </Window>
+      <Continue onClick={closeOverlay}>continue</Continue>
+    </Container>
   );
 };
 

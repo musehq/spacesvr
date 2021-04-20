@@ -10,6 +10,7 @@ import {
   EnvironmentEvent,
   EnvironmentState,
   KeyframeEnvironmentState,
+  MenuItem,
 } from "../types";
 import { isMobile } from "react-device-detect";
 
@@ -31,6 +32,7 @@ export function useKeyframeEnvironment(): KeyframeEnvironmentState {
  *
  */
 export function useEnvironmentState(): EnvironmentState {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
   const [paused, setPausedState] = useState(true);
   const [overlay, setOverlayState] = useState(null);
@@ -86,6 +88,8 @@ export function useEnvironmentState(): EnvironmentState {
     containerRef: container,
     container: container.current,
     events: events.current,
+    menuItems,
+    setMenuItems,
     setPaused,
     addEvent,
   };

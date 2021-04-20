@@ -2,8 +2,34 @@ import { useEnvironment } from "../contexts/environment";
 import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
 import { useEffect, useRef, useState } from "react";
+import { MenuItem } from "../types/environment";
 
-type MenuItem = { text: string; action: () => void };
+/**
+ * Component to register menu items to the environment.
+ * Needs to be a component because it needs access to the three context to run
+ * but components outside of the three context need to access it, so it uses
+ * the environment as a mediator
+ *
+ * @constructor
+ */
+export function RegisterMenuItems() {
+  const { setMenuItems } = useEnvironment();
+  const vrMenu = useVRMenuItem();
+  const fsMenu = useFsMenuItem();
+
+  //TODO: too many re-renders
+
+  useEffect(() => {
+    const arr: MenuItem[] = [];
+
+    if (vrMenu) arr.push(vrMenu);
+    if (fsMenu) arr.push(fsMenu);
+
+    setMenuItems(arr);
+  }, [vrMenu?.text, fsMenu?.text]);
+
+  return null;
+}
 
 export const useVRMenuItem = (): MenuItem | undefined => {
   const gl = useThree((state) => state.gl);

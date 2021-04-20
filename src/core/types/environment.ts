@@ -22,6 +22,8 @@ export interface EnvironmentState {
   overlay: string | null;
   container: HTMLDivElement | null;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  menuItems: MenuItem[];
+  setMenuItems: (i: MenuItem[]) => void;
   events: EnvironmentEvent[];
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
 }
@@ -38,3 +40,5 @@ export type DeviceState = {
   mobile: boolean;
   desktop: boolean;
 };
+
+export type MenuItem = { text: string; action: () => void };
