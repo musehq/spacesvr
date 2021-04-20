@@ -64,6 +64,7 @@ export const useSimulationState = (
     return new Peer();
   }, [signalHost, signalPort, signalPath]);
 
+  // Track remote player position and rotation
   const updateSimulationData = (
     dataConn: Peer.DataConnection,
     data: any
@@ -71,15 +72,11 @@ export const useSimulationState = (
     if (simulationData.current) {
       const obj = JSON.parse(data);
       if (simulationData.current.has(dataConn.peer)) {
-        [
-          ["x", "_x"],
-          ["y", "_y"],
-          ["z", "_z"],
-        ].forEach((key, idx) => {
+        ["x", "y", "z"].forEach((key, idx) => {
           simulationData.current!.get(dataConn.peer)!.position[idx] =
-            obj.position[key[0]];
+            obj.position[idx];
           simulationData.current!.get(dataConn.peer)!.rotation[idx] =
-            obj.rotation[key[1]];
+            obj.rotation[idx];
         });
       } else {
         simulationData.current.set(dataConn.peer, {
@@ -100,7 +97,6 @@ export const useSimulationState = (
       }
     });
 
-    // Track remote player position and rotation
     dataConn.on("data", (data: any) => {
       updateSimulationData(dataConn, data);
     });
