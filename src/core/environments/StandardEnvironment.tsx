@@ -104,16 +104,14 @@ export const StandardEnvironment = (
   const simState = useSimulationState(simulationProps);
   const envState = useEnvironmentState();
 
-  console.log("re-render env");
-
   return (
     <>
       <GlobalStyles />
       <Container ref={envState.containerRef}>
         <VRCanvas {...defaultCanvasProps} {...canvasProps}>
-          <EnvironmentContext.Provider value={envState}>
-            <SimulationContext.Provider value={simState}>
-              <Physics {...defaultPhysicsProps} {...physicsProps}>
+          <Physics {...defaultPhysicsProps} {...physicsProps}>
+            <EnvironmentContext.Provider value={envState}>
+              <SimulationContext.Provider value={simState}>
                 {adaptiveDPR && <AdaptiveDpr />}
                 <Player {...playerProps}>
                   <Entities />
@@ -125,9 +123,9 @@ export const StandardEnvironment = (
                     <DesktopPause />
                   )}
                 </Player>
-              </Physics>
-            </SimulationContext.Provider>
-          </EnvironmentContext.Provider>
+              </SimulationContext.Provider>
+            </EnvironmentContext.Provider>
+          </Physics>
         </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
