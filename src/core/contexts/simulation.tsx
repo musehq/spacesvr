@@ -61,7 +61,6 @@ export const useSimulationState = (
         secure: signalPort === 443,
       });
     }
-    return new Peer();
   }, [signalHost, signalPort, signalPath]);
 
   // Track remote player position and rotation
@@ -140,26 +139,28 @@ export const useSimulationState = (
 
   // Connect client WebSocket
   const connectWS = (wss: string): void => {
-    socket.current = new WebSocket(wss);
+    if (peer) {
+      socket.current = new WebSocket(wss);
 
-    // Emit the new ID
-    socket.current.onopen = (event: Event) => {
-      if (peerId.current && socket.current) {
-        socket.current.send(peerId.current);
-      }
-    };
+      // Emit the new ID
+      socket.current.onopen = (event: Event) => {
+        if (peerId.current && socket.current) {
+          socket.current.send(peerId.current);
+        }
+      };
 
-    // Catch WebSocket errors and close
-    socket.current.onerror = (event: Event) => {
-      if (socket.current) {
-        socket.current.close();
-      }
-    };
+      // Catch WebSocket errors and close
+      socket.current.onerror = (event: Event) => {
+        if (socket.current) {
+          socket.current.close();
+        }
+      };
 
-    // Connect to any new peers
-    socket.current.onmessage = (event: MessageEvent) => {
-      connectPeer(peer, event.data);
-    };
+      // Connect to any new peers
+      socket.current.onmessage = (event: MessageEvent) => {
+        connectPeer(peer, event.data);
+      };
+    }
   };
 
   // Send event
@@ -208,38 +209,40 @@ export const useSimulationState = (
       return;
     }
 
-    peer.on("open", (id: string) => {
-      if (!socketServer) return;
+    if (peer) {
+      peer.on("open", (id: string) => {
+        if (!socketServer) return;
 
-      peerId.current = id;
-      dataConnMap.current = new Map<string, Peer.DataConnection>();
-      simulationData.current = new Map<string, Entity>();
+        peerId.current = id;
+        dataConnMap.current = new Map<string, Peer.DataConnection>();
+        simulationData.current = new Map<string, Entity>();
 
-      // Join network of existing peers
-      connectP2P(peer);
+        // Join network of existing peers
+        connectP2P(peer);
 
-      // WebSocket listen for future peers
-      connectWS(socketServer);
+        // WebSocket listen for future peers
+        connectWS(socketServer);
 
-      setConnected(true);
-    });
+        setConnected(true);
+      });
 
-    // P2P connection established
-    peer.on("connection", (dataConn: Peer.DataConnection) => {
-      handleDataConn(dataConn);
-    });
+      // P2P connection established
+      peer.on("connection", (dataConn: Peer.DataConnection) => {
+        handleDataConn(dataConn);
+      });
 
-    // Exit client
-    peer.on("close", () => {
-      setConnected(false);
-      peer.disconnect();
-      peer.destroy();
-    });
+      // Exit client
+      peer.on("close", () => {
+        setConnected(false);
+        peer.disconnect();
+        peer.destroy();
+      });
 
-    // Catch peer error
-    peer.on("error", (err: Error) => {
-      console.log(err);
-    });
+      // Catch peer error
+      peer.on("error", (err: Error) => {
+        console.log(err);
+      });
+    }
 
     return () => {
       setConnected(false);
