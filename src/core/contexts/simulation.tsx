@@ -49,7 +49,6 @@ export const useSimulationState = (
   const simulationData = useRef<Map<string, Entity>>();
 
   // Setup sources
-  const peerId = useRef<string>();
   const socket = useRef<WebSocket>();
   const [connected, setConnected] = useState(false);
   const peer = useMemo(() => {
@@ -79,8 +78,8 @@ export const useSimulationState = (
         });
       } else {
         simulationData.current.set(dataConn.peer, {
-          position: [obj.position.x, obj.position.y, obj.position.z],
-          rotation: [obj.rotation._x, obj.rotation._y, obj.rotation._z],
+          position: [obj.position[0], obj.position[1], obj.position[2]],
+          rotation: [obj.rotation[0], obj.rotation[1], obj.rotation[2]],
         });
       }
     }
@@ -121,7 +120,7 @@ export const useSimulationState = (
 
   // Connect a client
   const connectPeer = (locPeer: Peer, newPeer: string): void => {
-    if (peerId.current != newPeer) {
+    if (locPeer.id != newPeer) {
       handleDataConn(locPeer.connect(newPeer));
     }
   };
@@ -144,8 +143,8 @@ export const useSimulationState = (
 
       // Emit the new ID
       socket.current.onopen = (event: Event) => {
-        if (peerId.current && socket.current) {
-          socket.current.send(peerId.current);
+        if (peer.id && socket.current) {
+          socket.current.send(peer.id);
         }
       };
 
@@ -213,7 +212,6 @@ export const useSimulationState = (
       peer.on("open", (id: string) => {
         if (!socketServer) return;
 
-        peerId.current = id;
         dataConnMap.current = new Map<string, Peer.DataConnection>();
         simulationData.current = new Map<string, Entity>();
 
