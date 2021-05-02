@@ -10,7 +10,7 @@ type Props = {
   lockZ?: boolean;
 };
 
-const FacePlayer = (props: Props) => {
+export function FacePlayer(props: Props) {
   const { children, lockX = false, lockY = false, lockZ = false } = props;
 
   const group = useRef<Group>();
@@ -33,6 +33,6 @@ const FacePlayer = (props: Props) => {
   });
 
   return <group ref={group}>{children}</group>;
-};
+}
 
 export default FacePlayer;

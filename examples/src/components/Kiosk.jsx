@@ -23,7 +23,7 @@ const SUB_FONT = {
   textAlign: "left",
 };
 
-const Kiosk = (props) => {
+export default function Kiosk(props) {
   const { width, productName, productId, ...restProps } = props;
 
   const CART_WIDTH = HEIGHT * 0.5;
@@ -101,6 +101,4 @@ const Kiosk = (props) => {
       </group>
     </group>
   );
-};
-
-export default Kiosk;
+}

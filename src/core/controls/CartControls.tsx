@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { ShopContext } from "../../components/Shopify";
 import FacePlayer from "../../modifiers/FacePlayer";
 
-const Control = () => {
+export default function Control() {
   const { cart, copyright } = useContext(ShopContext);
 
   const numScale = isMobile ? 0.9 : 1;
@@ -41,6 +41,4 @@ const Control = () => {
       </group>
     </group>
   );
-};
-
-export default Control;
+}

@@ -13,12 +13,10 @@ type ShopifyProps = {
   cartModel?: ReactNode;
 };
 
-let shop: ShopState | undefined = undefined;
-
 export function Shopify(props: ShopifyProps) {
   const { domain, token, noCart, rights, cartModel, children } = props;
 
-  shop = useShopifyShop({
+  const shop = useShopifyShop({
     domain: domain,
     storefrontAccessToken: token,
     rights: rights,

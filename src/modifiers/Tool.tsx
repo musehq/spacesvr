@@ -21,7 +21,7 @@ const SCALE = 0.0025;
  * @param props
  * @constructor
  */
-export const Tool = (props: Props) => {
+export function Tool(props: Props) {
   const { children, pos, face = true, pinY = false, distance = 1 } = props;
 
   const DISTANCE = distance * 0.05;
@@ -66,4 +66,4 @@ export const Tool = (props: Props) => {
       </group>
     </group>
   );
-};
+}

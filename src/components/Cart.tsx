@@ -17,7 +17,11 @@ import { config } from "react-spring";
 import { Preload } from "@react-three/drei";
 import { ShopContext } from "./Shopify";
 
-const Cart = (props: { cartModel?: ReactNode }) => {
+type CartProps = {
+  cartModel?: ReactNode;
+};
+
+export default function Cart(props: CartProps) {
   const { cart } = useContext(ShopContext);
   const { cartModel } = props;
 
@@ -73,6 +77,4 @@ const Cart = (props: { cartModel?: ReactNode }) => {
       </Interactable>
     </Tool>
   );
-};
-
-export default Cart;
+}

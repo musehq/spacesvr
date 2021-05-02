@@ -151,7 +151,7 @@ const MenuButton = styled.button`
   }
 `;
 
-const DesktopPause = (props: { dev: boolean }) => {
+export default function DesktopPause(props: { dev: boolean }) {
   const { dev } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
@@ -195,6 +195,4 @@ const DesktopPause = (props: { dev: boolean }) => {
       <Continue onClick={closeOverlay}>continue</Continue>
     </Container>
   );
-};
-
-export default DesktopPause;
+}
