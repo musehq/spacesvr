@@ -22,7 +22,7 @@ type Props = {
  * @param props
  * @constructor
  */
-export const Interactable = (props: Props) => {
+export function Interactable(props: Props) {
   const { onClick, onHover, onUnHover, children } = props;
 
   const gl = useThree((state) => state.gl);
@@ -106,4 +106,4 @@ export const Interactable = (props: Props) => {
   }, [onMouseUp, onTouchEnd, onClick]);
 
   return <group ref={group}>{children}</group>;
-};
+}

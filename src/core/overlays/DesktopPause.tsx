@@ -3,7 +3,7 @@ import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
 
-const Container = styled.div<{ paused: boolean }>`
+const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -11,7 +11,7 @@ const Container = styled.div<{ paused: boolean }>`
   left: 0;
   z-index: 100;
   transition: opacity 0.25s ease;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, ${(props) => (props.dev ? 0 : 0.5)});
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -151,10 +151,18 @@ const MenuButton = styled.button`
   }
 `;
 
-const DesktopPause = () => {
+export default function DesktopPause(props: { dev: boolean }) {
+  const { dev } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
 
+  if (dev) {
+    return (
+      <Container paused={paused} dev={true}>
+        <ClickContainer onClick={closeOverlay} />
+      </Container>
+    );
+  }
   if (overlay) {
     return null;
   }
@@ -187,6 +195,4 @@ const DesktopPause = () => {
       <Continue onClick={closeOverlay}>continue</Continue>
     </Container>
   );
-};
-
-export default DesktopPause;
+}

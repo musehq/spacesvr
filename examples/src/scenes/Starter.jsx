@@ -22,7 +22,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
+    <StandardEnvironment>
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}
