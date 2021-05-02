@@ -137,9 +137,6 @@ const MenuButton = styled.button`
   color: white;
   border: 1px solid white;
   border-radius: 2px;
-  //position: absolute;
-  //left: 60px;
-  //bottom: 24px;
   background: rgba(255, 255, 255, 0);
   padding: 5px 10px;
   margin: 8px 0;
@@ -171,7 +168,7 @@ export default function DesktopPause(props: { dev: boolean }) {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.6.5</Version>
+        <Version>v1.6.6</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >
