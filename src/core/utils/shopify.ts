@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import ShopifyBuy from "shopify-buy";
 import { Cart, Product, ShopState } from "../types/shop";
@@ -6,10 +6,12 @@ import { Cart, Product, ShopState } from "../types/shop";
 type ShopifyClient = {
   domain: string;
   storefrontAccessToken: string;
+  rights?: string;
+  cartModel?: ReactNode;
 };
 
 export const useShopifyShop = (props: ShopifyClient): ShopState => {
-  const { domain, storefrontAccessToken } = props;
+  const { domain, storefrontAccessToken, rights } = props;
 
   const client = useMemo(
     () => ShopifyBuy.buildClient({ domain, storefrontAccessToken }),
@@ -17,6 +19,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
   );
   const [products, setProducts] = useState<Product[]>([]);
   const [checkout, setCheckout] = useState<any>();
+  const copyright = rights;
 
   useEffect(() => {
     // fetch products, cast to Product type
@@ -27,7 +30,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
       );
 
     // fetch cart id from local storage or create a new one
-    const id = localStorage.getItem("muse-cart-id");
+    const id = localStorage.getItem(domain);
     if (id) {
       client.checkout
         .fetch(id)
@@ -49,7 +52,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
       client.checkout
         .addLineItems(checkout.id, lineItemsToAdd)
         .then((newCheckout: any) => {
-          localStorage.setItem("muse-cart-id", newCheckout.id);
+          localStorage.setItem(domain, newCheckout.id);
           setCheckout(newCheckout);
         });
     },
@@ -59,7 +62,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
       client.checkout
         .removeLineItems(checkoutId, id)
         .then((newCheckout: any) => {
-          localStorage.setItem("muse-cart-id", newCheckout.id);
+          localStorage.setItem(domain, newCheckout.id);
           setCheckout(newCheckout);
         });
     },
@@ -72,7 +75,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
     clear: () => {
       client.checkout.create().then((shopifyCheckout: any) => {
         setCheckout(shopifyCheckout);
-        localStorage.setItem("muse-cart-id", shopifyCheckout.id);
+        localStorage.setItem(domain, shopifyCheckout.id);
       });
     },
   };
@@ -80,6 +83,7 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
   return {
     products,
     cart,
+    copyright,
   };
 };
 

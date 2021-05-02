@@ -1,11 +1,11 @@
 import { Text } from "@react-three/drei";
 import { isMobile } from "react-device-detect";
 import { useContext } from "react";
-import { ShopContext } from "../../../index";
+import { ShopContext } from "./Shopify";
 import FacePlayer from "../modifiers/FacePlayer";
 
 const Control = () => {
-  const { cart } = useContext(ShopContext);
+  const { cart, copyright } = useContext(ShopContext);
 
   const numScale = isMobile ? 0.9 : 1;
   const numY = isMobile ? -1.25 : 6;
@@ -35,7 +35,7 @@ const Control = () => {
           </Text>
           {/* @ts-ignore */}
           <Text fontSize={0.35} position-y={-0.45} anchorY="top">
-            {"Silks by VP © 2021"}
+            {copyright}
           </Text>
         </FacePlayer>
       </group>

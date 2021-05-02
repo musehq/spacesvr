@@ -1,6 +1,10 @@
+import { ReactNode } from "react";
+
 export type ShopState = {
   cart: Cart;
   products: Product[];
+  copyright?: string;
+  cartModel?: ReactNode;
 };
 
 type Item = {
