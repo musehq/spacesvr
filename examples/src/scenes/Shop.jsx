@@ -17,7 +17,7 @@ export default () => {
     token = "149755cbbf5f79758937d9114964fda7";
 
   return (
-    <StandardEnvironment player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
+    <StandardEnvironment dev>
       <Shopify domain={domain} token={token}>
         <Background color={0xffffff} />
         <Interactable

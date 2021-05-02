@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Text } from "@react-three/drei";
 import { useState } from "react";
-import { Interactable, getProduct, addToCart, getShop } from "spacesvr";
+import { Interactable, getProduct, addToCart, useShop } from "spacesvr";
 
 const WIDTH = 1;
 const HEIGHT = 0.15;
@@ -26,13 +26,11 @@ const SUB_FONT = {
 const Kiosk = (props) => {
   const { width, productName, productId, ...restProps } = props;
 
-  // const WIDTH = width * 0.9;
   const CART_WIDTH = HEIGHT * 0.5;
   const TEXT_WIDTH = WIDTH - CART_WIDTH - PADDING_X * 3;
 
-  // const cart = getCart();
   const product = getProduct(productId);
-  const shop = getShop();
+  const shop = useShop();
   const { cart } = shop;
 
   const [variantIndex, setVariantIndex] = useState(0);

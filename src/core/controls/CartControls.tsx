@@ -1,8 +1,8 @@
 import { Text } from "@react-three/drei";
 import { isMobile } from "react-device-detect";
 import { useContext } from "react";
-import { ShopContext } from "./Shopify";
-import FacePlayer from "../modifiers/FacePlayer";
+import { ShopContext } from "../../components/Shopify";
+import FacePlayer from "../../modifiers/FacePlayer";
 
 const Control = () => {
   const { cart, copyright } = useContext(ShopContext);
@@ -11,8 +11,8 @@ const Control = () => {
   const numY = isMobile ? -1.25 : 6;
 
   const cartStatus =
-    cart && cart?.count > 0
-      ? `${cart?.count} Item${cart?.count > 1 ? "s" : ""}`
+    cart && cart.count > 0
+      ? `${cart.count} Item${cart.count > 1 ? "s" : ""}`
       : "Cart Is Empty";
   const cartPanelWidth = Math.max(4, cartStatus.length * 0.5);
   const instructions = isMobile ? "tap to clear" : "press 'c' to clear";

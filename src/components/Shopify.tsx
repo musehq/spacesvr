@@ -23,7 +23,6 @@ export function Shopify(props: ShopifyProps) {
     storefrontAccessToken: token,
     rights: rights,
   });
-  // console.log(getProducts());
 
   return (
     <ShopContext.Provider value={shop}>
@@ -39,14 +38,13 @@ export function getProduct(productId: string) {
   if (products.length === 0) return null;
 
   for (let i = 0; i < products.length; i++) {
-    // console.log(products[i]);
     if (products[i].id === productId) return products[i];
   }
 
   return false;
 }
 
-export function getShop() {
+export function useShop() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { cart, products } = useContext(ShopContext);
   return { cart: cart, products: products };
@@ -63,7 +61,6 @@ export const addToCart = (
 
   let product: Product | undefined = undefined;
   for (let i = 0; i < products.length; i++) {
-    // console.log(products[i]);
     if (products[i].id === productId) product = products[i];
   }
 

@@ -22,7 +22,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment dev>
+    <StandardEnvironment>
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}

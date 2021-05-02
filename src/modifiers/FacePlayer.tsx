@@ -14,7 +14,7 @@ const FacePlayer = (props: Props) => {
   const { children, lockX = false, lockY = false, lockZ = false } = props;
 
   const group = useRef<Group>();
-  const limiter = useLimiter(60);
+  const limiter = useLimiter(45);
 
   useFrame(({ clock, camera }) => {
     if (!limiter.isReady(clock)) return;

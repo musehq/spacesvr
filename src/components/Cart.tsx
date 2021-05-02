@@ -10,7 +10,7 @@ import {
 import ShoppingCart from "../models/ShoppingCart";
 import { Tool, Interactable } from "../modifiers";
 import { isMobile } from "react-device-detect";
-import Control from "../components/CartControls";
+import Control from "../core/controls/CartControls";
 // @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { config } from "react-spring";
