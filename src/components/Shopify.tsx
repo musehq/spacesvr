@@ -1,67 +1,27 @@
-import { createContext, ReactNode, useContext } from "react";
-import { useShopifyShop, ShopState, Product } from "../core";
+import { ReactNode } from "react";
+import { useShopifyShop } from "../core";
 import Cart from "./Cart";
-
-export const ShopContext = createContext<ShopState>({} as ShopState);
+import { ShopContext } from "../core/contexts/shopify";
 
 type ShopifyProps = {
   domain: string;
   token: string;
-  children?: ReactNode;
-  noCart?: boolean;
-  rights?: string;
-  cartModel?: ReactNode;
+  children?: ReactNode | ReactNode[];
+  cart?: ReactNode;
 };
 
 export function Shopify(props: ShopifyProps) {
-  const { domain, token, noCart, rights, cartModel, children } = props;
+  const { domain, token, cart, children } = props;
 
   const shop = useShopifyShop({
     domain: domain,
     storefrontAccessToken: token,
-    rights: rights,
   });
 
   return (
     <ShopContext.Provider value={shop}>
-      {!noCart && <Cart cartModel={cartModel} />}
+      {cart && <Cart />}
       {children}
     </ShopContext.Provider>
   );
 }
-
-export function useProduct(productId: string) {
-  const { products } = useContext(ShopContext);
-  if (products.length === 0) return null;
-
-  return products.find((prod) => prod.id === productId);
-}
-
-export function useShop() {
-  return useContext(ShopContext);
-}
-
-export const addToCart = (
-  shop: ShopState,
-  productId: string,
-  variant?: number
-) => {
-  const { cart, products } = shop;
-  if (products.length === 0) return null;
-
-  let product: Product | undefined = undefined;
-  for (let i = 0; i < products.length; i++) {
-    if (products[i].id === productId) product = products[i];
-  }
-
-  // @ts-ignore
-  if (
-    product !== undefined &&
-    product.variants[variant ? variant : 0].available
-  ) {
-    // @ts-ignore
-    cart.add(product.variants[variant ? variant : 0].id);
-    return true;
-  }
-  return false;
-};

@@ -1,28 +1,21 @@
-import { Spinning } from "../modifiers";
-import {
-  ReactNode,
-  Suspense,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import ShoppingCart from "../models/ShoppingCart";
-import { Tool, Interactable } from "../modifiers";
+import { Spinning } from "../../modifiers";
+import { ReactNode, Suspense, useEffect, useRef, useState } from "react";
+import ShoppingCart from "../../models/ShoppingCart";
+import { Tool, Interactable } from "../../modifiers";
 import { isMobile } from "react-device-detect";
-import Control from "../core/controls/CartControls";
+import Control from "./components/CartControls";
 // @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { config } from "react-spring";
 import { Preload } from "@react-three/drei";
-import { ShopContext } from "./Shopify";
+import { useShop } from "../../core/contexts/shopify";
 
 type CartProps = {
   cartModel?: ReactNode;
 };
 
 export default function Cart(props: CartProps) {
-  const { cart } = useContext(ShopContext);
+  const { cart } = useShop();
   const { cartModel } = props;
 
   const posY = isMobile ? 0.7 : -0.75;

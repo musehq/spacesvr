@@ -11,7 +11,7 @@ type ShopifyClient = {
 };
 
 export const useShopifyShop = (props: ShopifyClient): ShopState => {
-  const { domain, storefrontAccessToken, rights } = props;
+  const { domain, storefrontAccessToken } = props;
 
   const client = useMemo(
     () => ShopifyBuy.buildClient({ domain, storefrontAccessToken }),
@@ -19,7 +19,6 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
   );
   const [products, setProducts] = useState<Product[]>([]);
   const [checkout, setCheckout] = useState<any>();
-  const copyright = rights;
 
   useEffect(() => {
     // fetch products, cast to Product type
@@ -83,7 +82,6 @@ export const useShopifyShop = (props: ShopifyClient): ShopState => {
   return {
     products,
     cart,
-    copyright,
   };
 };
 

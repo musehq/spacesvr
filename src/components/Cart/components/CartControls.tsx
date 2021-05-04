@@ -1,11 +1,11 @@
 import { Text } from "@react-three/drei";
 import { isMobile } from "react-device-detect";
 import { useContext } from "react";
-import { ShopContext } from "../../components/Shopify";
-import FacePlayer from "../../modifiers/FacePlayer";
+import FacePlayer from "../../../modifiers/FacePlayer";
+import { ShopContext } from "../../../core/contexts";
 
 export default function Control() {
-  const { cart, copyright } = useContext(ShopContext);
+  const { cart } = useContext(ShopContext);
 
   const numScale = isMobile ? 0.9 : 1;
   const numY = isMobile ? -1.25 : 6;
@@ -32,10 +32,6 @@ export default function Control() {
           {/* @ts-ignore */}
           <Text fontSize={0.5} position-y={0.2} anchorY="top">
             {cart?.count == 0 ? "" : instructions}
-          </Text>
-          {/* @ts-ignore */}
-          <Text fontSize={0.35} position-y={-0.45} anchorY="top">
-            {copyright}
           </Text>
         </FacePlayer>
       </group>
