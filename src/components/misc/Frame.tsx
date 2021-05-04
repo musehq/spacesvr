@@ -6,6 +6,7 @@ import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtil
 type FrameProps = {
   width: number;
   height: number;
+  thickness?: number;
   material?: Material;
 };
 
@@ -21,7 +22,7 @@ type FrameProps = {
  * @constructor
  */
 const Frame = (props: FrameProps) => {
-  const { width, height, material: passedMaterial } = props;
+  const { width, height, thickness = 1, material: passedMaterial } = props;
 
   const material = useMemo(
     () =>
@@ -37,7 +38,7 @@ const Frame = (props: FrameProps) => {
   const frameDepth = 0.025;
   const frameWidth = 0.06;
   const borderDepth = 0.05;
-  const borderThickness = 0.05;
+  const borderThickness = 0.05 * thickness;
   const meshOffset = 0.0005;
 
   const geometry = useMemo<BufferGeometry>(() => {

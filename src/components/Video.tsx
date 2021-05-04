@@ -10,11 +10,20 @@ type Props = JSX.IntrinsicElements["group"] & {
   framed?: boolean;
   muted?: boolean;
   volume?: number;
-  material?: Material;
+  frameMaterial?: Material;
+  frameWidth?: number;
 };
 
 export const Video = (props: Props) => {
-  const { src, size = 1, framed, muted, volume = 1, material } = props;
+  const {
+    src,
+    size = 1,
+    framed,
+    muted,
+    volume = 1,
+    frameMaterial,
+    frameWidth = 1,
+  } = props;
 
   const camera = useThree((state) => state.camera);
 
@@ -107,7 +116,14 @@ export const Video = (props: Props) => {
         </meshBasicMaterial>
       </mesh>
       {speaker && <primitive object={speaker} />}
-      {framed && <Frame width={width} height={height} material={material} />}
+      {framed && (
+        <Frame
+          width={width}
+          height={height}
+          thickness={frameWidth}
+          material={frameMaterial}
+        />
+      )}
     </group>
   );
 };

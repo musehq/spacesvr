@@ -8,11 +8,12 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   src: string;
   size?: number;
   framed?: boolean;
-  material?: Material;
+  frameMaterial?: Material;
+  frameWidth?: number;
 };
 
 const UnsuspensedImage = (props: ImageProps) => {
-  const { src, size = 1, framed, material } = props;
+  const { src, size = 1, framed, frameMaterial, frameWidth = 1 } = props;
 
   const texture = useLoader(THREE.TextureLoader, src);
 
@@ -28,7 +29,14 @@ const UnsuspensedImage = (props: ImageProps) => {
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
         <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
       </mesh>
-      {framed && <Frame width={WIDTH} height={HEIGHT} material={material} />}
+      {framed && (
+        <Frame
+          width={WIDTH}
+          height={HEIGHT}
+          thickness={frameWidth}
+          material={frameMaterial}
+        />
+      )}
     </group>
   );
 };
