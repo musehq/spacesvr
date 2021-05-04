@@ -30,22 +30,15 @@ export function Shopify(props: ShopifyProps) {
   );
 }
 
-export function getProduct(productId: string) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+export function useProduct(productId: string) {
   const { products } = useContext(ShopContext);
   if (products.length === 0) return null;
 
-  for (let i = 0; i < products.length; i++) {
-    if (products[i].id === productId) return products[i];
-  }
-
-  return false;
+  return products.find((prod) => prod.id === productId);
 }
 
 export function useShop() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { cart, products } = useContext(ShopContext);
-  return { cart: cart, products: products };
+  return useContext(ShopContext);
 }
 
 export const addToCart = (
@@ -53,7 +46,6 @@ export const addToCart = (
   productId: string,
   variant?: number
 ) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { cart, products } = shop;
   if (products.length === 0) return null;
 
@@ -73,11 +65,3 @@ export const addToCart = (
   }
   return false;
 };
-
-export function clearCart() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { cart } = useContext(ShopContext);
-  if (!cart) return null;
-  cart.clear();
-  return true;
-}
