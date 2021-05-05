@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, ReactNode, useMemo } from "react";
+import { useRef, useEffect, ReactNode, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Camera, Quaternion, Raycaster, Vector3 } from "three";
 import NippleMovement from "../controls/NippleMovement";
@@ -16,10 +16,9 @@ import { useSimulation } from "../contexts/simulation";
 import { PlayerContext } from "../contexts/player";
 import { createPlayerState } from "../utils/player";
 import { useEnvironment } from "../contexts/environment";
-import { DefaultXRControllers } from "@react-three/xr";
 import VRControllerMovement from "../controls/VRControllerMovement";
 
-const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
+const SPEED = 3.6; // (m/s) 1.4 walking, 2.6 jogging, 4.1 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
