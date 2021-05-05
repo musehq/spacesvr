@@ -54,7 +54,7 @@ Visit the codesandbox to instantly play with the package
 
 https://codesandbox.io/s/e9w29
 
-### Starter Repo
+#### Starter Repo
 
 Clone the starter repo to give yourself a solid starting point
 
@@ -130,7 +130,7 @@ inside an `Environment` component and gives you an `PlayerState`, defined as:
 }
 ```
 
-### simulation
+#### simulation
 
 Your worlds can now run in a simulation! To enable it you can run a
 server out of `examples/server/app.js` and pass the corresponding parameters as `simulationProps` to the
@@ -308,6 +308,20 @@ Troika-3d-Text.
 />
 ```
 
+#### Shopify
+
+Allows you to integrate Shopify into your world! This leverages the Storefront API. To get started, [set up the storefront api](https://shopify.dev/docs/storefront-api/getting-started)
+for your store and get the store domain and Storefront API access token. From there, this component will power certain components
+like the `Kiosk` and `Cart` components, as well as offer the `useShop` hook to make your own shop components.
+
+```jsx
+<Shopify
+  domain="myawesomeshop.myshopify.com"
+  token="SOME_LONG_STRING"
+  noCart={false} // if you want to disable the cart
+/>
+```
+
 #### Video
 
 Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
@@ -324,6 +338,20 @@ Add a video file to your space with positional audio. Handles media playback rul
 ```
 
 ## Modifiers
+
+#### FacePlayer
+
+Makes its children face the player
+
+```jsx
+<FacePlayer
+  lockX={false} // lock rotation on the x axis
+  lockY={false} // just eyeball it
+  lockZ={false}
+>
+  <Stuff />
+</FacePlayer>
+```
 
 #### Floating
 
@@ -388,6 +416,21 @@ Makes its children spin
 >
   <Stuff />
 </Spinning>
+```
+
+#### Tool
+
+Puts its children in the player's field of view at all times. Think of it as a toolbelt.
+
+```jsx
+<Tool
+  pos={[0, 0]} // position on screen from [-1, -1] to [1, 1]
+  face={true} // whether the tool should face the screen
+  distance={1} // how far away to place the item. It will scale as it moves away
+  pinY={false} // pin the tool on the y axis
+>
+  <Stuff />
+</Tool>
 ```
 
 # Examples

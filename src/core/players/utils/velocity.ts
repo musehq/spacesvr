@@ -1,39 +1,32 @@
-import { useRef } from "react";
-import { Camera, Vector3 } from "three";
+import { useMemo, useRef } from "react";
+import { Camera, MathUtils, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
-import { useSpring } from "react-spring";
-import { getSpringValues } from "../../utils/spring";
 import { useEnvironment } from "../../contexts/environment";
 
 export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
   const direction = useRef(new Vector3());
   const { device } = useEnvironment();
-
-  const [spring, setSpring] = useSpring(() => ({
-    xyz: [0, 0, 0],
-    config: { tension: 200, friction: 26, precision: 0.0001 },
-  }));
+  const dummy = useMemo(() => new Vector3(), []);
 
   const updateVelocity = (cam: Camera, velocity: Vector3) => {
     // get forward/back movement and left/right movement velocities
-    const inputVelocity = new Vector3(0, 0, 0);
-    inputVelocity.x = direction.current.x * 0.75;
-    inputVelocity.z = direction.current.y; // forward/back
-    inputVelocity.multiplyScalar(speed);
+    dummy.x = direction.current.x * 0.75;
+    dummy.z = direction.current.y; // forward/back
+    dummy.multiplyScalar(speed);
 
     const moveQuaternion = cam.quaternion.clone();
     moveQuaternion.x = 0;
     moveQuaternion.z = 0;
-    inputVelocity.applyQuaternion(moveQuaternion);
-    inputVelocity.y = Math.min(velocity.y, 0);
+    dummy.applyQuaternion(moveQuaternion);
+    dummy.y = Math.min(velocity.y, 0.4);
 
     // keep y velocity intact and update velocity
-    if (device.xr) {
-      bodyApi.velocity.set(inputVelocity.x, inputVelocity.y, inputVelocity.z);
+    if (!device.desktop) {
+      bodyApi.velocity.set(dummy.x, dummy.y, dummy.z);
     } else {
-      setSpring({ xyz: inputVelocity.toArray() });
-      const [x, y, z] = getSpringValues(spring);
-      bodyApi.velocity.set(x, y, z);
+      const newX = MathUtils.lerp(velocity.x, dummy.x, 0.25);
+      const newZ = MathUtils.lerp(velocity.z, dummy.z, 0.25);
+      bodyApi.velocity.set(newX, dummy.y, newZ);
     }
   };
 

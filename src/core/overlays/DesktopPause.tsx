@@ -2,10 +2,8 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
-import { Overlay } from "../../modifiers/Overlay";
-import { useFsMenuItem, useVRMenuItem } from "../utils/menu";
 
-const Container = styled.div<{ paused: boolean }>`
+const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -13,7 +11,7 @@ const Container = styled.div<{ paused: boolean }>`
   left: 0;
   z-index: 100;
   transition: opacity 0.25s ease;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, ${(props) => (props.dev ? 0 : 0.5)});
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -139,9 +137,6 @@ const MenuButton = styled.button`
   color: white;
   border: 1px solid white;
   border-radius: 2px;
-  //position: absolute;
-  //left: 60px;
-  //bottom: 24px;
   background: rgba(255, 255, 255, 0);
   padding: 5px 10px;
   margin: 8px 0;
@@ -153,46 +148,48 @@ const MenuButton = styled.button`
   }
 `;
 
-const DesktopPause = () => {
-  const { paused, overlay, setPaused } = useEnvironment();
+export default function DesktopPause(props: { dev: boolean }) {
+  const { dev } = props;
+  const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
-  const vrMenu = useVRMenuItem();
-  const fsMenu = useFsMenuItem();
 
+  if (dev) {
+    return (
+      <Container paused={paused} dev={true}>
+        <ClickContainer onClick={closeOverlay} />
+      </Container>
+    );
+  }
   if (overlay) {
     return null;
   }
 
   return (
-    <Overlay>
-      <Container paused={paused}>
-        <ClickContainer onClick={closeOverlay} />
-        <Window>
-          <Version>v1.5.3</Version>
-          <Instagram
-            onClick={() => window.open("https://www.instagram.com/musehq")}
-          >
-            @musehq
-          </Instagram>
-          <Header>
-            <Title>muse</Title>
-          </Header>
-          <Text>
-            <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
-            <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
-            <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
-          </Text>
-          {vrMenu && (
-            <MenuButton onClick={vrMenu.action}>{vrMenu.text}</MenuButton>
-          )}
-          {fsMenu && (
-            <MenuButton onClick={fsMenu.action}>{fsMenu.text}</MenuButton>
-          )}
-        </Window>
-        <Continue onClick={closeOverlay}>continue</Continue>
-      </Container>
-    </Overlay>
+    <Container paused={paused}>
+      <ClickContainer onClick={closeOverlay} />
+      <Window>
+        <Version>v1.6.9</Version>
+        <Instagram
+          onClick={() => window.open("https://www.instagram.com/musehq")}
+        >
+          @musehq
+        </Instagram>
+        <Header>
+          <Title>muse</Title>
+        </Header>
+        <Text>
+          <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
+          <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
+          <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
+        </Text>
+        {menuItems.map(
+          (menuItem) =>
+            menuItem && (
+              <MenuButton onClick={menuItem.action}>{menuItem.text}</MenuButton>
+            )
+        )}
+      </Window>
+      <Continue onClick={closeOverlay}>continue</Continue>
+    </Container>
   );
-};
-
-export default DesktopPause;
+}

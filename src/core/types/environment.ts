@@ -1,6 +1,6 @@
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
-import { ContainerProps } from "react-three-fiber/targets/shared/web/ResizeContainer";
 import { MutableRefObject, ReactNode } from "react";
+import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
 
 export enum Environment {
   STANDARD,
@@ -22,6 +22,8 @@ export interface EnvironmentState {
   overlay: string | null;
   container: HTMLDivElement | null;
   containerRef: MutableRefObject<HTMLDivElement | null>;
+  menuItems: MenuItem[];
+  setMenuItems: (i: MenuItem[]) => void;
   events: EnvironmentEvent[];
   addEvent: (name: string, callback: (...args: any[]) => void) => void;
 }
@@ -38,3 +40,5 @@ export type DeviceState = {
   mobile: boolean;
   desktop: boolean;
 };
+
+export type MenuItem = { text: string; action: () => void };

@@ -1,4 +1,4 @@
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { ReactNode, useRef } from "react";
 import { AnimatedValue } from "react-spring";
 import { getSpringValues } from "../core/utils/spring";
@@ -14,7 +14,7 @@ type SpringScaledProps = {
  * @param props
  * @constructor
  */
-export const SpringScaled = (props: SpringScaledProps) => {
+export function SpringScaled(props: SpringScaledProps) {
   const { spring, children } = props;
 
   const group = useRef<THREE.Group>();
@@ -27,4 +27,4 @@ export const SpringScaled = (props: SpringScaledProps) => {
   });
 
   return <group ref={group}>{children}</group>;
-};
+}

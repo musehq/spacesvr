@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { useThree } from "react-three-fiber";
+import { useThree } from "@react-three/fiber";
 import Frame from "./misc/Frame";
 import { Material, Vector2 } from "three";
 
@@ -10,13 +10,22 @@ type Props = JSX.IntrinsicElements["group"] & {
   framed?: boolean;
   muted?: boolean;
   volume?: number;
-  material?: Material;
+  frameMaterial?: Material;
+  frameWidth?: number;
 };
 
 export const Video = (props: Props) => {
-  const { src, size = 1, framed, muted, volume = 1, material } = props;
+  const {
+    src,
+    size = 1,
+    framed,
+    muted,
+    volume = 1,
+    frameMaterial,
+    frameWidth = 1,
+  } = props;
 
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   const listener = useRef<THREE.AudioListener>();
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
@@ -60,9 +69,10 @@ export const Video = (props: Props) => {
     };
 
     if (video) {
-      video
-        .play()
-        .then(() => setDims(new Vector2(video.videoWidth, video.videoHeight)));
+      video.play().then(() => {
+        setDims(new Vector2(video.videoWidth, video.videoHeight));
+        setupAudio();
+      });
       document.addEventListener("click", playVideo);
       return () => {
         document.removeEventListener("click", playVideo);
@@ -106,7 +116,14 @@ export const Video = (props: Props) => {
         </meshBasicMaterial>
       </mesh>
       {speaker && <primitive object={speaker} />}
-      {framed && <Frame width={width} height={height} material={material} />}
+      {framed && (
+        <Frame
+          width={width}
+          height={height}
+          thickness={frameWidth}
+          material={frameMaterial}
+        />
+      )}
     </group>
   );
 };

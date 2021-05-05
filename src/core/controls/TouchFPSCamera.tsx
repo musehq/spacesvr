@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useThree } from "react-three-fiber";
+import { useThree } from "@react-three/fiber";
 import { Vector2, Euler } from "three";
 import {
   Touch,
@@ -21,7 +21,7 @@ const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
 const TouchFPSCamera = () => {
   const touchStartPos = useRef<Touch>(DefaultTouch);
   const originEuler = useRef<Euler>(new Euler(0, 0, 0, "YXZ"));
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   const getNewEuler = (dragX: number, dragY: number): Euler => {
     const newEuler = originEuler.current.clone();

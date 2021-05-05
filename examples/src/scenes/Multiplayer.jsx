@@ -6,10 +6,10 @@ export default () => {
     <StandardEnvironment
       player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}
       simulationProps={{
-        signalHost: "live.muse.place",
-        signalPort: 443,
+        signalHost: "127.0.0.1",
+        signalPort: 3001,
         signalPath: "/signal",
-        socketServer: "wss://live.muse.place:8081",
+        socketServer: "ws://127.0.0.1:3002",
         frequency: 20,
       }}
     >

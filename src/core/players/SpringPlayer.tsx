@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Quaternion, Vector3 } from "three";
 import { isMobile } from "react-device-detect";
 
@@ -32,7 +32,8 @@ type SpringPlayerProps = {
 const SpringPlayer = (props: SpringPlayerProps) => {
   const { spring } = props;
 
-  const { camera, raycaster } = useThree();
+  const camera = useThree((state) => state.camera);
+  const raycaster = useThree((state) => state.raycaster);
   const [initX, initY, initZ, initS] = getSpringValues(spring);
   const initPos = new Vector3(initX * initS, initY * initS, initZ * initS);
 

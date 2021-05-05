@@ -1,6 +1,6 @@
-import { useRef, useEffect, useState, ReactNode, useMemo } from "react";
-import { useFrame, useThree } from "react-three-fiber";
-import { Camera, Raycaster, Vector3 } from "three";
+import { useRef, useEffect, ReactNode, useMemo } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Camera, Quaternion, Raycaster, Vector3 } from "three";
 import NippleMovement from "../controls/NippleMovement";
 import KeyboardMovement from "../controls/KeyboardMovement";
 import PointerLockControls from "../controls/PointerLockControls";
@@ -16,12 +16,10 @@ import { useSimulation } from "../contexts/simulation";
 import { PlayerContext } from "../contexts/player";
 import { createPlayerState } from "../utils/player";
 import { useEnvironment } from "../contexts/environment";
-import { DefaultXRControllers } from "@react-three/xr";
 import VRControllerMovement from "../controls/VRControllerMovement";
 
-const SPEED = 2.8; // (m/s) 1.4 walking, 2.2 jogging, 6.6 running
+const SPEED = 3.6; // (m/s) 1.4 walking, 2.6 jogging, 4.1 running
 const SHOW_PLAYER_HITBOX = false;
-const Z_VEC = new Vector3();
 
 export type PlayerProps = {
   pos?: number[];
@@ -44,9 +42,12 @@ export type PlayerProps = {
 export default function Player(
   props: { children: ReactNode[] | ReactNode } & PlayerProps
 ) {
-  const { children, pos = [0, 2, 0], rot = 0, speed = SPEED, controls } = props;
+  const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
 
-  const { camera, raycaster: defaultRaycaster, gl } = useThree();
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
+  const defaultRaycaster = useThree((state) => state.raycaster);
+
   const { device } = useEnvironment();
 
   // physical body
@@ -54,28 +55,26 @@ export default function Player(
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state
-  const [setup, setSetup] = useState(false);
   const position = useRef(new Vector3());
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
-  const raycaster = useMemo(() => new Raycaster(Z_VEC, Z_VEC, 0, 1.5), []);
+  const raycaster = useMemo(
+    () => new Raycaster(new Vector3(), new Vector3(), 0, 1.5),
+    []
+  );
   const { connected, frequency, sendEvent } = useSimulation();
   const simulationLimiter = useLimiter(frequency);
-
-  // initial camera rotation
-  // i know this is ugly but it doesn't work in the use effect
-  if (!setup) {
-    const xLook = pos[0] + 100 * Math.cos(rot);
-    const zLook = pos[2] + 100 * Math.sin(rot);
-    camera.lookAt(xLook, pos[1], zLook);
-    setSetup(true);
-  }
 
   // setup player
   useEffect(() => {
     // store position and velocity
     bodyApi.position.subscribe((p) => position.current.fromArray(p));
     bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
+
+    // rotation happens before position move
+    camera.rotation.setFromQuaternion(
+      new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), rot)
+    );
   }, []);
 
   useFrame(({ clock }) => {
@@ -102,14 +101,17 @@ export default function Player(
       sendEvent(
         "player",
         JSON.stringify({
-          position: camera.position,
-          rotation: camera.rotation,
+          position: camera.position
+            .toArray()
+            .map((p) => parseFloat(p.toPrecision(3))),
+          rotation: camera.rotation
+            .toArray()
+            .slice(0, 3)
+            .map((r) => parseFloat(r.toPrecision(3))),
         })
       );
     }
   });
-
-  useFrame(({ gl, scene, camera }) => gl.render(scene, camera), 100);
 
   const state = createPlayerState(
     bodyApi,
@@ -140,7 +142,6 @@ export default function Player(
       {device.xr && (
         <>
           <VRControllerMovement position={position} direction={direction} />
-          <DefaultXRControllers />
         </>
       )}
       <group name="player" ref={bodyRef}>

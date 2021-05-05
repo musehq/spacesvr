@@ -1,18 +1,25 @@
 import { useEffect } from "react";
 
-import { useThree } from "react-three-fiber";
-import { UnsignedByteType } from "three";
-import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
+import {
+  NearestFilter,
+  RGBAFormat,
+  UnsignedByteType,
+  WebGLCubeRenderTarget,
+} from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
   src: string;
-  hideBackground?: boolean;
+  size?: number;
+  disableBackground?: boolean;
+  disableEnvironment?: boolean;
 };
 
 export const HDRI = (props: HDRIProps) => {
-  const { src, hideBackground } = props;
-  const { gl, scene } = useThree();
+  const { src, size = 1204, disableBackground, disableEnvironment } = props;
+  const gl = useThree((state) => state.gl);
+  const scene = useThree((state) => state.scene);
 
   // actual file loader
   const loader = new RGBELoader();
@@ -21,29 +28,30 @@ export const HDRI = (props: HDRIProps) => {
   useEffect(() => {
     loader.load(src, (texture) => {
       const opts = {
-        format: THREE.RGBAFormat,
+        format: RGBAFormat,
         generateMipmaps: false,
-        magFilter: THREE.NearestFilter,
-        minFilter: THREE.NearestFilter,
+        magFilter: NearestFilter,
+        minFilter: NearestFilter,
       };
-      const envMap = new THREE.WebGLCubeRenderTarget(
-        4096,
+      const envMap = new WebGLCubeRenderTarget(
+        size,
         opts
       ).fromEquirectangularTexture(gl, texture).texture;
 
       // sent envmap onto scene env and background
-      if (!hideBackground) {
+      if (!disableBackground) {
         scene.background = envMap;
       }
-      scene.environment = envMap;
-
+      if (!disableEnvironment) {
+        scene.environment = envMap;
+      }
       texture.dispose();
 
       return () => {
         envMap.dispose();
       };
     });
-  }, [src, scene, loader, hideBackground]);
+  }, [src, scene, loader, disableBackground, disableEnvironment]);
 
   return null;
 };

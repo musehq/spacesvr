@@ -1,6 +1,6 @@
 import { ReactNode, useRef, useState } from "react";
 import { Group } from "three";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { useLimiter } from "../services/limiter";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
   zSpeed?: number;
 };
 
-export const Spinning = (props: Props) => {
+export function Spinning(props: Props) {
   const { children, xSpeed = 0, ySpeed = 1, zSpeed = 0 } = props;
 
   const group = useRef<Group>();
@@ -30,4 +30,4 @@ export const Spinning = (props: Props) => {
   });
 
   return <group ref={group}>{children}</group>;
-};
+}

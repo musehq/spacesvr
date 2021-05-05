@@ -3,6 +3,7 @@ const express = require("express");
 const { ExpressPeerServer } = require("peer");
 const Websocket = require("ws");
 const dotenv = require("dotenv");
+const { v4: uuidv4 } = require("uuid");
 
 process.title = "muse-p2p-server";
 
@@ -17,6 +18,7 @@ app.get("/", (req, res, next) => res.send("Lorem ipsum"));
 // Create signalling server
 const httpServer = http.createServer(app);
 const peerServer = ExpressPeerServer(httpServer, {
+  generateClientId: uuidv4,
   allow_discovery: true,
   debug: true,
 });

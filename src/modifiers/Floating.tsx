@@ -1,5 +1,5 @@
 import { ReactNode, useRef } from "react";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { Group } from "three";
 import { useLimiter } from "../services/limiter";
 
@@ -9,7 +9,7 @@ type FloatingProps = {
   children: ReactNode;
 };
 
-export const Floating = (props: FloatingProps) => {
+export function Floating(props: FloatingProps) {
   const { children, height = 0.2, speed = 1 } = props;
 
   const group = useRef<Group>();
@@ -25,4 +25,4 @@ export const Floating = (props: FloatingProps) => {
   });
 
   return <group ref={group}>{children}</group>;
-};
+}

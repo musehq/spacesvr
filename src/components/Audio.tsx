@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { useEffect, useMemo, useState } from "react";
-import { GroupProps, useThree } from "react-three-fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 import { AudioAnalyser, Vector3 } from "three";
 
 type AudioProps = {
@@ -24,7 +24,7 @@ export const Audio = (props: AudioProps) => {
   } = props;
 
   const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   const audio = useMemo(() => {
     const a = document.createElement("audio");
@@ -57,10 +57,7 @@ export const Audio = (props: AudioProps) => {
       }
     };
 
-    const playAudio = () => {
-      audio.play();
-      setupAudio();
-    };
+    const playAudio = () => audio.play().then(() => setupAudio());
 
     if (audio) {
       document.addEventListener("click", playAudio);

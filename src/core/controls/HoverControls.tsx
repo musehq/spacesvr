@@ -1,4 +1,4 @@
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 
 type HoverControlsProps = {
   center: [number, number, number];
@@ -9,7 +9,7 @@ type HoverControlsProps = {
 const HoverControls = (props: HoverControlsProps) => {
   const { center = [0, 0, 0], xDist = 3, yDist = 1.5 } = props;
 
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   useFrame(({ mouse }) => {
     const xOffset = -mouse.x * xDist;

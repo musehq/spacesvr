@@ -5,7 +5,7 @@ const transpileModules = require("next-transpile-modules")([
   "three",
   "drei",
   "postprocessing",
-  "react-three-fiber",
+  "@react-three/fiber",
   "use-cannon",
 ]);
 

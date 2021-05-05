@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from "react";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Euler } from "three";
 import { useEnvironment } from "../contexts/environment";
 import * as THREE from "three";
@@ -19,7 +19,8 @@ const PI_2 = Math.PI / 2;
  * @constructor
  */
 const PointerLockCamera = () => {
-  const { camera, gl } = useThree();
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
   const { domElement } = gl;
   const { paused, setPaused, addEvent } = useEnvironment();
 

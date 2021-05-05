@@ -1,5 +1,5 @@
 import { Suspense, useRef } from "react";
-import { useFrame } from "react-three-fiber";
+import { useFrame } from "@react-three/fiber";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";

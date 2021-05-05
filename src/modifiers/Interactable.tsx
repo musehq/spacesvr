@@ -1,7 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Vector2 } from "three";
-import { useEnvironment } from "../core/contexts/environment";
-import { useFrame, useThree } from "react-three-fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { isMobile } from "react-device-detect";
 import { useLimiter } from "../services/limiter";
 import { usePlayer } from "../core/contexts/player";
@@ -23,10 +22,10 @@ type Props = {
  * @param props
  * @constructor
  */
-export const Interactable = (props: Props) => {
+export function Interactable(props: Props) {
   const { onClick, onHover, onUnHover, children } = props;
 
-  const { gl } = useThree();
+  const gl = useThree((state) => state.gl);
   const { domElement } = gl;
   const { raycaster } = usePlayer();
 
@@ -107,4 +106,4 @@ export const Interactable = (props: Props) => {
   }, [onMouseUp, onTouchEnd, onClick]);
 
   return <group ref={group}>{children}</group>;
-};
+}
