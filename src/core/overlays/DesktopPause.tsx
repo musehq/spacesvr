@@ -150,7 +150,7 @@ const MenuButton = styled.div`
   }
 `;
 
-const Typeform = styled.div`
+const Signup = styled.div`
   position: relative;
   bottom: -30px;
   font-family: "Roboto", sans-serif, monospace;
@@ -210,9 +210,9 @@ export default function DesktopPause(props: PauseProps) {
             )
         )}
         {signup && (
-          <Typeform onClick={() => window.open(signup, "_blank")}>
+          <Signup onClick={() => window.open(signup, "_blank")}>
             Get Your Own 3D Space
-          </Typeform>
+          </Signup>
         )}
       </Window>
       <Continue onClick={closeOverlay}>continue</Continue>
