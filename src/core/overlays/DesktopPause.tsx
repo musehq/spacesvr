@@ -133,7 +133,7 @@ const Text = styled.div`
   }
 `;
 
-const MenuButton = styled.button`
+const MenuButton = styled.div`
   color: white;
   border: 1px solid white;
   border-radius: 2px;
@@ -141,6 +141,8 @@ const MenuButton = styled.button`
   padding: 5px 10px;
   margin: 8px 0;
   transition: background 0.15s linear;
+  font-size: 0.5em;
+  font-family: "Roboto", sans-serif, monospace;
   cursor: pointer;
 
   &:hover {
@@ -148,8 +150,27 @@ const MenuButton = styled.button`
   }
 `;
 
-export default function DesktopPause(props: { dev: boolean }) {
-  const { dev } = props;
+const Typeform = styled.div`
+  position: relative;
+  bottom: -30px;
+  font-family: "Roboto", sans-serif, monospace;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  transition: color 0.15s linear;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.75);
+  }
+`;
+
+type PauseProps = {
+  dev: boolean;
+  signup?: string;
+};
+
+export default function DesktopPause(props: PauseProps) {
+  const { dev, signup } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
 
@@ -187,6 +208,11 @@ export default function DesktopPause(props: { dev: boolean }) {
             menuItem && (
               <MenuButton onClick={menuItem.action}>{menuItem.text}</MenuButton>
             )
+        )}
+        {signup && (
+          <Typeform onClick={() => window.open(signup, "_blank")}>
+            Get Your Own 3D Space
+          </Typeform>
         )}
       </Window>
       <Continue onClick={closeOverlay}>continue</Continue>

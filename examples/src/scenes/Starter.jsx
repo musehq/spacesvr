@@ -22,7 +22,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment>
+    <StandardEnvironment signup="https://www.muse.place">
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}
@@ -42,6 +42,13 @@ export default () => {
         src="https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
         size={3}
         position={[-6, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+      />
+      <Image
+        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/uastc.ktx2"
+        size={3}
+        position={[-3, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
       />
