@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { Material } from "three";
@@ -15,57 +15,27 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
 
 const UnsuspensedImage = (props: ImageProps) => {
   const { src, size = 1, framed, frameMaterial, frameWidth = 1 } = props;
-
   const { gl } = useThree();
 
   const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
   const ktx = src.includes(".ktx2");
 
-  const formatStrings = {
-    [THREE.RGBAFormat]: "RGBA32",
-    [THREE.RGBA_ASTC_4x4_Format]: "RGBA_ASTC_4x4",
-    [THREE.RGB_S3TC_DXT1_Format]: "RGB_S3TC_DXT1",
-    [THREE.RGBA_S3TC_DXT5_Format]: "RGBA_S3TC_DXT5",
-    [THREE.RGB_PVRTC_4BPPV1_Format]: "RGB_PVRTC_4BPPV1",
-    [THREE.RGBA_PVRTC_4BPPV1_Format]: "RGBA_PVRTC_4BPPV1",
-    [THREE.RGB_ETC1_Format]: "RGB_ETC1",
-    [THREE.RGB_ETC2_Format]: "RGB_ETC2",
-    [THREE.RGBA_ETC2_EAC_Format]: "RGB_ETC2_EAC",
-  };
+  // @ts-ignore
+  const texture = useLoader(
+    ktx ? KTX2Loader : THREE.TextureLoader,
+    src,
+    (loader: KTX2Loader) => {
+      if (ktx) {
+        loader.setTranscoderPath(
+          "https://d27rt3a60hh1lx.cloudfront.net/basis-transcoder/"
+        );
+        loader.detectSupport(gl);
+      }
+    }
+  );
 
-  let plainTexture = new THREE.Texture(),
-    width = 1,
-    height = 1;
-
-  if (ktx) {
-    const loader = new KTX2Loader();
-    loader.setTranscoderPath("three/examples/js/libs/basis/").detectSupport(gl);
-    console.log(loader);
-    loader.load(
-      src,
-      (texture) => {
-        console.info(`transcoded to ${formatStrings[texture.format]}`);
-
-        material.map = texture;
-        material.transparent = true;
-        material.needsUpdate = true;
-
-        width = texture.image.width;
-        height = texture.image.height;
-      },
-      (p) => console.log(`...${p}`),
-      (e) => console.error(e)
-    );
-    loader.dispose();
-  } else {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    plainTexture = useLoader(THREE.TextureLoader, src);
-    material.map = plainTexture;
-    material.needsUpdate = true;
-
-    width = plainTexture.image.width;
-    height = plainTexture.image.height;
-  }
+  const width = texture.image.width;
+  const height = texture.image.height;
 
   const max = Math.max(width, height);
   const WIDTH = (width / max) * size;
@@ -75,6 +45,7 @@ const UnsuspensedImage = (props: ImageProps) => {
     <group {...props}>
       <mesh material={material}>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
+        <meshBasicMaterial map={texture} />
       </mesh>
       {framed && (
         <Frame
