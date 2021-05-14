@@ -17,7 +17,6 @@ const UnsuspensedImage = (props: ImageProps) => {
   const { src, size = 1, framed, frameMaterial, frameWidth = 1 } = props;
   const { gl } = useThree();
 
-  const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
   const ktx = src.includes(".ktx2");
 
   const texture = useLoader(
