@@ -20,12 +20,13 @@ const UnsuspensedImage = (props: ImageProps) => {
   const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
   const ktx = src.includes(".ktx2");
 
-  // @ts-ignore
   const texture = useLoader(
+    // @ts-ignore
     ktx ? KTX2Loader : THREE.TextureLoader,
     src,
     (loader: KTX2Loader) => {
       if (ktx) {
+        console.log(src);
         loader.setTranscoderPath(
           "https://d27rt3a60hh1lx.cloudfront.net/basis-transcoder/"
         );
@@ -43,9 +44,9 @@ const UnsuspensedImage = (props: ImageProps) => {
 
   return (
     <group {...props}>
-      <mesh material={material}>
+      <mesh rotation-x={ktx ? Math.PI : 0}>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
-        <meshBasicMaterial map={texture} />
+        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
       </mesh>
       {framed && (
         <Frame

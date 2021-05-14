@@ -14,12 +14,12 @@ const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("opening");
-      setOpen(true);
-    }, 10000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log("opening");
+  //     setOpen(true);
+  //   }, 10000);
+  // }, []);
 
   return (
     <StandardEnvironment dev>
@@ -46,7 +46,7 @@ export default () => {
         framed
       />
       <Image
-        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/dream11.ktx2"
+        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/kodim23.ktx2"
         size={3}
         position={[-3, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
