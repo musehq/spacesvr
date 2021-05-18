@@ -46,7 +46,7 @@ export default () => {
         framed
       />
       <Image
-        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/kodim23.ktx2"
+        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/dream1.ktx2"
         size={3}
         position={[-3, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
