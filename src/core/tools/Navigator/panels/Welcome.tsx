@@ -49,7 +49,7 @@ export default function Welcome(props: GroupProps) {
           font="https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf"
         >
           {
-            "Welcome to the metaverse.\n\nNeed some help navigating this reality?"
+            "Welcome to the metaverse. \n\nNeed some help navigating this reality?"
           }
         </Text>
         <Button
