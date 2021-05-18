@@ -150,7 +150,7 @@ const MenuButton = styled.div`
   }
 `;
 
-const Signup = styled.div`
+const Signup = styled.a`
   position: relative;
   bottom: -30px;
   font-family: "Roboto", sans-serif, monospace;
@@ -210,7 +210,7 @@ export default function DesktopPause(props: PauseProps) {
             )
         )}
         {signup && (
-          <Signup onClick={() => window.open(signup, "_blank")}>
+          <Signup href={`${signup}`} target="_blank">
             Get Your Own 3D Space
           </Signup>
         )}

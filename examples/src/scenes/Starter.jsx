@@ -22,7 +22,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment signup="https://www.muse.place">
+    <StandardEnvironment signup="https://bit.ly/3wgMNGO">
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}
@@ -45,13 +45,13 @@ export default () => {
         rotation={[0, Math.PI, 0]}
         framed
       />
-      <Image
-        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/uastc.ktx2"
-        size={3}
-        position={[-3, 2, 6.4]}
-        rotation={[0, Math.PI, 0]}
-        framed
-      />
+      {/*<Image*/}
+      {/*  src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/homocosmico/dreams2/uastc.ktx2"*/}
+      {/*  size={3}*/}
+      {/*  position={[-3, 2, 6.4]}*/}
+      {/*  rotation={[0, Math.PI, 0]}*/}
+      {/*  framed*/}
+      {/*/>*/}
       {open && (
         <Video
           src="https://dwvo2npct47gg.cloudfront.net/videos/AWGEDVD-final.mp4"
