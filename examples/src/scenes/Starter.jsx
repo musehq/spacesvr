@@ -22,7 +22,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment>
+    <StandardEnvironment signup="https://bit.ly/3wgMNGO">
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}
