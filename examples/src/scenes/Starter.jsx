@@ -14,13 +14,6 @@ const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
   const [open, setOpen] = useState(false);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log("opening");
-  //     setOpen(true);
-  //   }, 10000);
-  // }, []);
-
   return (
     <StandardEnvironment dev>
       <Background color={0xffffff} />

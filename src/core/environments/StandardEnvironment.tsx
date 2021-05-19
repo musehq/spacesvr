@@ -76,7 +76,6 @@ type StandardEnvironmentProps = {
   loadingScreen?: ReactNode;
   adaptiveDPR?: boolean;
   dev?: boolean;
-  signup?: string;
 };
 
 /**
@@ -102,7 +101,6 @@ export const StandardEnvironment = (
     loadingScreen,
     adaptiveDPR = true,
     dev = false,
-    signup,
   } = props;
 
   const simState = useSimulationState(simulationProps);
@@ -129,7 +127,7 @@ export const StandardEnvironment = (
         </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu || <DesktopPause dev={dev} signup={signup} />}
+          {pauseMenu || <DesktopPause dev={dev} />}
           <Crosshair />
         </EnvironmentContext.Provider>
       </Container>
