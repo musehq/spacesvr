@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { Material } from "three";
@@ -17,7 +17,9 @@ const UnsuspensedImage = (props: ImageProps) => {
   const { src, size = 1, framed, frameMaterial, frameWidth = 1 } = props;
   const { gl } = useThree();
 
-  const isKtx = src.includes(".isKtx2");
+  const isKtx = src.includes(".ktx2");
+  const ogWidth = 1,
+    ogHeight = 1;
 
   const texture = useLoader(
     // @ts-ignore
@@ -33,12 +35,32 @@ const UnsuspensedImage = (props: ImageProps) => {
     }
   );
 
-  const width = texture.image.width;
-  const height = texture.image.height;
+  const [width, setWidth] = useState<number>(texture.image.width);
+  const [height, setHeight] = useState<number>(texture.image.height);
 
   const max = Math.max(width, height);
-  const WIDTH = (width / max) * size;
-  const HEIGHT = (height / max) * size;
+  const WIDTH = (width / max) * size,
+    HEIGHT = (height / max) * size;
+  if (isKtx) {
+    console.log(WIDTH);
+  }
+
+  if (isKtx) {
+    const ogSizeUrl = `${src.slice(0, -4)}txt`;
+    const request = new XMLHttpRequest();
+    request.open("GET", ogSizeUrl, true);
+    request.send(null);
+    request.onreadystatechange = function () {
+      if (request.readyState === 4 && request.status === 200) {
+        const type = request.getResponseHeader("Content-Type");
+        if (type !== null && type.indexOf("text") !== 1) {
+          const requestArr = request.responseText.split("\n");
+          setWidth(Number.parseInt(requestArr[0]));
+          setHeight(Number.parseInt(requestArr[1]));
+        }
+      }
+    };
+  }
 
   return (
     <group {...props}>
