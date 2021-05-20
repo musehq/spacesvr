@@ -14,13 +14,6 @@ const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("opening");
-      setOpen(true);
-    }, 10000);
-  }, []);
-
   return (
     <StandardEnvironment signup="https://bit.ly/3wgMNGO">
       <Background color={0xffffff} />
@@ -44,6 +37,29 @@ export default () => {
         position={[-6, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
+      />
+      <Image
+        src="https://d27rt3a60hh1lx.cloudfront.net/textures/dream1-1621460174/dream1.ktx2"
+        size={3}
+        position={[-3, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+      />
+      <Image
+        src="https://d27rt3a60hh1lx.cloudfront.net/textures/dream17-1621460188/dream17.ktx2"
+        size={3}
+        position={[0, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+      />
+      <Image
+        name="outside-eddie"
+        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
+        framed
+        frameWidth={0.75}
+        size={12}
+        rotation-y={0}
+        position={[-1.4, 1.5, -12]}
       />
       {open && (
         <Video

@@ -166,7 +166,7 @@ const Signup = styled.a`
 
 type PauseProps = {
   dev: boolean;
-  signup?: string;
+  signup: string;
 };
 
 export default function DesktopPause(props: PauseProps) {
