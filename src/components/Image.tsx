@@ -25,12 +25,12 @@ const UnsuspensedImage = (props: ImageProps) => {
     // @ts-ignore
     isKtx ? KTX2Loader : THREE.TextureLoader,
     src,
-    (loader: KTX2Loader) => {
+    (loader: THREE.Loader) => {
       if (isKtx) {
-        loader.setTranscoderPath(
+        (loader as KTX2Loader).setTranscoderPath(
           "https://d27rt3a60hh1lx.cloudfront.net/basis-transcoder/"
         );
-        loader.detectSupport(gl);
+        (loader as KTX2Loader).detectSupport(gl);
       }
     }
   );
