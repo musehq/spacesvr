@@ -166,7 +166,7 @@ const Signup = styled.a`
 
 type PauseProps = {
   dev: boolean;
-  signup: string;
+  signup?: string;
 };
 
 export default function DesktopPause(props: PauseProps) {
@@ -189,7 +189,7 @@ export default function DesktopPause(props: PauseProps) {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.6.10</Version>
+        <Version>v1.6.11</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >
