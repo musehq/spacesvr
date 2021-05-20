@@ -141,6 +141,7 @@ const MenuButton = styled.div`
   padding: 5px 10px;
   margin: 8px 0;
   transition: background 0.15s linear;
+  font-size: 0.5em;
   font-family: "Roboto", sans-serif, monospace;
   cursor: pointer;
 
