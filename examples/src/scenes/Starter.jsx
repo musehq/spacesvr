@@ -15,7 +15,7 @@ export default () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <StandardEnvironment dev>
+    <StandardEnvironment signup="https://bit.ly/3wgMNGO">
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}

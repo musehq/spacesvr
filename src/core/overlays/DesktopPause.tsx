@@ -150,12 +150,27 @@ const MenuButton = styled.div`
   }
 `;
 
+const Signup = styled.a`
+  position: relative;
+  bottom: -30px;
+  font-family: "Roboto", sans-serif, monospace;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  transition: color 0.15s linear;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.75);
+  }
+`;
+
 type PauseProps = {
   dev: boolean;
+  signup: string;
 };
 
 export default function DesktopPause(props: PauseProps) {
-  const { dev } = props;
+  const { dev, signup } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const closeOverlay = () => setPaused(false);
 
@@ -174,7 +189,7 @@ export default function DesktopPause(props: PauseProps) {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.6.9</Version>
+        <Version>v1.6.10</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >
@@ -193,6 +208,11 @@ export default function DesktopPause(props: PauseProps) {
             menuItem && (
               <MenuButton onClick={menuItem.action}>{menuItem.text}</MenuButton>
             )
+        )}
+        {signup && (
+          <Signup href={`${signup}`} target="_blank">
+            Get Your Own 3D Space
+          </Signup>
         )}
       </Window>
       <Continue onClick={closeOverlay}>continue</Continue>
