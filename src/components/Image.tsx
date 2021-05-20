@@ -41,9 +41,6 @@ const UnsuspensedImage = (props: ImageProps) => {
   const max = Math.max(width, height);
   const WIDTH = (width / max) * size,
     HEIGHT = (height / max) * size;
-  if (isKtx) {
-    console.log(WIDTH);
-  }
 
   if (isKtx) {
     const ogSizeUrl = `${src.slice(0, -4)}txt`;
