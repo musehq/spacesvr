@@ -90,18 +90,15 @@ export const useSimulationState = (
   };
 
   const handleMediaConn = (mediaConn: Peer.MediaConnection): void => {
-    console.log("Answering call from", mediaConn.peer);
     mediaConn.answer(mediaStream.current);
 
     mediaConn.on("stream", (stream: MediaStream) => {
-      if (mediaConn.open) {
-        console.log("Chatting with ", mediaConn.peer);
-        playStream(stream);
-      }
+      playStream(stream, mediaConn.peer);
     });
 
     mediaConn.on("close", () => {
-      console.log("Closed media connection with", mediaConn.peer);
+      const audio = document.getElementById(mediaConn.peer);
+      if (audio) audio.remove();
     });
 
     mediaConn.on("error", (err: any) => {
@@ -194,19 +191,16 @@ export const useSimulationState = (
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia;
 
-    console.log("Trying to access your mic. Please allow.");
-
     navigator.getUserMedia(
       // Request mic
       { video: false, audio: true },
       // Success
       (audioStream: MediaStream) => {
-        console.log("Your mic is on");
         mediaStream.current = audioStream;
       },
       // Error
       (err: any) => {
-        console.log("Couldn't connect to mic.");
+        console.log("Voice chat requires mic access");
       }
     );
   };
@@ -214,7 +208,6 @@ export const useSimulationState = (
   // Outgoing call
   const callPeer = (locPeer: Peer, peerId: string): void => {
     if (locPeer.id != peerId) {
-      console.log("Calling", peerId, "...");
       handleMediaConn(locPeer.call(peerId, mediaStream.current!));
     }
   };
@@ -230,8 +223,9 @@ export const useSimulationState = (
   };
 
   // Voice feed
-  const playStream = (stream: MediaStream) => {
+  const playStream = (stream: MediaStream, peerId: string) => {
     const audio = document.createElement("audio");
+    audio.id = peerId;
     audio.autoplay = true;
     audio.srcObject = stream;
     document.body.appendChild(audio);
@@ -285,24 +279,25 @@ export const useSimulationState = (
 
     if (peer) {
       // Enable mic
-      setupAudio();
-      if (audio)
-        peer.on("open", (id: string) => {
-          if (!socketServer) return;
+      if (audio) setupAudio();
 
-          dataConnMap.current = new Map<string, Peer.DataConnection>();
-          simulationData.current = new Map<string, Entity>();
+      peer.on("open", (id: string) => {
+        if (!socketServer) return;
 
-          // Join network of existing peers
-          connectP2P(peer);
+        dataConnMap.current = new Map<string, Peer.DataConnection>();
+        simulationData.current = new Map<string, Entity>();
 
-          // WebSocket listen for future peers
-          connectWS(socketServer);
+        // Join network of existing peers
+        connectP2P(peer);
 
-          // Voice chat
-          callPeers(peer);
-          if (audio) setConnected(true);
-        });
+        // WebSocket listen for future peers
+        connectWS(socketServer);
+
+        // Voice chat
+        if (audio) callPeers(peer);
+
+        setConnected(true);
+      });
 
       // P2P connection established
       peer.on("connection", (dataConn: Peer.DataConnection) => {
