@@ -37,7 +37,7 @@ export const useSimulationState = (
     signalPort,
     signalPath,
     socketServer,
-    frequency = 30,
+    frequency = 25,
   } = props;
 
   // Check props to enable simulation
@@ -50,6 +50,9 @@ export const useSimulationState = (
 
   // Setup sources
   const socket = useRef<WebSocket>();
+  const mediaStream = useRef<MediaStream>();
+
+  // Init peer state
   const [connected, setConnected] = useState(false);
   const peer = useMemo(() => {
     if (enabled) {
@@ -83,6 +86,26 @@ export const useSimulationState = (
         });
       }
     }
+  };
+
+  const handleMediaConn = (mediaConn: Peer.MediaConnection): void => {
+    console.log("Answering call from", mediaConn.peer);
+    mediaConn.answer(mediaStream.current);
+
+    mediaConn.on("stream", (stream: MediaStream) => {
+      if (mediaConn.open) {
+        console.log("Chatting with ", mediaConn.peer);
+        playStream(stream);
+      }
+    });
+
+    mediaConn.on("close", () => {
+      console.log("Closed media connection with", mediaConn.peer);
+    });
+
+    mediaConn.on("error", (err: any) => {
+      console.log(err);
+    });
   };
 
   // Handle DataConnection between peers
@@ -162,6 +185,52 @@ export const useSimulationState = (
     }
   };
 
+  // Outgoing call
+  const callPeer = (locPeer: Peer, peerId: string): void => {
+    console.log("Calling", peerId, "...");
+    if (mediaStream.current && locPeer.id != peerId) {
+      handleMediaConn(locPeer.call(peerId, mediaStream.current));
+    }
+  };
+
+  const callPeers = (locPeer: Peer): void => {
+    locPeer.listAllPeers((peers: any) => {
+      if (peers && peers.length) {
+        for (const p of peers) {
+          callPeer(locPeer, p);
+        }
+      }
+    });
+  };
+
+  // Browser mic permission
+  const setupAudio = (): void => {
+    navigator.getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia ||
+      navigator.msGetUserMedia;
+
+    console.log("Trying to access your mic. Please allow.");
+
+    navigator.getUserMedia(
+      { video: false, audio: true },
+      (audioStream: MediaStream) => {
+        console.log("Your mic is on");
+        mediaStream.current = audioStream;
+      },
+      (err: any) => {
+        console.log("Couldn't connect to mic.");
+      }
+    );
+  };
+
+  // Voice feed
+  const playStream = (stream: MediaStream) => {
+    const audio = $("<audio autoplay />").appendTo("body");
+    audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
+  };
+
   // Send event
   const sendEvent = useCallback(
     (type: string, data: any) => {
@@ -221,12 +290,23 @@ export const useSimulationState = (
         // WebSocket listen for future peers
         connectWS(socketServer);
 
+        // Enable mic
+        setupAudio();
+
+        // Call peers
+        callPeers(peer);
+
         setConnected(true);
       });
 
       // P2P connection established
       peer.on("connection", (dataConn: Peer.DataConnection) => {
         handleDataConn(dataConn);
+      });
+
+      // Handle voice chat
+      peer.on("call", (incoming: Peer.MediaConnection) => {
+        handleMediaConn(incoming);
       });
 
       // Exit client
