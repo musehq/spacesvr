@@ -11,6 +11,7 @@ export default () => {
         signalPath: "/signal",
         socketServer: "ws://127.0.0.1:3002",
         frequency: 20,
+        audio: true,
       }}
     >
       <Background color={0xffffff} />

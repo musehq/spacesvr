@@ -38,6 +38,7 @@ export const useSimulationState = (
     signalPath,
     socketServer,
     frequency = 25,
+    audio = false,
   } = props;
 
   // Check props to enable simulation
@@ -150,7 +151,7 @@ export const useSimulationState = (
 
   // Connect all clients
   const connectP2P = (locPeer: Peer): void => {
-    locPeer.listAllPeers((peers: any) => {
+    locPeer.listAllPeers((peers: string[]) => {
       if (peers && peers.length) {
         for (const p of peers) {
           connectPeer(locPeer, p);
@@ -185,25 +186,7 @@ export const useSimulationState = (
     }
   };
 
-  // Outgoing call
-  const callPeer = (locPeer: Peer, peerId: string): void => {
-    console.log("Calling", peerId, "...");
-    if (mediaStream.current && locPeer.id != peerId) {
-      handleMediaConn(locPeer.call(peerId, mediaStream.current));
-    }
-  };
-
-  const callPeers = (locPeer: Peer): void => {
-    locPeer.listAllPeers((peers: any) => {
-      if (peers && peers.length) {
-        for (const p of peers) {
-          callPeer(locPeer, p);
-        }
-      }
-    });
-  };
-
-  // Browser mic permission
+  // Browser permissions
   const setupAudio = (): void => {
     navigator.getUserMedia =
       navigator.getUserMedia ||
@@ -214,21 +197,44 @@ export const useSimulationState = (
     console.log("Trying to access your mic. Please allow.");
 
     navigator.getUserMedia(
+      // Request mic
       { video: false, audio: true },
+      // Success
       (audioStream: MediaStream) => {
         console.log("Your mic is on");
         mediaStream.current = audioStream;
       },
+      // Error
       (err: any) => {
         console.log("Couldn't connect to mic.");
       }
     );
   };
 
+  // Outgoing call
+  const callPeer = (locPeer: Peer, peerId: string): void => {
+    if (locPeer.id != peerId) {
+      console.log("Calling", peerId, "...");
+      handleMediaConn(locPeer.call(peerId, mediaStream.current!));
+    }
+  };
+
+  const callPeers = (locPeer: Peer): void => {
+    locPeer.listAllPeers((peers: string[]) => {
+      if (mediaStream.current && peers && peers.length) {
+        for (const p of peers) {
+          callPeer(locPeer, p);
+        }
+      }
+    });
+  };
+
   // Voice feed
   const playStream = (stream: MediaStream) => {
-    const audio = $("<audio autoplay />").appendTo("body");
-    audio[0].src = (URL || webkitURL || mozURL).createObjectURL(stream);
+    const audio = document.createElement("audio");
+    audio.autoplay = true;
+    audio.srcObject = stream;
+    document.body.appendChild(audio);
   };
 
   // Send event
@@ -278,26 +284,25 @@ export const useSimulationState = (
     }
 
     if (peer) {
-      peer.on("open", (id: string) => {
-        if (!socketServer) return;
+      // Enable mic
+      setupAudio();
+      if (audio)
+        peer.on("open", (id: string) => {
+          if (!socketServer) return;
 
-        dataConnMap.current = new Map<string, Peer.DataConnection>();
-        simulationData.current = new Map<string, Entity>();
+          dataConnMap.current = new Map<string, Peer.DataConnection>();
+          simulationData.current = new Map<string, Entity>();
 
-        // Join network of existing peers
-        connectP2P(peer);
+          // Join network of existing peers
+          connectP2P(peer);
 
-        // WebSocket listen for future peers
-        connectWS(socketServer);
+          // WebSocket listen for future peers
+          connectWS(socketServer);
 
-        // Enable mic
-        setupAudio();
-
-        // Call peers
-        callPeers(peer);
-
-        setConnected(true);
-      });
+          // Voice chat
+          callPeers(peer);
+          if (audio) setConnected(true);
+        });
 
       // P2P connection established
       peer.on("connection", (dataConn: Peer.DataConnection) => {
