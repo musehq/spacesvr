@@ -97,8 +97,8 @@ export const useSimulationState = (
     });
 
     mediaConn.on("close", () => {
-      const audio = document.getElementById(mediaConn.peer);
-      if (audio) audio.remove();
+      const audioElem = document.getElementById(mediaConn.peer);
+      if (audioElem) audioElem.remove();
     });
 
     mediaConn.on("error", (err: any) => {
@@ -224,11 +224,11 @@ export const useSimulationState = (
 
   // Voice feed
   const playStream = (stream: MediaStream, peerId: string) => {
-    const audio = document.createElement("audio");
-    audio.id = peerId;
-    audio.autoplay = true;
-    audio.srcObject = stream;
-    document.body.appendChild(audio);
+    const audioElem = document.createElement("audio");
+    audioElem.id = peerId;
+    audioElem.autoplay = true;
+    audioElem.srcObject = stream;
+    document.body.appendChild(audioElem);
   };
 
   // Send event
