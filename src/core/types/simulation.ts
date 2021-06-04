@@ -11,6 +11,7 @@ export type SimulationProps = {
   signalPath?: string;
   socketServer?: string;
   frequency?: number;
+  audio?: boolean;
 };
 
 export type Entity = {
