@@ -35,9 +35,9 @@ const Frame = (props: FrameProps) => {
     []
   );
 
-  const frameDepth = 0.025;
+  const frameDepth = 0.075;
   const frameWidth = 0.06;
-  const borderDepth = 0.05;
+  const borderDepth = 0.08;
   const borderThickness = 0.05 * thickness;
   const meshOffset = 0.0005;
 

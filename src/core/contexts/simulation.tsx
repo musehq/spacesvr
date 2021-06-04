@@ -37,7 +37,8 @@ export const useSimulationState = (
     signalPort,
     signalPath,
     socketServer,
-    frequency = 30,
+    frequency = 25,
+    audio = false,
   } = props;
 
   // Check props to enable simulation
@@ -50,6 +51,9 @@ export const useSimulationState = (
 
   // Setup sources
   const socket = useRef<WebSocket>();
+  const mediaStream = useRef<MediaStream>();
+
+  // Init peer state
   const [connected, setConnected] = useState(false);
   const peer = useMemo(() => {
     if (enabled) {
@@ -83,6 +87,23 @@ export const useSimulationState = (
         });
       }
     }
+  };
+
+  const handleMediaConn = (mediaConn: Peer.MediaConnection): void => {
+    mediaConn.answer(mediaStream.current);
+
+    mediaConn.on("stream", (stream: MediaStream) => {
+      playStream(stream, mediaConn.peer);
+    });
+
+    mediaConn.on("close", () => {
+      const audioElem = document.getElementById(mediaConn.peer);
+      if (audioElem) audioElem.remove();
+    });
+
+    mediaConn.on("error", (err: any) => {
+      console.log(err);
+    });
   };
 
   // Handle DataConnection between peers
@@ -127,7 +148,7 @@ export const useSimulationState = (
 
   // Connect all clients
   const connectP2P = (locPeer: Peer): void => {
-    locPeer.listAllPeers((peers: any) => {
+    locPeer.listAllPeers((peers: string[]) => {
       if (peers && peers.length) {
         for (const p of peers) {
           connectPeer(locPeer, p);
@@ -160,6 +181,57 @@ export const useSimulationState = (
         connectPeer(peer, event.data);
       };
     }
+  };
+
+  // Browser permissions
+  const setupAudio = (): void => {
+    navigator.getUserMedia =
+      navigator.getUserMedia ||
+      // @ts-ignore
+      navigator.webkitGetUserMedia ||
+      // @ts-ignore
+      navigator.mozGetUserMedia ||
+      // @ts-ignore
+      navigator.msGetUserMedia;
+
+    navigator.getUserMedia(
+      // Request mic
+      { video: false, audio: true },
+      // Success
+      (audioStream: MediaStream) => {
+        mediaStream.current = audioStream;
+      },
+      // Error
+      (err: any) => {
+        console.log("Voice chat requires mic access");
+      }
+    );
+  };
+
+  // Outgoing call
+  const callPeer = (locPeer: Peer, peerId: string): void => {
+    if (locPeer.id != peerId) {
+      handleMediaConn(locPeer.call(peerId, mediaStream.current!));
+    }
+  };
+
+  const callPeers = (locPeer: Peer): void => {
+    locPeer.listAllPeers((peers: string[]) => {
+      if (mediaStream.current && peers && peers.length) {
+        for (const p of peers) {
+          callPeer(locPeer, p);
+        }
+      }
+    });
+  };
+
+  // Voice feed
+  const playStream = (stream: MediaStream, peerId: string) => {
+    const audioElem = document.createElement("audio");
+    audioElem.id = peerId;
+    audioElem.autoplay = true;
+    audioElem.srcObject = stream;
+    document.body.appendChild(audioElem);
   };
 
   // Send event
@@ -209,6 +281,9 @@ export const useSimulationState = (
     }
 
     if (peer) {
+      // Enable mic
+      if (audio) setupAudio();
+
       peer.on("open", (id: string) => {
         if (!socketServer) return;
 
@@ -221,12 +296,20 @@ export const useSimulationState = (
         // WebSocket listen for future peers
         connectWS(socketServer);
 
+        // Voice chat
+        if (audio) callPeers(peer);
+
         setConnected(true);
       });
 
       // P2P connection established
       peer.on("connection", (dataConn: Peer.DataConnection) => {
         handleDataConn(dataConn);
+      });
+
+      // Handle voice chat
+      peer.on("call", (incoming: Peer.MediaConnection) => {
+        handleMediaConn(incoming);
       });
 
       // Exit client

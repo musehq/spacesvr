@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-three/drei": "^4.3.3",
     "@react-three/fiber": "^6.0.14",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -43,6 +44,7 @@
     ]
   },
   "devDependencies": {
-    "react-app-rewired": "^2.1.6"
+    "react-app-rewired": "^2.1.6",
+    "spacesvr": "^1.6.5"
   }
 }
