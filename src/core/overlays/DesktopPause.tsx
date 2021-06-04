@@ -189,7 +189,7 @@ export default function DesktopPause(props: PauseProps) {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Version>v1.6.11</Version>
+        <Version>v1.6.12</Version>
         <Instagram
           onClick={() => window.open("https://www.instagram.com/musehq")}
         >

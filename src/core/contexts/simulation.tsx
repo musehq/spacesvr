@@ -187,8 +187,11 @@ export const useSimulationState = (
   const setupAudio = (): void => {
     navigator.getUserMedia =
       navigator.getUserMedia ||
+      // @ts-ignore
       navigator.webkitGetUserMedia ||
+      // @ts-ignore
       navigator.mozGetUserMedia ||
+      // @ts-ignore
       navigator.msGetUserMedia;
 
     navigator.getUserMedia(
