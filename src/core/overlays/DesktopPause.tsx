@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { useRef } from "react";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
+import { useKeyboardLayout } from "../utils/hooks";
 
 const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
@@ -170,31 +170,11 @@ type PauseProps = {
   signup?: string;
 };
 
-interface Keyboard {
-  getLayoutMap: () => any;
-}
-
-interface KeyboardLayoutMap {
-  get: (key: string) => any;
-}
-interface Navigator {
-  keyboard: Keyboard;
-}
-
 export default function DesktopPause(props: PauseProps) {
   const { dev, signup } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
-  const controls = useRef("W/A/S/D");
+  const layout = useKeyboardLayout();
   const closeOverlay = () => setPaused(false);
-
-  if (navigator.keyboard) {
-    const keyboard = navigator.keyboard;
-    keyboard.getLayoutMap().then((keyboardLayoutMap: KeyboardLayoutMap) => {
-      const upKey = keyboardLayoutMap.get("KeyW");
-      if (upKey === "z") controls.current = "Z/Q/S/D";
-      else controls.current = "W/A/S/D";
-    });
-  }
 
   if (dev) {
     return (
@@ -221,7 +201,7 @@ export default function DesktopPause(props: PauseProps) {
           <Title>muse</Title>
         </Header>
         <Text>
-          <p>Move around: {isMobile ? "Joystick" : controls.current}</p>
+          <p>Move around: {isMobile ? "Joystick" : layout}</p>
           <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
           <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
         </Text>
