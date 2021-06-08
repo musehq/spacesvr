@@ -12,7 +12,7 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   frameMaterial?: Material;
   frameWidth?: number;
   innerFrameMaterial?: Material;
-  innerFrameTransparent: boolean;
+  transparent: boolean;
 };
 
 const UnsuspensedImage = (props: ImageProps) => {
@@ -23,7 +23,7 @@ const UnsuspensedImage = (props: ImageProps) => {
     frameMaterial,
     frameWidth = 1,
     innerFrameMaterial,
-    innerFrameTransparent,
+    transparent,
   } = props;
   const { gl } = useThree();
 
@@ -76,7 +76,7 @@ const UnsuspensedImage = (props: ImageProps) => {
         <meshBasicMaterial
           map={texture}
           side={THREE.DoubleSide}
-          transparent={Boolean(innerFrameTransparent || innerFrameMaterial)}
+          transparent={Boolean(transparent || innerFrameMaterial)}
         />
       </mesh>
       {framed && (
@@ -86,7 +86,7 @@ const UnsuspensedImage = (props: ImageProps) => {
           thickness={frameWidth}
           material={frameMaterial}
           innerFrameMaterial={innerFrameMaterial}
-          innerFrameTransparent={innerFrameTransparent}
+          transparent={transparent}
         />
       )}
     </group>

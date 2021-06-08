@@ -55,21 +55,21 @@ export default () => {
         src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
         position={[-11, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
-        innerFrameTransparent
+        transparent
       />
       <Image
         src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
         position={[-12.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
-        innerFrameTransparent
+        transparent
       />
       <Image
         src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
         position={[-14, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
-        innerFrameTransparent
+        transparent
         innerFrameMaterial={
           new THREE.MeshStandardMaterial({
             color: 0x000000,

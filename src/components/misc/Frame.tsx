@@ -9,7 +9,7 @@ type FrameProps = {
   thickness?: number;
   material?: Material;
   innerFrameMaterial?: Material;
-  innerFrameTransparent: boolean;
+  transparent: boolean;
 };
 
 /**
@@ -29,7 +29,7 @@ const Frame = (props: FrameProps) => {
     height,
     thickness = 1,
     material: passedMaterial,
-    innerFrameTransparent,
+    transparent,
     innerFrameMaterial: passedInnerMaterial,
   } = props;
 
@@ -111,7 +111,7 @@ const Frame = (props: FrameProps) => {
 
     const geos = [topFrame, bottomFrame, leftFrame, rightFrame];
 
-    if (!innerFrameTransparent) {
+    if (!transparent) {
       geos.unshift(backPanel);
     }
 
@@ -124,7 +124,7 @@ const Frame = (props: FrameProps) => {
     rightFrame.dispose();
 
     return geo;
-  }, [width, height, innerFrameTransparent]);
+  }, [width, height, transparent]);
 
   const backFrameGeometry = useMemo<BufferGeometry>(() => {
     const backPanel = new BoxBufferGeometry(
@@ -135,7 +135,7 @@ const Frame = (props: FrameProps) => {
     backPanel.translate(0, 0, -frameDepth - meshOffset);
 
     return backPanel;
-  }, [width, height, innerFrameTransparent]);
+  }, [width, height, transparent]);
 
   return (
     <group>
