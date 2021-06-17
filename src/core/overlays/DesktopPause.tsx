@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
 import { useEnvironment } from "../contexts/environment";
 import { keyframes } from "@emotion/core";
+import { useKeyboardLayout } from "../utils/hooks";
 
 const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
@@ -172,6 +173,7 @@ type PauseProps = {
 export default function DesktopPause(props: PauseProps) {
   const { dev, signup } = props;
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
+  const layout = useKeyboardLayout();
   const closeOverlay = () => setPaused(false);
 
   if (dev) {
@@ -199,7 +201,7 @@ export default function DesktopPause(props: PauseProps) {
           <Title>muse</Title>
         </Header>
         <Text>
-          <p>Move around: {isMobile ? "Joystick" : "W/A/S/D"}</p>
+          <p>Move around: {isMobile ? "Joystick" : layout}</p>
           <p>Look around: {isMobile ? "Drag" : "Mouse"}</p>
           <p>Pause: {isMobile ? "Menu Button" : "Esc"}</p>
         </Text>
