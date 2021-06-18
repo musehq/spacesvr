@@ -9,6 +9,7 @@ type Props = {
   onClick?: () => void;
   onHover?: () => void;
   onUnHover?: () => void;
+  editDist?: number;
   children: ReactNode;
 };
 
@@ -23,7 +24,7 @@ type Props = {
  * @constructor
  */
 export function Interactable(props: Props) {
-  const { onClick, onHover, onUnHover, children } = props;
+  const { onClick, onHover, onUnHover, editDist = 5, children } = props;
 
   const gl = useThree((state) => state.gl);
   const { domElement } = gl;
@@ -64,7 +65,7 @@ export function Interactable(props: Props) {
     const dist = downPos.distanceTo(
       new Vector2(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
     );
-    if (onClick && dist < 5 && hovered) {
+    if (onClick && dist < editDist && hovered) {
       onClick();
     }
   };
@@ -78,7 +79,7 @@ export function Interactable(props: Props) {
   const onMouseUp = useCallback(
     (e: MouseEvent) => {
       const dist = downPos.distanceTo(new Vector2(e.clientX, e.clientY));
-      if (onClick && dist < 5 && hovered) {
+      if (onClick && dist < editDist && hovered) {
         onClick();
       }
     },

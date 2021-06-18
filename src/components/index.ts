@@ -10,3 +10,4 @@ export * from "./Text";
 export * from "./Video";
 export * from "./Fog";
 export * from "./Shopify";
+export * from "./EditMode";
