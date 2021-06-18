@@ -1,8 +1,7 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
-import { Interactable } from "../modifiers";
+import { Interactable, RangeTool } from "../modifiers";
 import { usePlayer } from "../core/contexts";
 import { Group, Object3D, Raycaster } from "three";
-// @ts-ignore
 import { animated, useSpring } from "react-spring/three";
 import { useLimiter } from "../services";
 import { useFrame } from "@react-three/fiber";
@@ -13,7 +12,7 @@ type EditProps = {
 };
 
 function getIdea(object: Object3D): string {
-  if (object.name.includes("idea")) {
+  if (object.name.includes("idea") || object.name.includes("editor")) {
     return object.name;
   } else if (object.parent) {
     return getIdea(object.parent);
@@ -35,7 +34,7 @@ export function EditMode(props: EditProps) {
 
   console.log(edit);
   const { scale } = useSpring({
-    scale: edit === "" ? [0, 0, 0] : [1, 1, 1],
+    scale: edit === "" ? 0 : 20,
     config: {
       mass: 1,
     },
@@ -47,7 +46,7 @@ export function EditMode(props: EditProps) {
     const object = raycaster.intersectObject(group.current, true)[0].object;
     const idea = getIdea(object);
 
-    console.log(edit);
+    // console.log(edit);
     if (idea !== "") {
       setEdit(idea);
     } else {
@@ -58,6 +57,7 @@ export function EditMode(props: EditProps) {
   const limiter = useLimiter(45);
   useFrame(({ clock }) => {
     if (!limiter.isReady(clock) || !object) return;
+    // console.log(scale.getValue())
     // console.log(object);
   });
 
@@ -71,15 +71,16 @@ export function EditMode(props: EditProps) {
       >
         <group ref={group} name="scene">
           {children}
+          <RangeTool pos={[0, -0.5]} distance={3} range={0.005} t={0.005}>
+            <animated.group scale={scale} name="editor">
+              <mesh>
+                <boxBufferGeometry args={[1, 0.25, 0.1]} />
+                <meshBasicMaterial color="white" />
+              </mesh>
+            </animated.group>
+          </RangeTool>
         </group>
       </Interactable>
-      {/*ts-ignore*/}
-      <animated.group scale={scale} name="editor">
-        <mesh position={[0, 1, 0]}>
-          <boxBufferGeometry args={[1, 0.25, 0.1]} />
-          <meshBasicMaterial color="red" />
-        </mesh>
-      </animated.group>
     </group>
   );
 }
