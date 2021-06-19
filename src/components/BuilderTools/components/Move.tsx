@@ -5,6 +5,8 @@ import { Interactable } from "../../../modifiers";
 import { Object3D } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
+import { useActions } from "../utilities/ActionHandler";
+import { usePlayer } from "../../../core/contexts";
 
 type MoveProps = {
   object: Object3D | undefined;
@@ -15,6 +17,8 @@ type MoveProps = {
 export function Move(props: MoveProps) {
   const { object, active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
+  const { raycaster } = usePlayer();
+  const actions = useActions();
 
   const { color } = useSpring({
     color: hover
@@ -31,7 +35,10 @@ export function Move(props: MoveProps) {
   useFrame(({ clock }, delta) => {
     if (!limiter.isReady(clock) || active !== "position" || !object) return;
 
-    object.position.y += Math.sin(delta / 10);
+    const intersections = raycaster.intersectObject(object);
+    // if (intersections && intersections.length > 0) {
+    //
+    // }
   });
 
   return (

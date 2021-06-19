@@ -1,5 +1,5 @@
 import { Action } from "../types/types";
-import { createContext, ReactNode } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 class ActionTracker {
   past: Action[];
@@ -38,10 +38,14 @@ class ActionTracker {
   }
 }
 
-export const ActionContext = createContext<ActionTracker>({} as ActionTracker);
+const ActionContext = createContext<ActionTracker>({} as ActionTracker);
+export function useActions() {
+  return useContext(ActionContext);
+}
 
 export function ActionHandler(props: { children: ReactNode }) {
   const { children } = props;
+
   return (
     <ActionContext.Provider value={new ActionTracker()}>
       {children}

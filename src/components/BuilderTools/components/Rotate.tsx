@@ -5,6 +5,7 @@ import { Interactable } from "../../../modifiers";
 import { Object3D } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
+import { useActions } from "../utilities/ActionHandler";
 
 type MoveProps = {
   object: Object3D | undefined;
@@ -15,6 +16,7 @@ type MoveProps = {
 export function Rotate(props: MoveProps) {
   const { object, active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
+  const actions = useActions();
 
   const { color } = useSpring({
     color: hover
