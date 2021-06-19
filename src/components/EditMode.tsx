@@ -78,7 +78,7 @@ export function EditMode(props: EditProps) {
                 <boxBufferGeometry args={[1, 0.25, 0.1]} />
                 <meshBasicMaterial color="white" />
               </mesh>
-              <ControlManager />
+              <ControlManager object={object} />
             </animated.group>
           </RangeTool>
         </group>
