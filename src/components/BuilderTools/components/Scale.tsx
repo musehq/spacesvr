@@ -6,16 +6,17 @@ import { Object3D } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
+import { useEditor } from "../../EditMode";
 
 type MoveProps = {
-  object: Object3D | undefined;
   setActive: Dispatch<SetStateAction<ControlType>>;
   active: string | null;
 } & GroupProps;
 
 export function Scale(props: MoveProps) {
-  const { object, active, setActive, ...restProps } = props;
+  const { active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
+  const { editObject, mouseDown } = useEditor();
   const actions = useActions();
 
   const { color } = useSpring({
@@ -31,9 +32,9 @@ export function Scale(props: MoveProps) {
 
   const limiter = useLimiter(45);
   useFrame(({ clock }, delta) => {
-    if (!limiter.isReady(clock) || active !== "scale" || !object) return;
+    if (!limiter.isReady(clock) || active !== "scale" || !editObject) return;
 
-    object.position.y += Math.sin(delta / 10);
+    editObject.position.y += Math.sin(delta / 10);
   });
 
   return (

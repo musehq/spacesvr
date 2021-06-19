@@ -1,23 +1,26 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { GroupProps, useFrame } from "@react-three/fiber";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Object3D } from "three";
+import { Object3D, Vector3 } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
 import { usePlayer } from "../../../core/contexts";
+import { useEditor } from "../../EditMode";
 
 type MoveProps = {
-  object: Object3D | undefined;
   setActive: Dispatch<SetStateAction<ControlType>>;
   active: string | null;
 } & GroupProps;
 
 export function Move(props: MoveProps) {
-  const { object, active, setActive, ...restProps } = props;
+  const { active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
   const { raycaster } = usePlayer();
+  const { camera } = useThree();
+  const { scene } = useThree();
+  const { editObject, mouseDown, intersect } = useEditor();
   const actions = useActions();
 
   const { color } = useSpring({
@@ -31,14 +34,34 @@ export function Move(props: MoveProps) {
     },
   });
 
+  const vec = new Vector3(),
+    pos = new Vector3();
+
   const limiter = useLimiter(45);
   useFrame(({ clock }, delta) => {
-    if (!limiter.isReady(clock) || active !== "position" || !object) return;
+    if (!limiter.isReady(clock) || !editObject) return;
+    // if (!limiter.isReady(clock) || active !== "position" || !editObject) return;
+    // console.log(intersect)
 
-    const intersections = raycaster.intersectObject(object);
-    // if (intersections && intersections.length > 0) {
+    // vec.set(
+    //   ( event.clientX / window.innerWidth ) * 2 - 1,
+    //   - ( event.clientY / window.innerHeight ) * 2 + 1,
+    //   0.5 );
     //
-    // }
+    // vec.unproject( camera );
+    //
+    // vec.sub( camera.position ).normalize();
+    //
+    // const distance = - camera.position.z / vec.z;
+    //
+    // pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+
+    if (mouseDown) {
+      // MOVE OBJECT
+      // @ts-ignore
+      // scene.getObjectByName(editObject.name).position.set(pos.x, pos.y, pos.z);
+      // console.log(scene.getObjectByName(editObject.name).position)
+    }
   });
 
   return (

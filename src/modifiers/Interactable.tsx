@@ -7,6 +7,7 @@ import { usePlayer } from "../core/contexts/player";
 
 type Props = {
   onClick?: () => void;
+  onDownClick?: () => void;
   onHover?: () => void;
   onUnHover?: () => void;
   editDist?: number;
@@ -24,7 +25,14 @@ type Props = {
  * @constructor
  */
 export function Interactable(props: Props) {
-  const { onClick, onHover, onUnHover, editDist = 5, children } = props;
+  const {
+    onClick,
+    onDownClick,
+    onHover,
+    onUnHover,
+    editDist = 5,
+    children,
+  } = props;
 
   const gl = useThree((state) => state.gl);
   const { domElement } = gl;
@@ -58,6 +66,9 @@ export function Interactable(props: Props) {
   // start touch
   const onTouchStart = (e: TouchEvent) => {
     downPos.set(e.touches[0].clientX, e.touches[0].clientY);
+    if (onDownClick) {
+      onDownClick();
+    }
   };
 
   // if little to no movement on touch end, call click event
@@ -73,6 +84,9 @@ export function Interactable(props: Props) {
   // set mouse down position
   const onMouseDown = (e: MouseEvent) => {
     downPos.set(e.clientX, e.clientY);
+    if (onDownClick) {
+      onDownClick();
+    }
   };
 
   // if little to no movement on mouse up, queue a click event
