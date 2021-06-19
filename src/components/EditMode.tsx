@@ -5,6 +5,7 @@ import { Group, Object3D, Raycaster } from "three";
 import { animated, useSpring } from "react-spring/three";
 import { useLimiter } from "../services";
 import { useFrame } from "@react-three/fiber";
+import { ControlManager } from "./BuilderTools";
 
 type EditProps = {
   children: ReactNode;
@@ -72,11 +73,12 @@ export function EditMode(props: EditProps) {
         <group ref={group} name="scene">
           {children}
           <RangeTool pos={[0, -0.5]} distance={3} range={0.005} t={0.005}>
-            <animated.group scale={scale} name="editor">
+            <animated.group rotation-x={-0.25} scale={scale} name="editor">
               <mesh>
                 <boxBufferGeometry args={[1, 0.25, 0.1]} />
                 <meshBasicMaterial color="white" />
               </mesh>
+              <ControlManager />
             </animated.group>
           </RangeTool>
         </group>
