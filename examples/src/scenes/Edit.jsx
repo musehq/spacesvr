@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import Kiosks from "../components/Kiosks";
 import {
@@ -14,7 +13,6 @@ import {
 
 const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
-  const [open, setOpen] = useState(false);
   const domain = "balloonski.myshopify.com",
     token = "149755cbbf5f79758937d9114964fda7";
 
@@ -23,11 +21,7 @@ export default () => {
       <EditMode>
         <Shopify domain={domain} token={token}>
           <Background color={0xffffff} />
-          <Interactable
-            onClick={handleClick}
-            onHover={() => console.log("hover")}
-            onUnHover={() => console.log("un hover")}
-          >
+          <Interactable onClick={handleClick}>
             <Logo
               floating
               rotating
