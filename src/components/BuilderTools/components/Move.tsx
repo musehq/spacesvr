@@ -1,12 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Object3D, Vector3 } from "three";
+import { Vector3 } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
-import { usePlayer } from "../../../core/contexts";
 import { useEditor } from "../../EditMode";
 
 type MoveProps = {
@@ -17,10 +16,10 @@ type MoveProps = {
 export function Move(props: MoveProps) {
   const { active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
-  const { raycaster } = usePlayer();
   const { camera } = useThree();
-  const { scene } = useThree();
-  const { editObject, mouseDown, intersect } = useEditor();
+  const objectPos = useRef(new Vector3());
+  const actionRecorded = useRef<boolean>(false);
+  const { editObject, editor, mouseDown } = useEditor();
   const actions = useActions();
 
   const { color } = useSpring({
@@ -34,33 +33,49 @@ export function Move(props: MoveProps) {
     },
   });
 
-  const vec = new Vector3(),
-    pos = new Vector3();
+  const { current: dummyVector } = useRef(new Vector3());
+  const DISTANCE = 5,
+    distance = DISTANCE * 0.5;
+
+  const xPos = (0 * 0.00008 * 1) / 2;
+  const yPos = 0.04 * 0;
 
   const limiter = useLimiter(45);
   useFrame(({ clock }, delta) => {
-    if (!limiter.isReady(clock) || !editObject) return;
-    // if (!limiter.isReady(clock) || active !== "position" || !editObject) return;
-    // console.log(intersect)
+    // if (!limiter.isReady(clock) || !editObject) return;
+    if (!limiter.isReady(clock) || active !== "position" || !editObject) return;
 
-    // vec.set(
-    //   ( event.clientX / window.innerWidth ) * 2 - 1,
-    //   - ( event.clientY / window.innerHeight ) * 2 + 1,
-    //   0.5 );
-    //
-    // vec.unproject( camera );
-    //
-    // vec.sub( camera.position ).normalize();
-    //
-    // const distance = - camera.position.z / vec.z;
-    //
-    // pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+    // console.log(actionRecorded.current);
+    // console.log(actions)
+    // console.log(editMode)
+    // @ts-ignore
+    if (
+      mouseDown &&
+      editObject.name !== "Editor" &&
+      editor &&
+      editor.scale > 15
+    ) {
+      if (!actionRecorded.current) {
+        actions.add({
+          target: editObject,
+          attribute: "position",
+          value: editObject.position,
+        });
+        actionRecorded.current = true;
+      }
 
-    if (mouseDown) {
-      // MOVE OBJECT
-      // @ts-ignore
-      // scene.getObjectByName(editObject.name).position.set(pos.x, pos.y, pos.z);
-      // console.log(scene.getObjectByName(editObject.name).position)
+      dummyVector.set(xPos * DISTANCE, yPos * DISTANCE, -distance);
+      const moveQuaternion = camera.quaternion.clone();
+      dummyVector.applyQuaternion(moveQuaternion);
+
+      editObject.getWorldPosition(objectPos.current);
+      const deltaPos = objectPos.current.sub(camera.position);
+      editObject.position.sub(deltaPos);
+      editObject.position.add(dummyVector);
+    } else {
+      if (actionRecorded.current) {
+        actionRecorded.current = false;
+      }
     }
   });
 

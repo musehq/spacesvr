@@ -5,14 +5,13 @@ import {
   useState,
   createContext,
   useContext,
-  useCallback,
   useEffect,
 } from "react";
 import { Interactable, RangeTool } from "../modifiers";
 import { usePlayer } from "../core/contexts";
-import { Group, Object3D, Raycaster, Vector3 } from "three";
+import { Group, Object3D, Raycaster } from "three";
 import { animated, useSpring } from "react-spring/three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { ControlManager } from "./BuilderTools";
 import { Editor } from "./BuilderTools/types/types";
 import { isMobile } from "react-device-detect";
@@ -28,7 +27,7 @@ export function useEditor() {
 }
 
 function getIdea(object: Object3D): string {
-  if (object.name.includes("idea") || object.name.includes("editor")) {
+  if (object.name.includes("idea") || object.name === "Editor") {
     return object.name;
   } else if (object.parent) {
     return getIdea(object.parent);
@@ -41,12 +40,12 @@ export function EditMode(props: EditProps) {
   const { children, editDist = 15 } = props;
   const { raycaster } = usePlayer();
   const group = useRef<Group>();
+  const editor = useRef<Group>();
   const {
     gl: { domElement },
   } = useThree();
   const [edit, setEdit] = useState<string>("");
   const [mouseDown, setMouseDown] = useState<boolean>(false);
-  const [contactPoint, setContactPoint] = useState<Vector3>();
   const object = useMemo(() => {
     if (group.current) {
       return group.current.getObjectByName(edit);
@@ -54,7 +53,7 @@ export function EditMode(props: EditProps) {
   }, [edit]);
 
   const { scale } = useSpring({
-    scale: edit === "" ? 0 : 20,
+    scale: edit !== "" ? 20 : 0,
     config: {
       mass: 1,
     },
@@ -83,14 +82,6 @@ export function EditMode(props: EditProps) {
     }
   }
 
-  useFrame(() => {
-    if (!group.current) return;
-    if (raycaster.intersectObject(group.current).length > 0) {
-      const { point } = raycaster.intersectObject(group.current, true)[0];
-      setContactPoint(point);
-    }
-  });
-
   useEffect(() => {
     if (edit === "") {
       if (isMobile) {
@@ -105,8 +96,8 @@ export function EditMode(props: EditProps) {
     <EditorContext.Provider
       value={{
         editObject: object,
+        editor: editor.current,
         mouseDown: mouseDown,
-        intersect: contactPoint,
       }}
     >
       <Interactable
@@ -118,7 +109,12 @@ export function EditMode(props: EditProps) {
         <group ref={group} name="scene">
           {children}
           <RangeTool pos={[0, -0.5]} distance={3} range={0.005} t={0.005}>
-            <animated.group rotation-x={-0.25} scale={scale} name="editor">
+            <animated.group
+              rotation-x={-0.25}
+              scale={scale}
+              ref={editor}
+              name="Editor"
+            >
               <mesh>
                 <boxBufferGeometry args={[1, 0.25, 0.1]} />
                 <meshBasicMaterial color="white" />

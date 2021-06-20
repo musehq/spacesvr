@@ -17,6 +17,7 @@ export function Rotate(props: MoveProps) {
   const [hover, setHover] = useState<boolean>(false);
   const { editObject, mouseDown } = useEditor();
   const actions = useActions();
+  // console.log(actions)
 
   const { color } = useSpring({
     color: hover

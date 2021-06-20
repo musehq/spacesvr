@@ -9,15 +9,14 @@ class ActionTracker {
     (this.past = []), (this.future = []);
   }
 
-  add(action: Action): boolean {
+  add(action: Action): void {
     this.past.push(action);
     this.future = [];
-    return true;
   }
 
-  undo(): Action | false {
+  undo(): Action | void {
     if (this.past.length === 0) {
-      return false;
+      return;
     }
     const action = this.past.pop();
     // @ts-ignore
@@ -26,9 +25,9 @@ class ActionTracker {
     return action;
   }
 
-  redo(): Action | false {
+  redo(): Action | void {
     if (this.future.length === 0) {
-      return false;
+      return;
     }
     const action = this.future.pop();
     // @ts-ignore
@@ -45,9 +44,10 @@ export function useActions() {
 
 export function ActionHandler(props: { children: ReactNode }) {
   const { children } = props;
+  const actionHandler = new ActionTracker();
 
   return (
-    <ActionContext.Provider value={new ActionTracker()}>
+    <ActionContext.Provider value={actionHandler}>
       {children}
     </ActionContext.Provider>
   );
