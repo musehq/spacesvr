@@ -53,7 +53,8 @@ export function Move(props: MoveProps) {
       mouseDown &&
       editObject.name !== "Editor" &&
       editor &&
-      editor.scale > 15
+      // @ts-ignore
+      editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
         actions.add({
