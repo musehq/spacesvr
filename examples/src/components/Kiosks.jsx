@@ -6,7 +6,7 @@ import ShoppingCart from "../models/ShoppingCart";
 
 export default function Kiosks() {
   return (
-    <group name="kiosks" position={[2, 0.65, 4]} rotation-y={-Math.PI / 2}>
+    <group name="kiosks" position={[2, 0.65, 4]}>
       <group position-x={-3.75} name="idea2">
         <Spinning>
           <Suspense fallback={null}>

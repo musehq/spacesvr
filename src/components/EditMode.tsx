@@ -66,8 +66,8 @@ export function EditMode(props: EditProps) {
   function handleMouseDown(raycaster: Raycaster) {
     if (!group.current) return;
 
-    const { object } = raycaster.intersectObject(group.current, true)[0];
-    const idea = getIdea(object);
+    const intersection = raycaster.intersectObject(group.current, true)[0];
+    const idea = intersection ? getIdea(intersection.object) : "";
 
     if (idea !== "") {
       setEdit(idea);

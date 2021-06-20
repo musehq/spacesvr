@@ -28,7 +28,12 @@ export default () => {
             onHover={() => console.log("hover")}
             onUnHover={() => console.log("un hover")}
           >
-            <Logo floating rotating position={new Vector3(0, 2.5, 0)} />
+            <Logo
+              floating
+              rotating
+              position={new Vector3(0, 2.5, 0)}
+              name="idea5"
+            />
           </Interactable>
           <fog attach="fog" args={[0xffffff, 10, 90]} />
           <ambientLight />
