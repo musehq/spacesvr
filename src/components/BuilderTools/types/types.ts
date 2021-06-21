@@ -9,6 +9,6 @@ export type Action = {
 export type Editor = {
   editObject: Object3D | undefined;
   editor: Object3D | undefined;
-  mouseDown: boolean;
-  intersect?: Vector3 | undefined;
+  mouseDown: string;
+  intersection?: Vector3 | null;
 };

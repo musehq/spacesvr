@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Interactable, RangeTool } from "../modifiers";
 import { usePlayer } from "../core/contexts";
-import { Group, Object3D, Raycaster } from "three";
+import { Group, Object3D, Raycaster, Vector3 } from "three";
 import { animated, useSpring } from "react-spring/three";
 import { useThree } from "@react-three/fiber";
 import { ControlManager } from "./BuilderTools";
@@ -26,13 +26,13 @@ export function useEditor() {
   return useContext(EditorContext);
 }
 
-function getIdea(object: Object3D): string {
+function getIdea(object: Object3D): string | null {
   if (object.name.includes("idea") || object.name === "Editor") {
     return object.name;
   } else if (object.parent) {
     return getIdea(object.parent);
   } else {
-    return "";
+    return null;
   }
 }
 
@@ -41,11 +41,12 @@ export function EditMode(props: EditProps) {
   const { raycaster } = usePlayer();
   const group = useRef<Group>();
   const editor = useRef<Group>();
+  const contactPoint = useRef<Vector3 | null>(null);
   const {
     gl: { domElement },
   } = useThree();
   const [edit, setEdit] = useState<string>("");
-  const [mouseDown, setMouseDown] = useState<boolean>(false);
+  const [mouseDown, setMouseDown] = useState<string>("");
   const object = useMemo(() => {
     if (group.current) {
       return group.current.getObjectByName(edit);
@@ -60,37 +61,51 @@ export function EditMode(props: EditProps) {
   });
 
   const onMouseUp = (e: MouseEvent | TouchEvent) => {
-    setMouseDown(false);
+    setMouseDown("");
   };
+
+  function handleClick(raycaster: Raycaster) {
+    if (!group.current) return;
+
+    const intersection = raycaster.intersectObject(group.current, true)[0];
+    const idea = intersection ? getIdea(intersection.object) : null;
+    contactPoint.current = intersection ? intersection.point : null;
+
+    if (idea && idea !== "") {
+      setEdit(idea);
+    } else {
+      setEdit("");
+    }
+  }
 
   function handleMouseDown(raycaster: Raycaster) {
     if (!group.current) return;
 
     const intersection = raycaster.intersectObject(group.current, true)[0];
     const idea = intersection ? getIdea(intersection.object) : "";
+    contactPoint.current = intersection ? intersection.point : null;
 
-    if (idea !== "") {
-      setEdit(idea);
-      setMouseDown(true);
+    if (idea && idea !== "") {
+      setMouseDown(idea);
       if (isMobile) {
         domElement.addEventListener("touchstart", onMouseUp);
       } else {
         domElement.addEventListener("mouseup", onMouseUp);
       }
     } else {
-      setEdit("");
+      setMouseDown("none");
     }
   }
 
   useEffect(() => {
-    if (edit === "") {
+    if (mouseDown === "") {
       if (isMobile) {
         domElement.removeEventListener("touchend", onMouseUp);
       } else {
         domElement.removeEventListener("mouseup", onMouseUp);
       }
     }
-  }, [edit]);
+  }, [mouseDown]);
 
   return (
     <EditorContext.Provider
@@ -98,6 +113,7 @@ export function EditMode(props: EditProps) {
         editObject: object,
         editor: editor.current,
         mouseDown: mouseDown,
+        intersection: contactPoint.current,
       }}
     >
       <Interactable
@@ -105,10 +121,13 @@ export function EditMode(props: EditProps) {
         onDownClick={() => {
           handleMouseDown(raycaster);
         }}
+        onClick={() => {
+          handleClick(raycaster);
+        }}
       >
         <group ref={group} name="scene">
           {children}
-          <RangeTool pos={[0, -0.5]} distance={3} range={0.005} t={0.005}>
+          <RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>
             <animated.group
               rotation-x={-0.25}
               scale={scale}

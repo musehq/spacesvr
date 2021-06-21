@@ -23,11 +23,12 @@ export function Move(props: MoveProps) {
   const actions = useActions();
 
   const { color } = useSpring({
-    color: hover
-      ? "rgba(150, 150, 150, 1)"
-      : active === "position"
-      ? "rgba(0, 150, 0, 1)"
-      : "rgba(0, 0, 0, 1)",
+    color:
+      active === "position"
+        ? "rgba(0, 150, 0, 1)"
+        : hover
+        ? "rgba(150, 150, 150, 1)"
+        : "rgba(0, 0, 0, 1)",
     config: {
       mass: 1,
     },
@@ -42,15 +43,10 @@ export function Move(props: MoveProps) {
 
   const limiter = useLimiter(45);
   useFrame(({ clock }, delta) => {
-    // if (!limiter.isReady(clock) || !editObject) return;
     if (!limiter.isReady(clock) || active !== "position" || !editObject) return;
 
-    // console.log(actionRecorded.current);
-    // console.log(actions)
-    // console.log(editMode)
-    // @ts-ignore
     if (
-      mouseDown &&
+      mouseDown === editObject.name &&
       editObject.name !== "Editor" &&
       editor &&
       // @ts-ignore
@@ -100,7 +96,8 @@ export function Move(props: MoveProps) {
         onClick={() => {
           if (active !== "position") {
             setActive("position");
-            setHover(false);
+          } else {
+            setActive(null);
           }
         }}
       >

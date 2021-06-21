@@ -42,6 +42,8 @@ export function Interactable(props: Props) {
   const [hovered, setHovered] = useState(false);
   const { current: downPos } = useRef(new Vector2());
   const limiter = useLimiter(30);
+  const start = useRef<number>(0);
+  const end = useRef<number>(0);
 
   // continuously update the hover state
   useFrame(({ clock }) => {
@@ -66,6 +68,7 @@ export function Interactable(props: Props) {
   // start touch
   const onTouchStart = (e: TouchEvent) => {
     downPos.set(e.touches[0].clientX, e.touches[0].clientY);
+    start.current = Date.now();
     if (onDownClick) {
       onDownClick();
     }
@@ -76,7 +79,9 @@ export function Interactable(props: Props) {
     const dist = downPos.distanceTo(
       new Vector2(e.changedTouches[0].clientX, e.changedTouches[0].clientY)
     );
-    if (onClick && dist < editDist && hovered) {
+    end.current = Date.now();
+    const timeElapsed = end.current - start.current;
+    if (onClick && timeElapsed < 100 && dist < editDist && hovered) {
       onClick();
     }
   };
@@ -84,6 +89,7 @@ export function Interactable(props: Props) {
   // set mouse down position
   const onMouseDown = (e: MouseEvent) => {
     downPos.set(e.clientX, e.clientY);
+    start.current = Date.now();
     if (onDownClick) {
       onDownClick();
     }
@@ -93,7 +99,9 @@ export function Interactable(props: Props) {
   const onMouseUp = useCallback(
     (e: MouseEvent) => {
       const dist = downPos.distanceTo(new Vector2(e.clientX, e.clientY));
-      if (onClick && dist < editDist && hovered) {
+      end.current = Date.now();
+      const timeElapsed = end.current - start.current;
+      if (onClick && timeElapsed < 100 && dist < editDist && hovered) {
         onClick();
       }
     },

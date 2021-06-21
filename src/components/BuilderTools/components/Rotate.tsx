@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
@@ -6,6 +6,7 @@ import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
+import { Vector3 } from "three";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -15,9 +16,11 @@ type MoveProps = {
 export function Rotate(props: MoveProps) {
   const { active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
-  const { editObject, mouseDown } = useEditor();
+  const actionRecorded = useRef<boolean>(false);
+  const objectRot = useRef(new Vector3());
+  const { editObject, editor, mouseDown } = useEditor();
   const actions = useActions();
-  console.log(actions);
+  // console.log(actions);
 
   const { color } = useSpring({
     color: hover
@@ -34,7 +37,26 @@ export function Rotate(props: MoveProps) {
   useFrame(({ clock }, delta) => {
     if (!limiter.isReady(clock) || active !== "rotation" || !editObject) return;
 
-    editObject.position.y += Math.sin(delta / 10);
+    if (
+      mouseDown &&
+      editObject.name !== "Editor" &&
+      editor &&
+      // @ts-ignore
+      editor.scale.x > 15
+    ) {
+      if (!actionRecorded.current) {
+        actions.add({
+          target: editObject,
+          attribute: "rotation",
+          value: editObject.rotation,
+        });
+        actionRecorded.current = true;
+      }
+    } else {
+      if (actionRecorded.current) {
+        actionRecorded.current = false;
+      }
+    }
   });
 
   return (
@@ -58,6 +80,8 @@ export function Rotate(props: MoveProps) {
           if (active !== "rotation") {
             setActive("rotation");
             setHover(false);
+          } else {
+            setActive(null);
           }
         }}
       >
