@@ -9,9 +9,19 @@ export function ControlManager() {
   return (
     <ActionHandler>
       <group name="editControls" position-y={-0.015}>
-        <Move active={active} setActive={setActive} position-x={-0.25} />
-        <Rotate active={active} setActive={setActive} />
-        <Scale active={active} setActive={setActive} position-x={0.25} />
+        <Move
+          active={active}
+          setActive={setActive}
+          position-x={-0.25}
+          name="move"
+        />
+        <Rotate active={active} setActive={setActive} name="rotate" />
+        <Scale
+          active={active}
+          setActive={setActive}
+          position-x={0.25}
+          name="scale"
+        />
         <UndoRedo />
       </group>
     </ActionHandler>

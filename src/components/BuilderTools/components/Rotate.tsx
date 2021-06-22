@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
@@ -7,6 +7,7 @@ import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
 import { Matrix4, Quaternion, Vector3 } from "three";
+import { Text } from "@react-three/drei";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -16,6 +17,8 @@ type MoveProps = {
 export function Rotate(props: MoveProps) {
   const { active, setActive, ...restProps } = props;
   const [hover, setHover] = useState<boolean>(false);
+  const [hoverAxis, setHoverAxis] = useState<string>("");
+  const [activeAxis, setActiveAxis] = useState<string>("");
   const actionRecorded = useRef<boolean>(false);
   const { camera } = useThree();
   const objectRot = useRef<Vector3>(new Vector3());
@@ -25,12 +28,31 @@ export function Rotate(props: MoveProps) {
   const actions = useActions();
   const vecLength = 5;
 
-  const { color } = useSpring({
+  const { color, colorX, colorY, colorZ, scale } = useSpring({
     color: hover
       ? "rgba(150, 150, 150, 1)"
       : active === "rotation"
       ? "rgba(0, 150, 0, 1)"
       : "rgba(0, 0, 0, 1)",
+    colorX:
+      hoverAxis === "x"
+        ? "rgba(150, 150, 150, 1)"
+        : activeAxis === "x"
+        ? "rgba(0, 150, 0, 1)"
+        : "rgba(255, 0, 0, 1)",
+    colorY:
+      hoverAxis === "y"
+        ? "rgba(150, 150, 150, 1)"
+        : activeAxis === "y"
+        ? "rgba(0, 150, 0, 1)"
+        : "rgba(255, 255, 0, 1)",
+    colorZ:
+      hoverAxis === "z"
+        ? "rgba(150, 150, 150, 1)"
+        : activeAxis === "z"
+        ? "rgba(0, 150, 0, 1)"
+        : "rgba(0, 0, 255, 1)",
+    scale: active === "rotation" ? 0.1 : 0,
     config: {
       mass: 1,
     },
@@ -57,11 +79,41 @@ export function Rotate(props: MoveProps) {
           value: rotVec,
         });
         actionRecorded.current = true;
-        // objectRot.current = new Vector3(editObject.rotation.x, editObject.rotation.y, editObject.rotation.z);
-        // objectRot.current.negate();
+        objectRot.current = new Vector3(
+          editObject.rotation.x,
+          editObject.rotation.y,
+          editObject.rotation.z
+        );
+        objectRot.current.negate().unproject(camera);
         // objectRot.current = new Vector3(editObject.rotation.x, editObject.rotation.y, editObject.rotation.z).normalize().setLength(vecLength);
         //
         // initRot.current = intersection.normalize().setLength(vecLength);
+        cameraRot.current = new Vector3(
+          camera.rotation.x,
+          camera.rotation.y,
+          camera.rotation.z
+        )
+          .normalize()
+          .setLength(vecLength);
+      }
+      switch (activeAxis) {
+        case "x":
+          editObject.rotateX(
+            cameraRot.current.sub(objectRot.current).lengthSq()
+          );
+          break;
+        case "y":
+          editObject.rotateY(
+            cameraRot.current.sub(objectRot.current).lengthSq()
+          );
+          break;
+        case "z":
+          editObject.rotateZ(
+            cameraRot.current.sub(objectRot.current).lengthSq()
+          );
+          break;
+        default:
+          break;
       }
 
       // initRot.current.rotation.
@@ -69,11 +121,11 @@ export function Rotate(props: MoveProps) {
       // cameraRot.current = new Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z);
       // cameraRot.current.negate();
       // const newRot = objectRot.current.add(cameraRot.current);
-      editObject.rotation.set(
-        cameraRot.current.x,
-        cameraRot.current.y,
-        cameraRot.current.z
-      );
+      // editObject.rotation.set(
+      //   cameraRot.current.x,
+      //   cameraRot.current.y,
+      //   cameraRot.current.z
+      // );
       // editObject.rotation.set(newRot.x, newRot.y, newRot.z);
     } else {
       if (actionRecorded.current) {
@@ -81,6 +133,12 @@ export function Rotate(props: MoveProps) {
       }
     }
   });
+
+  useEffect(() => {
+    if (active !== "rotation") {
+      setActiveAxis("");
+    }
+  }, [active]);
 
   return (
     <group position-z={0.05} {...restProps}>
@@ -95,9 +153,7 @@ export function Rotate(props: MoveProps) {
           }
         }}
         onUnHover={() => {
-          if (hover === true) {
-            setHover(false);
-          }
+          setHover(false);
         }}
         onClick={() => {
           if (active !== "rotation") {
@@ -113,6 +169,104 @@ export function Rotate(props: MoveProps) {
           <meshBasicMaterial color="white" />
         </mesh>
       </Interactable>
+      <animated.group name="axisControl" scale={scale} position-y={0.225}>
+        <Interactable
+          onHover={() => {
+            if (activeAxis !== "x") {
+              setHoverAxis("x");
+            }
+          }}
+          onUnHover={() => {
+            setHoverAxis("");
+          }}
+          onClick={() => {
+            if (activeAxis !== "x") {
+              setActiveAxis("x");
+              setHoverAxis("");
+            } else {
+              setActiveAxis("");
+            }
+          }}
+        >
+          <group position-x={-2}>
+            <mesh>
+              <boxBufferGeometry args={[1, 1, 0.25]} />
+              <animated.meshBasicMaterial color={colorX} />
+            </mesh>
+            <mesh position-z={0.1}>
+              <boxBufferGeometry args={[0.85, 0.85, 0.25]} />
+              <meshBasicMaterial color="white" />
+            </mesh>
+            <Text fontSize={0.5} position-z={0.25} color="red">
+              X
+            </Text>
+          </group>
+        </Interactable>
+        <Interactable
+          onHover={() => {
+            if (activeAxis !== "y") {
+              setHoverAxis("y");
+            }
+          }}
+          onUnHover={() => {
+            setHoverAxis("");
+          }}
+          onClick={() => {
+            if (activeAxis !== "y") {
+              setActiveAxis("y");
+              setHoverAxis("");
+            } else {
+              setActiveAxis("");
+            }
+          }}
+        >
+          <group>
+            <mesh>
+              <boxBufferGeometry args={[1, 1, 0.25]} />
+              <animated.meshBasicMaterial color={colorY} />
+            </mesh>
+            <mesh position-z={0.1}>
+              <boxBufferGeometry args={[0.85, 0.85, 0.25]} />
+              <meshBasicMaterial color="white" />
+            </mesh>
+            <Text fontSize={0.5} position-z={0.25} color="yellow">
+              Y
+            </Text>
+          </group>
+        </Interactable>
+        <Interactable
+          onHover={() => {
+            if (activeAxis !== "z") {
+              setHoverAxis("z");
+            }
+          }}
+          onUnHover={() => {
+            setHoverAxis("");
+          }}
+          onClick={() => {
+            if (activeAxis !== "z") {
+              setActiveAxis("z");
+              setHoverAxis("");
+            } else {
+              setActiveAxis("");
+            }
+          }}
+        >
+          <group position-x={2}>
+            <mesh>
+              <boxBufferGeometry args={[1, 1, 0.25]} />
+              <animated.meshBasicMaterial color={colorZ} />
+            </mesh>
+            <mesh position-z={0.1}>
+              <boxBufferGeometry args={[0.85, 0.85, 0.25]} />
+              <meshBasicMaterial color="white" />
+            </mesh>
+            <Text fontSize={0.5} position-z={0.25} color="blue">
+              Z
+            </Text>
+          </group>
+        </Interactable>
+      </animated.group>
     </group>
   );
 }
