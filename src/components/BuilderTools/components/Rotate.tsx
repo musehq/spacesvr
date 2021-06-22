@@ -24,7 +24,6 @@ export function Rotate(props: MoveProps) {
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const actions = useActions();
   const vecLength = 5;
-  console.log(actions);
 
   const { color } = useSpring({
     color: hover
@@ -50,15 +49,12 @@ export function Rotate(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
-        const matrix = new Matrix4();
-        const quaternion = new Quaternion().setFromEuler(editObject.rotation);
+        const rotVec = new Vector3();
+        editObject.getWorldDirection(rotVec);
         actions.add({
           target: editObject,
-          matrix: matrix.compose(
-            editObject.position,
-            quaternion,
-            editObject.scale
-          ),
+          attribute: "rotation",
+          value: rotVec,
         });
         actionRecorded.current = true;
         // objectRot.current = new Vector3(editObject.rotation.x, editObject.rotation.y, editObject.rotation.z);

@@ -33,6 +33,7 @@ export function Move(props: MoveProps) {
       mass: 1,
     },
   });
+  // console.log(actions);
 
   const { current: dummyVector } = useRef(new Vector3());
   const DISTANCE = 5,
@@ -53,16 +54,16 @@ export function Move(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
-        const matrix = new Matrix4();
-        const quaternion = new Quaternion().setFromEuler(editObject.rotation);
+        const posVec = new Vector3();
+        editObject.getWorldPosition(posVec);
         actions.add({
           target: editObject,
-          matrix: editObject.matrixWorld,
+          attribute: "position",
+          value: posVec,
         });
         actionRecorded.current = true;
       }
 
-      console.log(actions);
       dummyVector.set(xPos * DISTANCE, yPos * DISTANCE, -distance);
       const moveQuaternion = camera.quaternion.clone();
       dummyVector.applyQuaternion(moveQuaternion);
@@ -78,7 +79,6 @@ export function Move(props: MoveProps) {
     }
   });
 
-  console.log(actions);
   return (
     <group position-z={0.05} {...restProps}>
       <mesh>

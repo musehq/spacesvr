@@ -4,9 +4,11 @@ import { Interactable } from "../../../modifiers";
 import { useEditor } from "../../EditMode";
 import { useThree } from "@react-three/fiber";
 import { Action } from "../types/types";
+import { Text } from "@react-three/drei";
 
 export function UndoRedo() {
   const actions = useActions();
+  const { scene } = useThree();
   const { undoOpacity, redoOpacity } = useSpring({
     undoOpacity: actions.past.length === 0 ? 0.5 : 1,
     redoOpacity: actions.future.length === 0 ? 0.5 : 1,
@@ -17,11 +19,13 @@ export function UndoRedo() {
 
   function undoRedo(undo: boolean) {
     if (undo && actions.past.length > 0) {
-      const action = actions.undo();
-      (action as Action).target.applyMatrix4((action as Action).matrix);
+      const { target, attribute, value } = actions.undo() as Action;
+      // @ts-ignore
+      target[attribute].set(value.x, value.y, value.z);
     } else if (!undo && actions.future.length > 0) {
-      const action = actions.redo();
-      (action as Action).target.applyMatrix4((action as Action).matrix);
+      const { target, attribute, value } = actions.redo() as Action;
+      // @ts-ignore
+      target[attribute].set(value.x, value.y, value.z);
     }
   }
 
@@ -32,28 +36,54 @@ export function UndoRedo() {
           undoRedo(true);
         }}
       >
-        <mesh name="undo">
-          <boxBufferGeometry args={[2, 1, 0.25]} />
-          <animated.meshBasicMaterial
-            color="red"
-            opacity={undoOpacity}
-            transparent
-          />
-        </mesh>
+        <group name="undo">
+          <mesh>
+            <boxBufferGeometry args={[2, 1, 0.25]} />
+            <animated.meshBasicMaterial
+              color="red"
+              opacity={undoOpacity}
+              transparent
+            />
+          </mesh>
+          <mesh position-z={0.1}>
+            <boxBufferGeometry args={[1.9, 0.9, 0.15]} />
+            <animated.meshBasicMaterial
+              color="white"
+              opacity={undoOpacity}
+              transparent
+            />
+          </mesh>
+          <Text fontSize={0.5} position-z={0.25} color="red">
+            Undo
+          </Text>
+        </group>
       </Interactable>
       <Interactable
         onClick={() => {
           undoRedo(false);
         }}
       >
-        <mesh name="redo" position-x={2.5}>
-          <boxBufferGeometry args={[2, 1, 0.25]} />
-          <animated.meshBasicMaterial
-            color="green"
-            opacity={redoOpacity}
-            transparent
-          />
-        </mesh>
+        <group position-x={2.5} name="redo">
+          <mesh>
+            <boxBufferGeometry args={[2, 1, 0.25]} />
+            <animated.meshBasicMaterial
+              color="green"
+              opacity={redoOpacity}
+              transparent
+            />
+          </mesh>
+          <mesh position-z={0.1}>
+            <boxBufferGeometry args={[1.9, 0.9, 0.15]} />
+            <animated.meshBasicMaterial
+              color="white"
+              opacity={undoOpacity}
+              transparent
+            />
+          </mesh>
+          <Text fontSize={0.5} position-z={0.25} color="green">
+            Redo
+          </Text>
+        </group>
       </Interactable>
     </group>
   );

@@ -18,7 +18,10 @@ class ActionTracker {
     if (this.past.length === 0) {
       return;
     }
+    console.log(this);
     const action = this.past.pop();
+    console.log(this);
+    console.log(action);
     // @ts-ignore
     this.future.push(action);
     // @ts-ignore

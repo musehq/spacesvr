@@ -67,15 +67,12 @@ export function Scale(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
-        const matrix = new Matrix4();
-        const quaternion = new Quaternion().setFromEuler(editObject.rotation);
+        const scaleVec = new Vector3();
+        editObject.getWorldScale(scaleVec);
         actions.add({
           target: editObject,
-          matrix: matrix.compose(
-            editObject.position,
-            quaternion,
-            editObject.scale
-          ),
+          attribute: "scale",
+          value: scaleVec,
         });
         actionRecorded.current = true;
         // contactPoint.current = intersection as Vector3;
