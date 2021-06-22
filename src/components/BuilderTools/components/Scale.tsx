@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Object3D, Vector2, Vector3 } from "three";
+import { Matrix4, Object3D, Quaternion, Vector2, Vector3 } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
@@ -67,10 +67,15 @@ export function Scale(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
+        const matrix = new Matrix4();
+        const quaternion = new Quaternion().setFromEuler(editObject.rotation);
         actions.add({
           target: editObject,
-          attribute: "scale",
-          value: editObject.scale,
+          matrix: matrix.compose(
+            editObject.position,
+            quaternion,
+            editObject.scale
+          ),
         });
         actionRecorded.current = true;
         // contactPoint.current = intersection as Vector3;
@@ -90,7 +95,7 @@ export function Scale(props: MoveProps) {
       const rotation = new Vector3(0, 0, 1);
       // const cross = contactPoint.current.cross(new Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z)).length();
       const angle = contactPoint.current.angleTo(rotation);
-      console.log(contactPoint.current.distanceTo(rotation.unproject(camera)));
+      // console.log(contactPoint.current.distanceTo(rotation.unproject(camera)));
       // console.log(contactPoint.current);
 
       // console.log(cross);

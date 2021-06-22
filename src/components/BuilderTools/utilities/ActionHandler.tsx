@@ -1,5 +1,5 @@
 import { Action } from "../types/types";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 
 class ActionTracker {
   past: Action[];
@@ -44,7 +44,9 @@ export function useActions() {
 
 export function ActionHandler(props: { children: ReactNode }) {
   const { children } = props;
-  const actionHandler = new ActionTracker();
+  const actionHandler = useMemo(() => {
+    return new ActionTracker();
+  }, []);
 
   return (
     <ActionContext.Provider value={actionHandler}>

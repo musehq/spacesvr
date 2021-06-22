@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Vector3 } from "three";
+import { Matrix4, Quaternion, Vector3 } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
@@ -53,14 +53,16 @@ export function Move(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
+        const matrix = new Matrix4();
+        const quaternion = new Quaternion().setFromEuler(editObject.rotation);
         actions.add({
           target: editObject,
-          attribute: "position",
-          value: editObject.position,
+          matrix: editObject.matrixWorld,
         });
         actionRecorded.current = true;
       }
 
+      console.log(actions);
       dummyVector.set(xPos * DISTANCE, yPos * DISTANCE, -distance);
       const moveQuaternion = camera.quaternion.clone();
       dummyVector.applyQuaternion(moveQuaternion);
@@ -76,6 +78,7 @@ export function Move(props: MoveProps) {
     }
   });
 
+  console.log(actions);
   return (
     <group position-z={0.05} {...restProps}>
       <mesh>

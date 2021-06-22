@@ -15,6 +15,7 @@ import { useThree } from "@react-three/fiber";
 import { ControlManager } from "./BuilderTools";
 import { Editor } from "./BuilderTools/types/types";
 import { isMobile } from "react-device-detect";
+import { Text } from "@react-three/drei";
 
 type EditProps = {
   children: ReactNode;
@@ -138,6 +139,19 @@ export function EditMode(props: EditProps) {
                 <boxBufferGeometry args={[1, 0.25, 0.1]} />
                 <meshBasicMaterial color="white" />
               </mesh>
+              <group name="selectedObject" position={[-0.4, 0.1, 0.06]}>
+                <Text fontSize={0.035} color="black" textAlign="left">
+                  Selected:
+                </Text>
+                <Text
+                  fontSize={0.035}
+                  color="red"
+                  textAlign="left"
+                  position-x={0.125}
+                >
+                  {edit}
+                </Text>
+              </group>
               <ControlManager />
             </animated.group>
           </RangeTool>
