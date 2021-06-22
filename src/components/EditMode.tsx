@@ -69,7 +69,15 @@ export function EditMode(props: EditProps) {
     if (!group.current) return;
 
     const intersection = raycaster.intersectObject(group.current, true)[0];
-    const idea = intersection ? getIdea(intersection.object) : null;
+    let idea: string | null;
+    if (intersection) {
+      idea = getIdea(intersection.object);
+      if (idea === "Editor") {
+        idea = edit;
+      }
+    } else {
+      idea = null;
+    }
     contactPoint.current = intersection ? intersection.point : null;
 
     if (idea && idea !== "") {

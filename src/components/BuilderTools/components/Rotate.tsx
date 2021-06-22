@@ -84,49 +84,29 @@ export function Rotate(props: MoveProps) {
           editObject.rotation.y,
           editObject.rotation.z
         );
-        objectRot.current.negate().unproject(camera);
-        // objectRot.current = new Vector3(editObject.rotation.x, editObject.rotation.y, editObject.rotation.z).normalize().setLength(vecLength);
-        //
-        // initRot.current = intersection.normalize().setLength(vecLength);
         cameraRot.current = new Vector3(
           camera.rotation.x,
           camera.rotation.y,
           camera.rotation.z
-        )
-          .normalize()
-          .setLength(vecLength);
+        );
       }
+
       switch (activeAxis) {
         case "x":
-          editObject.rotateX(
-            cameraRot.current.sub(objectRot.current).lengthSq()
-          );
+          editObject.rotation.x =
+            objectRot.current.x + camera.rotation.x - cameraRot.current.x;
           break;
         case "y":
-          editObject.rotateY(
-            cameraRot.current.sub(objectRot.current).lengthSq()
-          );
+          editObject.rotation.y =
+            objectRot.current.y + camera.rotation.y - cameraRot.current.y;
           break;
         case "z":
-          editObject.rotateZ(
-            cameraRot.current.sub(objectRot.current).lengthSq()
-          );
+          editObject.rotation.z =
+            objectRot.current.z + camera.rotation.z - cameraRot.current.z;
           break;
         default:
           break;
       }
-
-      // initRot.current.rotation.
-      const dragVector = new Vector3();
-      // cameraRot.current = new Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z);
-      // cameraRot.current.negate();
-      // const newRot = objectRot.current.add(cameraRot.current);
-      // editObject.rotation.set(
-      //   cameraRot.current.x,
-      //   cameraRot.current.y,
-      //   cameraRot.current.z
-      // );
-      // editObject.rotation.set(newRot.x, newRot.y, newRot.z);
     } else {
       if (actionRecorded.current) {
         actionRecorded.current = false;
