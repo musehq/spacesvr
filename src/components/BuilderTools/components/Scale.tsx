@@ -23,6 +23,8 @@ export function Scale(props: MoveProps) {
   const [hover, setHover] = useState<boolean>(false);
   const actionRecorded = useRef<boolean>(false);
   const contactPoint = useRef<Vector3>(new Vector3());
+  const objectScale = useRef<Vector3>(new Vector3());
+  const cameraRot = useRef<Vector3>(new Vector3());
   const editDist = useRef<number>(0);
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const {
@@ -57,10 +59,9 @@ export function Scale(props: MoveProps) {
   const limiter = useLimiter(45);
   useFrame(({ clock }, delta) => {
     if (!limiter.isReady(clock) || active !== "scale" || !editObject) return;
-    // console.log(mouseDown)
 
     if (
-      mouseDown !== "" &&
+      mouseDown === editObject.name &&
       editObject.name !== "Editor" &&
       editor &&
       // @ts-ignore
@@ -75,29 +76,28 @@ export function Scale(props: MoveProps) {
           value: scaleVec,
         });
         actionRecorded.current = true;
-        // contactPoint.current = intersection as Vector3;
-        // @ts-ignore
-        // contactPoint.current = getScreenXY(intersection);
+        objectScale.current = new Vector3(
+          editObject.scale.x,
+          editObject.scale.y,
+          editObject.scale.z
+        );
+        cameraRot.current = new Vector3(
+          camera.rotation.x,
+          camera.rotation.y,
+          camera.rotation.z
+        );
         contactPoint.current = new Vector3(
           editObject.position.x,
           editObject.position.y,
           editObject.position.z
         );
-        // editDist.current = editObject.position.unproject(camera).lengthSq()
-        // console.log(editObject.position);
-        // console.log("initial rot");
-        // console.log(camera.rotation);
       }
-      contactPoint.current.unproject(camera).normalize();
-      const rotation = new Vector3(0, 0, 1);
-      // const cross = contactPoint.current.cross(new Vector3(camera.rotation.x, camera.rotation.y, camera.rotation.z)).length();
-      const angle = contactPoint.current.angleTo(rotation);
-      // console.log(contactPoint.current.distanceTo(rotation.unproject(camera)));
-      // console.log(contactPoint.current);
 
-      // console.log(cross);
-
-      // editObject.scale.set(contactPoint.current.x + distance, contactPoint.current.y + distance, contactPoint.current.z + distance);
+      editObject.scale.set(
+        objectScale.current.x + camera.rotation.y - cameraRot.current.y,
+        objectScale.current.y + camera.rotation.y - cameraRot.current.y,
+        objectScale.current.z + camera.rotation.y - cameraRot.current.y
+      );
     } else {
       if (actionRecorded.current) {
         actionRecorded.current = false;
