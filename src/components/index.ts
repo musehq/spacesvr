@@ -11,3 +11,4 @@ export * from "./Video";
 export * from "./Fog";
 export * from "./Shopify";
 export * from "./EditMode";
+export * from "./TextInput";

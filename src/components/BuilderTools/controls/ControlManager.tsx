@@ -1,4 +1,4 @@
-import { Move, Rotate, Scale, UndoRedo } from "../components";
+import { Move, Rotate, Scale, SchemaEditor, UndoRedo } from "../components";
 import { useState } from "react";
 import { ControlType } from "../types/types";
 import { ActionHandler } from "../utilities/ActionHandler";
@@ -9,6 +9,8 @@ export function ControlManager() {
   return (
     <ActionHandler>
       <group name="editControls" position-y={-0.015}>
+        <UndoRedo />
+        <SchemaEditor />
         <Move
           active={active}
           setActive={setActive}
@@ -22,7 +24,6 @@ export function ControlManager() {
           position-x={0.25}
           name="scale"
         />
-        <UndoRedo />
       </group>
     </ActionHandler>
   );
