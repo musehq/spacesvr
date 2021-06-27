@@ -1,12 +1,26 @@
-import { DefaultXRControllers, useController } from "@react-three/xr";
+import { DefaultXRControllers, useController, useXR } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
-import { Vector3 } from "three";
-import { useFrame, useThree } from "@react-three/fiber";
-import { Group } from "three";
+import { Vector3, Vector2, XRHandedness } from "three";
+import { useFrame } from "@react-three/fiber";
+
+const MOVEMENT_SPEED = 2;
+
+type SnapTurnProps = {
+  hand?: XRHandedness;
+  increment?: number;
+  threshold?: number;
+};
+
+type SmoothLocomotionProps = {
+  hand?: XRHandedness;
+  speed?: number;
+};
 
 type VRControllerMovementProps = {
   position: MutableRefObject<Vector3>;
   direction: MutableRefObject<Vector3>;
+  snapTurn?: SnapTurnProps;
+  smoothLocomotion?: SmoothLocomotionProps;
 };
 
 /**
@@ -18,45 +32,85 @@ type VRControllerMovementProps = {
  * @constructor
  */
 
-const ROTATION_SPEED = 2;
-const MOVEMENT_SPEED = 1;
+const SnapTurn = ({
+  hand = "right",
+  increment = Math.PI / 6,
+  threshold = 0.8,
+}: SnapTurnProps) => {
+  const controller = useController(hand);
+  const { player } = useXR();
+  const isSnapping = useRef(false);
 
-const VRControllerMovement = (props: VRControllerMovementProps) => {
-  const { position, direction } = props;
+  useFrame(() => {
+    if (controller && controller.inputSource.gamepad) {
+      const [, , x] = controller.inputSource.gamepad.axes;
 
-  const camera = useThree((state) => state.camera);
-  const group = useRef<Group>();
-
-  const left = useController("left");
-  const right = useController("right");
-
-  useFrame((_, delta) => {
-    if (position.current && group.current) {
-      group.current.position.copy(position.current);
-    }
-
-    if (left && left.inputSource.gamepad) {
-      // move the player
-      const [, , x, y] = left.inputSource.gamepad.axes;
-
-      direction.current.x = x * MOVEMENT_SPEED;
-      direction.current.y = y * MOVEMENT_SPEED;
-      direction.current.z = 0;
-    }
-
-    if (right && right.inputSource.gamepad) {
-      // rotate the camera parent
-      const [, , x] = right.inputSource.gamepad.axes;
-      if (group.current) {
-        group.current.rotation.y -= x * ROTATION_SPEED * delta;
+      if (Math.abs(x) > threshold) {
+        if (!isSnapping.current) {
+          player.rotateY(-increment * Math.sign(x));
+        }
+        isSnapping.current = true;
+      } else {
+        isSnapping.current = false;
       }
     }
   });
 
+  return null;
+};
+
+const SmoothLocomotion = ({
+  hand = "left",
+  speed = MOVEMENT_SPEED,
+}: SmoothLocomotionProps) => {
+  const controller = useController(hand);
+  const { player } = useXR();
+
+  const controllerDirection = new Vector2();
+  const controllerDirection3 = new Vector3();
+  const joystickDirection = new Vector2();
+
+  useFrame((_, delta) => {
+    if (controller && controller.inputSource.gamepad) {
+      const [, , x, y] = controller.inputSource.gamepad.axes;
+
+      joystickDirection.set(x, y);
+      controller.controller.getWorldDirection(controllerDirection3);
+      controllerDirection
+        .set(controllerDirection3.x, -controllerDirection3.z)
+        .normalize();
+
+      player.position.x +=
+        controllerDirection.cross(joystickDirection) * delta * speed;
+      player.position.z -=
+        controllerDirection.dot(joystickDirection) * delta * speed;
+    }
+  });
+
+  return null;
+};
+
+const VRControllerMovement = (
+  props: VRControllerMovementProps
+): JSX.Element => {
+  const { position, direction, snapTurn, smoothLocomotion } = props;
+  const { player } = useXR();
+
+  player.position.copy(position.current);
+
+  useFrame(() => {
+    position.current.copy(player.position);
+
+    direction.current.x = player.position.x;
+    direction.current.y = player.position.y;
+    direction.current.z = 0;
+  });
+
   return (
-    <group ref={group}>
+    <group>
+      <SnapTurn {...snapTurn} />
+      <SmoothLocomotion {...smoothLocomotion} />
       <DefaultXRControllers />
-      <primitive object={camera} />
     </group>
   );
 };
