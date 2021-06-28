@@ -1,10 +1,14 @@
 import { RoundedBox, Text } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { animated, useSpring } from "react-spring/three";
 import { useEnvironment, usePlayer } from "../core/contexts";
 import { Interactable } from "../modifiers";
 import { Vector3 } from "three";
+import {
+  CSS3DRenderer,
+  CSS3DObject,
+} from "three/examples/jsm/renderers/CSS3DRenderer";
 
 type TextProps = {
   value: string;
@@ -38,9 +42,9 @@ export function TextInput(props: TextProps) {
   useEffect(() => {
     if (!inputRef.current && enabled) {
       inputRef.current = document.createElement("input");
-      inputRef.current.setAttribute("type", inputType);
-      inputRef.current.style.zIndex = "-99";
-      inputRef.current.style.opacity = "0";
+      inputRef.current.setAttribute("type", "text");
+      inputRef.current.style.zIndex = "99";
+      inputRef.current.style.opacity = "1";
       inputRef.current.style.fontSize = "16px"; // this disables zoom on mobile
       inputRef.current.style.position = "absolute";
       inputRef.current.style.left = "50%";
@@ -49,6 +53,7 @@ export function TextInput(props: TextProps) {
 
       inputRef.current.addEventListener("focus", () => setFocused(true));
       inputRef.current.addEventListener("blur", () => setFocused(false));
+      console.log(inputRef.current);
 
       setCursorPos(inputRef.current.selectionStart);
       setValue(inputRef.current.value);
@@ -63,7 +68,7 @@ export function TextInput(props: TextProps) {
         }
       };
     }
-  }, [enabled, inputType]);
+  }, [enabled]);
 
   useEffect(() => {
     if (focused) {
@@ -94,21 +99,32 @@ export function TextInput(props: TextProps) {
 
       const onKeyup = (e: KeyboardEvent) => {
         if (!focused || !inputRef.current) return;
+        // inputRef.current.value = inputRef.current.value + e.key;
+        console.log(e);
+        // console.log(inputRef.current.value)
         setCursorPos(inputRef.current.selectionStart);
+        // setCursorPos(inputRef.current.selectionStart);
         setValue(inputRef.current.value);
       };
 
       const onSelectionChange = () =>
         setCursorPos(inputRef?.current?.selectionStart || null);
 
+      inputRef?.current?.addEventListener("change", () => {
+        console.log("change");
+      });
       document.addEventListener("click", onDocClick);
       document.addEventListener("keyup", onKeyup);
       document.addEventListener("selectionchange", onSelectionChange);
+
+      // document.addEventListener("change", onKeyup);
 
       return () => {
         document.removeEventListener("click", onDocClick);
         document.removeEventListener("keyup", onKeyup);
         document.removeEventListener("selectionchange", onSelectionChange);
+
+        // document.removeEventListener("change", onKeyup);
       };
     }
   }, [enabled, focused, paused]);

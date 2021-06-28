@@ -60,13 +60,13 @@ export function SchemaEditor(props: SchemaProps) {
           <boxBufferGeometry args={[1, 0.75, 0.1]} />
           <meshBasicMaterial color="white" opacity={0.75} transparent />
         </mesh>
-        <TextInput
-          value={value}
-          setValue={setValue}
-          enabled={true}
-          position={[0.1, 0.15, 0.05]}
-          inputType="text"
-        />
+        {/*<TextInput*/}
+        {/*  value={value}*/}
+        {/*  setValue={setValue}*/}
+        {/*  // enabled={true}*/}
+        {/*  position={[0.1, 0.15, 0.05]}*/}
+        {/*  inputType="text"*/}
+        {/*/>*/}
         {/*<Interactable*/}
         {/*  onClick={() => {*/}
         {/*    if (!enabled) {*/}

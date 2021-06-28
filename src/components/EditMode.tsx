@@ -70,12 +70,20 @@ export function EditMode(props: EditProps) {
     if (!group.current) return;
 
     const intersection = raycaster.intersectObject(group.current, true)[0];
-    const idea = intersection ? getIdea(intersection.object) : null;
+    let idea: string | null;
+    if (intersection) {
+      idea = getIdea(intersection.object);
+      if (idea === "Editor") {
+        idea = edit;
+      }
+    } else {
+      idea = null;
+    }
     contactPoint.current = intersection ? intersection.point : null;
 
-    if (idea && idea !== "" && idea !== "Editor") {
+    if (idea && idea !== "") {
       setEdit(idea);
-    } else if (idea === null || idea === "") {
+    } else {
       setEdit("");
     }
   }
@@ -129,30 +137,33 @@ export function EditMode(props: EditProps) {
       >
         <group ref={group} name="scene">
           {children}
-          <group ref={editor} name="Editor">
-            <RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>
-              <animated.group rotation-x={-0.25} scale={scale}>
-                <mesh>
-                  <boxBufferGeometry args={[1, 0.25, 0.1]} />
-                  <meshBasicMaterial color="white" />
-                </mesh>
-                <group name="selectedObject" position={[-0.4, 0.1, 0.06]}>
-                  <Text fontSize={0.035} color="black" textAlign="left">
-                    Selected:
-                  </Text>
-                  <Text
-                    fontSize={0.035}
-                    color="red"
-                    textAlign="left"
-                    position-x={0.125}
-                  >
-                    {edit}
-                  </Text>
-                </group>
-                <ControlManager />
-              </animated.group>
-            </RangeTool>
-          </group>
+          <RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>
+            <animated.group
+              rotation-x={-0.25}
+              scale={scale}
+              ref={editor}
+              name="Editor"
+            >
+              <mesh>
+                <boxBufferGeometry args={[1, 0.25, 0.1]} />
+                <meshBasicMaterial color="white" />
+              </mesh>
+              <group name="selectedObject" position={[-0.4, 0.1, 0.06]}>
+                <Text fontSize={0.035} color="black" textAlign="left">
+                  Selected:
+                </Text>
+                <Text
+                  fontSize={0.035}
+                  color="red"
+                  textAlign="left"
+                  position-x={0.125}
+                >
+                  {edit}
+                </Text>
+              </group>
+              <ControlManager />
+            </animated.group>
+          </RangeTool>
         </group>
       </Interactable>
     </EditorContext.Provider>
