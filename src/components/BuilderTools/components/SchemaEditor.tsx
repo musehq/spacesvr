@@ -2,39 +2,51 @@ import { Text } from "@react-three/drei";
 import { TextInput } from "../../TextInput";
 import { useEditor } from "../../EditMode";
 import { useActions } from "../utilities/ActionHandler";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Interactable } from "../../../modifiers";
 import { Vector3 } from "three";
-import { useThree } from "@react-three/fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 import { FacePlayer } from "../../../modifiers/FacePlayer";
 import { FileInput } from "../../FileInput";
 import { animated, useSpring } from "@react-spring/three";
+import { ControlType } from "../types/types";
 
-export function SchemaEditor() {
+type SchemaProps = {
+  active: string | null;
+} & GroupProps;
+
+export function SchemaEditor(props: SchemaProps) {
+  const { active } = props;
+  const [open, setOpen] = useState<boolean>(true);
+  const [toggle, setToggle] = useState<boolean>(false);
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const actions = useActions();
   const { camera } = useThree();
   const [value, setValue] = useState<string>(""),
     [enabled, setEnabled] = useState<boolean>(false);
   const position = useRef<Vector3>(new Vector3(0, 0, 0));
-  const [open, setOpen] = useState<boolean>(true);
-  const { scale } = useSpring({
+  const { scale, toggleScale } = useSpring({
     scale: open ? 1 : 0,
+    toggleScale: toggle ? 1 : 0,
     config: {
       mass: 1,
     },
   });
 
-  // position.current = useMemo(() => {
-  //   if (intersection) {
-  //     const xOffset = camera.position.x < intersection.x ? -1 : 1,
-  //       yOffset = camera.position.y < intersection.y ? -1 : 1,
-  //       zOffset = camera.position.z < intersection.z ? -1 : 1;
-  //     return new Vector3(intersection.x+xOffset, intersection.y+yOffset, intersection.z+zOffset);
-  //   } else {
-  //     return position.current;
-  //   }
-  // }, [editObject])
+  useEffect(() => {
+    if (active === "rotation" || open) {
+      setToggle(false);
+    } else if (toggle === false) {
+      setToggle(true);
+    }
+  }, [active]);
 
   return (
     <group name="premaPanel">
@@ -81,6 +93,7 @@ export function SchemaEditor() {
         <Interactable
           onClick={() => {
             setOpen(false);
+            setToggle(true);
           }}
         >
           <group
@@ -98,16 +111,29 @@ export function SchemaEditor() {
           </group>
         </Interactable>
       </animated.group>
-      <group position={[0.4, 0, 0.1]} name="togglePremaPanel">
-        <mesh>
-          <boxBufferGeometry args={[0.075, 0.075, 0.01]} />
-          <meshBasicMaterial color="black" />
-        </mesh>
-        <mesh>
-          <boxBufferGeometry args={[0.07, 0.07, 0.015]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
-      </group>
+      <Interactable
+        onClick={() => {
+          setOpen(true);
+          setToggle(false);
+        }}
+      >
+        <animated.group
+          position={[0, 0.2, 0.1]}
+          scale={toggleScale}
+          name="togglePremaPanel"
+        >
+          <group scale={[3, 1, 1]}>
+            <mesh>
+              <boxBufferGeometry args={[0.075, 0.08, 0.01]} />
+              <meshBasicMaterial color="black" />
+            </mesh>
+            <mesh>
+              <boxBufferGeometry args={[0.07, 0.07, 0.015]} />
+              <meshBasicMaterial color="white" />
+            </mesh>
+          </group>
+        </animated.group>
+      </Interactable>
     </group>
   );
 }

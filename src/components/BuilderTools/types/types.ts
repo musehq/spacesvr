@@ -1,6 +1,12 @@
 import { Object3D, Vector3 } from "three";
 
-export type ControlType = null | "position" | "rotation" | "scale" | "color";
+export type ControlType =
+  | null
+  | "position"
+  | "rotation"
+  | "scale"
+  | "color"
+  | "premaPanel";
 export type Action = {
   target: Object3D;
   attribute: string;

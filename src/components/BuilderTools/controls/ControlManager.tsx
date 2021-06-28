@@ -10,7 +10,7 @@ export function ControlManager() {
     <ActionHandler>
       <group name="editControls" position-y={-0.015}>
         <UndoRedo />
-        <SchemaEditor />
+        <SchemaEditor active={active} />
         <Move
           active={active}
           setActive={setActive}
