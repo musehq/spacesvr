@@ -8,6 +8,7 @@ import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { MeshBasicMaterial } from "three";
 import { Text } from "@react-three/drei";
+import { COLORS } from "../constants/constants";
 
 type GLTFResult = GLTF & {
   nodes: {
@@ -43,13 +44,7 @@ type GLTFResult = GLTF & {
 };
 
 const FILE_URL =
-    "https://d27rt3a60hh1lx.cloudfront.net/models/hotbar-1624866752/hotbar.glb.gz",
-  COLORS = {
-    btnPrimary: "white",
-    btnSecondary: "#004ECC",
-    textPrimary: "black",
-    textSecondary: "white",
-  };
+  "https://d27rt3a60hh1lx.cloudfront.net/models/hotbar-1624866752/hotbar.glb.gz";
 
 export function MoveModel(props: JSX.IntrinsicElements["group"]) {
   const group = useRef<THREE.Group>();

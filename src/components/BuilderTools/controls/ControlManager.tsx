@@ -23,7 +23,7 @@ export function ControlManager() {
   return (
     <ActionHandler>
       <group name="editControls" position-y={-0.015}>
-        <MoveModel scale={0.1} />
+        {/*<MoveModel scale={0.1} />*/}
         <RotateModel scale={0.1} />
         <ScaleModel scale={0.1} />
         <UndoModel scale={0.1} />
@@ -37,12 +37,12 @@ export function ControlManager() {
         <TrashModel scale={0.1} />
         {/*<UndoRedo />*/}
         {/*<SchemaEditor active={active} />*/}
-        {/*<Move*/}
-        {/*  active={active}*/}
-        {/*  setActive={setActive}*/}
-        {/*  position-x={-0.25}*/}
-        {/*  name="move"*/}
-        {/*/>*/}
+        <Move
+          active={active}
+          setActive={setActive}
+          // position-x={-0.25}
+          name="move"
+        />
         {/*<Rotate active={active} setActive={setActive} name="rotate" />*/}
         {/*<Scale*/}
         {/*  active={active}*/}

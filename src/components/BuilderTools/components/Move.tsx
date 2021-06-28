@@ -1,12 +1,20 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Matrix4, Quaternion, Vector3 } from "three";
+import { Matrix4, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import { useLimiter } from "../../../services";
-import { ControlType } from "../types/types";
+import { ControlType, GLTFResult } from "../types/types";
+import { COLORS, FILE_URL } from "../constants/constants";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
+import { Text, useGLTF } from "@react-three/drei";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -19,16 +27,19 @@ export function Move(props: MoveProps) {
   const { camera } = useThree();
   const objectPos = useRef(new Vector3());
   const actionRecorded = useRef<boolean>(false);
+  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const moveMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
   const { editObject, editor, mouseDown } = useEditor();
   const actions = useActions();
 
-  const { color } = useSpring({
+  const { color, posZ } = useSpring({
     color:
       active === "position"
-        ? "rgba(0, 150, 0, 1)"
+        ? COLORS.btnSelected
         : hover
-        ? "rgba(150, 150, 150, 1)"
-        : "rgba(0, 0, 0, 1)",
+        ? "#777777"
+        : COLORS.btnSecondary,
+    posZ: active === "position" ? 0.15 : 0,
     config: {
       mass: 1,
     },
@@ -80,11 +91,11 @@ export function Move(props: MoveProps) {
   });
 
   return (
-    <group position-z={0.05} {...restProps}>
-      <mesh>
-        <boxBufferGeometry args={[0.17, 0.17, 0.05]} />
-        <animated.meshBasicMaterial color={color} />
-      </mesh>
+    <group {...restProps}>
+      {/*<mesh>*/}
+      {/*  <boxBufferGeometry args={[0.17, 0.17, 0.05]} />*/}
+      {/*  <animated.meshBasicMaterial color={color} />*/}
+      {/*</mesh>*/}
       <Interactable
         onHover={() => {
           if (active !== "position") {
@@ -104,11 +115,30 @@ export function Move(props: MoveProps) {
           }
         }}
       >
-        <mesh position-z={0.02}>
-          <boxBufferGeometry args={[0.15, 0.15, 0.05]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
+        <group scale={0.1} {...props} dispose={null} name="move-btn">
+          <animated.group position-z={posZ}>
+            <mesh
+              name="move"
+              geometry={nodes.move.geometry}
+              material={moveMat}
+            />
+          </animated.group>
+          <mesh name="move-click" geometry={nodes["move-click"].geometry}>
+            <animated.meshBasicMaterial color={color} />
+          </mesh>
+          <Text
+            position={[-0.75, -0.33, 0.075]}
+            fontSize={0.2}
+            color={COLORS.textPrimary}
+            textAlign="center"
+            name="move-btn-label"
+          >
+            Move
+          </Text>
+        </group>
       </Interactable>
     </group>
   );
 }
+
+useGLTF.preload(FILE_URL);
