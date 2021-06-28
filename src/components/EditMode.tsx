@@ -55,7 +55,7 @@ export function EditMode(props: EditProps) {
     }
   }, [edit]);
 
-  console.log(edit);
+  // console.log(edit);
   const { scale } = useSpring({
     scale: edit !== "" ? 20 : 0,
     config: {
@@ -71,7 +71,7 @@ export function EditMode(props: EditProps) {
     if (!group.current) return;
 
     // const intersection = raycaster.intersectObject(group.current, true)[0];
-    console.log(intersection.current);
+    // console.log(intersection.current);
     let idea: string | null;
     if (intersection.current) {
       idea = getIdea(intersection.current.object);
@@ -152,23 +152,23 @@ export function EditMode(props: EditProps) {
               ref={editor}
               name="Editor"
             >
-              <mesh>
-                <boxBufferGeometry args={[1, 0.25, 0.1]} />
-                <meshBasicMaterial color="white" />
-              </mesh>
-              <group name="selectedObject" position={[-0.4, 0.1, 0.06]}>
-                <Text fontSize={0.035} color="black" textAlign="left">
-                  Selected:
-                </Text>
-                <Text
-                  fontSize={0.035}
-                  color="red"
-                  textAlign="left"
-                  position-x={0.125}
-                >
-                  {edit}
-                </Text>
-              </group>
+              {/*<mesh>*/}
+              {/*  <boxBufferGeometry args={[1, 0.25, 0.1]} />*/}
+              {/*  <meshBasicMaterial color="white" />*/}
+              {/*</mesh>*/}
+              {/*<group name="selectedObject" position={[-0.4, 0.1, 0.06]}>*/}
+              {/*  <Text fontSize={0.035} color="black" textAlign="left">*/}
+              {/*    Selected:*/}
+              {/*  </Text>*/}
+              {/*  <Text*/}
+              {/*    fontSize={0.035}*/}
+              {/*    color="red"*/}
+              {/*    textAlign="left"*/}
+              {/*    position-x={0.125}*/}
+              {/*  >*/}
+              {/*    {edit}*/}
+              {/*  </Text>*/}
+              {/*</group>*/}
               <ControlManager />
             </animated.group>
           </RangeTool>
