@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Interactable, RangeTool } from "../modifiers";
 import { usePlayer } from "../core/contexts";
-import { Group, Object3D, Raycaster, Vector3 } from "three";
+import { Group, Intersection, Object3D, Raycaster, Vector3 } from "three";
 import { animated, useSpring } from "react-spring/three";
 import { useThree } from "@react-three/fiber";
 import { ControlManager } from "./BuilderTools";
@@ -48,6 +48,7 @@ export function EditMode(props: EditProps) {
   } = useThree();
   const [edit, setEdit] = useState<string>("");
   const [mouseDown, setMouseDown] = useState<string>("");
+  const intersection = useRef<Intersection>();
   const object = useMemo(() => {
     if (group.current) {
       return group.current.getObjectByName(edit);
@@ -69,17 +70,20 @@ export function EditMode(props: EditProps) {
   function handleClick(raycaster: Raycaster) {
     if (!group.current) return;
 
-    const intersection = raycaster.intersectObject(group.current, true)[0];
+    // const intersection = raycaster.intersectObject(group.current, true)[0];
+    console.log(intersection.current);
     let idea: string | null;
-    if (intersection) {
-      idea = getIdea(intersection.object);
+    if (intersection.current) {
+      idea = getIdea(intersection.current.object);
       if (idea === "Editor") {
         idea = edit;
       }
     } else {
       idea = null;
     }
-    contactPoint.current = intersection ? intersection.point : null;
+    contactPoint.current = intersection.current
+      ? intersection.current.point
+      : null;
 
     if (idea && idea !== "") {
       setEdit(idea);
@@ -91,14 +95,18 @@ export function EditMode(props: EditProps) {
   function handleMouseDown(raycaster: Raycaster) {
     if (!group.current) return;
 
-    const intersection = raycaster.intersectObject(group.current, true)[0];
-    const idea = intersection ? getIdea(intersection.object) : "";
-    contactPoint.current = intersection ? intersection.point : null;
+    intersection.current = raycaster.intersectObject(group.current, true)[0];
+    const idea = intersection.current
+      ? getIdea(intersection.current.object)
+      : "";
+    contactPoint.current = intersection.current
+      ? intersection.current.point
+      : null;
 
     if (idea && idea !== "") {
       setMouseDown(idea);
       if (isMobile) {
-        domElement.addEventListener("touchstart", onMouseUp);
+        domElement.addEventListener("touchend", onMouseUp);
       } else {
         domElement.addEventListener("mouseup", onMouseUp);
       }
