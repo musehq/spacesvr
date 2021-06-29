@@ -33,8 +33,8 @@ export function ControlManager() {
         <PublishModel scale={0.1} />
         <PlaceholderModel scale={0.1} />
         <PremaModel scale={0.1} />
-        <CloseModel scale={0.1} />
-        <TrashModel scale={0.1} />
+        {/*<CloseModel scale={0.1} />*/}
+        {/*<TrashModel scale={0.1} />*/}
         <UndoRedo />
         {/*<SchemaEditor active={active} />*/}
         <Move active={active} setActive={setActive} name="move" />

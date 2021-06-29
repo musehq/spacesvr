@@ -15,7 +15,7 @@ import { useThree } from "@react-three/fiber";
 import { ControlManager } from "./BuilderTools";
 import { Editor } from "./BuilderTools/types/types";
 import { isMobile } from "react-device-detect";
-import { Text } from "@react-three/drei";
+import { AltRangeTool } from "./BuilderTools/modifiers/AltRangeTool";
 
 type EditProps = {
   children: ReactNode;
@@ -70,8 +70,6 @@ export function EditMode(props: EditProps) {
   function handleClick(raycaster: Raycaster) {
     if (!group.current) return;
 
-    // const intersection = raycaster.intersectObject(group.current, true)[0];
-    // console.log(intersection.current);
     let idea: string | null;
     if (intersection.current) {
       idea = getIdea(intersection.current.object);
@@ -145,7 +143,15 @@ export function EditMode(props: EditProps) {
       >
         <group ref={group} name="scene">
           {children}
-          <RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>
+          <AltRangeTool
+            edit={edit}
+            editor={editor.current}
+            pos={[0, -0.5]}
+            distance={5}
+            range={1}
+            t={0.025}
+          >
+            {/*<RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>*/}
             <animated.group
               rotation-x={-0.25}
               scale={scale}
@@ -171,7 +177,7 @@ export function EditMode(props: EditProps) {
               {/*</group>*/}
               <ControlManager />
             </animated.group>
-          </RangeTool>
+          </AltRangeTool>
         </group>
       </Interactable>
     </EditorContext.Provider>
