@@ -1,6 +1,7 @@
 export const COLORS = {
   btnPrimary: "white",
   btnSecondary: "#34AAFE",
+  btnHovered: "#777777",
   btnSelected: "#55A630",
   textPrimary: "black",
   textSecondary: "white",

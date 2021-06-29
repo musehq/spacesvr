@@ -274,7 +274,6 @@ export function PremaModel(props: JSX.IntrinsicElements["group"]) {
   const group = useRef<THREE.Group>();
   const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
   const premaMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
-  const premaMatBack = new MeshBasicMaterial({ color: COLORS.btnSecondary });
   return (
     <group ref={group} {...props} dispose={null} name="prema">
       <mesh

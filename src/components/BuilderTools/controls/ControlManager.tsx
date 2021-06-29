@@ -29,14 +29,14 @@ export function ControlManager() {
         {/*<UndoModel scale={0.1} />*/}
         {/*<RedoModel scale={0.1} />*/}
         <HotbarModel scale={0.1} />
-        <HamburgerModel scale={0.1} />
+        {/*<HamburgerModel scale={0.1} />*/}
         <PublishModel scale={0.1} />
         <PlaceholderModel scale={0.1} />
-        <PremaModel scale={0.1} />
+        {/*<PremaModel scale={0.1} />*/}
         {/*<CloseModel scale={0.1} />*/}
         {/*<TrashModel scale={0.1} />*/}
         <UndoRedo />
-        {/*<SchemaEditor active={active} />*/}
+        <SchemaEditor active={active} />
         <Move active={active} setActive={setActive} name="move" />
         <Rotate active={active} setActive={setActive} name="rotate" />
         <Scale active={active} setActive={setActive} name="scale" />

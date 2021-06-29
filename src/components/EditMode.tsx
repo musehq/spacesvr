@@ -143,15 +143,15 @@ export function EditMode(props: EditProps) {
       >
         <group ref={group} name="scene">
           {children}
-          <AltRangeTool
-            edit={edit}
-            editor={editor.current}
-            pos={[0, -0.5]}
-            distance={5}
-            range={1}
-            t={0.025}
-          >
-            {/*<RangeTool pos={[0, -0.5]} distance={3} range={0.5} t={0.025}>*/}
+          {/*<AltRangeTool*/}
+          {/*  edit={edit}*/}
+          {/*  editor={editor.current}*/}
+          {/*  pos={[0, -0.5]}*/}
+          {/*  distance={5}*/}
+          {/*  range={1}*/}
+          {/*  t={0.025}*/}
+          {/*>*/}
+          <RangeTool pos={[0, -0.5]} distance={3} range={0.75} t={0.025}>
             <animated.group
               rotation-x={-0.25}
               scale={scale}
@@ -177,7 +177,7 @@ export function EditMode(props: EditProps) {
               {/*</group>*/}
               <ControlManager />
             </animated.group>
-          </AltRangeTool>
+          </RangeTool>
         </group>
       </Interactable>
     </EditorContext.Provider>

@@ -111,3 +111,4 @@ export function UndoRedo() {
     </group>
   );
 }
+useGLTF.preload(FILE_URL);

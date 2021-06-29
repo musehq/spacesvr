@@ -1,8 +1,8 @@
-import { Text } from "@react-three/drei";
+import { Text, useGLTF } from "@react-three/drei";
 import { TextInput } from "../../TextInput";
 import { useEditor } from "../../EditMode";
 import { useActions } from "../utilities/ActionHandler";
-import {
+import React, {
   Dispatch,
   SetStateAction,
   useEffect,
@@ -11,12 +11,14 @@ import {
   useState,
 } from "react";
 import { Interactable } from "../../../modifiers";
-import { Vector3 } from "three";
+import { MeshBasicMaterial, Vector3 } from "three";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { FacePlayer } from "../../../modifiers/FacePlayer";
 import { FileInput } from "../../FileInput";
 import { animated, useSpring } from "@react-spring/three";
-import { ControlType } from "../types/types";
+import { ControlType, GLTFResult } from "../types/types";
+import * as THREE from "three";
+import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
 
 type SchemaProps = {
   active: string | null;
@@ -26,15 +28,20 @@ export function SchemaEditor(props: SchemaProps) {
   const { active } = props;
   const [open, setOpen] = useState<boolean>(true);
   const [toggle, setToggle] = useState<boolean>(false);
+  const [optionsHover, setOHover] = useState<boolean>(false);
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const actions = useActions();
   const { camera } = useThree();
   const [value, setValue] = useState<string>(""),
     [enabled, setEnabled] = useState<boolean>(false);
-  const position = useRef<Vector3>(new Vector3(0, 0, 0));
-  const { scale, toggleScale } = useSpring({
-    scale: open ? 1 : 0,
+  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const premaMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
+  const hamburgerMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
+  const { scale, toggleScale, optionsColor, optionsPosZ } = useSpring({
+    scale: open ? HOTBAR_SCALE : 0,
     toggleScale: toggle ? 1 : 0,
+    optionsColor: optionsHover ? COLORS.btnHovered : COLORS.btnSecondary,
+    optionsPosZ: optionsHover ? 0.15 : 0,
     config: {
       mass: 1,
     },
@@ -50,90 +57,54 @@ export function SchemaEditor(props: SchemaProps) {
 
   return (
     <group name="premaPanel">
-      <animated.group
-        position={[0, 0.6, 0]}
-        rotation-x={0.25}
-        name="panel"
-        scale={scale}
-      >
-        <mesh>
-          <boxBufferGeometry args={[1, 0.75, 0.1]} />
-          <meshBasicMaterial color="white" opacity={0.75} transparent />
-        </mesh>
-        {/*<TextInput*/}
-        {/*  value={value}*/}
-        {/*  setValue={setValue}*/}
-        {/*  // enabled={true}*/}
-        {/*  position={[0.1, 0.15, 0.05]}*/}
-        {/*  inputType="text"*/}
-        {/*/>*/}
-        {/*<Interactable*/}
-        {/*  onClick={() => {*/}
-        {/*    if (!enabled) {*/}
-        {/*      setEnabled(true)*/}
-        {/*    }*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  <FacePlayer>*/}
-        {/*    <TextInput*/}
-        {/*      value={value}*/}
-        {/*      setValue={setValue}*/}
-        {/*      enabled={true}*/}
-        {/*      position-y={0.5}*/}
-        {/*      inputType="text"*/}
-        {/*    />*/}
-        {/*    <FileInput*/}
-        {/*      value={value}*/}
-        {/*      setValue={setValue}*/}
-        {/*      enabled={true}*/}
-        {/*      position-y={0.5}*/}
-        {/*    />*/}
-        {/*  </FacePlayer>*/}
-        {/*</Interactable>*/}
-        <Interactable
-          onClick={() => {
-            setOpen(false);
-            setToggle(true);
-          }}
-        >
-          <group
-            position={[0.325, -0.25, 0]}
-            scale={0.1}
-            name="premaPanelClose"
-          >
-            <mesh position-z={0.5}>
-              <boxBufferGeometry args={[2, 1, 0.1]} />
-              <meshBasicMaterial color="white" />
-            </mesh>
-            <Text fontSize={0.5} color="black" position={[-0.1, -0.05, 0.75]}>
-              Close
-            </Text>
-          </group>
-        </Interactable>
+      <animated.group name="panel" scale={scale}>
+        <group dispose={null} name="prema">
+          <mesh
+            name="prema"
+            geometry={nodes["prema-panel"].geometry}
+            material={premaMat}
+          />
+        </group>
       </animated.group>
       <Interactable
+        onHover={() => {
+          setOHover(true);
+        }}
+        onUnHover={() => {
+          setOHover(false);
+        }}
         onClick={() => {
-          setOpen(true);
-          setToggle(false);
+          setOpen(!open);
         }}
       >
-        <animated.group
-          position={[0, 0.2, 0.1]}
-          scale={toggleScale}
-          name="togglePremaPanel"
-        >
-          <group scale={[3, 1, 1]}>
-            <mesh>
-              <boxBufferGeometry args={[0.075, 0.08, 0.01]} />
-              <meshBasicMaterial color="black" />
+        <group name="premaPanelClose" scale={HOTBAR_SCALE}>
+          <group dispose={null} name="hamburger">
+            <animated.group position-z={optionsPosZ}>
+              <mesh
+                name="hamburger"
+                geometry={nodes.hamburger.geometry}
+                material={hamburgerMat}
+              />
+            </animated.group>
+            <mesh
+              name="hamburger-click"
+              geometry={nodes["props-click"].geometry}
+            >
+              <animated.meshBasicMaterial color={optionsColor} />
             </mesh>
-            <mesh>
-              <boxBufferGeometry args={[0.07, 0.07, 0.015]} />
-              <meshBasicMaterial color="white" />
-            </mesh>
+            <Text
+              position={[3.55, -0.33, 0.075]}
+              fontSize={0.2}
+              color={COLORS.textPrimary}
+              textAlign="center"
+              name="hamburger-btn-label"
+            >
+              Options
+            </Text>
           </group>
-        </animated.group>
+        </group>
       </Interactable>
     </group>
   );
 }
+useGLTF.preload(FILE_URL);
