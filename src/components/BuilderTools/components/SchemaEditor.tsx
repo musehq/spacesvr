@@ -29,19 +29,16 @@ export function SchemaEditor(props: SchemaProps) {
   const [open, setOpen] = useState<boolean>(true);
   const [toggle, setToggle] = useState<boolean>(false);
   const [optionsHover, setOHover] = useState<boolean>(false);
-  const { editObject, editor, mouseDown, intersection } = useEditor();
-  const actions = useActions();
-  const { camera } = useThree();
-  const [value, setValue] = useState<string>(""),
-    [enabled, setEnabled] = useState<boolean>(false);
+  const [trashHover, setTHover] = useState<boolean>(false);
+  const { editObject } = useEditor();
   const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
   const premaMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
   const hamburgerMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
-  const { scale, toggleScale, optionsColor, optionsPosZ } = useSpring({
+  const { scale, optionsColor, optionsPosZ, trashColor } = useSpring({
     scale: open ? HOTBAR_SCALE : 0,
-    toggleScale: toggle ? 1 : 0,
     optionsColor: optionsHover ? COLORS.btnHovered : COLORS.btnSecondary,
     optionsPosZ: optionsHover ? 0.15 : 0,
+    trashColor: trashHover ? COLORS.btnHovered : COLORS.textPrimary,
     config: {
       mass: 1,
     },
@@ -57,13 +54,60 @@ export function SchemaEditor(props: SchemaProps) {
 
   return (
     <group name="premaPanel">
-      <animated.group name="panel" scale={scale}>
+      <animated.group name="panel" scale={scale} rotation-x={0.25}>
         <group dispose={null} name="prema">
           <mesh
             name="prema"
             geometry={nodes["prema-panel"].geometry}
             material={premaMat}
           />
+          <Interactable
+            onHover={() => {
+              setTHover(true);
+            }}
+            onUnHover={() => {
+              setTHover(false);
+            }}
+          >
+            <mesh name="trash" geometry={nodes.trash.geometry}>
+              <animated.meshBasicMaterial color={trashColor} />
+            </mesh>
+          </Interactable>
+          <Interactable
+            onHover={() => {
+              setTHover(true);
+            }}
+            onUnHover={() => {
+              setTHover(false);
+            }}
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <mesh name="trash" geometry={nodes.close.geometry}>
+              <animated.meshBasicMaterial color={trashColor} />
+            </mesh>
+          </Interactable>
+          <Interactable
+            onHover={() => {
+              setTHover(true);
+            }}
+            onUnHover={() => {
+              setTHover(false);
+            }}
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <mesh name="trash" geometry={nodes.check.geometry}>
+              <animated.meshBasicMaterial color={trashColor} />
+            </mesh>
+          </Interactable>
+        </group>
+        <group name="premaContent" position={[-4.6, 4.54, 0.1]}>
+          <Text fontSize={0.25} color="red">
+            {editObject && editObject.name}
+          </Text>
         </group>
       </animated.group>
       <Interactable
