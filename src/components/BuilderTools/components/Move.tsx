@@ -11,7 +11,7 @@ import { Interactable } from "../../../modifiers";
 import { Matrix4, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import { useLimiter } from "../../../services";
 import { ControlType, GLTFResult } from "../types/types";
-import { COLORS, FILE_URL } from "../constants/constants";
+import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
 import { Text, useGLTF } from "@react-three/drei";
@@ -115,7 +115,7 @@ export function Move(props: MoveProps) {
           }
         }}
       >
-        <group scale={0.1} {...props} dispose={null} name="move-btn">
+        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="move-btn">
           <animated.group position-z={posZ}>
             <mesh
               name="move"

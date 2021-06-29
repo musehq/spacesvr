@@ -1,17 +1,32 @@
 import { useActions } from "../utilities/ActionHandler";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { useEditor } from "../../EditMode";
-import { useThree } from "@react-three/fiber";
-import { Action } from "../types/types";
-import { Text } from "@react-three/drei";
+import { Action, GLTFResult } from "../types/types";
+import { Text, useGLTF } from "@react-three/drei";
+import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
+import React, { useState } from "react";
+import { MeshBasicMaterial } from "three";
 
 export function UndoRedo() {
   const actions = useActions();
-  const { scene } = useThree();
-  const { undoOpacity, redoOpacity } = useSpring({
-    undoOpacity: actions.past.length === 0 ? 0.5 : 1,
-    redoOpacity: actions.future.length === 0 ? 0.5 : 1,
+  const [undoHover, setUHover] = useState<boolean>(false);
+  const [redoHover, setRHover] = useState<boolean>(false);
+  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const undoMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
+  const {
+    undoColor,
+    redoColor,
+    undoBColor,
+    redoBColor,
+    undoPosZ,
+    redoPosZ,
+  } = useSpring({
+    undoColor: actions.past.length === 0 ? "#AAAAAA" : "#8F0000",
+    redoColor: actions.future.length === 0 ? "#AAAAAA" : "#417E25",
+    undoBColor: undoHover ? "#777777" : COLORS.btnSecondary,
+    redoBColor: redoHover ? "#777777" : COLORS.btnSecondary,
+    undoPosZ: actions.past.length !== 0 && undoHover ? 0.15 : 0,
+    redoPosZ: actions.future.length !== 0 && redoHover ? 0.15 : 0,
     config: {
       mass: 1,
     },
@@ -30,57 +45,65 @@ export function UndoRedo() {
   }
 
   return (
-    <group scale={0.1} position={[-0.125, -0.2, 0]}>
+    <group scale={HOTBAR_SCALE}>
       <Interactable
+        onHover={() => {
+          setUHover(true);
+        }}
+        onUnHover={() => {
+          setUHover(false);
+        }}
         onClick={() => {
           undoRedo(true);
         }}
       >
-        <group name="undo">
-          <mesh>
-            <boxBufferGeometry args={[2, 1, 0.25]} />
-            <animated.meshBasicMaterial
-              color="red"
-              opacity={undoOpacity}
-              transparent
-            />
+        <group dispose={null} name="undo-btn">
+          <animated.group position-z={undoPosZ}>
+            <mesh name="undo" geometry={nodes.undo.geometry}>
+              <animated.meshBasicMaterial color={undoColor} />
+            </mesh>
+          </animated.group>
+          <mesh name="undo-click" geometry={nodes["undo-click"].geometry}>
+            <animated.meshBasicMaterial color={undoBColor} />
           </mesh>
-          <mesh position-z={0.1}>
-            <boxBufferGeometry args={[1.9, 0.9, 0.15]} />
-            <animated.meshBasicMaterial
-              color="white"
-              opacity={undoOpacity}
-              transparent
-            />
-          </mesh>
-          <Text fontSize={0.5} position-z={0.25} color="red">
+          <Text
+            position={[-1.65, -0.33, 0.075]}
+            fontSize={0.2}
+            color={COLORS.textPrimary}
+            textAlign="center"
+            name="undo-btn-label"
+          >
             Undo
           </Text>
         </group>
       </Interactable>
       <Interactable
+        onHover={() => {
+          setRHover(true);
+        }}
+        onUnHover={() => {
+          setRHover(false);
+        }}
         onClick={() => {
           undoRedo(false);
         }}
       >
-        <group position-x={2.5} name="redo">
-          <mesh>
-            <boxBufferGeometry args={[2, 1, 0.25]} />
-            <animated.meshBasicMaterial
-              color="green"
-              opacity={redoOpacity}
-              transparent
-            />
+        <group dispose={null} name="redo">
+          <animated.group position-z={redoPosZ}>
+            <mesh name="redo" geometry={nodes.redo.geometry}>
+              <animated.meshBasicMaterial color={redoColor} />
+            </mesh>
+          </animated.group>
+          <mesh name="redo-click" geometry={nodes["redo-click"].geometry}>
+            <animated.meshBasicMaterial color={redoBColor} />
           </mesh>
-          <mesh position-z={0.1}>
-            <boxBufferGeometry args={[1.9, 0.9, 0.15]} />
-            <animated.meshBasicMaterial
-              color="white"
-              opacity={undoOpacity}
-              transparent
-            />
-          </mesh>
-          <Text fontSize={0.5} position-z={0.25} color="green">
+          <Text
+            position={[-2.35, -0.33, 0.075]}
+            fontSize={0.2}
+            color={COLORS.textPrimary}
+            textAlign="center"
+            name="redo-btn-label"
+          >
             Redo
           </Text>
         </group>

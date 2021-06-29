@@ -1,13 +1,22 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
-import { Matrix4, Object3D, Quaternion, Vector2, Vector3 } from "three";
+import {
+  Matrix4,
+  MeshBasicMaterial,
+  Object3D,
+  Quaternion,
+  Vector2,
+  Vector3,
+} from "three";
 import { useLimiter } from "../../../services";
-import { ControlType } from "../types/types";
+import { ControlType, GLTFResult } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
 import { useEnvironment } from "../../../core/contexts";
+import { Text, useGLTF } from "@react-three/drei";
+import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -25,20 +34,23 @@ export function Scale(props: MoveProps) {
   const contactPoint = useRef<Vector3>(new Vector3());
   const objectScale = useRef<Vector3>(new Vector3());
   const cameraRot = useRef<Vector3>(new Vector3());
-  const editDist = useRef<number>(0);
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const {
     gl: { domElement },
     camera,
   } = useThree();
   const actions = useActions();
+  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const scaleMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
 
-  const { color } = useSpring({
-    color: hover
-      ? "rgba(150, 150, 150, 1)"
-      : active === "scale"
-      ? "rgba(0, 150, 0, 1)"
-      : "rgba(0, 0, 0, 1)",
+  const { color, posZ } = useSpring({
+    color:
+      active === "scale"
+        ? COLORS.btnSelected
+        : hover
+        ? "#777777"
+        : COLORS.btnSecondary,
+    posZ: active === "scale" ? 0.15 : 0,
     config: {
       mass: 1,
     },
@@ -106,11 +118,7 @@ export function Scale(props: MoveProps) {
   });
 
   return (
-    <group position-z={0.05} {...restProps}>
-      <mesh>
-        <boxBufferGeometry args={[0.17, 0.17, 0.05]} />
-        <animated.meshBasicMaterial color={color} />
-      </mesh>
+    <group {...restProps}>
       <Interactable
         onHover={() => {
           if (active !== "scale") {
@@ -131,10 +139,27 @@ export function Scale(props: MoveProps) {
           }
         }}
       >
-        <mesh position-z={0.02}>
-          <boxBufferGeometry args={[0.15, 0.15, 0.05]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
+        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="scale-btn">
+          <animated.group position-z={posZ}>
+            <mesh
+              name="scale"
+              geometry={nodes.size.geometry}
+              material={scaleMat}
+            />
+          </animated.group>
+          <mesh name="scale-click" geometry={nodes["scale-click"].geometry}>
+            <animated.meshBasicMaterial color={color} />
+          </mesh>
+          <Text
+            position={[0.65, -0.33, 0.075]}
+            fontSize={0.2}
+            color={COLORS.textPrimary}
+            textAlign="center"
+            name="scale-btn-label"
+          >
+            Scale
+          </Text>
+        </group>
       </Interactable>
     </group>
   );

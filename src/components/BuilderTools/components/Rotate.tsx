@@ -1,13 +1,20 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { GroupProps, useFrame, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "react-spring/three";
 import { Interactable } from "../../../modifiers";
 import { useLimiter } from "../../../services";
-import { ControlType } from "../types/types";
+import { ControlType, GLTFResult } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
-import { Matrix4, Quaternion, Vector3 } from "three";
-import { Text } from "@react-three/drei";
+import { Matrix4, MeshBasicMaterial, Quaternion, Vector3 } from "three";
+import { Text, useGLTF } from "@react-three/drei";
+import { COLORS, HOTBAR_SCALE, FILE_URL } from "../constants/constants";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -22,18 +29,19 @@ export function Rotate(props: MoveProps) {
   const actionRecorded = useRef<boolean>(false);
   const { camera } = useThree();
   const objectRot = useRef<Vector3>(new Vector3());
-  const initRot = useRef<Vector3 | null>(new Vector3());
   const cameraRot = useRef(new Vector3());
   const { editObject, editor, mouseDown, intersection } = useEditor();
   const actions = useActions();
-  const vecLength = 5;
+  const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
+  const rotateMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
 
-  const { color, colorX, colorY, colorZ, scale } = useSpring({
-    color: hover
-      ? "rgba(150, 150, 150, 1)"
-      : active === "rotation"
-      ? "rgba(0, 150, 0, 1)"
-      : "rgba(0, 0, 0, 1)",
+  const { color, colorX, colorY, colorZ, scale, posZ } = useSpring({
+    color:
+      active === "rotation"
+        ? COLORS.btnSelected
+        : hover
+        ? "#777777"
+        : COLORS.btnSecondary,
     colorX:
       hoverAxis === "x"
         ? "rgba(150, 150, 150, 1)"
@@ -53,6 +61,7 @@ export function Rotate(props: MoveProps) {
         ? "rgba(0, 150, 0, 1)"
         : "rgba(0, 0, 255, 1)",
     scale: active === "rotation" ? 0.1 : 0,
+    posZ: active === "rotation" ? 0.15 : 0,
     config: {
       mass: 1,
     },
@@ -71,19 +80,17 @@ export function Rotate(props: MoveProps) {
       editor.scale.x > 15
     ) {
       if (!actionRecorded.current) {
-        const rotVec = new Vector3();
-        editObject.getWorldDirection(rotVec);
-        actions.add({
-          target: editObject,
-          attribute: "rotation",
-          value: rotVec,
-        });
         actionRecorded.current = true;
         objectRot.current = new Vector3(
           editObject.rotation.x,
           editObject.rotation.y,
           editObject.rotation.z
         );
+        actions.add({
+          target: editObject,
+          attribute: "rotation",
+          value: objectRot.current,
+        });
         cameraRot.current = new Vector3(
           camera.rotation.x,
           camera.rotation.y,
@@ -121,11 +128,7 @@ export function Rotate(props: MoveProps) {
   }, [active]);
 
   return (
-    <group position-z={0.05} {...restProps}>
-      <mesh>
-        <boxBufferGeometry args={[0.17, 0.17, 0.05]} />
-        <animated.meshBasicMaterial color={color} />
-      </mesh>
+    <group {...restProps}>
       <Interactable
         onHover={() => {
           if (active !== "rotation") {
@@ -144,10 +147,27 @@ export function Rotate(props: MoveProps) {
           }
         }}
       >
-        <mesh position-z={0.02}>
-          <boxBufferGeometry args={[0.15, 0.15, 0.05]} />
-          <meshBasicMaterial color="white" />
-        </mesh>
+        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="rotate-btn">
+          <animated.group position-z={posZ}>
+            <mesh
+              name="rotate"
+              geometry={nodes.rotate.geometry}
+              material={rotateMat}
+            />
+          </animated.group>
+          <mesh name="rotate-click" geometry={nodes["rotate-click"].geometry}>
+            <animated.meshBasicMaterial color={color} />
+          </mesh>
+          <Text
+            position={[-0.05, -0.33, 0.075]}
+            fontSize={0.2}
+            color={COLORS.textPrimary}
+            textAlign="center"
+            name="rotate-btn-label"
+          >
+            Rotate
+          </Text>
+        </group>
       </Interactable>
       <animated.group name="axisControl" scale={scale} position-y={0.225}>
         <Interactable
@@ -250,3 +270,4 @@ export function Rotate(props: MoveProps) {
     </group>
   );
 }
+useGLTF.preload(FILE_URL);
