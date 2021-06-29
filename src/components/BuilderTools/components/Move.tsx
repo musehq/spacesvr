@@ -37,7 +37,7 @@ export function Move(props: MoveProps) {
       active === "position"
         ? COLORS.btnSelected
         : hover
-        ? "#777777"
+        ? COLORS.btnHovered
         : COLORS.btnSecondary,
     posZ: active === "position" ? 0.15 : 0,
     config: {

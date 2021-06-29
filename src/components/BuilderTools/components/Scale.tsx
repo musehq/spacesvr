@@ -48,7 +48,7 @@ export function Scale(props: MoveProps) {
       active === "scale"
         ? COLORS.btnSelected
         : hover
-        ? "#777777"
+        ? COLORS.btnHovered
         : COLORS.btnSecondary,
     posZ: active === "scale" ? 0.15 : 0,
     config: {

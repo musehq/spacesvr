@@ -3,3 +3,4 @@ export * from "./Rotate";
 export * from "./Scale";
 export * from "./UndoRedo";
 export * from "./SchemaEditor";
+export * from "./Publish";

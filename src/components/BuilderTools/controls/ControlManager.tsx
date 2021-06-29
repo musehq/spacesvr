@@ -1,4 +1,11 @@
-import { Move, Rotate, Scale, SchemaEditor, UndoRedo } from "../components";
+import {
+  Move,
+  Rotate,
+  Scale,
+  SchemaEditor,
+  UndoRedo,
+  Publish,
+} from "../components";
 import { useState } from "react";
 import { ControlType } from "../types/types";
 import { ActionHandler } from "../utilities/ActionHandler";
@@ -30,7 +37,7 @@ export function ControlManager() {
         {/*<RedoModel scale={0.1} />*/}
         <HotbarModel scale={0.1} />
         {/*<HamburgerModel scale={0.1} />*/}
-        <PublishModel scale={0.1} />
+        {/*<PublishModel scale={0.1} />*/}
         <PlaceholderModel scale={0.1} />
         {/*<PremaModel scale={0.1} />*/}
         {/*<CloseModel scale={0.1} />*/}
@@ -40,6 +47,7 @@ export function ControlManager() {
         <Move active={active} setActive={setActive} name="move" />
         <Rotate active={active} setActive={setActive} name="rotate" />
         <Scale active={active} setActive={setActive} name="scale" />
+        <Publish />
       </group>
     </ActionHandler>
   );

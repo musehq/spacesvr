@@ -40,7 +40,7 @@ export function Rotate(props: MoveProps) {
       active === "rotation"
         ? COLORS.btnSelected
         : hover
-        ? "#777777"
+        ? COLORS.btnHovered
         : COLORS.btnSecondary,
     colorX:
       hoverAxis === "x"

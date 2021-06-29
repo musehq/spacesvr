@@ -23,8 +23,8 @@ export function UndoRedo() {
   } = useSpring({
     undoColor: actions.past.length === 0 ? "#AAAAAA" : "#8F0000",
     redoColor: actions.future.length === 0 ? "#AAAAAA" : "#417E25",
-    undoBColor: undoHover ? "#777777" : COLORS.btnSecondary,
-    redoBColor: redoHover ? "#777777" : COLORS.btnSecondary,
+    undoBColor: undoHover ? COLORS.btnHovered : COLORS.btnSecondary,
+    redoBColor: redoHover ? COLORS.btnHovered : COLORS.btnSecondary,
     undoPosZ: actions.past.length !== 0 && undoHover ? 0.15 : 0,
     redoPosZ: actions.future.length !== 0 && redoHover ? 0.15 : 0,
     config: {
