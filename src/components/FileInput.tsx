@@ -1,32 +1,51 @@
 import { RoundedBox, Text } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { GroupProps, useThree } from "@react-three/fiber";
+import { Ref, useEffect, useMemo, useRef, useState } from "react";
 import { animated, useSpring } from "react-spring/three";
-import { useEnvironment, usePlayer } from "../core/contexts";
 import { Interactable } from "../modifiers";
-import { Vector3 } from "three";
+import { useEnvironment, usePlayer } from "../core/contexts";
+import { BufferGeometry, Group, Material, Mesh, Vector3 } from "three";
+import {
+  CSS3DRenderer,
+  CSS3DObject,
+} from "three/examples/jsm/renderers/CSS3DRenderer";
 
-type TextProps = {
-  value: string;
-  setValue: (s: string) => void;
+type FileProps = {
   enabled?: boolean;
 } & GroupProps;
 
 const FONT_FILE =
   "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf";
 
-export function FileInput(props: TextProps) {
-  const { value, setValue, enabled = true, ...rest } = props;
+export function FileInput(props: FileProps) {
+  const { enabled = true, ...rest } = props;
 
   const { paused, device } = useEnvironment();
   const { controls, velocity } = usePlayer();
   const inputRef = useRef<HTMLInputElement>();
+  const rBox = useRef<
+    Mesh<BufferGeometry, Material | Material[]> | undefined
+  >();
   const [focused, setFocused] = useState(false);
   const [cursorPos, setCursorPos] = useState<number | null>(null);
   const protectClick = useRef(false); // used to click off of the input to blur
   const textRef = useRef<any>();
+  const { scene } = useThree();
+  const selectedFile = useMemo(() => {
+    if (inputRef.current && inputRef.current?.files?.length !== 0) {
+      // @ts-ignore
+      return inputRef.current.files[0].name;
+    }
+  }, [inputRef.current, inputRef?.current?.files]);
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
+
+  const renderer = new CSS3DRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  if (document.getElementById("container")) {
+    // @ts-ignore
+    document.getElementById("container").appendChild(renderer.domElement);
+  }
 
   useEffect(() => {
     if (!inputRef.current && enabled) {
@@ -44,7 +63,6 @@ export function FileInput(props: TextProps) {
       inputRef.current.addEventListener("blur", () => setFocused(false));
 
       setCursorPos(inputRef.current.selectionStart);
-      setValue(inputRef.current.value);
 
       document.body.appendChild(inputRef.current);
 
@@ -80,27 +98,19 @@ export function FileInput(props: TextProps) {
         if (!protectClick.current && inputRef.current) {
           inputRef.current.blur();
         } else if (inputRef.current) {
-          inputRef.current.focus();
+          inputRef.current.click();
         }
         protectClick.current = false;
-      };
-
-      const onKeyup = (e: KeyboardEvent) => {
-        if (!focused || !inputRef.current) return;
-        setCursorPos(inputRef.current.selectionStart);
-        setValue(inputRef.current.value);
       };
 
       const onSelectionChange = () =>
         setCursorPos(inputRef?.current?.selectionStart || null);
 
       document.addEventListener("click", onDocClick);
-      document.addEventListener("keyup", onKeyup);
       document.addEventListener("selectionchange", onSelectionChange);
 
       return () => {
         document.removeEventListener("click", onDocClick);
-        document.removeEventListener("keyup", onKeyup);
         document.removeEventListener("selectionchange", onSelectionChange);
       };
     }
@@ -130,15 +140,20 @@ export function FileInput(props: TextProps) {
     sdfGlyphSize: 16,
   };
 
-  const displayValue =
-    cursorPos !== null && focused
-      ? value.substring(0, cursorPos) + "|" + value.substring(cursorPos)
-      : value;
-
   const percWidth =
     textRef.current?._textRenderInfo?.blockBounds[2] / INNER_WIDTH;
-  const percCursor = (cursorPos || 0) / displayValue.length;
+  const percCursor = cursorPos || 0;
   const offsetX = Math.max(percCursor * percWidth - 1 + 0.1, 0) * OUTER_WIDTH;
+  const offset = selectedFile ? textRef.current.geometry.x : 0;
+
+  useEffect(() => {
+    if (textRef.current && inputRef.current) {
+      // @ts-ignore
+      if (inputRef.current.files[0] && textRef.current.color === "black") {
+        textRef.current.color = "green";
+      }
+    }
+  });
 
   return (
     <group name="input" {...rest}>
@@ -146,7 +161,7 @@ export function FileInput(props: TextProps) {
         ref={textRef}
         {...textStyles}
         position-z={0.051}
-        position-x={-INNER_WIDTH / 2 - offsetX}
+        position-x={-INNER_WIDTH / 2 + 0.175}
         clipRect={[
           -PADDING_X + offsetX,
           -Infinity,
@@ -154,21 +169,38 @@ export function FileInput(props: TextProps) {
           Infinity,
         ]}
       >
-        {displayValue}
+        {selectedFile ? selectedFile : "Upload Image"}
       </Text>
       <Interactable onClick={() => focusInput()}>
-        <RoundedBox args={[0.7, 0.1, 0.1]} radius={0.025} smoothness={4}>
+        <RoundedBox args={[0.35, 0.1, 0.1]} radius={0.025} smoothness={4}>
           <meshStandardMaterial color="white" />
         </RoundedBox>
       </Interactable>
       <RoundedBox
-        args={[0.7 + BORDER, 0.1 + BORDER, 0.1]}
+        args={[0.35 + BORDER, 0.1 + BORDER, 0.1]}
         radius={0.025}
         smoothness={4}
         position-z={-0.001}
       >
         <animated.meshStandardMaterial color={color} />
       </RoundedBox>
+      {/*<Text*/}
+      {/*  ref={textRef}*/}
+      {/*  {...textStyles}*/}
+      {/*  color="green"*/}
+      {/*  textAlign="center"*/}
+      {/*  position-z={0.01}*/}
+      {/*  position-y={-0.085}*/}
+      {/*  position-x={-INNER_WIDTH / 2 + 0.15}*/}
+      {/*  clipRect={[*/}
+      {/*    -PADDING_X + offsetX,*/}
+      {/*    -Infinity,*/}
+      {/*    INNER_WIDTH + PADDING_X + offsetX,*/}
+      {/*    Infinity,*/}
+      {/*  ]}*/}
+      {/*>*/}
+      {/*  {selectedFile}*/}
+      {/*</Text>*/}
     </group>
   );
 }

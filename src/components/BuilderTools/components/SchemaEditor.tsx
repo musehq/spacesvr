@@ -19,6 +19,7 @@ import { animated, useSpring } from "@react-spring/three";
 import { ControlType, GLTFResult } from "../types/types";
 import * as THREE from "three";
 import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
+import { PropsHandler } from "./PropsHandler";
 
 type SchemaProps = {
   active: string | null;
@@ -30,7 +31,6 @@ export function SchemaEditor(props: SchemaProps) {
   const [toggle, setToggle] = useState<boolean>(false);
   const [optionsHover, setOHover] = useState<boolean>(false);
   const [trashHover, setTHover] = useState<boolean>(false);
-  const [value, setValue] = useState<string>("");
   const { editObject } = useEditor();
   const { nodes, materials } = useGLTF(FILE_URL) as GLTFResult;
   const premaMat = new MeshBasicMaterial({ color: COLORS.btnPrimary });
@@ -109,13 +109,7 @@ export function SchemaEditor(props: SchemaProps) {
           <Text fontSize={0.25} color="red">
             {editObject && editObject.name}
           </Text>
-          <TextInput
-            value={value}
-            setValue={setValue}
-            position-y={-1}
-            scale={3}
-            name="input"
-          />
+          <PropsHandler />
         </group>
       </animated.group>
       <Interactable

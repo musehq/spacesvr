@@ -9,20 +9,7 @@ import {
 import { useState } from "react";
 import { ControlType } from "../types/types";
 import { ActionHandler } from "../utilities/ActionHandler";
-import Hotbar, {
-  HamburgerModel,
-  HotbarModel,
-  MoveModel,
-  RedoModel,
-  RotateModel,
-  ScaleModel,
-  UndoModel,
-  PublishModel,
-  PlaceholderModel,
-  PremaModel,
-  CloseModel,
-  TrashModel,
-} from "../models/Hotbar";
+import { HotbarModel } from "../models/Hotbar";
 
 export function ControlManager() {
   const [active, setActive] = useState<ControlType>(null);
