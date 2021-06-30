@@ -109,7 +109,7 @@ export function SchemaEditor(props: SchemaProps) {
           <Text fontSize={0.25} color="red">
             {editObject && editObject.name}
           </Text>
-          <PropsHandler />
+          <PropsHandler open={open} />
         </group>
       </animated.group>
       <Interactable

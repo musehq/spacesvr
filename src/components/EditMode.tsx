@@ -55,7 +55,6 @@ export function EditMode(props: EditProps) {
     }
   }, [edit]);
 
-  console.log(edit);
   const { scale } = useSpring({
     scale: edit !== "" ? 20 : 0,
     config: {

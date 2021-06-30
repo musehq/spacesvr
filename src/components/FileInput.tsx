@@ -9,16 +9,18 @@ import {
   CSS3DRenderer,
   CSS3DObject,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
+import { useEditor } from "./EditMode";
 
 type FileProps = {
   enabled?: boolean;
+  open: boolean;
 } & GroupProps;
 
 const FONT_FILE =
   "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf";
 
 export function FileInput(props: FileProps) {
-  const { enabled = true, ...rest } = props;
+  const { enabled = true, open, ...rest } = props;
 
   const { paused, device } = useEnvironment();
   const { controls, velocity } = usePlayer();
@@ -27,10 +29,13 @@ export function FileInput(props: FileProps) {
     Mesh<BufferGeometry, Material | Material[]> | undefined
   >();
   const [focused, setFocused] = useState(false);
+  const { editObject } = useEditor();
+  const [idea, setIdea] = useState<string | null>(
+    editObject ? editObject.name : null
+  );
   const [cursorPos, setCursorPos] = useState<number | null>(null);
   const protectClick = useRef(false); // used to click off of the input to blur
   const textRef = useRef<any>();
-  const { scene } = useThree();
   const selectedFile = useMemo(() => {
     if (inputRef.current && inputRef.current?.files?.length !== 0) {
       // @ts-ignore
@@ -40,17 +45,14 @@ export function FileInput(props: FileProps) {
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
 
-  const renderer = new CSS3DRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  if (document.getElementById("container")) {
-    // @ts-ignore
-    document.getElementById("container").appendChild(renderer.domElement);
-  }
-
   useEffect(() => {
     if (!inputRef.current && enabled) {
       inputRef.current = document.createElement("input");
       inputRef.current.setAttribute("type", "file");
+      inputRef.current.setAttribute(
+        "accept",
+        "image/png, image/jpeg, image/jpg"
+      );
       inputRef.current.style.zIndex = "-99";
       inputRef.current.style.opacity = "0";
       inputRef.current.style.fontSize = "16px"; // this disables zoom on mobile
@@ -74,7 +76,7 @@ export function FileInput(props: FileProps) {
         }
       };
     }
-  }, [enabled]);
+  }, [enabled, editObject]);
 
   useEffect(() => {
     if (focused) {
@@ -149,11 +151,22 @@ export function FileInput(props: FileProps) {
   useEffect(() => {
     if (textRef.current && inputRef.current) {
       // @ts-ignore
-      if (inputRef.current.files[0] && textRef.current.color === "black") {
+      if (selectedFile && textRef.current.color === "black") {
         textRef.current.color = "green";
+      } else {
+        textRef.current.color = "black";
       }
     }
-  });
+  }, [textRef.current, inputRef.current, inputRef?.current?.files]);
+
+  useEffect(() => {
+    // @ts-ignore
+    if (editObject && idea !== editObject.name) {
+      // @ts-ignore
+      inputRef.current.value = null;
+      setIdea(editObject.name);
+    }
+  }, [editObject]);
 
   return (
     <group name="input" {...rest}>
@@ -162,9 +175,9 @@ export function FileInput(props: FileProps) {
         {...textStyles}
         position-z={0.051}
         position-x={-INNER_WIDTH / 2 + 0.175}
-        clipRect={[-PADDING_X + offsetX, -Infinity, 0.3, Infinity]}
+        clipRect={[-PADDING_X + offsetX, -Infinity, 0.275, Infinity]}
       >
-        {selectedFile ? selectedFile : "Upload Image"}
+        {selectedFile && open ? selectedFile : "Upload Image"}
       </Text>
       <Interactable onClick={() => focusInput()}>
         <RoundedBox args={[0.35, 0.1, 0.1]} radius={0.025} smoothness={4}>
@@ -179,23 +192,6 @@ export function FileInput(props: FileProps) {
       >
         <animated.meshStandardMaterial color={color} />
       </RoundedBox>
-      {/*<Text*/}
-      {/*  ref={textRef}*/}
-      {/*  {...textStyles}*/}
-      {/*  color="green"*/}
-      {/*  textAlign="center"*/}
-      {/*  position-z={0.01}*/}
-      {/*  position-y={-0.085}*/}
-      {/*  position-x={-INNER_WIDTH / 2 + 0.15}*/}
-      {/*  clipRect={[*/}
-      {/*    -PADDING_X + offsetX,*/}
-      {/*    -Infinity,*/}
-      {/*    INNER_WIDTH + PADDING_X + offsetX,*/}
-      {/*    Infinity,*/}
-      {/*  ]}*/}
-      {/*>*/}
-      {/*  {selectedFile}*/}
-      {/*</Text>*/}
     </group>
   );
 }
