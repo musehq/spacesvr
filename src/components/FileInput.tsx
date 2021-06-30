@@ -162,12 +162,7 @@ export function FileInput(props: FileProps) {
         {...textStyles}
         position-z={0.051}
         position-x={-INNER_WIDTH / 2 + 0.175}
-        clipRect={[
-          -PADDING_X + offsetX,
-          -Infinity,
-          INNER_WIDTH + PADDING_X + offsetX,
-          Infinity,
-        ]}
+        clipRect={[-PADDING_X + offsetX, -Infinity, 0.3, Infinity]}
       >
         {selectedFile ? selectedFile : "Upload Image"}
       </Text>
