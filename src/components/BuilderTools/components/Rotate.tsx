@@ -11,7 +11,7 @@ import { Interactable } from "../../../modifiers";
 import { useLimiter } from "../../../services";
 import { ControlType, GLTFResult } from "../types/types";
 import { useActions } from "../utilities/ActionHandler";
-import { useEditor } from "../../EditMode";
+import { useEditor } from "../index";
 import { Matrix4, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import { Text, useGLTF } from "@react-three/drei";
 import { COLORS, HOTBAR_SCALE, FILE_URL } from "../constants/constants";

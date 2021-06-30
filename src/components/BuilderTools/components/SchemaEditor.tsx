@@ -1,6 +1,6 @@
 import { Text, useGLTF } from "@react-three/drei";
 import { TextInput } from "../../TextInput";
-import { useEditor } from "../../EditMode";
+import { useEditor } from "../index";
 import { useActions } from "../utilities/ActionHandler";
 import React, {
   Dispatch,

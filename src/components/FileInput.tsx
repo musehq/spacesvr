@@ -9,7 +9,7 @@ import {
   CSS3DRenderer,
   CSS3DObject,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
-import { useEditor } from "./EditMode";
+import { useEditor } from "./BuilderTools";
 
 type FileProps = {
   enabled?: boolean;

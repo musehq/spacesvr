@@ -13,7 +13,7 @@ import { useLimiter } from "../../../services";
 import { ControlType, GLTFResult } from "../types/types";
 import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
 import { useActions } from "../utilities/ActionHandler";
-import { useEditor } from "../../EditMode";
+import { useEditor } from "../index";
 import { Text, useGLTF } from "@react-three/drei";
 import { ButtonHitbox } from "../utilities/ButtonHitbox";
 
