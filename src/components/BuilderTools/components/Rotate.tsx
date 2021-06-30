@@ -15,6 +15,7 @@ import { useEditor } from "../../EditMode";
 import { Matrix4, MeshBasicMaterial, Quaternion, Vector3 } from "three";
 import { Text, useGLTF } from "@react-three/drei";
 import { COLORS, HOTBAR_SCALE, FILE_URL } from "../constants/constants";
+import { ButtonHitbox } from "../utilities/ButtonHitbox";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -147,28 +148,33 @@ export function Rotate(props: MoveProps) {
           }
         }}
       >
-        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="rotate-btn">
-          <animated.group position-z={posZ}>
-            <mesh
-              name="rotate"
-              geometry={nodes.rotate.geometry}
-              material={rotateMat}
-            />
-          </animated.group>
-          <mesh name="rotate-click" geometry={nodes["rotate-click"].geometry}>
-            <animated.meshBasicMaterial color={color} />
-          </mesh>
-          <Text
-            position={[-0.05, -0.33, 0.075]}
-            fontSize={0.2}
-            color={COLORS.textPrimary}
-            textAlign="center"
-            name="rotate-btn-label"
-          >
-            Rotate
-          </Text>
-        </group>
+        <ButtonHitbox
+          position={[-0.005, 0.0125, 0.01]}
+          scale={HOTBAR_SCALE}
+          name="hitbox"
+        />
       </Interactable>
+      <group scale={HOTBAR_SCALE} {...props} dispose={null} name="rotate-btn">
+        <animated.group position-z={posZ}>
+          <mesh
+            name="rotate"
+            geometry={nodes.rotate.geometry}
+            material={rotateMat}
+          />
+        </animated.group>
+        <mesh name="rotate-click" geometry={nodes["rotate-click"].geometry}>
+          <animated.meshBasicMaterial color={color} />
+        </mesh>
+        <Text
+          position={[-0.05, -0.33, 0.075]}
+          fontSize={0.2}
+          color={COLORS.textPrimary}
+          textAlign="center"
+          name="rotate-btn-label"
+        >
+          Rotate
+        </Text>
+      </group>
       <animated.group name="axisControl" scale={scale} position-y={0.225}>
         <Interactable
           onHover={() => {

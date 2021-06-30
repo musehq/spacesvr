@@ -67,7 +67,7 @@ export function UndoRedo() {
             <animated.meshBasicMaterial color={undoBColor} />
           </mesh>
           <Text
-            position={[-1.65, -0.33, 0.075]}
+            position={[-2.35, -0.33, 0.075]}
             fontSize={0.2}
             color={COLORS.textPrimary}
             textAlign="center"
@@ -98,7 +98,7 @@ export function UndoRedo() {
             <animated.meshBasicMaterial color={redoBColor} />
           </mesh>
           <Text
-            position={[-2.35, -0.33, 0.075]}
+            position={[-1.65, -0.33, 0.075]}
             fontSize={0.2}
             color={COLORS.textPrimary}
             textAlign="center"

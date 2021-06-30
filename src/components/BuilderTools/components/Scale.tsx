@@ -17,6 +17,7 @@ import { useEditor } from "../../EditMode";
 import { useEnvironment } from "../../../core/contexts";
 import { Text, useGLTF } from "@react-three/drei";
 import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
+import { ButtonHitbox } from "../utilities/ButtonHitbox";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -139,28 +140,33 @@ export function Scale(props: MoveProps) {
           }
         }}
       >
-        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="scale-btn">
-          <animated.group position-z={posZ}>
-            <mesh
-              name="scale"
-              geometry={nodes.size.geometry}
-              material={scaleMat}
-            />
-          </animated.group>
-          <mesh name="scale-click" geometry={nodes["scale-click"].geometry}>
-            <animated.meshBasicMaterial color={color} />
-          </mesh>
-          <Text
-            position={[0.65, -0.33, 0.075]}
-            fontSize={0.2}
-            color={COLORS.textPrimary}
-            textAlign="center"
-            name="scale-btn-label"
-          >
-            Scale
-          </Text>
-        </group>
+        <ButtonHitbox
+          position={[0.065, 0.0125, 0.01]}
+          scale={HOTBAR_SCALE}
+          name="hitbox"
+        />
       </Interactable>
+      <group scale={HOTBAR_SCALE} {...props} dispose={null} name="scale-btn">
+        <animated.group position-z={posZ}>
+          <mesh
+            name="scale"
+            geometry={nodes.size.geometry}
+            material={scaleMat}
+          />
+        </animated.group>
+        <mesh name="scale-click" geometry={nodes["scale-click"].geometry}>
+          <animated.meshBasicMaterial color={color} />
+        </mesh>
+        <Text
+          position={[0.65, -0.33, 0.075]}
+          fontSize={0.2}
+          color={COLORS.textPrimary}
+          textAlign="center"
+          name="scale-btn-label"
+        >
+          Scale
+        </Text>
+      </group>
     </group>
   );
 }

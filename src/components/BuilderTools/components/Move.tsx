@@ -15,6 +15,7 @@ import { COLORS, FILE_URL, HOTBAR_SCALE } from "../constants/constants";
 import { useActions } from "../utilities/ActionHandler";
 import { useEditor } from "../../EditMode";
 import { Text, useGLTF } from "@react-three/drei";
+import { ButtonHitbox } from "../utilities/ButtonHitbox";
 
 type MoveProps = {
   setActive: Dispatch<SetStateAction<ControlType>>;
@@ -115,28 +116,29 @@ export function Move(props: MoveProps) {
           }
         }}
       >
-        <group scale={HOTBAR_SCALE} {...props} dispose={null} name="move-btn">
-          <animated.group position-z={posZ}>
-            <mesh
-              name="move"
-              geometry={nodes.move.geometry}
-              material={moveMat}
-            />
-          </animated.group>
-          <mesh name="move-click" geometry={nodes["move-click"].geometry}>
-            <animated.meshBasicMaterial color={color} />
-          </mesh>
-          <Text
-            position={[-0.75, -0.33, 0.075]}
-            fontSize={0.2}
-            color={COLORS.textPrimary}
-            textAlign="center"
-            name="move-btn-label"
-          >
-            Move
-          </Text>
-        </group>
+        <ButtonHitbox
+          position={[-0.075, 0.0125, 0.01]}
+          scale={HOTBAR_SCALE}
+          name="hitbox"
+        />
       </Interactable>
+      <group scale={HOTBAR_SCALE} {...props} dispose={null} name="move-btn">
+        <animated.group position-z={posZ}>
+          <mesh name="move" geometry={nodes.move.geometry} material={moveMat} />
+        </animated.group>
+        <mesh name="move-click" geometry={nodes["move-click"].geometry}>
+          <animated.meshBasicMaterial color={color} />
+        </mesh>
+        <Text
+          position={[-0.75, -0.33, 0.075]}
+          fontSize={0.2}
+          color={COLORS.textPrimary}
+          textAlign="center"
+          name="move-btn-label"
+        >
+          Move
+        </Text>
+      </group>
     </group>
   );
 }

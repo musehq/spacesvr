@@ -62,18 +62,18 @@ export function SchemaEditor(props: SchemaProps) {
             geometry={nodes["prema-panel"].geometry}
             material={premaMat}
           />
-          <Interactable
-            onHover={() => {
-              setTHover(true);
-            }}
-            onUnHover={() => {
-              setTHover(false);
-            }}
-          >
-            <mesh name="trash" geometry={nodes.trash.geometry}>
-              <animated.meshBasicMaterial color={trashColor} />
-            </mesh>
-          </Interactable>
+          {/*<Interactable*/}
+          {/*  onHover={() => {*/}
+          {/*    setTHover(true);*/}
+          {/*  }}*/}
+          {/*  onUnHover={() => {*/}
+          {/*    setTHover(false);*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <mesh name="trash" geometry={nodes.trash.geometry}>*/}
+          {/*    <animated.meshBasicMaterial color={trashColor} />*/}
+          {/*  </mesh>*/}
+          {/*</Interactable>*/}
           <Interactable
             onHover={() => {
               setTHover(true);
@@ -85,7 +85,7 @@ export function SchemaEditor(props: SchemaProps) {
               setOpen(false);
             }}
           >
-            <mesh name="trash" geometry={nodes.close.geometry}>
+            <mesh name="close" geometry={nodes.close.geometry}>
               <animated.meshBasicMaterial color={trashColor} />
             </mesh>
           </Interactable>
