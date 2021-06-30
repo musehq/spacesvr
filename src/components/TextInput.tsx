@@ -2,8 +2,8 @@ import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { animated, useSpring } from "react-spring/three";
-import { useEnvironment, usePlayer } from "../core/contexts";
 import { Interactable } from "../modifiers";
+import { useEnvironment, usePlayer } from "../core/contexts";
 import { Vector3 } from "three";
 import {
   CSS3DRenderer,
@@ -15,6 +15,7 @@ type TextProps = {
   setValue: (s: string) => void;
   enabled?: boolean;
   inputType?: "text" | "password" | "email";
+  autoComplete?: boolean;
 } & GroupProps;
 
 const FONT_FILE =
@@ -26,6 +27,7 @@ export function TextInput(props: TextProps) {
     setValue,
     enabled = true,
     inputType = "text",
+    autoComplete = false,
     ...rest
   } = props;
 
@@ -36,13 +38,30 @@ export function TextInput(props: TextProps) {
   const [cursorPos, setCursorPos] = useState<number | null>(null);
   const protectClick = useRef(false); // used to click off of the input to blur
   const textRef = useRef<any>();
+  const { scene } = useThree();
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
+
+  const container = document.createElement("div");
+  container.id = "container";
+  const element = document.createElement("input");
+  const objectCSS = new CSS3DObject(element);
+  objectCSS.position.x = 0;
+  objectCSS.position.y = 0;
+  objectCSS.position.z = 0;
+  scene.add(objectCSS);
+
+  const renderer = new CSS3DRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  if (document.getElementById("container")) {
+    // @ts-ignore
+    document.getElementById("container").appendChild(renderer.domElement);
+  }
 
   useEffect(() => {
     if (!inputRef.current && enabled) {
       inputRef.current = document.createElement("input");
-      inputRef.current.setAttribute("type", "text");
+      inputRef.current.setAttribute("type", inputType);
       inputRef.current.style.zIndex = "99";
       inputRef.current.style.opacity = "1";
       inputRef.current.style.fontSize = "16px"; // this disables zoom on mobile
@@ -50,10 +69,10 @@ export function TextInput(props: TextProps) {
       inputRef.current.style.left = "50%";
       inputRef.current.style.top = "0";
       inputRef.current.style.transform = "translate(-50%, 0%)";
+      inputRef.current.autocomplete = autoComplete ? "on" : "off";
 
       inputRef.current.addEventListener("focus", () => setFocused(true));
       inputRef.current.addEventListener("blur", () => setFocused(false));
-      console.log(inputRef.current);
 
       setCursorPos(inputRef.current.selectionStart);
       setValue(inputRef.current.value);
@@ -68,7 +87,7 @@ export function TextInput(props: TextProps) {
         }
       };
     }
-  }, [enabled]);
+  }, [enabled, inputType]);
 
   useEffect(() => {
     if (focused) {
@@ -99,32 +118,22 @@ export function TextInput(props: TextProps) {
 
       const onKeyup = (e: KeyboardEvent) => {
         if (!focused || !inputRef.current) return;
-        // inputRef.current.value = inputRef.current.value + e.key;
-        console.log(e);
-        // console.log(inputRef.current.value)
+        console.log(inputRef.current.value);
         setCursorPos(inputRef.current.selectionStart);
-        // setCursorPos(inputRef.current.selectionStart);
         setValue(inputRef.current.value);
       };
 
       const onSelectionChange = () =>
         setCursorPos(inputRef?.current?.selectionStart || null);
 
-      inputRef?.current?.addEventListener("change", () => {
-        console.log("change");
-      });
       document.addEventListener("click", onDocClick);
       document.addEventListener("keyup", onKeyup);
       document.addEventListener("selectionchange", onSelectionChange);
-
-      // document.addEventListener("change", onKeyup);
 
       return () => {
         document.removeEventListener("click", onDocClick);
         document.removeEventListener("keyup", onKeyup);
         document.removeEventListener("selectionchange", onSelectionChange);
-
-        // document.removeEventListener("change", onKeyup);
       };
     }
   }, [enabled, focused, paused]);
