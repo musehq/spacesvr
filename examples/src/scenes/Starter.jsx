@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Vector3 } from "three";
+import * as THREE from "three";
+
 import {
   StandardEnvironment,
   Background,
@@ -34,11 +36,49 @@ export default () => {
       <Image
         src="https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
         size={3}
-        position={[-6, 2, 6.4]}
+        position={[-6.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
       />
       <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-9.5, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+      />
+      <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-8, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+      />
+      <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-11, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        transparent
+      />
+      <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-12.5, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+        transparent
+      />
+      <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-14, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+        transparent
+        innerFrameMaterial={
+          new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            roughness: 0.8,
+            metalness: 0.05,
+          })
+        }
+      />
+      {/* <Image
         src="https://d27rt3a60hh1lx.cloudfront.net/textures/dream1-1621460174/dream1.ktx2"
         size={3}
         position={[-3, 2, 6.4]}
@@ -51,7 +91,7 @@ export default () => {
         position={[0, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
-      />
+      /> */}
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
