@@ -13,15 +13,14 @@ import { EnvironmentProps } from "../types/environment";
 import { SimulationProps } from "../types/simulation";
 import LoadingScreen from "../overlays/LoadingScreen";
 import { InfinitePlane } from "../../components/InfinitePlane";
-import DesktopPause from "../overlays/DesktopPause";
 import GlobalStyles from "../styles/GlobalStyles";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { VRCanvas } from "@react-three/xr";
 import { isMobile } from "react-device-detect";
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
-import { AdaptiveDpr } from "@react-three/drei";
 import { RegisterMenuItems } from "../utils/menu";
+import PauseMenu from "../overlays/PauseMenu";
 
 const Container = styled.div`
   position: absolute;
@@ -74,9 +73,7 @@ type StandardEnvironmentProps = {
   disableGround?: boolean;
   simulationProps?: SimulationProps;
   loadingScreen?: ReactNode;
-  adaptiveDPR?: boolean;
   dev?: boolean;
-  signup?: string;
 };
 
 /**
@@ -100,9 +97,7 @@ export const StandardEnvironment = (
     disableGround,
     pauseMenu,
     loadingScreen,
-    adaptiveDPR = true,
     dev = false,
-    signup,
   } = props;
 
   const simState = useSimulationState(simulationProps);
@@ -117,7 +112,6 @@ export const StandardEnvironment = (
             <EnvironmentContext.Provider value={envState}>
               <SimulationContext.Provider value={simState}>
                 <RegisterMenuItems />
-                {adaptiveDPR && <AdaptiveDpr />}
                 <Player {...playerProps}>
                   <Entities />
                   {!disableGround && <InfinitePlane height={-0.001} />}
@@ -129,7 +123,7 @@ export const StandardEnvironment = (
         </VRCanvas>
         <EnvironmentContext.Provider value={envState}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu || <DesktopPause dev={dev} signup={signup} />}
+          {pauseMenu || <PauseMenu dev={dev} />}
           <Crosshair />
         </EnvironmentContext.Provider>
       </Container>

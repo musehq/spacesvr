@@ -308,20 +308,6 @@ Troika-3d-Text.
 />
 ```
 
-#### Shopify
-
-Allows you to integrate Shopify into your world! This leverages the Storefront API. To get started, [set up the storefront api](https://shopify.dev/docs/storefront-api/getting-started)
-for your store and get the store domain and Storefront API access token. From there, this component will power certain components
-like the `Kiosk` and `Cart` components, as well as offer the `useShop` hook to make your own shop components.
-
-```jsx
-<Shopify
-  domain="myawesomeshop.myshopify.com"
-  token="SOME_LONG_STRING"
-  noCart={false} // if you want to disable the cart
-/>
-```
-
 #### Video
 
 Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.

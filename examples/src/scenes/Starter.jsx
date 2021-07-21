@@ -15,6 +15,19 @@ import {
 const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
   const [open, setOpen] = useState(false);
+  const [url, setUrl] = useState(
+    "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
+  );
+
+  useEffect(() => {
+    setTimeout(
+      () =>
+        setUrl(
+          "https://muse-worlds.s3.us-west-1.amazonaws.com/1d7d3517-d168-4654-8bf8-466bf3369874/assets/bd4a336a-ad58-477b-89b7-1b764a058390/1d7d3517-d168-4654-8bf8-466bf3369874_assets_8c1a0efe-699d-4549-9347-76e307e42066_94a48aaf-6cd1-4c37-a0cc-fc70ee955a76_assets_86616231-19ec-4281-9122-14f12909166b_Screen%2BShot%2B2021-07-13%2Bat%2B5.49.37%2BPM.png"
+        ),
+      5000
+    );
+  }, []);
 
   return (
     <StandardEnvironment signup="https://bit.ly/3wgMNGO">
@@ -34,7 +47,7 @@ export default () => {
       </mesh>
       <Audio url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3" />
       <Image
-        src="https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
+        src={url}
         size={3}
         position={[-6.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
