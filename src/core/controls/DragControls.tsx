@@ -1,9 +1,8 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { config, useSpring } from "react-spring";
 import { Vector2, Euler } from "three";
 import { useEnvironment } from "../contexts/environment";
-import { getSpringValues } from "../utils/spring";
 
 const DRAG_SENSITIVITY = new Vector2(0.16, 0.16);
 const HOVER_SENSITIVITY = new Vector2(0.02, 0.02);
@@ -22,16 +21,18 @@ const DragControls = () => {
   const dragging = useRef(false);
   const camera = useThree((state) => state.camera);
   const { containerRef } = useEnvironment();
+  const [xyz, setXYZ] = useState([0, 0, 0]);
 
-  const [spring, setSpring] = useSpring(() => ({
-    xyz: [0, 0, 0],
+  const { x, y, z } = useSpring({
+    x: xyz[0],
+    y: xyz[1],
+    z: xyz[2],
     config: { ...config.default, precision: 0.0001 },
-  }));
+  });
 
   useFrame(() => {
     if (setEuler.current) {
-      const [x, y, z] = getSpringValues(spring);
-      setEuler.current.set(x, y, z);
+      setEuler.current.set(x.get(), y.get(), z.get());
       camera.quaternion.setFromEuler(setEuler.current);
     }
   });
@@ -63,7 +64,7 @@ const DragControls = () => {
   };
   const onMouseMove = (ev: MouseEvent) => {
     const newEuler = getNewEuler(ev.clientX, ev.clientY, !dragging.current);
-    setSpring({ xyz: newEuler.toArray() });
+    setXYZ(newEuler.toArray());
   };
   const onMouseUp = (ev: MouseEvent) => {
     dragging.current = false;

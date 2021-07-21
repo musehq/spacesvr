@@ -9,7 +9,6 @@ import {
   getCurrentTouch,
   tappedNipple,
 } from "../utils/touch";
-import { getSpringValues } from "../utils/spring";
 
 const ALPHA_SENSITIVITY = 0.008;
 
@@ -35,14 +34,15 @@ export const GyroControls = (props: GyroControlsProps) => {
 
   const [controls, setControls] = useState<DeviceOrientationControls>();
   const [enableGyro, setEnableGyro] = useState(false);
+  const [alphaVal, setAlphaVal] = useState(0);
 
   // dragging for y axis offset
   const touchStartPos = useRef<Touch>(DefaultTouch);
   const currentOffset = useRef(0);
-  const [spring, setSpring] = useSpring(() => ({
-    a: [0],
+  const { alpha } = useSpring({
+    alpha: alphaVal,
     config: { ...config.default, precision: 0.001 },
-  }));
+  });
 
   // try to prompt user for device controls
   useEffect(() => {
@@ -70,8 +70,7 @@ export const GyroControls = (props: GyroControlsProps) => {
     }
 
     if (controls) {
-      const [a] = getSpringValues(spring);
-      controls.alphaOffset = -a * ALPHA_SENSITIVITY;
+      controls.alphaOffset = -alpha.get() * ALPHA_SENSITIVITY;
       controls.update();
     }
   });
@@ -102,7 +101,7 @@ export const GyroControls = (props: GyroControlsProps) => {
     }
 
     const extraOffset = touch.clientX - touchStartPos.current.pos.x;
-    setSpring({ a: [currentOffset.current + extraOffset] });
+    setAlphaVal(currentOffset.current + extraOffset);
   };
   const onTouchEnd = (ev: TouchEvent) => {
     const touch = getCurrentTouch(touchStartPos.current.id, ev.changedTouches);
@@ -112,7 +111,7 @@ export const GyroControls = (props: GyroControlsProps) => {
     }
 
     const finalOffset = touch.clientX - touchStartPos.current.pos.x;
-    setSpring({ a: [currentOffset.current + finalOffset] });
+    setAlphaVal(currentOffset.current + finalOffset);
     currentOffset.current += finalOffset;
     touchStartPos.current.id = -1;
   };

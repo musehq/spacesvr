@@ -100,6 +100,7 @@ const VRControllerMovement = (
 
   useFrame(() => {
     position.current.copy(player.position);
+    player.position.y -= 1;
 
     direction.current.x = player.position.x;
     direction.current.y = player.position.y;
