@@ -9,7 +9,7 @@ type FrameProps = {
   thickness?: number;
   material?: Material;
   innerFrameMaterial?: Material;
-  transparent: boolean;
+  transparent?: boolean;
 };
 
 /**
@@ -29,7 +29,7 @@ const Frame = (props: FrameProps) => {
     height,
     thickness = 1,
     material: passedMaterial,
-    transparent,
+    transparent = false,
     innerFrameMaterial: passedInnerMaterial,
   } = props;
 
