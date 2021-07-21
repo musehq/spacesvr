@@ -11,10 +11,20 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   framed?: boolean;
   frameMaterial?: Material;
   frameWidth?: number;
+  innerFrameMaterial?: Material;
+  transparent: boolean;
 };
 
 const UnsuspensedImage = (props: ImageProps) => {
-  const { src, size = 1, framed, frameMaterial, frameWidth = 1 } = props;
+  const {
+    src,
+    size = 1,
+    framed,
+    frameMaterial,
+    frameWidth = 1,
+    innerFrameMaterial,
+    transparent,
+  } = props;
   const { gl } = useThree();
 
   const isKtx = src.includes(".ktx2");
@@ -63,7 +73,11 @@ const UnsuspensedImage = (props: ImageProps) => {
     <group {...props}>
       <mesh rotation-x={isKtx ? Math.PI : 0}>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
-        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          map={texture}
+          side={THREE.DoubleSide}
+          transparent={Boolean(transparent || innerFrameMaterial)}
+        />
       </mesh>
       {framed && (
         <Frame
@@ -71,6 +85,8 @@ const UnsuspensedImage = (props: ImageProps) => {
           height={HEIGHT}
           thickness={frameWidth}
           material={frameMaterial}
+          innerFrameMaterial={innerFrameMaterial}
+          transparent={transparent}
         />
       )}
     </group>

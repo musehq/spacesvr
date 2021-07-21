@@ -8,6 +8,8 @@ type FrameProps = {
   height: number;
   thickness?: number;
   material?: Material;
+  innerFrameMaterial?: Material;
+  transparent?: boolean;
 };
 
 /**
@@ -22,20 +24,38 @@ type FrameProps = {
  * @constructor
  */
 const Frame = (props: FrameProps) => {
-  const { width, height, thickness = 1, material: passedMaterial } = props;
+  const {
+    width,
+    height,
+    thickness = 1,
+    material: passedMaterial,
+    transparent = false,
+    innerFrameMaterial: passedInnerMaterial,
+  } = props;
 
   const material = useMemo(
     () =>
       passedMaterial ||
       new THREE.MeshStandardMaterial({
-        color: 0x111111,
+        color: 0xffff00,
         roughness: 0.8,
         metalness: 0.05,
       }),
     []
   );
 
-  const frameDepth = 0.075;
+  const innerMaterial = useMemo(
+    () =>
+      passedInnerMaterial ||
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.8,
+        metalness: 0.05,
+      }),
+    []
+  );
+
+  const frameDepth = 0.005;
   const frameWidth = 0.06;
   const borderDepth = 0.08;
   const borderThickness = 0.05 * thickness;
@@ -89,7 +109,11 @@ const Frame = (props: FrameProps) => {
       0
     );
 
-    const geos = [backPanel, topFrame, bottomFrame, leftFrame, rightFrame];
+    const geos = [topFrame, bottomFrame, leftFrame, rightFrame];
+
+    if (!transparent) {
+      geos.unshift(backPanel);
+    }
 
     const geo = BufferGeometryUtils.mergeBufferGeometries(geos);
 
@@ -100,9 +124,25 @@ const Frame = (props: FrameProps) => {
     rightFrame.dispose();
 
     return geo;
-  }, [width, height]);
+  }, [width, height, transparent]);
 
-  return <mesh geometry={geometry} material={material} />;
+  const backFrameGeometry = useMemo<BufferGeometry>(() => {
+    const backPanel = new BoxBufferGeometry(
+      width + frameWidth / 2,
+      height + frameWidth / 2,
+      frameDepth
+    );
+    backPanel.translate(0, 0, -frameDepth - meshOffset);
+
+    return backPanel;
+  }, [width, height, transparent]);
+
+  return (
+    <group>
+      <mesh geometry={geometry} material={material} />
+      <mesh geometry={backFrameGeometry} material={innerMaterial} />
+    </group>
+  );
 };
 
 export default Frame;

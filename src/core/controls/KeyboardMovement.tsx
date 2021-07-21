@@ -32,37 +32,68 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
   };
 
   const onKeyDown = (ev: KeyboardEvent) => {
-    if (ev.key === "w" || ev.key === "W" || ev.key === "ArrowUp") {
-      pressedKeys.current[0] = true;
+    if (ev.defaultPrevented) {
+      return;
     }
-    if (ev.key === "a" || ev.key === "A" || ev.key === "ArrowLeft") {
-      pressedKeys.current[1] = true;
+
+    // We don't want to mess with the browser's shortcuts
+    if (ev.ctrlKey || ev.altKey || ev.metaKey || ev.shiftKey) {
+      return;
     }
-    if (ev.key === "s" || ev.key === "S" || ev.key === "ArrowDown") {
-      pressedKeys.current[2] = true;
-    }
-    if (ev.key === "d" || ev.key === "D" || ev.key === "ArrowRight") {
-      pressedKeys.current[3] = true;
-    }
-    const [x, y, z] = calcDirection();
-    direction.current.set(x, y, z);
-  };
-  const onKeyUp = (ev: KeyboardEvent) => {
-    if (ev.key === "w" || ev.key === "W" || ev.key === "ArrowUp") {
-      pressedKeys.current[0] = false;
-    }
-    if (ev.key === "a" || ev.key === "A" || ev.key === "ArrowLeft") {
-      pressedKeys.current[1] = false;
-    }
-    if (ev.key === "s" || ev.key === "S" || ev.key === "ArrowDown") {
-      pressedKeys.current[2] = false;
-    }
-    if (ev.key === "d" || ev.key === "D" || ev.key === "ArrowRight") {
-      pressedKeys.current[3] = false;
-    }
+
+    updatePressedKeys(ev, true);
+
+    ev.preventDefault();
 
     const [x, y, z] = calcDirection();
     direction.current.set(x, y, z);
+  };
+
+  const onKeyUp = (ev: KeyboardEvent) => {
+    updatePressedKeys(ev, false);
+
+    const [x, y, z] = calcDirection();
+    direction.current.set(x, y, z);
+  };
+
+  const updatePressedKeys = (ev: KeyboardEvent, pressedState: boolean) => {
+    // We try to use `code` first because that's the layout-independent property.
+    // Then we use `key` because some browsers, notably Internet Explorer and
+    // Edge, support it but not `code`. Then we use `keyCode` to support older
+    // browsers like Safari, older Internet Explorer and older Chrome.
+    switch (ev.code || ev.key || ev.keyCode) {
+      case "KeyW":
+      case "KeyI":
+      case "ArrowUp":
+      case "Numpad8":
+      case 38: // keyCode for arrow up
+        pressedKeys.current[0] = pressedState;
+        break;
+      case "KeyA":
+      case "KeyJ":
+      case "ArrowLeft":
+      case "Numpad4":
+      case 37: // keyCode for arrow left
+        pressedKeys.current[1] = pressedState;
+        break;
+      case "KeyS":
+      case "KeyK":
+      case "ArrowDown":
+      case "Numpad5":
+      case "Numpad2":
+      case 40: // keyCode for arrow down
+        pressedKeys.current[2] = pressedState;
+        break;
+      case "KeyD":
+      case "KeyL":
+      case "ArrowRight":
+      case "Numpad6":
+      case 39: // keyCode for arrow right
+        pressedKeys.current[3] = pressedState;
+        break;
+      default:
+        return;
+    }
   };
 
   useEffect(() => {
