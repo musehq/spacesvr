@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../../contexts/environment";
-import { useKeyboardLayout } from "../../utils/hooks";
-import { MenuItem } from "../../types";
+import { useEnvironment } from "../contexts/environment";
+import { useKeyboardLayout } from "../utils/hooks";
+import { MenuItem } from "../types";
 import { useMemo } from "react";
-import { Idea } from "../../../layers/basis";
+import { Idea } from "../../layers/basis";
 
 const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
@@ -156,6 +156,8 @@ export default function PauseMenu(props: PauseMenuProps) {
   const layout = useKeyboardLayout();
   const closeOverlay = () => setPaused(false);
 
+  const cta = useCTA();
+
   const continueIdea = useMemo(
     () => new Idea().setFromCreation(Math.random(), 0.8, 0.95),
     []
@@ -175,11 +177,13 @@ export default function PauseMenu(props: PauseMenuProps) {
 
   const PAUSE_ITEMS: PauseItem[] = [
     {
-      text: "www.muse.place",
+      text: cta,
       action: () => {
         console.log("");
       },
-      link: "www.muse.place?utm_source=pause_menu",
+      link: `https://muse.place?utm_source=pause_menu&utm_campaign=${encodeURIComponent(
+        cta
+      )}`,
     },
     {
       text: "v1.6.14",
@@ -220,3 +224,8 @@ export default function PauseMenu(props: PauseMenuProps) {
     </Container>
   );
 }
+
+const useCTA = (): string => {
+  const options = ["Build a World", "Build Now", "Muse HQ", "www.muse.place"];
+  return useMemo(() => options[Math.floor(Math.random() * options.length)], []);
+};
