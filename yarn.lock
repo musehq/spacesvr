@@ -1940,6 +1940,11 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.5.tgz#7fdec6a28a67ae18647c51668a9ff95bb2fa7bb8"
   integrity sha512-uVDi8LpBUKQj6sdxNaTetL6FpeCqTjOvAQuQUa/qAqq8oOd4ivkbhgnqayl0dnPal8Tb/yB1tF+gOvCBiicaiQ==
 
+culori@^0.18.2:
+  version "0.18.2"
+  resolved "https://registry.yarnpkg.com/culori/-/culori-0.18.2.tgz#8bbfe9a8bc56938cda870e5f44d3f3c82da764c9"
+  integrity sha512-cEoI0aymWhLTFxYOPCERk3GRVA+pLML0a3VpTjmGZQICOq4Zs8/YHyZJYnPUwwt59Bup7hmWNI1pM3VLM/Sjog==
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -4300,11 +4305,6 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
-
-shopify-buy@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-2.11.0.tgz#0f7cb52741395e4ae778c336f32ddf3fe67c2f35"
-  integrity sha512-bGjS1b/VCPvCjazSstlKwgLtK1WBotWom06/12loja8yfo/cWkLuJsakBbQe1uEIDiOLhKaR0M0CAXZFheYDug==
 
 side-channel@^1.0.2, side-channel@^1.0.3:
   version "1.0.4"

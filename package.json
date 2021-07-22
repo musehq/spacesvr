@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "private": true,
   "description": "An Environment for WebXR Spaces",
   "keywords": [
@@ -49,12 +49,12 @@
     "@react-three/drei": "^4.1.8",
     "@react-three/fiber": "^6.0.14",
     "@react-three/xr": "^3.0.1",
+    "culori": "^0.18.2",
     "nipplejs": "^0.8.7",
     "node-fetch": "^2.6.1",
     "peerjs": "^1.3.1",
     "react-device-detect": "^1.13.1",
     "react-spring": "^8.0.27",
-    "shopify-buy": "^2.11.0",
     "valtio": "^0.7.0"
   },
   "peerDependencies": {
