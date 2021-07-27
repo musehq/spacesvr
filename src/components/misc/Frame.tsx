@@ -41,7 +41,7 @@ const Frame = (props: FrameProps) => {
         roughness: 0.8,
         metalness: 0.05,
       }),
-    []
+    [passedMaterial]
   );
 
   const innerMaterial = useMemo(
@@ -52,7 +52,7 @@ const Frame = (props: FrameProps) => {
         roughness: 0.8,
         metalness: 0.05,
       }),
-    []
+    [passedInnerMaterial]
   );
 
   const frameDepth = 0.005;
@@ -124,7 +124,7 @@ const Frame = (props: FrameProps) => {
     rightFrame.dispose();
 
     return geo;
-  }, [width, height, transparent]);
+  }, [borderThickness, width, height, transparent]);
 
   const backFrameGeometry = useMemo<BufferGeometry>(() => {
     const backPanel = new BoxBufferGeometry(
@@ -135,7 +135,7 @@ const Frame = (props: FrameProps) => {
     backPanel.translate(0, 0, -frameDepth - meshOffset);
 
     return backPanel;
-  }, [width, height, transparent]);
+  }, [width, height]);
 
   return (
     <group>
