@@ -51,7 +51,10 @@ const NippleMovement = (props: NippleMovementProps) => {
       });
 
       nipple.current.on("move", (evt, data) => {
-        direction.current.set(data.vector.x, -data.vector.y, 0);
+        console.log(data.position);
+        const x = (data.distance / 120) * Math.cos(data.angle.radian);
+        const y = (-data.distance / 120) * Math.sin(data.angle.radian);
+        direction.current.set(x, y, 0);
       });
 
       nipple.current.on("end", () => {

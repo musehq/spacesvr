@@ -50,7 +50,7 @@
     "@react-three/fiber": "^6.0.14",
     "@react-three/xr": "^3.0.1",
     "culori": "^0.18.2",
-    "nipplejs": "^0.8.7",
+    "nipplejs": "0.8.1",
     "node-fetch": "^2.6.1",
     "peerjs": "^1.3.1",
     "react-device-detect": "^1.13.1",
