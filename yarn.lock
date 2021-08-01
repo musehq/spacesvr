@@ -3542,10 +3542,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-nipplejs@^0.8.7:
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/nipplejs/-/nipplejs-0.8.7.tgz#da14db793bbe22f9ccb98aad7dbea2d0abf7cdb6"
-  integrity sha512-B3uSKnWIGWHfrd6oDpLW1xiYleY8+ACVIlLNZeVChBBGDeDiKm4YjetVxlP3O2FvS3Fqf24E/9FrjM3Thc6WDg==
+nipplejs@0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/nipplejs/-/nipplejs-0.8.1.tgz#c9564021de42a3820cc79522a64826c0800daef4"
+  integrity sha512-IdsyaLjfIz+9vEhW9PzxMPsO8wV5vBeSDPivedoQgln72WzuX8jB2405JRnQ6kTG4w3U5HBb9p1SZ5LZueHGLw==
 
 node-fetch@^2.6.1:
   version "2.6.1"
