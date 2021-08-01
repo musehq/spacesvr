@@ -9,7 +9,6 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@types/three": "^0.127.1",
-    "culori": "^0.18.2",
     "customize-cra": "^1.0.0",
     "peer": "^0.6.1",
     "react": "0.0.0-experimental-10cc40018",
