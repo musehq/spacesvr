@@ -43,8 +43,6 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
 
     updatePressedKeys(ev, true);
 
-    ev.preventDefault();
-
     const [x, y, z] = calcDirection();
     direction.current.set(x, y, z);
   };
