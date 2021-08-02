@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../contexts/environment";
+import { useEnvironment } from "../layers/environment";
 import { useKeyboardLayout } from "../utils/hooks";
 import { MenuItem } from "../types";
 import { useMemo } from "react";

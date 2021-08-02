@@ -1,26 +1,26 @@
+export * from "./layers";
+export * from "./types";
+export * from "./utils";
+
 import styled from "@emotion/styled";
-import Crosshair from "../ui/Crosshair";
+import Crosshair from "./ui/Crosshair";
 import { ProviderProps } from "@react-three/cannon/dist/Provider";
 import { Physics } from "@react-three/cannon";
-import Player, { PlayerProps } from "../players/Player";
-import Entities from "../simulated/Entities";
-import {
-  useEnvironmentState,
-  EnvironmentContext,
-} from "../contexts/environment";
-import { useSimulationState, SimulationContext } from "../contexts/simulation";
-import { EnvironmentProps } from "../types/environment";
-import { SimulationProps } from "../types/simulation";
-import LoadingScreen from "../overlays/LoadingScreen";
-import { InfinitePlane } from "../../../ideas/components/InfinitePlane";
-import GlobalStyles from "../ui/GlobalStyles";
+import Player, { PlayerProps } from "./players/Player";
+import Entities from "./simulated/Entities";
+import { useEnvironmentState, EnvironmentContext } from "./layers/environment";
+import { useSimulationState, SimulationContext } from "./layers/simulation";
+import { EnvironmentProps, SimulationProps } from "./types";
+import LoadingScreen from "./ui/LoadingScreen";
+import GlobalStyles from "./ui/GlobalStyles";
+import PauseMenu from "./ui/PauseMenu";
+import { InfinitePlane } from "../../ideas/components/InfinitePlane";
 import { ReactNode } from "react";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { VRCanvas } from "@react-three/xr";
 import { isMobile } from "react-device-detect";
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
-import { RegisterMenuItems } from "../utils/menu";
-import PauseMenu from "../overlays/PauseMenu";
+import { RegisterMenuItems } from "./utils/menu";
 
 const Container = styled.div`
   position: absolute;

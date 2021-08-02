@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Euler } from "three";
-import { useEnvironment } from "../contexts/environment";
+import { useEnvironment } from "../layers/environment";
 import * as THREE from "three";
 
 const MIN_POLAR_ANGLE = 0; // radians

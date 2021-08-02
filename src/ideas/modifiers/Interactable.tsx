@@ -3,7 +3,7 @@ import { Group, Vector2 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { isMobile } from "react-device-detect";
 import { useLimiter } from "../../utils/limiter";
-import { usePlayer } from "../../layers/reality/contexts/player";
+import { usePlayer } from "../../layers/reality/layers/player";
 
 type Props = {
   onClick?: () => void;

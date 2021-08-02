@@ -1,4 +1,4 @@
-import { useSimulation } from "../contexts/simulation";
+import { useSimulation } from "../layers/simulation";
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";

@@ -12,10 +12,10 @@ import {
 import { GyroControls } from "../controls/GyroControls";
 import { useSpringVelocity } from "./utils/velocity";
 import { useLimiter } from "../../../utils/limiter";
-import { useSimulation } from "../contexts/simulation";
-import { PlayerContext } from "../contexts/player";
+import { useSimulation } from "../layers/simulation";
+import { PlayerContext } from "../layers/player";
 import { createPlayerState } from "../utils/player";
-import { useEnvironment } from "../contexts/environment";
+import { useEnvironment } from "../layers/environment";
 import VRControllerMovement from "../controls/VRControllerMovement";
 
 const SPEED = 3.6; // (m/s) 1.4 walking, 2.6 jogging, 4.1 running

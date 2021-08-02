@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react";
 import { Camera, MathUtils, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
-import { useEnvironment } from "../../contexts/environment";
+import { useEnvironment } from "../../layers/environment";
 
 export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
   const direction = useRef(new Vector3());
