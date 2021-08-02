@@ -11,7 +11,7 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   frameMaterial?: Material;
   frameWidth?: number;
   innerFrameMaterial?: Material;
-  transparent: boolean;
+  transparent?: boolean;
 };
 
 const UnsuspensedImage = (props: ImageProps) => {
