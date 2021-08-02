@@ -41,7 +41,7 @@ const UnsuspensedImage = (props: ImageProps) => {
         <meshBasicMaterial
           map={texture}
           side={THREE.DoubleSide}
-          transparent={Boolean(transparent || innerFrameMaterial)}
+          transparent={transparent}
         />
       </mesh>
       {framed && (

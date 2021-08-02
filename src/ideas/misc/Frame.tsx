@@ -30,7 +30,7 @@ const Frame = (props: FrameProps) => {
     thickness = 1,
     material: passedMaterial,
     transparent = false,
-    innerFrameMaterial: passedInnerMaterial,
+    innerFrameMaterial,
   } = props;
 
   const material = useMemo(
@@ -44,18 +44,7 @@ const Frame = (props: FrameProps) => {
     [passedMaterial]
   );
 
-  const innerMaterial = useMemo(
-    () =>
-      passedInnerMaterial ||
-      new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.8,
-        metalness: 0.05,
-      }),
-    [passedInnerMaterial]
-  );
-
-  const frameDepth = 0.005;
+  const frameDepth = 0.075;
   const frameWidth = 0.06;
   const borderDepth = 0.08;
   const borderThickness = 0.05 * thickness;
@@ -111,7 +100,7 @@ const Frame = (props: FrameProps) => {
 
     const geos = [topFrame, bottomFrame, leftFrame, rightFrame];
 
-    if (!transparent) {
+    if (!innerFrameMaterial && !transparent) {
       geos.unshift(backPanel);
     }
 
@@ -124,23 +113,27 @@ const Frame = (props: FrameProps) => {
     rightFrame.dispose();
 
     return geo;
-  }, [borderThickness, width, height, transparent]);
+  }, [innerFrameMaterial, transparent, borderThickness, width, height]);
 
-  const backFrameGeometry = useMemo<BufferGeometry>(() => {
+  const backFrameGeometry = useMemo<BufferGeometry | undefined>(() => {
+    if (!innerFrameMaterial) return undefined;
+
     const backPanel = new BoxBufferGeometry(
-      width + frameWidth / 2,
-      height + frameWidth / 2,
+      width + frameWidth,
+      height + frameWidth,
       frameDepth
     );
     backPanel.translate(0, 0, -frameDepth - meshOffset);
 
     return backPanel;
-  }, [width, height]);
+  }, [innerFrameMaterial, width, height]);
 
   return (
     <group>
       <mesh geometry={geometry} material={material} />
-      <mesh geometry={backFrameGeometry} material={innerMaterial} />
+      {backFrameGeometry && innerFrameMaterial && (
+        <mesh geometry={backFrameGeometry} material={innerFrameMaterial} />
+      )}
     </group>
   );
 };
