@@ -26,7 +26,8 @@
     "process-gltf": "./scripts/process-gltf.sh",
     "eslint": "eslint --fix {src,examples/src}/**/*.{ts,tsx}",
     "copy": "copyfiles package.json readme.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.optionalDependencies=undefined; this.scripts=undefined; this.husky=undefined; this.prettier=undefined; this.jest=undefined; this['lint-staged']=undefined;\"",
-    "pack-dist": "cd dist && yarn pack && mv *.tgz .. && cd .."
+    "pack-dist": "cd dist && yarn pack && mv *.tgz .. && cd ..",
+    "dev": "yarn --cwd ./examples start"
   },
   "husky": {
     "hooks": {
@@ -42,7 +43,6 @@
     "**"
   ],
   "dependencies": {
-    "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "@juggle/resize-observer": "^3.2.0",
     "@react-three/cannon": "^1.1.0",
@@ -60,7 +60,8 @@
   "peerDependencies": {
     "react": ">=17.0",
     "react-dom": ">=17.0",
-    "three": ">=0.127"
+    "three": ">=0.127",
+    "three-stdlib": ">=2.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.12.1",
