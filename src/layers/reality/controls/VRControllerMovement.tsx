@@ -1,9 +1,7 @@
 import { DefaultXRControllers, useController, useXR } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
-import { Vector3, Vector2, XRHandedness } from "three";
+import { Vector3, XRHandedness } from "three";
 import { useFrame } from "@react-three/fiber";
-
-const MOVEMENT_SPEED = 2;
 
 type SnapTurnProps = {
   hand?: XRHandedness;
@@ -14,6 +12,7 @@ type SnapTurnProps = {
 type SmoothLocomotionProps = {
   hand?: XRHandedness;
   speed?: number;
+  direction: MutableRefObject<Vector3>;
 };
 
 type VRControllerMovementProps = {
@@ -32,11 +31,9 @@ type VRControllerMovementProps = {
  * @constructor
  */
 
-const SnapTurn = ({
-  hand = "right",
-  increment = Math.PI / 6,
-  threshold = 0.8,
-}: SnapTurnProps) => {
+const SnapTurn = (props: SnapTurnProps) => {
+  const { hand = "right", increment = Math.PI / 6, threshold = 0.8 } = props;
+
   const controller = useController(hand);
   const { player } = useXR();
   const isSnapping = useRef(false);
@@ -59,58 +56,40 @@ const SnapTurn = ({
   return null;
 };
 
-const SmoothLocomotion = ({
-  hand = "left",
-  speed = MOVEMENT_SPEED,
-}: SmoothLocomotionProps) => {
+const SmoothLocomotion = (props: SmoothLocomotionProps) => {
+  const { hand = "left", direction } = props;
+
   const controller = useController(hand);
-  const { player } = useXR();
 
-  const controllerDirection = new Vector2();
-  const controllerDirection3 = new Vector3();
-  const joystickDirection = new Vector2();
-
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (controller && controller.inputSource.gamepad) {
       const [, , x, y] = controller.inputSource.gamepad.axes;
-
-      joystickDirection.set(x, y);
-      controller.controller.getWorldDirection(controllerDirection3);
-      controllerDirection
-        .set(controllerDirection3.x, -controllerDirection3.z)
-        .normalize();
-
-      player.position.x +=
-        controllerDirection.cross(joystickDirection) * delta * speed;
-      player.position.z -=
-        controllerDirection.dot(joystickDirection) * delta * speed;
+      direction.current.x = x;
+      direction.current.y = y;
     }
   });
 
   return null;
 };
 
-const VRControllerMovement = (
-  props: VRControllerMovementProps
-): JSX.Element => {
+const VRControllerMovement = (props: VRControllerMovementProps) => {
   const { position, direction, snapTurn, smoothLocomotion } = props;
   const { player } = useXR();
 
-  player.position.copy(position.current);
+  // player.position.copy(position.current);
 
   useFrame(() => {
-    position.current.copy(player.position);
-    player.position.y -= 1;
+    player.position.copy(position.current);
 
-    direction.current.x = player.position.x;
-    direction.current.y = player.position.y;
-    direction.current.z = 0;
+    // average human height is ~1.7, player height is 1.
+    // subtract difference to fix it.
+    player.position.y -= 0.7;
   });
 
   return (
     <group>
       <SnapTurn {...snapTurn} />
-      <SmoothLocomotion {...smoothLocomotion} />
+      <SmoothLocomotion {...smoothLocomotion} direction={direction} />
       <DefaultXRControllers />
     </group>
   );
