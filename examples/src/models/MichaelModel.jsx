@@ -1,4 +1,4 @@
-import { DRACO_URL } from "../../../src/services";
+import { DRACO_URL } from "../../../src/utils";
 import { useGLTF } from "@react-three/drei";
 
 const MichaelModel = (props) => {
