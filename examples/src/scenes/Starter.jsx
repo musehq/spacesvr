@@ -45,6 +45,10 @@ export default () => {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
+      <mesh position-y={0.5} position-x={3}>
+        <boxBufferGeometry args={[1, 1, 1]} />
+        <meshNormalMaterial />
+      </mesh>
       <Audio url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3" />
       <Image
         src={url}

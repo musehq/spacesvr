@@ -3,6 +3,7 @@ import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
 import { useEffect, useRef, useState } from "react";
 import { MenuItem } from "../types/environment";
+import { isMobile } from "react-device-detect";
 
 /**
  * Component to register menu items to the environment.
@@ -71,6 +72,7 @@ export const useVRMenuItem = (): MenuItem | undefined => {
 
     function onSessionEnded() {
       session.current?.removeEventListener("end", onSessionEnded);
+      setDevice(isMobile ? "mobile" : "desktop");
       setText("Enter VR");
       session.current = undefined;
     }

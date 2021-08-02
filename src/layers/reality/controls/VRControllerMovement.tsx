@@ -76,14 +76,12 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
   const { position, direction, snapTurn, smoothLocomotion } = props;
   const { player } = useXR();
 
-  // player.position.copy(position.current);
-
   useFrame(() => {
     player.position.copy(position.current);
 
     // average human height is ~1.7, player height is 1.
-    // subtract difference to fix it.
-    player.position.y -= 0.7;
+    // set to 0 fixes it i guess
+    player.position.y = 0;
   });
 
   return (
