@@ -1,5 +1,6 @@
 import { useRef, useEffect, MutableRefObject } from "react";
 import { Vector3 } from "three";
+import { useEnvironment } from "../layers/environment";
 
 type KeyboardMovementProps = {
   direction: MutableRefObject<Vector3>;
@@ -20,6 +21,8 @@ type KeyboardMovementProps = {
  */
 const KeyboardMovement = (props: KeyboardMovementProps) => {
   const { direction } = props;
+
+  const { paused } = useEnvironment();
 
   const pressedKeys = useRef([false, false, false, false]);
 
@@ -95,6 +98,12 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
   };
 
   useEffect(() => {
+    if (paused) {
+      direction.current.set(0, 0, 0);
+      pressedKeys.current = [false, false, false, false];
+      return;
+    }
+
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
 
@@ -102,7 +111,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
     };
-  }, []);
+  }, [paused, onKeyDown, onKeyUp]);
 
   return <></>;
 };
