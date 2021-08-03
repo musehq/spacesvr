@@ -30,7 +30,7 @@ const NippleMovement = (props: NippleMovementProps) => {
     if (containerRef.current) {
       nippleContainer.current = document.createElement("div");
       nippleContainer.current.style.position = "fixed";
-      nippleContainer.current.style.left = "0";
+      nippleContainer.current.style.right = "0";
       nippleContainer.current.style.bottom = "0";
       nippleContainer.current.style.width = "40%";
       nippleContainer.current.style.maxWidth = "160px";
@@ -51,9 +51,9 @@ const NippleMovement = (props: NippleMovementProps) => {
       });
 
       nipple.current.on("move", (evt, data) => {
-        console.log(data.position);
-        const x = (data.distance / 120) * Math.cos(data.angle.radian);
-        const y = (-data.distance / 120) * Math.sin(data.angle.radian);
+        // i kinda pulled 60 out of my ass tbh
+        const x = (data.distance / 60) * Math.cos(data.angle.radian);
+        const y = (-data.distance / 60) * Math.sin(data.angle.radian);
         direction.current.set(x, y, 0);
       });
 
