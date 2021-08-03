@@ -30,7 +30,7 @@ const NippleMovement = (props: NippleMovementProps) => {
     if (containerRef.current) {
       nippleContainer.current = document.createElement("div");
       nippleContainer.current.style.position = "fixed";
-      nippleContainer.current.style.right = "0";
+      nippleContainer.current.style.left = "0";
       nippleContainer.current.style.bottom = "0";
       nippleContainer.current.style.width = "40%";
       nippleContainer.current.style.maxWidth = "160px";
