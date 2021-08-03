@@ -91,7 +91,6 @@ const App = () => {
 The main functionality comes from the `Environment` components which provide variations of...
 
 - a player with a control scheme
-- post processing
 - physics
 - default components
 - loading menu
@@ -130,11 +129,11 @@ inside an `Environment` component and gives you an `PlayerState`, defined as:
 }
 ```
 
-#### simulation
+#### simulation.
 
 Your worlds can now run in a simulation! To enable it you can run a
 server out of `examples/server/app.js` and pass the corresponding parameters as `simulationProps` to the
-`StandardEnvironment` component
+`StandardEnvironment` component. This is a work in progress!
 
 ```jsx
 {
@@ -163,9 +162,7 @@ animations to components!
 
 # Documentation
 
-## Environments
-
-#### Standard Environment
+## Standard Environment
 
 The Standard Environment defines the following:
 
@@ -179,7 +176,7 @@ The Standard Environment defines the following:
     canvasProps={{...}} // props to be passed along to the r3f canvas
     physicsProps={{...}} // props to be passed along to cannon.js
     playerProps={{
-        pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
+        pos: [INIT_X, INIT_Y, INIT_Z],  // initial position
         rot: 0,  // initial rotation,
         speed: 3.2 // meters per second (~1.4 walking, ~2.2 jogging)
     }}
@@ -188,33 +185,7 @@ The Standard Environment defines the following:
 />
 ```
 
-#### Keyframe Environment
-
-The Keyframe Environment defines the following:
-
-- 1 unit tall floating player
-- Move with Arrow Keys, A/D movement, or Onscreen Arrows
-- Drag Controls, Gryro Controls with Mobile Drag as fallback
-- Physics enabled, ground plane at y=0
-- Custom loading menu
-- No pause menu
-
-```jsx
-<KeyframeEnvironment
-    canvasProps={{...}} // props to be passed along to the r3f canvas
-    physicsProps={{...}} // props to be passed along to cannon.js
-    player={{
-        pos: new Vector3(INIT_X, INIT_Y, INIT_Z),  // initial position
-        rot: Math.PI / 2,  // initial rotation,
-    }}
-    keyframes={[
-        { label: "home", position: new Vector3(0, 2, 5) },
-        { label: "about", position: new Vector3(1, 2, 6), scale: 1.5 }
-    ]} // keyframes to travel between
-/>
-```
-
-## Components
+## Ideas
 
 #### Arrow
 
@@ -274,6 +245,7 @@ Quickly add an image to your scene
   src="https://link-to-your-image.png"
   size={1} // size, default normalized to longest side = 1
   framed // adds a frame
+  transparent // enables transparency on the image
   material={THREE.Material} // custom material for the frame
 />
 ```
