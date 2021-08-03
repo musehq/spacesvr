@@ -80,8 +80,8 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
     player.position.copy(position.current);
 
     // average human height is ~1.7, player height is 1.
-    // set to 0 fixes it i guess
-    player.position.y = 0;
+    // somehow subtracting 1 is more correct idk
+    player.position.y -= 1;
   });
 
   return (
