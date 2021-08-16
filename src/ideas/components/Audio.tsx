@@ -34,7 +34,7 @@ export const Audio = (props: AudioProps) => {
     a.crossOrigin = "Anonymous";
     a.loop = true;
     return a;
-  }, [url]);
+  }, []);
 
   useEffect(() => {
     const setupAudio = () => {
@@ -60,12 +60,15 @@ export const Audio = (props: AudioProps) => {
     const playAudio = () => audio.play().then(() => setupAudio());
 
     if (audio) {
+      audio.setAttribute("src", url);
+      audio.load();
+      audio.play().then(() => setupAudio());
       document.addEventListener("click", playAudio);
       return () => {
         document.removeEventListener("click", playAudio);
       };
     }
-  }, [speaker, audio]);
+  }, [speaker, audio, url]);
 
   useEffect(() => {
     if (!speaker) return;
