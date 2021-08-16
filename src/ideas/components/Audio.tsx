@@ -34,7 +34,7 @@ export const Audio = (props: AudioProps) => {
     a.crossOrigin = "Anonymous";
     a.loop = true;
     return a;
-  }, []);
+  }, [url]);
 
   useEffect(() => {
     const setupAudio = () => {
