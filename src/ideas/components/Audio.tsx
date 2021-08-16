@@ -61,7 +61,6 @@ export const Audio = (props: AudioProps) => {
 
     if (audio) {
       audio.setAttribute("src", url);
-      audio.load();
       audio.play().then(() => setupAudio());
       document.addEventListener("click", playAudio);
       return () => {
