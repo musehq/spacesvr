@@ -18,6 +18,15 @@ export default () => {
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
+  const [audio, setAudio] = useState(
+    "https://d27rt3a60hh1lx.cloudfront.net/audio/LucidMondayMix.mp3"
+  );
+
+  setTimeout(() => {
+    setAudio(
+      "https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3"
+    );
+  }, 10000);
 
   useEffect(() => {
     setTimeout(
@@ -49,7 +58,7 @@ export default () => {
         <boxBufferGeometry args={[1, 1, 1]} />
         <meshNormalMaterial />
       </mesh>
-      <Audio url="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3" />
+      <Audio url={audio} />
       <Image
         src={url}
         size={3}
