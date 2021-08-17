@@ -60,12 +60,14 @@ export const Audio = (props: AudioProps) => {
     const playAudio = () => audio.play().then(() => setupAudio());
 
     if (audio) {
+      audio.setAttribute("src", url);
+      audio.play().then(() => setupAudio());
       document.addEventListener("click", playAudio);
       return () => {
         document.removeEventListener("click", playAudio);
       };
     }
-  }, [speaker, audio]);
+  }, [speaker, audio, url]);
 
   useEffect(() => {
     if (!speaker) return;
