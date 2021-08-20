@@ -1,4 +1,4 @@
-import { ShapeType, useCompoundBody } from "@react-three/cannon";
+import { ShapeType, Triplet, useCompoundBody } from "@react-three/cannon";
 import { Vector3 } from "three";
 
 // height of 0.9 (eye level) for a perceived height of 1
@@ -13,9 +13,11 @@ const sphere2 = { ...sphereProps, position: [0, -(HEIGHT / 2), 0] };
 const sphere3 = { ...sphereProps, position: [0, -RADIUS, 0] };
 
 export const useCapsuleCollider = (pos = [0, 0, 0]) => {
+  const vPos = pos as Triplet;
+
   const compoundBody = useCompoundBody(() => ({
     mass: 62,
-    position: pos,
+    position: vPos,
     segments: 8,
     fixedRotation: true,
     type: "Dynamic",
