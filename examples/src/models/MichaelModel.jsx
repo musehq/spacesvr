@@ -7,6 +7,8 @@ const MichaelModel = (props) => {
     DRACO_URL
   );
 
+  gltf.scene.traverse((child) => (child.frustumCulled = false));
+
   return (
     <group {...props}>
       <primitive object={gltf.scene} />

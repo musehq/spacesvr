@@ -2,22 +2,6 @@
   "name": "spacesvr-examples",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@react-three/drei": "^4.3.3",
-    "@react-three/fiber": "^6.0.14",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/three": "^0.127.1",
-    "customize-cra": "^1.0.0",
-    "peer": "^0.6.1",
-    "react": "0.0.0-experimental-10cc40018",
-    "react-dom": "0.0.0-experimental-10cc40018",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.0",
-    "three": "^0.127.0",
-    "web-vitals": "^0.2.4"
-  },
   "scripts": {
     "start": "react-app-rewired start",
     "start-ssl": "HTTPS=true SSL_CRT_FILE=cert.crt SSL_KEY_FILE=cert.key react-app-rewired start",
@@ -43,8 +27,24 @@
       "last 1 safari version"
     ]
   },
+  "peerDependencies": {
+    "spacesvr": ">0"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/three": "^0.127.1",
+    "customize-cra": "^1.0.0",
+    "peer": "^0.6.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.0",
+    "three": "^0.127.0",
+    "web-vitals": "^0.2.4"
+  },
   "devDependencies": {
-    "react-app-rewired": "^2.1.6",
-    "spacesvr": "^1.6.5"
+    "react-app-rewired": "^2.1.6"
   }
 }
