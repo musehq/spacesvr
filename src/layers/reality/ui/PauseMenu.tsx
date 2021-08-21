@@ -211,9 +211,13 @@ export default function PauseMenu(props: PauseMenuProps) {
         <Actions>
           {PAUSE_ITEMS.map((item) =>
             item.link ? (
-              <MenuLink href={item.link}>{item.text}</MenuLink>
+              <MenuLink key={item.text} href={item.link}>
+                {item.text}
+              </MenuLink>
             ) : (
-              <MenuButton onClick={item.action}>{item.text}</MenuButton>
+              <MenuButton key={item.text} onClick={item.action}>
+                {item.text}
+              </MenuButton>
             )
           )}
         </Actions>
