@@ -37,7 +37,7 @@ const Frame = (props: FrameProps) => {
     () =>
       passedMaterial ||
       new THREE.MeshStandardMaterial({
-        color: 0xffff00,
+        color: 0x333333,
         roughness: 0.8,
         metalness: 0.05,
       }),
