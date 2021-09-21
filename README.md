@@ -10,7 +10,7 @@
      Sleek, powerful front-end framework for quickly creating cross-platform VR Websites.
 </h5>
 <p align="center">
-    <a href="https://muse.place/muse">muse.place/muse</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place?utm_source=npmjs">muse.place</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
 <br/>
 <br/>
@@ -336,30 +336,6 @@ Makes its children react to onclick and on hover methods
 >
   <Stuff />
 </Interactable>
-```
-
-#### Overlay
-
-Allows for raw html to be placed inside an `Environment` component for access to
-environment state, player state, and renderer state.
-
-```jsx
-function Stuff() {
-  const { size } = useThree();
-  const { position } = usePlayer();
-
-  return (
-    <div>
-      <h1>Current player position is {position.velocity.get()}</h1>
-    </div>
-  );
-}
-
-<StandardEnvironment>
-  <Overlay>
-    <Stuff />
-  </Overlay>
-</StandardEnvironment>;
 ```
 
 #### Spinning

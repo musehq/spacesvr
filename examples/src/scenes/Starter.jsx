@@ -39,7 +39,7 @@ export default () => {
   }, []);
 
   return (
-    <StandardEnvironment signup="https://bit.ly/3wgMNGO">
+    <StandardEnvironment playerProps={{ pos: [0, 2, 0] }}>
       <Background color={0xffffff} />
       <Interactable
         onClick={handleClick}

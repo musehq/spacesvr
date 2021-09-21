@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "1.7.12",
+  "version": "1.8.3",
   "private": true,
   "description": "An Environment for WebXR Spaces",
   "keywords": [
@@ -35,7 +35,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "src/*.{ts,tsx}": [
       "eslint --fix"
     ]
   },
@@ -46,7 +46,7 @@
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@juggle/resize-observer": "^3.2.0",
-    "@react-three/cannon": "^1.1.0",
+    "@react-three/cannon": "^2.6.1",
     "@react-three/drei": "7.0.6",
     "@react-three/fiber": "^6.0.14",
     "@react-three/xr": "^3.0.1",

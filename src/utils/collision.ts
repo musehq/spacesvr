@@ -6,7 +6,7 @@ import {
 import { useTrimesh } from "@react-three/cannon";
 
 export const useTrimeshCollision = (geometry: BufferGeometry) => {
-  const indices = (geometry.index as BufferAttribute).array;
+  const indices = (geometry.index as BufferAttribute).array as number[];
 
   const isInterleaved =
     // @ts-ignore
@@ -26,7 +26,6 @@ export const useTrimeshCollision = (geometry: BufferGeometry) => {
       .array as number[];
   }
 
-  // @ts-ignore
   const [hitbox] = useTrimesh(() => ({
     type: "Static",
     args: [vertices, indices],

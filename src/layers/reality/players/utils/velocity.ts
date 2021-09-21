@@ -18,7 +18,7 @@ export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
     moveQuaternion.x = 0;
     moveQuaternion.z = 0;
     dummy.applyQuaternion(moveQuaternion);
-    dummy.y = Math.min(velocity.y, 0.4);
+    dummy.y = velocity.y;
 
     // keep y velocity intact and update velocity
     if (!device.desktop) {

@@ -52,6 +52,8 @@ export default function TouchFPSCamera() {
     const { clientX, clientY, identifier: id } = ev.touches[touchIndex];
 
     touchStartPos.current = { pos: new Vector2(clientX, clientY), id };
+
+    originEuler.current.setFromQuaternion(camera.quaternion);
   };
 
   const onTouchMove = (ev: TouchEvent) => {
