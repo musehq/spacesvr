@@ -17,26 +17,23 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
   const vPos = pos as Triplet;
 
   const { paused } = useEnvironment();
-  const [mass, setMass] = useState(0);
+  const [setup, setSetup] = useState(false);
 
-  const compoundBody = useCompoundBody(
-    () => ({
-      mass: mass,
-      position: vPos,
-      segments: 8,
-      fixedRotation: true,
-      type: "Dynamic",
-      shapes: [sphere1, sphere2, sphere3],
-    }),
-    undefined,
-    [mass]
-  );
+  const compoundBody = useCompoundBody(() => ({
+    mass: 0,
+    position: vPos,
+    segments: 8,
+    fixedRotation: true,
+    type: "Dynamic",
+    shapes: [sphere1, sphere2, sphere3],
+  }));
 
   useEffect(() => {
-    if (!paused && mass === 0) {
-      setMass(62);
+    if (!paused && !setup) {
+      compoundBody[1].mass?.set(62);
+      setSetup(true);
     }
-  }, [mass, paused]);
+  }, [setup, paused, compoundBody]);
 
   return compoundBody;
 };
