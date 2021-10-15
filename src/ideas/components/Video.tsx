@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import Frame from "../misc/Frame";
-import { Material, Vector2 } from "three";
+import { DoubleSide, LinearEncoding, Material, Vector2 } from "three";
 
 type Props = JSX.IntrinsicElements["group"] & {
   src: string;
@@ -111,8 +111,8 @@ export const Video = (props: Props) => {
     <group {...props}>
       <mesh>
         <planeBufferGeometry attach="geometry" args={[width, height]} />
-        <meshBasicMaterial>
-          <videoTexture attach="map" args={[video]} />
+        <meshBasicMaterial side={DoubleSide}>
+          <videoTexture attach="map" args={[video]} encoding={LinearEncoding} />
         </meshBasicMaterial>
       </mesh>
       {speaker && <primitive object={speaker} />}
