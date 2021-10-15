@@ -14,7 +14,7 @@ import {
 
 const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
