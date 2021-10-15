@@ -186,7 +186,7 @@ export default function PauseMenu(props: PauseMenuProps) {
       )}`,
     },
     {
-      text: "v1.8.4",
+      text: "v1.8.5",
       action: () => {
         console.log("");
       },
