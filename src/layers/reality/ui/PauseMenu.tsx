@@ -193,6 +193,22 @@ export default function PauseMenu(props: PauseMenuProps) {
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
+    {
+      text: "Privacy Policy",
+      action: () => {
+        console.log("");
+      },
+      link:
+        "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf",
+    },
+    {
+      text: "Terms of Service",
+      action: () => {
+        console.log("");
+      },
+      link:
+        "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf",
+    },
   ];
 
   return (
