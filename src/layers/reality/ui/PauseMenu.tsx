@@ -78,6 +78,30 @@ const Continue = styled.div<{ color: string }>`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
+const Footer = styled.a<{ position: string }>`
+  width: 50%;
+  height: auto;
+  cursor: pointer;
+
+  font-size: 0.4em;
+  font-family: "Quicksand", sans-serif;
+  transition: opacity 0.15s linear;
+  float: ${(props) => props.position};
+  display: inline-block;
+
+  color: black;
+  line-height: 1em;
+
+  :hover {
+    opacity: 0.5;
+  }
+`;
+
+const FooterItem = styled.div`
+  height: auto;
+  width: auto;
+`;
+
 const Logo = styled.img`
   height: 0.8em;
   vertical-align: middle;
@@ -145,6 +169,9 @@ const Actions = styled.div`
 type PauseItem = MenuItem & {
   link?: string;
 };
+type FooterItem = MenuItem & {
+  link?: string;
+};
 
 type PauseMenuProps = {
   dev: boolean;
@@ -193,6 +220,10 @@ export default function PauseMenu(props: PauseMenuProps) {
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
+  ];
+
+  const FOOTER_ITEMS: FooterItem[] = [
+    ,
     {
       text: "Privacy Policy",
       action: () => {
@@ -237,6 +268,20 @@ export default function PauseMenu(props: PauseMenuProps) {
             )
           )}
         </Actions>
+        <FooterItem>
+          <Footer
+            position={"left"}
+            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf"
+          >
+            terms and conditions
+          </Footer>
+          <Footer
+            position={"right"}
+            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf"
+          >
+            privacy policy
+          </Footer>
+        </FooterItem>
       </Window>
       <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
         continue
