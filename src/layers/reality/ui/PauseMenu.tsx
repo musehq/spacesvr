@@ -78,26 +78,6 @@ const Continue = styled.div<{ color: string }>`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
-const FooterItem = styled.a<{ position: string; width: string }>`
-  width: ${(props) => props.width};
-  height: auto;
-  cursor: pointer;
-
-  font-size: 0.4em;
-  font-family: "Quicksand", sans-serif;
-  transition: opacity 0.15s linear;
-  float: ${(props) => props.position};
-  display: inline-block;
-  white-space: nowrap;
-
-  color: black;
-  line-height: 1em;
-
-  :hover {
-    opacity: 0.5;
-  }
-`;
-
 const Footer = styled.div`
   margin-top: 15px;
   width: 100%;
@@ -106,7 +86,7 @@ const Footer = styled.div`
   font-family: "Quicksand", sans-serif;
 
   & > a {
-    color: black;
+    color: #333;
     line-height: 1em;
     transition: opacity 0.15s linear;
 
