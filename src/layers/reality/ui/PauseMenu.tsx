@@ -99,9 +99,21 @@ const FooterItem = styled.a<{ position: string; width: string }>`
 `;
 
 const Footer = styled.div`
-  height: auto;
+  margin-top: 15px;
   width: 100%;
   text-align: center;
+  font-size: 0.75rem;
+  font-family: "Quicksand", sans-serif;
+
+  & > a {
+    color: black;
+    line-height: 1em;
+    transition: opacity 0.15s linear;
+
+    :hover {
+      opacity: 0.5;
+    }
+  }
 `;
 
 const Logo = styled.img`
@@ -169,9 +181,6 @@ const Actions = styled.div`
 `;
 
 type PauseItem = MenuItem & {
-  link?: string;
-};
-type FooterItem = MenuItem & {
   link?: string;
 };
 
@@ -251,20 +260,21 @@ export default function PauseMenu(props: PauseMenuProps) {
           )}
         </Actions>
         <Footer>
-          <FooterItem
-            position={"left"}
-            width={"50%"}
+          <a
             href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf"
+            target="_blank"
+            rel="noreferrer"
           >
             terms and conditions
-          </FooterItem>
-          <FooterItem
-            position={"right"}
-            width={"50%"}
+          </a>
+          &nbsp;&nbsp;•&nbsp;&nbsp;
+          <a
             href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf"
+            target="_blank"
+            rel="noreferrer"
           >
             privacy policy
-          </FooterItem>
+          </a>
         </Footer>
       </Window>
       <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
