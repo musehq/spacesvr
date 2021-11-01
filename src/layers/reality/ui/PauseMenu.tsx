@@ -78,8 +78,8 @@ const Continue = styled.div<{ color: string }>`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
-const Footer = styled.a<{ position: string }>`
-  width: 50%;
+const FooterItem = styled.a<{ position: string; width: string }>`
+  width: ${(props) => props.width};
   height: auto;
   cursor: pointer;
 
@@ -88,6 +88,7 @@ const Footer = styled.a<{ position: string }>`
   transition: opacity 0.15s linear;
   float: ${(props) => props.position};
   display: inline-block;
+  white-space: nowrap;
 
   color: black;
   line-height: 1em;
@@ -97,9 +98,10 @@ const Footer = styled.a<{ position: string }>`
   }
 `;
 
-const FooterItem = styled.div`
+const Footer = styled.div`
   height: auto;
-  width: auto;
+  width: 100%;
+  text-align: center;
 `;
 
 const Logo = styled.img`
@@ -222,26 +224,6 @@ export default function PauseMenu(props: PauseMenuProps) {
     ...menuItems,
   ];
 
-  const FOOTER_ITEMS: FooterItem[] = [
-    ,
-    {
-      text: "Privacy Policy",
-      action: () => {
-        console.log("");
-      },
-      link:
-        "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf",
-    },
-    {
-      text: "Terms of Service",
-      action: () => {
-        console.log("");
-      },
-      link:
-        "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf",
-    },
-  ];
-
   return (
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
@@ -268,20 +250,22 @@ export default function PauseMenu(props: PauseMenuProps) {
             )
           )}
         </Actions>
-        <FooterItem>
-          <Footer
+        <Footer>
+          <FooterItem
             position={"left"}
+            width={"50%"}
             href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf"
           >
             terms and conditions
-          </Footer>
-          <Footer
+          </FooterItem>
+          <FooterItem
             position={"right"}
+            width={"50%"}
             href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf"
           >
             privacy policy
-          </Footer>
-        </FooterItem>
+          </FooterItem>
+        </Footer>
       </Window>
       <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
         continue
