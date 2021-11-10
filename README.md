@@ -10,7 +10,7 @@
      Sleek, powerful front-end framework for quickly creating cross-platform VR Websites.
 </h5>
 <p align="center">
-    <a href="https://muse.place?utm_source=npmjs">muse.place</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place?utm_source=npmjs">muse.place</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a> · <a href="https://jobs.ashbyhq.com/muse/1e73e735-3c63-4131-a04d-ff3c73f3567e">We are hiring!</a>
 <p>
 <br/>
 <br/>
