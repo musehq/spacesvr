@@ -10,7 +10,7 @@ const Container = styled.div<{ finished: boolean }>`
   z-index: 200;
   background: white;
   transition: opacity 0.75s ease-in;
-  transition-delay: 1.25s;
+  transition-delay: 0.5s;
   opacity: ${(props) => (props.finished ? "0" : "1")};
   pointer-events: ${(props) => (props.finished ? "none" : "all")};
   display: flex;

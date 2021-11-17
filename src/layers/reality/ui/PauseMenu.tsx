@@ -78,6 +78,24 @@ const Continue = styled.div<{ color: string }>`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
+const Footer = styled.div`
+  margin-top: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  font-family: "Quicksand", sans-serif;
+
+  & > a {
+    color: #333;
+    line-height: 1em;
+    transition: opacity 0.15s linear;
+
+    :hover {
+      opacity: 0.5;
+    }
+  }
+`;
+
 const Logo = styled.img`
   height: 0.8em;
   vertical-align: middle;
@@ -186,7 +204,7 @@ export default function PauseMenu(props: PauseMenuProps) {
       )}`,
     },
     {
-      text: "v1.8.5",
+      text: "v1.8.9",
       action: () => {
         console.log("");
       },
@@ -221,6 +239,23 @@ export default function PauseMenu(props: PauseMenuProps) {
             )
           )}
         </Actions>
+        <Footer>
+          <a
+            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            terms and conditions
+          </a>
+          &nbsp;&nbsp;•&nbsp;&nbsp;
+          <a
+            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            privacy policy
+          </a>
+        </Footer>
       </Window>
       <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
         continue

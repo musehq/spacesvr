@@ -8,9 +8,8 @@ import { useProgress } from "@react-three/drei";
  * - a timeout when it reaches > 50%, marked as stuck
  */
 export const useControlledProgress = () => {
-  const TIMEOUT = 2000; // minimum time to wait before moving to 100
-  const AFTER_TIME = 100; // extra time to prevent bouncing at reaching 100
-  const STUCK_TIMEOUT = 5500; // for safari, when stuck at a value above 50
+  const MIN_TIME = 2000; // minimum time to wait before moving to 100
+  const AFTER_TIME = 300; // extra time to prevent bouncing at reaching 100
 
   const { progress, total } = useProgress();
 
@@ -24,7 +23,7 @@ export const useControlledProgress = () => {
     const timeElapsed = newTime.getTime() - startTime.current.getTime();
     const diff = Math.min(
       progress - controlledProgress.current,
-      timeElapsed < TIMEOUT ? 99 : 100
+      timeElapsed < MIN_TIME ? 99 : 100
     );
     if (diff > 0) {
       if (progress === 100) {
@@ -41,16 +40,10 @@ export const useControlledProgress = () => {
       } else {
         finished.current = false;
         controlledProgress.current = progress;
-
-        // once above 50, skip progress is stuck then skip loading
-        if (progress > 50) {
-          setTimeout(() => {
-            if (controlledProgress.current === progress) {
-              setSkip(true);
-            }
-          }, STUCK_TIMEOUT);
-        }
       }
+    }
+    if (progress !== 100) {
+      finished.current = false;
     }
   }, [progress]);
 
@@ -63,7 +56,7 @@ export const useControlledProgress = () => {
     } else if (counter > 0) {
       setSkip(true);
     } else {
-      setTimeout(() => setCounter(counter + 1), TIMEOUT);
+      setTimeout(() => setCounter(counter + 1), MIN_TIME);
     }
   }, [counter]);
 
