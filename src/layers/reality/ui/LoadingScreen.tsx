@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useControlledProgress } from "../utils/loading";
-const backgroundURL =
+const loadingGifURL =
   "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/gif/mortloading.gif";
 
 const Container = styled.div<{ finished: boolean }>`
@@ -18,9 +18,9 @@ const Container = styled.div<{ finished: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-image: url(${backgroundURL});
-
+  background-image: url(${loadingGifURL});
+  background-repeat: no-repeat;
+  background-position: 25%;
   flex-direction: column;
 `;
 
