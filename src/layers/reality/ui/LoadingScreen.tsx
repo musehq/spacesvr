@@ -20,7 +20,7 @@ const Container = styled.div<{ finished: boolean }>`
   align-items: center;
   background-image: url(${loadingGifURL});
   background-repeat: no-repeat;
-  background-position: 25%;
+  background-position: center;
   flex-direction: column;
 `;
 
