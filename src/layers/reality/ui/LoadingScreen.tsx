@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useControlledProgress } from "../utils/loading";
 const loadingGifURL =
-  "https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/gif/mortloading.gif";
+  "https://d27rt3a60hh1lx.cloudfront.net/videos/mortloading.mp4";
 
 const Container = styled.div<{ finished: boolean }>`
   width: 100%;
@@ -28,8 +28,9 @@ export default function LoadingScreen() {
   const progress = useControlledProgress();
 
   return (
-    <>
-      <Container finished={progress === 100}>{Math.round(progress)}%</Container>
-    </>
+    <Container finished={progress === 100}>
+      {Math.round(progress)}%
+      <video autoPlay={true} muted={true} loop={true} src={loadingGifURL} />
+    </Container>
   );
 }
