@@ -1,4 +1,5 @@
 import { useRef, useEffect, MutableRefObject } from "react";
+import { Global, css } from "@emotion/react";
 import { Vector3 } from "three";
 import nipplejs, { JoystickManager } from "nipplejs";
 import { useEnvironment } from "../layers/environment";
@@ -45,7 +46,7 @@ const NippleMovement = (props: NippleMovementProps) => {
         zone: nippleContainer.current,
         mode: "static",
         position: { left: "50%", top: "50%" },
-        color: "gray",
+        color: "#fff",
         size: 120,
         restOpacity: 0.75,
       });
@@ -62,14 +63,19 @@ const NippleMovement = (props: NippleMovementProps) => {
       });
 
       return () => {
-        if (nipple.current) {
-          nipple.current.destroy();
-        }
+        if (nipple.current) nipple.current.destroy();
       };
     }
   }, []);
 
-  return null;
+  const nippleStyles = css`
+    .nipple-container > * > .front,
+    .nipple-container > * > .back {
+      background: radial-gradient(white, white 64%, black 86%) !important;
+    }
+  `;
+
+  return <Global styles={nippleStyles} />;
 };
 
 export default NippleMovement;
