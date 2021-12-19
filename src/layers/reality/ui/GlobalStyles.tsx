@@ -35,9 +35,7 @@ export default function GlobalStyles() {
     <>
       <Global styles={globalStyles} />
       <Helmet>
-        <head>
-          <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
-        </head>
+        <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
       </Helmet>
     </>
   );
