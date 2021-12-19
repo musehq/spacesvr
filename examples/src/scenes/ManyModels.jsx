@@ -1,5 +1,12 @@
 import { Vector3 } from "three";
-import { StandardEnvironment, Background, Logo, Image, Audio } from "spacesvr";
+import { useEffect } from "react";
+import {
+  StandardEnvironment,
+  Background,
+  Logo,
+  Image,
+  usePlayer,
+} from "spacesvr";
 import Building from "../models/Building";
 import MichaelModel from "../models/MichaelModel";
 import PinkWhiteDurag from "../models/PinkWhiteDurag";
@@ -31,6 +38,32 @@ export default () => {
       <ShoppingCart position={[-6, 0, 0]} />
       <Ramp />
       <Block />
+      <MovementTest />
     </StandardEnvironment>
   );
+};
+
+const MovementTest = () => {
+  const player = usePlayer();
+
+  useEffect(() => {
+    const onKeyPress = (e) => {
+      if (e.key.toLowerCase() === " ") {
+        player.velocity.set(
+          player.velocity
+            .get()
+            .add(new Vector3(Math.random() * 50, 4, Math.random() * 50))
+        );
+      }
+
+      if (e.key.toLowerCase() === "t") {
+        player.velocity.set(new Vector3());
+      }
+    };
+
+    document.addEventListener("keypress", onKeyPress);
+    return () => document.removeEventListener("keypress", onKeyPress);
+  }, [player]);
+
+  return null;
 };

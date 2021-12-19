@@ -1,4 +1,5 @@
 import { Global, css } from "@emotion/react";
+import { Helmet } from "react-helmet";
 
 const globalStyles = css`
   @font-face {
@@ -29,4 +30,13 @@ const globalStyles = css`
   }
 `;
 
-export default () => <Global styles={globalStyles} />;
+export default function GlobalStyles() {
+  return (
+    <>
+      <Global styles={globalStyles} />
+      <Helmet>
+        <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
+      </Helmet>
+    </>
+  );
+}
