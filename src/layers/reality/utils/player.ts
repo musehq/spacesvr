@@ -13,11 +13,17 @@ export function createPlayerState(
 ): PlayerState {
   return {
     position: {
-      set: (pos: Vector3) => bodyApi.position.copy(pos),
+      set: (pos: Vector3) => {
+        bodyApi.position.copy(pos);
+        position.current.copy(pos);
+      },
       get: () => position.current,
     },
     velocity: {
-      set: (vec: Vector3) => bodyApi.velocity.copy(vec),
+      set: (vec: Vector3) => {
+        bodyApi.velocity.copy(vec);
+        velocity.current.copy(vec);
+      },
       get: () => velocity.current,
     },
     controls: {
