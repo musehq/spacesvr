@@ -3,8 +3,8 @@ import { isMobile } from "react-device-detect";
 
 const Element = styled.div`
   position: fixed;
-  top: 50vh;
-  left: 50vw;
+  top: 50%;
+  left: 50%;
   z-index: 1;
   mix-blend-mode: difference;
 
