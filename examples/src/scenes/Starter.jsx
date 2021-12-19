@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Vector3 } from "three";
 import * as THREE from "three";
 
 import {
@@ -38,6 +37,8 @@ export default () => {
     );
   }, []);
 
+  const [hovering, setHovering] = useState(false);
+
   return (
     <StandardEnvironment playerProps={{ pos: [0, 2, 0] }}>
       <Background color={0xffffff} />
@@ -46,7 +47,7 @@ export default () => {
         onHover={() => console.log("hover")}
         onUnHover={() => console.log("un hover")}
       >
-        <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
+        <Logo floating rotating position={[4, 2, 0]} />
       </Interactable>
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />
@@ -104,20 +105,15 @@ export default () => {
           })
         }
       />
-      {/* <Image
-        src="https://d27rt3a60hh1lx.cloudfront.net/textures/dream1-1621460174/dream1.ktx2"
-        size={3}
-        position={[-3, 2, 6.4]}
-        rotation={[0, Math.PI, 0]}
-        framed
-      />
-      <Image
-        src="https://d27rt3a60hh1lx.cloudfront.net/textures/dream17-1621460188/dream17.ktx2"
-        size={3}
-        position={[0, 2, 6.4]}
-        rotation={[0, Math.PI, 0]}
-        framed
-      /> */}
+      <Interactable
+        onHover={() => setHovering(true)}
+        onUnHover={() => setHovering(false)}
+      >
+        <mesh position={[-3, 0.5, 0]}>
+          <boxBufferGeometry args={[1, 0.25, 0.1]} />
+          <meshStandardMaterial color={hovering ? "red" : "blue"} />
+        </mesh>
+      </Interactable>
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
