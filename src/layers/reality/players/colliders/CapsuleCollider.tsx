@@ -1,19 +1,36 @@
-import { ShapeType, Triplet, useCompoundBody } from "@react-three/cannon";
+import {
+  BodyProps,
+  ShapeType,
+  Triplet,
+  useCompoundBody,
+} from "@react-three/cannon";
 import { useEffect, useState } from "react";
 import { useEnvironment } from "../../layers/environment";
 
-// height of 0.9 (eye level) for a perceived height of 1
-const HEIGHT = 0.9;
-const RADIUS = HEIGHT / 3;
-
+const RADIUS = 0.5;
+const SPACING = 0.3;
 const SHAPE_TYPE: ShapeType = "Sphere";
 
 const sphereProps = { type: SHAPE_TYPE, args: [RADIUS] };
-const sphere1 = { ...sphereProps, position: [0, -(HEIGHT - RADIUS), 0] };
-const sphere2 = { ...sphereProps, position: [0, -(HEIGHT / 2), 0] };
-const sphere3 = { ...sphereProps, position: [0, -RADIUS, 0] };
+const spheres: (BodyProps<unknown> & { type: ShapeType })[] = [];
 
-export const useCapsuleCollider = (pos = [0, 0, 0]) => {
+function generateSpheres(count: number, pos: Triplet, height: number) {
+  for (let i = 0; i < count; i++) {
+    const sphere = {
+      ...sphereProps,
+      position: [0, -(SPACING * (i + 1)), 0],
+    };
+    // @ts-ignore
+    spheres.push(sphere);
+  }
+  return spheres;
+}
+
+export const useCapsuleCollider = (pos: Triplet = [0, 0, 0], height = 0.9) => {
+  const sphereCount = Math.floor(height / SPACING);
+
+  const spheres = generateSpheres(sphereCount, pos, height);
+
   const vPos = pos as Triplet;
 
   const { paused } = useEnvironment();
@@ -25,7 +42,7 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
     segments: 8,
     fixedRotation: true,
     type: "Dynamic",
-    shapes: [sphere1, sphere2, sphere3],
+    shapes: spheres,
   }));
 
   useEffect(() => {
@@ -39,18 +56,22 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
 };
 
 export function VisibleCapsuleCollider() {
-  const createSphere = (sphere: any) => (
-    <mesh position={sphere.position}>
-      <sphereBufferGeometry args={sphere.args} attach="geometry" />
-      <meshStandardMaterial color="red" attach="material" wireframe={true} />
-    </mesh>
-  );
+  const visibleSpheres = [];
+  for (const sphere of spheres) {
+    if (!sphere) continue;
+    visibleSpheres.push(
+      // @ts-ignore
+      <mesh position={sphere.position}>
+        {/* @ts-ignore */}
+        <sphereBufferGeometry args={sphere.args} attach="geometry" />
+        <meshStandardMaterial color="red" attach="material" wireframe={true} />
+      </mesh>
+    );
+  }
 
   return (
     <group name="collider" position={[1.5, 0, 0]}>
-      {createSphere(sphere1)}
-      {createSphere(sphere2)}
-      {createSphere(sphere3)}
+      {visibleSpheres}
     </group>
   );
 }

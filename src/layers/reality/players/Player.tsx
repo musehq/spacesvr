@@ -17,14 +17,17 @@ import { PlayerContext } from "../layers/player";
 import { createPlayerState } from "../utils/player";
 import { useEnvironment } from "../layers/environment";
 import VRControllerMovement from "../controls/VRControllerMovement";
+import { Triplet } from "@react-three/cannon";
 
 const SPEED = 3.6; // (m/s) 1.4 walking, 2.6 jogging, 4.1 running
+const HEIGHT = 0.9; // height of 0.9 (eye level) for a perceived height of 1
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
   pos?: number[];
   rot?: number;
   speed?: number;
+  height?: number;
   controls?: {
     disableGyro?: boolean;
   };
@@ -42,7 +45,14 @@ export type PlayerProps = {
 export default function Player(
   props: { children: ReactNode[] | ReactNode } & PlayerProps
 ) {
-  const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
+  const {
+    children,
+    pos = [0, 1, 0],
+    rot = 0,
+    speed = SPEED,
+    height = HEIGHT,
+    controls,
+  } = props;
 
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
@@ -51,7 +61,7 @@ export default function Player(
   const { device } = useEnvironment();
 
   // physical body
-  const [bodyRef, bodyApi] = useCapsuleCollider(pos);
+  const [bodyRef, bodyApi] = useCapsuleCollider(pos as Triplet, height);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state

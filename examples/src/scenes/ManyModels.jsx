@@ -15,7 +15,7 @@ import { Ramp, Block } from "../components/Physics";
 
 export default () => {
   return (
-    <StandardEnvironment playerProps={{ pos: [0, 1, 5], rot: 0.9 }}>
+    <StandardEnvironment playerProps={{ pos: [0, 5, 5], rot: 0.9, height: 5 }}>
       <Background color={0xffffff} />
       <Logo floating rotating position={new Vector3(0, 1.25, 0)} />
       <ambientLight />
