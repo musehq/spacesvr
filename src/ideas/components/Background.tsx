@@ -1,5 +1,5 @@
 import { Color } from "three";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
 type BackgroundProps = {
@@ -8,15 +8,16 @@ type BackgroundProps = {
 
 export const Background = (props: BackgroundProps) => {
   const { color } = props;
+
   const scene = useThree((state) => state.scene);
-  const [setup, setSetup] = useState(false);
 
   useEffect(() => {
-    if (scene && !setup) {
-      scene.background = new Color(color);
-      setSetup(true);
-    }
-  }, [scene, setup]);
+    const col = (color as Color) instanceof Color ? color : new Color(color);
+    scene.background = col as Color;
+    return () => {
+      scene.background = null;
+    };
+  }, [color, scene]);
 
   return null;
 };
