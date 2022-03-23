@@ -1,7 +1,6 @@
-import * as THREE from "three";
 import { useEffect, useMemo, useState } from "react";
 import { GroupProps, useThree } from "@react-three/fiber";
-import { AudioAnalyser, Vector3 } from "three";
+import { AudioAnalyser, PositionalAudio, Vector3, AudioListener } from "three";
 
 type AudioProps = {
   url: string;
@@ -12,7 +11,7 @@ type AudioProps = {
   fftSize?: 64 | 128 | 256 | 512 | 1024;
 } & GroupProps;
 
-export const Audio = (props: AudioProps) => {
+export default function Audio(props: AudioProps) {
   const {
     url,
     dCone = new Vector3(180, 230, 0.1),
@@ -23,7 +22,7 @@ export const Audio = (props: AudioProps) => {
     ...restProps
   } = props;
 
-  const [speaker, setSpeaker] = useState<THREE.PositionalAudio>();
+  const [speaker, setSpeaker] = useState<PositionalAudio>();
   const camera = useThree((state) => state.camera);
 
   const audio = useMemo(() => {
@@ -39,10 +38,10 @@ export const Audio = (props: AudioProps) => {
   useEffect(() => {
     const setupAudio = () => {
       if (!audio.paused && !speaker) {
-        const listener = new THREE.AudioListener();
+        const listener = new AudioListener();
         camera.add(listener);
 
-        const speak = new THREE.PositionalAudio(listener);
+        const speak = new PositionalAudio(listener);
         speak.setMediaElementSource(audio);
         speak.setRefDistance(0.75);
         speak.setRolloffFactor(rollOff);
@@ -80,4 +79,4 @@ export const Audio = (props: AudioProps) => {
   return (
     <group {...restProps}>{speaker && <primitive object={speaker} />}</group>
   );
-};
+}

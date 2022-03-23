@@ -1,19 +1,16 @@
-import { useLoader } from "@react-three/fiber";
-import * as THREE from "three";
+import { GroupProps, useLoader } from "@react-three/fiber";
+import { TextureLoader } from "three";
 
-type ArrowProps = { dark?: boolean } & JSX.IntrinsicElements["group"];
+type ArrowProps = { dark?: boolean } & GroupProps;
 
 const IMAGE_SRC = "https://d27rt3a60hh1lx.cloudfront.net/images/whiteArrow.png";
 const IMAGE_SRC_DARK =
   "https://d27rt3a60hh1lx.cloudfront.net/images/blackArrow.png";
 
-export const Arrow = (props: ArrowProps) => {
+export default function Arrow(props: ArrowProps) {
   const { dark, ...restProps } = props;
 
-  const texture = useLoader(
-    THREE.TextureLoader,
-    dark ? IMAGE_SRC_DARK : IMAGE_SRC
-  );
+  const texture = useLoader(TextureLoader, dark ? IMAGE_SRC_DARK : IMAGE_SRC);
 
   return (
     <group {...restProps}>
@@ -29,4 +26,4 @@ export const Arrow = (props: ArrowProps) => {
       </mesh>
     </group>
   );
-};
+}
