@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 
 type Props = {
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
   pos?: [number, number];
   face?: boolean;
   distance?: number;
@@ -26,8 +26,7 @@ export function Tool(props: Props) {
 
   const DISTANCE = distance * 0.05;
 
-  const camera = useThree((state) => state.camera);
-  const size = useThree((state) => state.size);
+  const { size, camera } = useThree();
 
   const group = useRef<Group>();
   const groupPos = useRef(new Vector3());
@@ -60,7 +59,7 @@ export function Tool(props: Props) {
   });
 
   return (
-    <group>
+    <group name="spacesvr-tool">
       <group ref={group}>
         <group scale={SCALE * distance}>{children}</group>
       </group>

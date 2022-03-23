@@ -8,7 +8,7 @@ type FogProps = {
   far?: number;
 };
 
-export default function Fog(props: FogProps) {
+export function Fog(props: FogProps) {
   const { color = "white", near = 10, far = 80 } = props;
 
   const scene = useThree((state) => state.scene);

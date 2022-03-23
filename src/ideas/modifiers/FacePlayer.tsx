@@ -3,14 +3,14 @@ import { Group } from "three";
 import { useFrame } from "@react-three/fiber";
 import { useLimiter } from "../../utils/limiter";
 
-type Props = {
-  children: ReactNode;
+type FacePlayerProps = {
+  children: ReactNode | ReactNode[];
   lockX?: boolean;
   lockY?: boolean;
   lockZ?: boolean;
 };
 
-export function FacePlayer(props: Props) {
+export function FacePlayer(props: FacePlayerProps) {
   const { children, lockX = false, lockY = false, lockZ = false } = props;
 
   const group = useRef<Group>();
@@ -32,7 +32,9 @@ export function FacePlayer(props: Props) {
     }
   });
 
-  return <group ref={group}>{children}</group>;
+  return (
+    <group name="spacesvr-faceplayer" ref={group}>
+      {children}
+    </group>
+  );
 }
-
-export default FacePlayer;

@@ -29,5 +29,9 @@ export function Spinning(props: Props) {
       clock.getElapsedTime() * zSpeed * 0.25 + zSpeed * seed * 40;
   });
 
-  return <group ref={group}>{children}</group>;
+  return (
+    <group name="spacesvr-spinning" ref={group}>
+      {children}
+    </group>
+  );
 }

@@ -6,7 +6,7 @@ import { useLimiter } from "../../utils/limiter";
 type FloatingProps = {
   height?: number;
   speed?: number;
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
 };
 
 export function Floating(props: FloatingProps) {
@@ -24,5 +24,9 @@ export function Floating(props: FloatingProps) {
       Math.sin(clock.getElapsedTime() * speed * 0.4 + seed.current * 10000);
   });
 
-  return <group ref={group}>{children}</group>;
+  return (
+    <group name="spacesvr-floating" ref={group}>
+      {children}
+    </group>
+  );
 }

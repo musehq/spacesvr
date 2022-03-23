@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
-import { FontLoader, Vector3, Mesh } from "three";
-import { useLoader } from "@react-three/fiber";
+import { FontLoader, Vector3, Mesh, Material } from "three";
+import { GroupProps, useLoader } from "@react-three/fiber";
 
 const FONT_FILE = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Coolvetica.json";
 
-type TextProps = JSX.IntrinsicElements["group"] & {
+type TextProps = {
   text: string;
   vAlign?: "center" | "top" | "bottom";
   hAlign?: "center" | "left" | "right";
@@ -12,10 +12,10 @@ type TextProps = JSX.IntrinsicElements["group"] & {
   color?: string;
   bevel?: boolean;
   font?: string;
-  material?: THREE.Material;
-};
+  material?: Material;
+} & GroupProps;
 
-export const Text = (props: TextProps) => {
+export function Text(props: TextProps) {
   const {
     text,
     vAlign = "center",
@@ -25,7 +25,7 @@ export const Text = (props: TextProps) => {
     color = "#000000",
     font: fontFile,
     material,
-    ...restProps
+    ...rest
   } = props;
 
   const font = useLoader(FontLoader, fontFile || FONT_FILE);
@@ -59,7 +59,7 @@ export const Text = (props: TextProps) => {
   }, [text]);
 
   return (
-    <group {...restProps} scale={[0.1 * size, 0.1 * size, 0.1]}>
+    <group name="spacesvr-text" {...rest} scale={[0.1 * size, 0.1 * size, 0.1]}>
       <mesh ref={mesh} material={material}>
         <textGeometry attach="geometry" args={[text, config]} />
         {!material && (
@@ -72,4 +72,4 @@ export const Text = (props: TextProps) => {
       </mesh>
     </group>
   );
-};
+}

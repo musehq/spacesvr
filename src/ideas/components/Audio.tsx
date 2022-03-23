@@ -11,7 +11,7 @@ type AudioProps = {
   fftSize?: 64 | 128 | 256 | 512 | 1024;
 } & GroupProps;
 
-export default function Audio(props: AudioProps) {
+export function Audio(props: AudioProps) {
   const {
     url,
     dCone = new Vector3(180, 230, 0.1),
@@ -19,7 +19,7 @@ export default function Audio(props: AudioProps) {
     volume = 1,
     setAudioAnalyser,
     fftSize = 128,
-    ...restProps
+    ...rest
   } = props;
 
   const [speaker, setSpeaker] = useState<PositionalAudio>();
@@ -77,6 +77,8 @@ export default function Audio(props: AudioProps) {
   }, [dCone, rollOff, volume]);
 
   return (
-    <group {...restProps}>{speaker && <primitive object={speaker} />}</group>
+    <group name="spacesvr-audio" {...rest}>
+      {speaker && <primitive object={speaker} />}
+    </group>
   );
 }
