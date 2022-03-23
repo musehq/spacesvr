@@ -2,9 +2,6 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { useControlledProgress } from "../utils/loading";
 
-const LOADING_VIDEO =
-  "https://d27rt3a60hh1lx.cloudfront.net/videos/mortloading.mp4";
-
 const float = keyframes`
   0% {
     transform: translatey(0px);
@@ -16,6 +13,19 @@ const float = keyframes`
 
   100% {
     transform: translatey(0px);
+  }
+`;
+const grow = keyframes`
+  0% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 0.8;
   }
 `;
 
@@ -41,11 +51,34 @@ const Text = styled.div`
   animation: ${float} 7s ease-in-out infinite;
 `;
 
-const Video = styled.video`
-  display: block;
-  margin: 0 auto;
-  z-index: -1;
-  position: absolute;
+const Wrapper = styled.div`
+  position: relative;
+
+  &:before {
+    pointer-events: none;
+    position: absolute;
+    content: "";
+    top: 100%;
+    left: 5%;
+    height: 10px;
+    width: 90%;
+    background: -webkit-radial-gradient(
+      center,
+      ellipse,
+      rgba(0, 0, 0, 0.35) 0%,
+      transparent 80%
+    );
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0.35) 0%,
+      transparent 80%
+    );
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property: transform, opacity;
+    transition-property: transform, opacity;
+    animation: ${grow} 7s ease-in-out infinite;
+  }
 `;
 
 export default function LoadingScreen() {
@@ -53,8 +86,9 @@ export default function LoadingScreen() {
 
   return (
     <Container finished={progress === 100}>
-      <Text>{Math.round(progress)}%</Text>
-      <Video autoPlay muted loop playsInline src={LOADING_VIDEO} />
+      <Wrapper>
+        <Text>{Math.round(progress)}%</Text>
+      </Wrapper>
     </Container>
   );
 }
