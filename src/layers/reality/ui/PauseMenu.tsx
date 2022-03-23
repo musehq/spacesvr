@@ -45,7 +45,6 @@ const Window = styled.div`
   position: relative;
   border-radius: 10px;
   background-color: white;
-  //border: 2px solid black;
   background-position: center;
   background-size: cover;
   box-sizing: border-box;
@@ -76,30 +75,6 @@ const Continue = styled.div<{ color: string }>`
 
   box-shadow: 12px 12px 16px 0 rgba(0, 0, 0, 0.25),
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
-`;
-
-const Footer = styled.div`
-  margin-top: 15px;
-  width: 100%;
-  text-align: center;
-  font-size: 0.75rem;
-  font-family: "Quicksand", sans-serif;
-
-  & > a {
-    color: #333;
-    line-height: 1em;
-    transition: opacity 0.15s linear;
-
-    :hover {
-      opacity: 0.5;
-    }
-  }
-`;
-
-const Logo = styled.img`
-  height: 0.8em;
-  vertical-align: middle;
-  margin-right: 15px;
 `;
 
 const Instructions = styled.div`
@@ -160,7 +135,7 @@ const Actions = styled.div`
   flex-wrap: wrap;
 `;
 
-type PauseItem = MenuItem & {
+type PauseItem = Partial<MenuItem> & {
   link?: string;
 };
 
@@ -170,12 +145,11 @@ type PauseMenuProps = {
 
 export default function PauseMenu(props: PauseMenuProps) {
   const { dev } = props;
+
   const { paused, overlay, setPaused, menuItems } = useEnvironment();
   const layout = useKeyboardLayout();
+
   const closeOverlay = () => setPaused(false);
-
-  const cta = useCTA();
-
   const continueIdea = useMemo(
     () => new Idea().setFromCreation(Math.random(), 0.8, 0.95),
     []
@@ -195,19 +169,7 @@ export default function PauseMenu(props: PauseMenuProps) {
 
   const PAUSE_ITEMS: PauseItem[] = [
     {
-      text: cta,
-      action: () => {
-        console.log("");
-      },
-      link: `https://muse.place?utm_source=pause_menu&utm_campaign=${encodeURIComponent(
-        cta
-      )}`,
-    },
-    {
       text: "v1.8.12",
-      action: () => {
-        console.log("");
-      },
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
@@ -217,10 +179,7 @@ export default function PauseMenu(props: PauseMenuProps) {
     <Container paused={paused}>
       <ClickContainer onClick={closeOverlay} />
       <Window>
-        <Title>
-          <Logo src="https://d27rt3a60hh1lx.cloudfront.net/images/muselogogray.png" />
-          muse
-        </Title>
+        <Title>spacesvr</Title>
         <Instructions>
           <p>Move – {isMobile ? "Joystick" : layout}</p>
           <p>Look – {isMobile ? "Drag" : "Mouse"}</p>
@@ -239,23 +198,6 @@ export default function PauseMenu(props: PauseMenuProps) {
             )
           )}
         </Actions>
-        <Footer>
-          <a
-            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/musetermsofservice.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            terms and conditions
-          </a>
-          &nbsp;&nbsp;•&nbsp;&nbsp;
-          <a
-            href="https://spaces-gallery-assets.s3.us-west-1.amazonaws.com/legal/museprivacypolicy.pdf"
-            target="_blank"
-            rel="noreferrer"
-          >
-            privacy policy
-          </a>
-        </Footer>
       </Window>
       <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
         continue
@@ -263,8 +205,3 @@ export default function PauseMenu(props: PauseMenuProps) {
     </Container>
   );
 }
-
-const useCTA = (): string => {
-  const options = ["Build a World", "Build Now", "Muse HQ", "www.muse.place"];
-  return useMemo(() => options[Math.floor(Math.random() * options.length)], []);
-};
