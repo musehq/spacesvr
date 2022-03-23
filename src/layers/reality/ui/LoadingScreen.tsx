@@ -2,9 +2,6 @@ import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { useControlledProgress } from "../utils/loading";
 
-const LOADING_VIDEO =
-  "https://d27rt3a60hh1lx.cloudfront.net/videos/mortloading.mp4";
-
 const float = keyframes`
   0% {
     transform: translatey(0px);
@@ -41,20 +38,12 @@ const Text = styled.div`
   animation: ${float} 7s ease-in-out infinite;
 `;
 
-const Video = styled.video`
-  display: block;
-  margin: 0 auto;
-  z-index: -1;
-  position: absolute;
-`;
-
 export default function LoadingScreen() {
   const progress = useControlledProgress();
 
   return (
     <Container finished={progress === 100}>
       <Text>{Math.round(progress)}%</Text>
-      <Video autoPlay muted loop playsInline src={LOADING_VIDEO} />
     </Container>
   );
 }
