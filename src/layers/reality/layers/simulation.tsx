@@ -334,6 +334,15 @@ export const useSimulationState = (
     };
   }, [peer, props]);
 
+  useEffect(() => {
+    if (peer) {
+      window.onunload = function () {
+        peer.disconnect();
+        peer.destroy();
+      };
+    }
+  }, [peer]);
+
   return {
     connected,
     sendEvent,

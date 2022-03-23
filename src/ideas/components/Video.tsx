@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 import Frame from "../misc/Frame";
-import { DoubleSide, Material, sRGBEncoding, Vector2 } from "three";
+import {
+  DoubleSide,
+  Material,
+  PositionalAudio,
+  sRGBEncoding,
+  Vector2,
+  AudioListener,
+} from "three";
 
-type Props = JSX.IntrinsicElements["group"] & {
+type Props = {
   src: string;
   size?: number;
   framed?: boolean;
@@ -12,9 +18,9 @@ type Props = JSX.IntrinsicElements["group"] & {
   volume?: number;
   frameMaterial?: Material;
   frameWidth?: number;
-};
+} & GroupProps;
 
-export const Video = (props: Props) => {
+export function Video(props: Props) {
   const {
     src,
     size = 1,
@@ -23,6 +29,7 @@ export const Video = (props: Props) => {
     volume = 1,
     frameMaterial,
     frameWidth = 1,
+    ...rest
   } = props;
 
   const camera = useThree((state) => state.camera);
@@ -46,10 +53,10 @@ export const Video = (props: Props) => {
   useEffect(() => {
     const setupAudio = () => {
       if (!muted && !video.paused && !speaker) {
-        const listener = new THREE.AudioListener();
+        const listener = new AudioListener();
         camera.add(listener);
 
-        const speak = new THREE.PositionalAudio(listener);
+        const speak = new PositionalAudio(listener);
         speak.setMediaElementSource(video);
         speak.setRefDistance(0.75);
         speak.setRolloffFactor(1);
@@ -108,7 +115,7 @@ export const Video = (props: Props) => {
   const height = (dims.y / max) * size;
 
   return (
-    <group {...props}>
+    <group name="spacesvr-video" {...rest}>
       <mesh>
         <planeBufferGeometry attach="geometry" args={[width, height]} />
         <meshBasicMaterial side={DoubleSide}>
@@ -126,4 +133,4 @@ export const Video = (props: Props) => {
       )}
     </group>
   );
-};
+}

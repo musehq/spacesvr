@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-
+import { useEffect, useMemo } from "react";
 import { useThree } from "@react-three/fiber";
 import {
   NearestFilter,
@@ -16,14 +15,15 @@ type HDRIProps = {
   disableEnvironment?: boolean;
 };
 
-export const HDRI = (props: HDRIProps) => {
+export function HDRI(props: HDRIProps) {
   const { src, size = 1204, disableBackground, disableEnvironment } = props;
-  const gl = useThree((state) => state.gl);
-  const scene = useThree((state) => state.scene);
 
-  // actual file loader
-  const loader = new RGBELoader();
-  loader.setDataType(UnsignedByteType);
+  const { gl, scene } = useThree();
+
+  const loader = useMemo(
+    () => new RGBELoader().setDataType(UnsignedByteType),
+    []
+  );
 
   useEffect(() => {
     loader.load(src, (texture) => {
@@ -33,6 +33,7 @@ export const HDRI = (props: HDRIProps) => {
         magFilter: NearestFilter,
         minFilter: NearestFilter,
       };
+
       const envMap = new WebGLCubeRenderTarget(
         size,
         opts
@@ -45,13 +46,16 @@ export const HDRI = (props: HDRIProps) => {
       if (!disableEnvironment) {
         scene.environment = envMap;
       }
+
       texture.dispose();
 
       return () => {
+        scene.background = null;
+        scene.environment = null;
         envMap.dispose();
       };
     });
   }, [src, scene, loader, disableBackground, disableEnvironment]);
 
   return null;
-};
+}

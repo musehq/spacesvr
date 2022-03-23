@@ -1,21 +1,26 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { Color, Fog as ThreeFog } from "three";
 
 type FogProps = {
-  color: THREE.Color;
-  near: number;
-  far: number;
+  color?: Color | string | number;
+  near?: number;
+  far?: number;
 };
 
-export const Fog = (props: FogProps) => {
-  const { color, near, far } = props;
+export function Fog(props: FogProps) {
+  const { color = "white", near = 10, far = 80 } = props;
 
   const scene = useThree((state) => state.scene);
 
   useEffect(() => {
-    scene.fog = new THREE.Fog(color, near, far);
+    const col = (color as Color) instanceof Color ? color : new Color(color);
+    scene.fog = new ThreeFog(col, near, far);
+
+    return () => {
+      scene.fog = null;
+    };
   }, [scene, color, near, far]);
 
-  return <></>;
-};
+  return null;
+}

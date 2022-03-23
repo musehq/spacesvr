@@ -9,7 +9,7 @@ type Props = {
   onClick?: () => void;
   onHover?: () => void;
   onUnHover?: () => void;
-  children: ReactNode;
+  children: ReactNode | ReactNode[];
 };
 
 /**
@@ -105,5 +105,9 @@ export function Interactable(props: Props) {
     };
   }, [onMouseUp, onTouchEnd, onClick]);
 
-  return <group ref={group}>{children}</group>;
+  return (
+    <group name="spacesvr-interactable" ref={group}>
+      {children}
+    </group>
+  );
 }
