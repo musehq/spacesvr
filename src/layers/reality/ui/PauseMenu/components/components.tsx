@@ -1,12 +1,6 @@
 import styled from "@emotion/styled";
-import { isMobile } from "react-device-detect";
-import { useEnvironment } from "../layers/environment";
-import { useKeyboardLayout } from "../utils/hooks";
-import { MenuItem } from "../types";
-import { useMemo } from "react";
-import { Idea } from "../../basis";
 
-const Container = styled.div<{ paused: boolean; dev?: boolean }>`
+export const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -24,7 +18,7 @@ const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   font-family: "Quicksand", sans-serif;
 `;
 
-const ClickContainer = styled.div`
+export const ClickContainer = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -33,7 +27,7 @@ const ClickContainer = styled.div`
   z-index: -1;
 `;
 
-const Window = styled.div`
+export const Window = styled.div`
   width: 90%;
   max-width: 400px;
   padding: 20px 20px;
@@ -53,7 +47,7 @@ const Window = styled.div`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
-const Continue = styled.div<{ color: string }>`
+export const Continue = styled.div<{ color: string }>`
   width: 90%;
   max-width: 400px;
   height: auto;
@@ -77,7 +71,7 @@ const Continue = styled.div<{ color: string }>`
     -8px -8px 12px 0 rgba(255, 255, 255, 0.3);
 `;
 
-const Instructions = styled.div`
+export const Instructions = styled.div`
   width: 100%;
   height: auto;
   margin: 30px 0;
@@ -92,7 +86,7 @@ const Instructions = styled.div`
   }
 `;
 
-const MenuButton = styled.div`
+export const MenuButton = styled.div`
   border: 1px solid black;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0);
@@ -107,7 +101,7 @@ const MenuButton = styled.div`
   }
 `;
 
-const MenuLink = styled.a`
+export const MenuLink = styled.a`
   border: 1px solid black;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0);
@@ -124,84 +118,13 @@ const MenuLink = styled.a`
   }
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
   margin: 0;
 `;
 
-const Actions = styled.div`
+export const Actions = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
 `;
-
-type PauseItem = Partial<MenuItem> & {
-  link?: string;
-};
-
-type PauseMenuProps = {
-  dev: boolean;
-};
-
-export default function PauseMenu(props: PauseMenuProps) {
-  const { dev } = props;
-
-  const { paused, overlay, setPaused, menuItems } = useEnvironment();
-  const layout = useKeyboardLayout();
-
-  const closeOverlay = () => setPaused(false);
-  const continueIdea = useMemo(
-    () => new Idea().setFromCreation(Math.random(), 0.8, 0.95),
-    []
-  );
-
-  if (dev) {
-    return (
-      <Container paused={paused} dev={true}>
-        <ClickContainer onClick={closeOverlay} />
-      </Container>
-    );
-  }
-
-  if (overlay) {
-    return null;
-  }
-
-  const PAUSE_ITEMS: PauseItem[] = [
-    {
-      text: "v1.8.12",
-      link: "https://www.npmjs.com/package/spacesvr",
-    },
-    ...menuItems,
-  ];
-
-  return (
-    <Container paused={paused}>
-      <ClickContainer onClick={closeOverlay} />
-      <Window>
-        <Title>spacesvr</Title>
-        <Instructions>
-          <p>Move – {isMobile ? "Joystick" : layout}</p>
-          <p>Look – {isMobile ? "Drag" : "Mouse"}</p>
-          <p>Pause – {isMobile ? "Menu Button" : "Esc"}</p>
-        </Instructions>
-        <Actions>
-          {PAUSE_ITEMS.map((item) =>
-            item.link ? (
-              <MenuLink key={item.text} href={item.link}>
-                {item.text}
-              </MenuLink>
-            ) : (
-              <MenuButton key={item.text} onClick={item.action}>
-                {item.text}
-              </MenuButton>
-            )
-          )}
-        </Actions>
-      </Window>
-      <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
-        continue
-      </Continue>
-    </Container>
-  );
-}
