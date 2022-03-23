@@ -1,5 +1,5 @@
 import { Suspense, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { GroupProps, useFrame } from "@react-three/fiber";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
@@ -19,13 +19,13 @@ const SPEED = 0.2;
 type LogoProps = {
   floating?: boolean;
   rotating?: boolean;
-} & JSX.IntrinsicElements["group"];
+} & GroupProps;
 
 const FILE_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/models/SpacesSphere1/SpacesSphere1.glb";
 
-export const Logo = (props: LogoProps) => {
-  const { rotating, floating, ...restProps } = props;
+export function Logo(props: LogoProps) {
+  const { rotating, floating, ...rest } = props;
 
   const group = useRef<THREE.Group>();
   const sphereGroup = useRef<THREE.Group>();
@@ -43,7 +43,7 @@ export const Logo = (props: LogoProps) => {
   });
 
   return (
-    <group {...restProps}>
+    <group name="spacesvr-logo" {...rest}>
       <group ref={group}>
         <Suspense fallback={null}>
           <group ref={sphereGroup} scale={[100, 100, 100]} dispose={null}>
@@ -59,4 +59,4 @@ export const Logo = (props: LogoProps) => {
       </group>
     </group>
   );
-};
+}

@@ -1,10 +1,10 @@
 import { Suspense, useMemo } from "react";
-import * as THREE from "three";
-import { Material } from "three";
+import { DoubleSide, Material } from "three";
 import Frame from "../misc/Frame";
 import { useTexture } from "@react-three/drei";
+import { GroupProps } from "@react-three/fiber";
 
-type ImageProps = JSX.IntrinsicElements["group"] & {
+type ImageProps = {
   src: string;
   size?: number;
   framed?: boolean;
@@ -12,9 +12,9 @@ type ImageProps = JSX.IntrinsicElements["group"] & {
   frameWidth?: number;
   innerFrameMaterial?: Material;
   transparent?: boolean;
-};
+} & GroupProps;
 
-const UnsuspensedImage = (props: ImageProps) => {
+function UnsuspensedImage(props: ImageProps) {
   const {
     src,
     size = 1,
@@ -35,12 +35,12 @@ const UnsuspensedImage = (props: ImageProps) => {
     HEIGHT = (height / max) * size;
 
   return (
-    <group {...props}>
+    <group name="spacesvr-image" {...props}>
       <mesh>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
         <meshBasicMaterial
           map={texture}
-          side={THREE.DoubleSide}
+          side={DoubleSide}
           transparent={transparent}
         />
       </mesh>
@@ -56,7 +56,7 @@ const UnsuspensedImage = (props: ImageProps) => {
       )}
     </group>
   );
-};
+}
 
 export function Image(props: ImageProps) {
   return (

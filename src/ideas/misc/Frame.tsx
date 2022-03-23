@@ -1,6 +1,10 @@
 import { useMemo } from "react";
-import * as THREE from "three";
-import { BoxBufferGeometry, BufferGeometry, Material } from "three";
+import {
+  BoxBufferGeometry,
+  BufferGeometry,
+  Material,
+  MeshStandardMaterial,
+} from "three";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 type FrameProps = {
@@ -23,7 +27,7 @@ type FrameProps = {
  * @param props
  * @constructor
  */
-const Frame = (props: FrameProps) => {
+export default function Frame(props: FrameProps) {
   const {
     width,
     height,
@@ -36,7 +40,7 @@ const Frame = (props: FrameProps) => {
   const material = useMemo(
     () =>
       passedMaterial ||
-      new THREE.MeshStandardMaterial({
+      new MeshStandardMaterial({
         color: 0x333333,
         roughness: 0.8,
         metalness: 0.05,
@@ -129,13 +133,11 @@ const Frame = (props: FrameProps) => {
   }, [innerFrameMaterial, width, height]);
 
   return (
-    <group>
+    <group name="frame">
       <mesh geometry={geometry} material={material} />
       {backFrameGeometry && innerFrameMaterial && (
         <mesh geometry={backFrameGeometry} material={innerFrameMaterial} />
       )}
     </group>
   );
-};
-
-export default Frame;
+}
