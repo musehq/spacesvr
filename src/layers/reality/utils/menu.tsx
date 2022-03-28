@@ -34,7 +34,7 @@ export function RegisterMenuItems() {
 
 export const useVRMenuItem = (): MenuItem | undefined => {
   const gl = useThree((state) => state.gl);
-  const { setDevice } = useEnvironment();
+  const { setDevice, setPaused } = useEnvironment();
 
   // @ts-ignore
   const xr = navigator.xr;
@@ -67,6 +67,7 @@ export const useVRMenuItem = (): MenuItem | undefined => {
       await gl.xr.setSession(sesh);
       setText("Exit VR");
       setDevice("xr");
+      setPaused(false);
       session.current = sesh;
     }
 
@@ -74,6 +75,7 @@ export const useVRMenuItem = (): MenuItem | undefined => {
       session.current?.removeEventListener("end", onSessionEnded);
       setDevice(isMobile ? "mobile" : "desktop");
       setText("Enter VR");
+      setPaused(true);
       session.current = undefined;
     }
 
