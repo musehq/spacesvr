@@ -51,7 +51,6 @@ function UnsuspensedImage(props: ImageProps) {
           thickness={frameWidth}
           material={frameMaterial}
           innerFrameMaterial={innerFrameMaterial}
-          transparent={transparent}
         />
       )}
     </group>
