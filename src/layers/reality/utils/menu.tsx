@@ -98,6 +98,8 @@ export const useVRMenuItem = (): MenuItem | undefined => {
 export const useFsMenuItem = (): MenuItem | undefined => {
   const domElement = document.body;
 
+  const { paused } = useEnvironment();
+
   const getRFS = () =>
     domElement.requestFullscreen ||
     // @ts-ignore
@@ -108,6 +110,7 @@ export const useFsMenuItem = (): MenuItem | undefined => {
     domElement.msRequestFullscreen ||
     undefined;
 
+  const [hasContinued, setHasContinued] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenAvailable] = useState(getRFS() !== undefined);
 
@@ -120,6 +123,15 @@ export const useFsMenuItem = (): MenuItem | undefined => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (!paused) {
+      setHasContinued(true);
+      if (!hasContinued && fullscreenAvailable) {
+        getRFS().apply(domElement, [{ navigationUI: "hide" }]);
+      }
+    }
+  }, [fullscreenAvailable, hasContinued, paused]);
 
   if (!fullscreenAvailable) {
     return undefined;
