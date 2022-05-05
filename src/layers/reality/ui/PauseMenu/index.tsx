@@ -53,7 +53,7 @@ export default function PauseMenu(props: PauseMenuProps) {
   const PAUSE_ITEMS: PauseItem[] = [
     ...pauseMenuItems,
     {
-      text: "v1.9.1",
+      text: "v1.9.2",
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
