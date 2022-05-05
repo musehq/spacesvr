@@ -40,7 +40,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
     }
 
     // We don't want to mess with the browser's shortcuts
-    if (ev.ctrlKey || ev.altKey || ev.metaKey || ev.shiftKey) {
+    if (ev.ctrlKey || ev.altKey || ev.metaKey) {
       return;
     }
 
