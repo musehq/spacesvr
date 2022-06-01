@@ -2,8 +2,8 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Vector2 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { isMobile } from "react-device-detect";
-import { useLimiter } from "../../utils/limiter";
-import { usePlayer } from "../../layers/reality/layers/player";
+import { useLimiter } from "../../logic/limiter";
+import { usePlayer } from "layers/fundamental/layers/Player";
 
 type Props = {
   onClick?: () => void;

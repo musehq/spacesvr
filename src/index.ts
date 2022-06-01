@@ -1,3 +1,3 @@
 export * from "./ideas";
-export * from "./layers/reality";
-export * from "./utils";
+export * from "./layers";
+export * from "./logic";

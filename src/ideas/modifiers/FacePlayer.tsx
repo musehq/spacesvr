@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
 import { Group } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../utils/limiter";
+import { useLimiter } from "../../logic/limiter";
 
 type FacePlayerProps = {
   children: ReactNode | ReactNode[];

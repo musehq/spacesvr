@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Group } from "three";
-import { useLimiter } from "../../utils/limiter";
+import { useLimiter } from "../../logic/limiter";
 
 type FloatingProps = {
   height?: number;

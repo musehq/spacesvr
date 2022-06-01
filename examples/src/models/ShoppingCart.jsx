@@ -1,6 +1,6 @@
-import { DRACO_URL } from "../../../src/utils";
+import { DRACO_URL } from "../../../src/logic";
 import { useGLTF } from "@react-three/drei";
-import { useTrimeshCollision } from "../../../src/utils/";
+import { useTrimeshCollision } from "../../../src/logic/";
 
 const Building = () => {
   const gltf = useGLTF(

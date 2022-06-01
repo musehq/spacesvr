@@ -1,4 +1,4 @@
-import { DRACO_URL } from "../../../src/utils";
+import { DRACO_URL } from "../../../src/logic";
 import { useGLTF } from "@react-three/drei";
 
 const Building = () => {
