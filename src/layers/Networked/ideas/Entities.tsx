@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Mesh } from "three";
-import { useNetwork } from "../logic/network";
+import { useNetwork } from "../index";
 
 type EntityAvatarProps = {
   uuid: string;
@@ -37,7 +37,7 @@ const EntityAvatar = (props: EntityAvatarProps) => {
   );
 };
 
-const Entities = () => {
+export default function Entities() {
   const { connected, fetch } = useNetwork();
 
   const [entityIds, setEntityIds] = useState<Array<string>>([]);
@@ -65,6 +65,4 @@ const Entities = () => {
       ))}
     </group>
   );
-};
-
-export default Entities;
+}

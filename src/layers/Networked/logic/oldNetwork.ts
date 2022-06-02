@@ -1,33 +1,14 @@
-import Peer from "peerjs";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  createContext,
-  useContext,
-} from "react";
+import { Peer, DataConnection, MediaConnection } from "peerjs";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NetworkedProps } from "../index";
-
-export type NetworkedState = {
-  connected: boolean;
-  frequency: number;
-  sendEvent: (type: string, data: any) => void;
-  fetch: (type: string) => Map<string, Entity>;
-};
 
 export type Entity = {
   position: [number, number, number];
   rotation: [number, number, number];
 };
 
-export const NetworkedContext = createContext({} as NetworkedState);
-export const useNetwork = () => useContext(NetworkedContext);
-
 /**
- * Simulation creates a P2P mesh
- * between clients by using PeerJS
+ * Networked creates a P2P mesh between clients by using PeerJS
  *
  * PeerJS API wraps WebRTC framework, supported by Peer Server
  * for signaling, and WebSockets for discovering new clients
@@ -35,23 +16,12 @@ export const useNetwork = () => useContext(NetworkedContext);
  * @param props
  * @constructor
  */
-export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
-  const {
-    signalHost,
-    signalPort,
-    signalPath,
-    socketServer,
-    frequency = 25,
-    audio = false,
-  } = props;
-
-  // Check props to enable simulation
-  // TODO: Assert all SimulationProps specified
-  const enabled = Object.keys(props).length > 0;
+export const useNetworkedState = (props: NetworkedProps) => {
+  const { frequency = 25, audio = false } = props;
 
   // Manage player and network data
-  const dataConnMap = useRef<Map<string, Peer.DataConnection>>();
-  const simulationData = useRef<Map<string, Entity>>();
+  const dataConnMap = useRef<Map<string, DataConnection>>();
+  const data = useRef<Map<string, Entity>>();
 
   // Setup sources
   const socket = useRef<WebSocket>();
@@ -59,33 +29,19 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
 
   // Init peer state
   const [connected, setConnected] = useState(false);
-  const peer = useMemo(() => {
-    if (enabled) {
-      return new Peer({
-        host: signalHost,
-        port: signalPort,
-        path: signalPath,
-        secure: signalPort === 443,
-      });
-    }
-  }, [signalHost, signalPort, signalPath]);
+  const peer = useMemo(() => new Peer(), []);
 
   // Track remote player position and rotation
-  const updateSimulationData = (
-    dataConn: Peer.DataConnection,
-    data: any
-  ): void => {
-    if (simulationData.current) {
+  const updateData = (dataConn: DataConnection, data: any): void => {
+    if (data.current) {
       const obj = JSON.parse(data);
-      if (simulationData.current.has(dataConn.peer)) {
+      if (data.current.has(dataConn.peer)) {
         ["x", "y", "z"].forEach((key, idx) => {
-          simulationData.current!.get(dataConn.peer)!.position[idx] =
-            obj.position[idx];
-          simulationData.current!.get(dataConn.peer)!.rotation[idx] =
-            obj.rotation[idx];
+          data.current!.get(dataConn.peer)!.position[idx] = obj.position[idx];
+          data.current!.get(dataConn.peer)!.rotation[idx] = obj.rotation[idx];
         });
       } else {
-        simulationData.current.set(dataConn.peer, {
+        data.current.set(dataConn.peer, {
           position: [obj.position[0], obj.position[1], obj.position[2]],
           rotation: [obj.rotation[0], obj.rotation[1], obj.rotation[2]],
         });
@@ -93,7 +49,7 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
     }
   };
 
-  const handleMediaConn = (mediaConn: Peer.MediaConnection): void => {
+  const handleMediaConn = (mediaConn: MediaConnection): void => {
     mediaConn.answer(mediaStream.current);
 
     mediaConn.on("stream", (stream: MediaStream) => {
@@ -111,7 +67,7 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
   };
 
   // Handle DataConnection between peers
-  const handleDataConn = (dataConn: Peer.DataConnection): void => {
+  const handleDataConn = (dataConn: DataConnection): void => {
     dataConn.on("open", () => {
       if (dataConnMap.current) {
         if (!dataConnMap.current.has(dataConn.peer)) {
@@ -121,7 +77,7 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
     });
 
     dataConn.on("data", (data: any) => {
-      updateSimulationData(dataConn, data);
+      updateData(dataConn, data);
     });
 
     dataConn.on("close", () => {
@@ -131,9 +87,9 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
         }
       }
 
-      if (simulationData.current) {
-        if (simulationData.current.has(dataConn.peer)) {
-          simulationData.current.delete(dataConn.peer);
+      if (data.current) {
+        if (data.current.has(dataConn.peer)) {
+          data.current.delete(dataConn.peer);
         }
       }
     });
@@ -264,8 +220,8 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
     (type: string) => {
       switch (type) {
         case "entities":
-          if (peer && simulationData.current) {
-            return simulationData.current;
+          if (peer && data.current) {
+            return data.current;
           }
           break;
         default:
@@ -275,30 +231,24 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
 
       return new Map<string, Entity>();
     },
-    [peer, simulationData]
+    [peer, data]
   );
 
   // Make connections synced with props
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
     if (peer) {
       // Enable mic
       if (audio) setupAudio();
 
       peer.on("open", (id: string) => {
-        if (!socketServer) return;
-
-        dataConnMap.current = new Map<string, Peer.DataConnection>();
-        simulationData.current = new Map<string, Entity>();
+        dataConnMap.current = new Map<string, DataConnection>();
+        data.current = new Map<string, Entity>();
 
         // Join network of existing peers
         connectP2P(peer);
 
         // WebSocket listen for future peers
-        connectWS(socketServer);
+        // connectWS(socketServer);
 
         // Voice chat
         if (audio) callPeers(peer);
@@ -307,12 +257,12 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
       });
 
       // P2P connection established
-      peer.on("connection", (dataConn: Peer.DataConnection) => {
+      peer.on("connection", (dataConn: DataConnection) => {
         handleDataConn(dataConn);
       });
 
       // Handle voice chat
-      peer.on("call", (incoming: Peer.MediaConnection) => {
+      peer.on("call", (incoming: MediaConnection) => {
         handleMediaConn(incoming);
       });
 
@@ -339,12 +289,11 @@ export const useNetworkedState = (props: NetworkedProps): NetworkedState => {
   }, [peer, props]);
 
   useEffect(() => {
-    if (peer) {
-      window.onunload = function () {
-        peer.disconnect();
-        peer.destroy();
-      };
-    }
+    if (!peer) return;
+    window.onunload = function () {
+      peer.disconnect();
+      peer.destroy();
+    };
   }, [peer]);
 
   return {

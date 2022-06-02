@@ -53,7 +53,7 @@
     "culori": "^0.18.2",
     "nipplejs": "0.8.1",
     "node-fetch": "^2.6.1",
-    "peerjs": "^1.3.1",
+    "peerjs": "^1.4.6",
     "react-device-detect": "^1.13.1",
     "react-helmet": "^6.1.0",
     "react-spring": "^9.1.2"

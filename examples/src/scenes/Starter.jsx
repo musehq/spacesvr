@@ -117,6 +117,7 @@ export default () => {
         size={4}
         position={[0, 2.425, 3.076]}
         rotation={[0, -Math.PI, 0]}
+        muted
       />
     </StandardReality>
   );
