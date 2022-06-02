@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Idea } from "../../../../../basis";
 import {
   Actions,
   ClickContainer,
@@ -14,6 +13,7 @@ import {
 import { MenuItem } from "../../logic/menu";
 import { useKeyboardLayout } from "./logic/keyboard";
 import { useEnvironment } from "../../index";
+import { Idea } from "../../../basis";
 
 type PauseItem = Omit<MenuItem, "action"> & {
   action?: () => void;

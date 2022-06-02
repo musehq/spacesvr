@@ -1,7 +1,6 @@
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
 import { ResizeObserver } from "@juggle/resize-observer";
 import { isMobile } from "react-device-detect";
-import { ProviderProps } from "@react-three/cannon/dist/Provider";
 
 export const defaultCanvasProps: Partial<ContainerProps> = {
   gl: {
@@ -21,13 +20,4 @@ export const defaultCanvasProps: Partial<ContainerProps> = {
   // disable default enter vr button
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onCreated: () => {},
-};
-
-export const defaultPhysicsProps: Partial<ProviderProps> = {
-  size: 50,
-  allowSleep: false,
-  gravity: [0, -9.8, 0],
-  defaultContactMaterial: {
-    friction: 0,
-  },
 };

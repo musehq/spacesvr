@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { DoubleSide, Color, MeshStandardMaterial, Uniform } from "three";
-import { useLimiter } from "logic/limiter";
+import { useLimiter } from "../../../../logic/limiter";
 import { frag, fragHead, vert, vertHead } from "./materials/world";
 import { World } from "../index";
 import { Idea } from "../../idea";

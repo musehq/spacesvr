@@ -12,7 +12,10 @@ import { Device, DeviceState, useDevice } from "./logic/device";
 import LoadingScreen from "./ui/LoadingScreen";
 import PauseMenu from "./ui/PauseMenu";
 import Crosshair from "./ui/Crosshair";
-import { MenuItem } from "./logic/menu";
+import { MenuItem, RegisterMenuItems } from "./logic/menu";
+import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
+import { VRCanvas } from "@react-three/xr";
+import { defaultCanvasProps } from "./logic/canvas";
 
 export interface EnvironmentState {
   paused: boolean;
@@ -31,12 +34,15 @@ export type EnvironmentProps = {
   pauseMenu?: ReactNode;
   loadingScreen?: ReactNode;
   dev?: boolean;
+  canvasProps?: Partial<ContainerProps>;
 };
 
-export function Environment(
-  props: { children: ReactNode | ReactNode[] } & EnvironmentProps
-) {
-  const { loadingScreen, pauseMenu, dev, children } = props;
+type EnvironmentLayerProps = {
+  children: ReactNode | ReactNode[];
+} & EnvironmentProps;
+
+export function Environment(props: EnvironmentLayerProps) {
+  const { loadingScreen, pauseMenu, dev, canvasProps, children } = props;
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const container = useRef<HTMLDivElement>(null);
@@ -54,14 +60,21 @@ export function Environment(
   };
 
   return (
-    <EnvironmentContext.Provider value={value}>
+    <>
       <GlobalStyles />
       <Container ref={container}>
-        {loadingScreen || <LoadingScreen />}
-        {pauseMenu || <PauseMenu dev={dev} />}
-        <Crosshair />
-        {children}
+        <EnvironmentContext.Provider value={value}>
+          {loadingScreen || <LoadingScreen />}
+          {pauseMenu || <PauseMenu dev={dev} />}
+          <Crosshair />
+        </EnvironmentContext.Provider>
+        <VRCanvas {...defaultCanvasProps} {...canvasProps}>
+          <EnvironmentContext.Provider value={value}>
+            <RegisterMenuItems />
+            {children}
+          </EnvironmentContext.Provider>
+        </VRCanvas>
       </Container>
-    </EnvironmentContext.Provider>
+    </>
   );
 }

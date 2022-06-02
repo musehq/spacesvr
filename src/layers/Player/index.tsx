@@ -38,6 +38,8 @@ export type PlayerProps = {
   };
 };
 
+type PlayerLayer = { children: ReactNode[] | ReactNode } & PlayerProps;
+
 /**
  * Player represents a physics-enabled player in the environment, complete with a
  * control scheme and a physical representation that interacts with other physics-
@@ -47,16 +49,15 @@ export type PlayerProps = {
  *
  * @constructor
  */
-export default function Player(
-  props: { children: ReactNode[] | ReactNode } & PlayerProps
-) {
+export function Player(props: PlayerLayer) {
   const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
 
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
   const defaultRaycaster = useThree((state) => state.raycaster);
 
-  const { device } = useEnvironment();
+  const st = useEnvironment();
+  const { device } = st;
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider(pos);

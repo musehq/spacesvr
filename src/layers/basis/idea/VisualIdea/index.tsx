@@ -4,7 +4,7 @@ import { DoubleSide, Color, Uniform, MeshStandardMaterial } from "three";
 import { Idea } from "../index";
 import { frag, vert, vertHead } from "./materials/idea";
 import { useSpring } from "react-spring";
-import { useLimiter } from "logic/limiter";
+import { useLimiter } from "../../../../logic/limiter";
 
 type Props = {
   size?: number | [number, number, number];

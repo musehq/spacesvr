@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-
 import {
-  StandardEnvironment,
+  StandardReality,
   Background,
-  Logo,
   Interactable,
   Audio,
   Image,
   Video,
 } from "spacesvr";
 
-const handleClick = () => window.open("https://www.apple.com", "_blank");
 export default () => {
-  const [open, setOpen] = useState(true);
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
@@ -40,15 +36,8 @@ export default () => {
   const [hovering, setHovering] = useState(false);
 
   return (
-    <StandardEnvironment playerProps={{ pos: [0, 2, 0] }}>
+    <StandardReality playerProps={{ pos: [0, 2, 0] }}>
       <Background color={0xffffff} />
-      <Interactable
-        onClick={handleClick}
-        onHover={() => console.log("hover")}
-        onUnHover={() => console.log("un hover")}
-      >
-        <Logo floating rotating position={[4, 2, 0]} />
-      </Interactable>
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />
       <mesh rotation-x={-Math.PI / 2}>
@@ -123,14 +112,12 @@ export default () => {
         rotation-y={0}
         position={[-1.4, 1.5, -12]}
       />
-      {open && (
-        <Video
-          src="https://dwvo2npct47gg.cloudfront.net/videos/AWGEDVD-final.mp4"
-          size={4}
-          position={[0, 2.425, 3.076]}
-          rotation={[0, -Math.PI, 0]}
-        />
-      )}
-    </StandardEnvironment>
+      <Video
+        src="https://dwvo2npct47gg.cloudfront.net/videos/AWGEDVD-final.mp4"
+        size={4}
+        position={[0, 2.425, 3.076]}
+        rotation={[0, -Math.PI, 0]}
+      />
+    </StandardReality>
   );
 };

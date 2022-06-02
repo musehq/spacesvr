@@ -11,10 +11,10 @@ export type NetworkedProps = {
   audio?: boolean;
 };
 
-export default function Networked(
-  props: { children: ReactNode | ReactNode[] } & NetworkedProps
-) {
-  const { children, ...rest } = props;
+type NetworkedLayer = { children: ReactNode | ReactNode[] } & NetworkedProps;
+
+export function Networked(props: NetworkedLayer) {
+  const { children, ...networkProps } = props;
 
   const state = useNetwork();
 

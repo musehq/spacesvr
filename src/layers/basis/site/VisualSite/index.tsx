@@ -1,7 +1,7 @@
 import { Site } from "../index";
 import { VisualWorld } from "../../world/VisualWorld";
 import { Text } from "@react-three/drei";
-import LookAtPlayer from "ideas/modifiers/LookAtPlayer";
+import LookAtPlayer from "../../../../ideas/modifiers/LookAtPlayer";
 
 type VisualSiteProps = {
   site: Site;

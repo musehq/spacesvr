@@ -11,14 +11,12 @@ export type DeviceState = {
 export const useDevice = () => {
   const [device, setDevice] = useState<Device>(isMobile ? "mobile" : "desktop");
 
-  const deviceState = {
-    mobile: device === "mobile",
-    desktop: device === "desktop",
-    xr: device === "xr",
-  };
-
   return {
-    device: deviceState,
+    device: {
+      mobile: device === "mobile",
+      desktop: device === "desktop",
+      xr: device === "xr",
+    },
     setDevice,
   };
 };
