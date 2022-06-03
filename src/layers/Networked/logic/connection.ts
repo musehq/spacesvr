@@ -3,8 +3,6 @@ import { DataConnection, Peer } from "peerjs";
 import { getIceServers } from "./servers";
 import { getSignalledPeers } from "./signal";
 import { DataManager, useDataManager } from "./dataManager";
-import { useLimiter } from "../../../logic";
-import { useFrame } from "@react-three/fiber";
 
 export type ConnectionState = {
   connected: boolean;
@@ -94,12 +92,6 @@ export const useConnection = () => {
       }
     }
   }
-
-  const lim = useLimiter(1 / 5);
-  useFrame(({ clock }) => {
-    if (!lim.isReady(clock)) return;
-    console.log(connections);
-  });
 
   console.info(`peer connection ${connected ? "connected" : "disconnected"}`);
 

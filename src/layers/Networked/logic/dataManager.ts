@@ -17,7 +17,6 @@ export type DataManager = {
 
 export const useDataManager = (): DataManager => {
   const listeners = useMemo<Listener[]>(() => [], []);
-  const stores = useMemo(() => new Map<Listener, any>(), []);
 
   const useStream = <D = any, S = any>(
     type: string,

@@ -3,7 +3,6 @@ import { createContext, ReactNode, useContext, useEffect } from "react";
 import { ConnectionState, useConnection } from "./logic/connection";
 
 export type NetworkedState = ConnectionState;
-
 export const NetworkedContext = createContext({} as NetworkedState);
 export const useNetworked = (): NetworkedState => useContext(NetworkedContext);
 
@@ -19,6 +18,7 @@ export function Networked(props: NetworkedLayer) {
 
   const connection = useConnection();
 
+  // by default, connect on start
   useEffect(() => {
     if (!connection.connected) connection.connect();
   }, [connection]);
