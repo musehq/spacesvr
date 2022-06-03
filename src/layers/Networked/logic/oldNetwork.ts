@@ -17,7 +17,7 @@ export type Entity = {
  * @constructor
  */
 export const useNetworkedState = (props: NetworkedProps) => {
-  const { frequency = 25, audio = false } = props;
+  const { audio = false } = props;
 
   // Manage player and network data
   const dataConnMap = useRef<Map<string, DataConnection>>();
@@ -299,7 +299,6 @@ export const useNetworkedState = (props: NetworkedProps) => {
   return {
     connected,
     sendEvent,
-    frequency,
     fetch,
   };
 };

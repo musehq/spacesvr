@@ -1,39 +1,31 @@
-import Entities from "./ideas/Entities";
-import { createContext, MutableRefObject, ReactNode, useContext } from "react";
-import { usePeerConnection } from "./logic/connect";
-import { usePlayerStream } from "./logic/stream";
-import { Peer, DataConnection } from "peerjs";
-import { Entity } from "./logic/oldNetwork";
+import NetworkedEntities from "./ideas/NetworkedEntities";
+import { createContext, ReactNode, useContext, useEffect } from "react";
+import { ConnectionState, useConnection } from "./logic/connection";
 
-export type NetworkedState = {
-  peer: Peer;
-  connected: boolean;
-  connect: () => void;
-  sendEvent: (type: string, data: any) => void;
-  connections: Map<string, DataConnection>;
-  data: MutableRefObject<Map<string, Entity> | undefined>;
-  fetch: (type: string) => Map<string, Entity>;
-};
+export type NetworkedState = ConnectionState;
 
 export const NetworkedContext = createContext({} as NetworkedState);
-export const useNetwork = () => useContext(NetworkedContext);
+export const useNetworked = (): NetworkedState => useContext(NetworkedContext);
 
 export type NetworkedProps = {
-  frequency?: number;
+  disableEntities?: boolean;
   audio?: boolean;
 };
 
 type NetworkedLayer = { children: ReactNode | ReactNode[] } & NetworkedProps;
 
 export function Networked(props: NetworkedLayer) {
-  const { children, ...networkProps } = props;
+  const { children, disableEntities, audio } = props;
 
-  const connection = usePeerConnection();
-  usePlayerStream(connection);
+  const connection = useConnection();
+
+  useEffect(() => {
+    if (!connection.connected) connection.connect();
+  }, [connection]);
 
   return (
     <NetworkedContext.Provider value={connection}>
-      <Entities />
+      {!disableEntities && <NetworkedEntities />}
       {children}
     </NetworkedContext.Provider>
   );

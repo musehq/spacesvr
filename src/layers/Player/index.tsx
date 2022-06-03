@@ -22,6 +22,8 @@ import { createPlayerState } from "./utils/player";
 import { useEnvironment } from "../Environment";
 import VRControllerMovement from "./controls/VRControllerMovement";
 import { PlayerState } from "./types/player";
+import { useNetworked } from "../Networked";
+import { useLimiter } from "../../logic/limiter";
 
 export const PlayerContext = createContext({} as PlayerState);
 export const usePlayer = () => useContext(PlayerContext);
@@ -56,8 +58,8 @@ export function Player(props: PlayerLayer) {
   const gl = useThree((state) => state.gl);
   const defaultRaycaster = useThree((state) => state.raycaster);
 
-  const st = useEnvironment();
-  const { device } = st;
+  const { device } = useEnvironment();
+  const networked = useNetworked();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider(pos);
@@ -102,6 +104,19 @@ export function Player(props: PlayerLayer) {
     if (!lockControls.current) {
       updateVelocity(cam, velocity.current);
     }
+  });
+
+  const networkedLimiter = useLimiter(15);
+  useFrame(({ clock, camera }) => {
+    if (!networked.connected || !networkedLimiter.isReady(clock)) return;
+
+    networked.send("player", {
+      pos: camera.position.toArray().map((p) => parseFloat(p.toPrecision(3))),
+      rot: camera.rotation
+        .toArray()
+        .slice(0, 3)
+        .map((r) => parseFloat(r.toPrecision(3))),
+    });
   });
 
   const state = createPlayerState(

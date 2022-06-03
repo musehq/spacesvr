@@ -25,12 +25,12 @@ export function StandardReality(props: StandardRealityProps) {
   return (
     <Environment {...environmentProps}>
       <Physics {...physicsProps}>
-        <Player {...playerProps}>
-          <Networked>
+        <Networked>
+          <Player {...playerProps}>
             {!disableGround && <InfinitePlane />}
             {children}
-          </Networked>
-        </Player>
+          </Player>
+        </Networked>
       </Physics>
     </Environment>
   );
