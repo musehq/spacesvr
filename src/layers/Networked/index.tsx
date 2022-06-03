@@ -7,16 +7,16 @@ export const NetworkedContext = createContext({} as NetworkedState);
 export const useNetworked = (): NetworkedState => useContext(NetworkedContext);
 
 export type NetworkedProps = {
+  iceServers?: RTCIceServer[];
   disableEntities?: boolean;
-  audio?: boolean;
 };
 
 type NetworkedLayer = { children: ReactNode | ReactNode[] } & NetworkedProps;
 
 export function Networked(props: NetworkedLayer) {
-  const { children, disableEntities, audio } = props;
+  const { children, iceServers, disableEntities } = props;
 
-  const connection = useConnection();
+  const connection = useConnection({ iceServers });
 
   // by default, connect on start
   useEffect(() => {

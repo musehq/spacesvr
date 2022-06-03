@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { DataConnection, Peer } from "peerjs";
-import { getIceServers } from "./servers";
-import { getSignalledPeers } from "./signal";
+import { getSignalledPeers, removeSignalledPeer } from "./signal";
 import { DataManager, useDataManager } from "./dataManager";
 
 export type ConnectionState = {
@@ -12,7 +11,11 @@ export type ConnectionState = {
   send: (type: string, data: any) => void;
 } & Pick<DataManager, "useStream">;
 
-export const useConnection = () => {
+type ConnectionConfig = {
+  iceServers?: RTCIceServer[];
+};
+
+export const useConnection = (config: ConnectionConfig) => {
   const [peer, setPeer] = useState<Peer>();
   const connections = useMemo(() => new Map<string, DataConnection>(), []);
   const [connected, setConnected] = useState(false);
@@ -30,7 +33,12 @@ export const useConnection = () => {
       conn.on("close", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);
+        removeSignalledPeer(conn.peer, peer);
       });
+    });
+    conn.on("error", () => {
+      console.error("connection with peer errored");
+      removeSignalledPeer(conn.peer, peer);
     });
   };
 
@@ -45,11 +53,21 @@ export const useConnection = () => {
       console.error("already connected");
       return;
     }
-    const iceServers = getIceServers();
-    const p = new Peer({ config: { iceServers } });
+    const locConfig: any = {};
+    if (config.iceServers) locConfig.iceServers = config.iceServers;
+    const p = new Peer({ config: locConfig });
     p.on("connection", registerConnection); // incoming
     p.on("close", disconnect);
-    p.on("error", (err) => console.error(err));
+    p.on("error", (err) => {
+      if (err.message.includes("Could not connect to peer")) {
+        const messageWords = err.message.split(" ");
+        const connId = messageWords[messageWords.length - 1];
+        console.error(`could not establish connection to peer ${connId}`);
+        removeSignalledPeer(connId, peer);
+      } else {
+        console.error(err);
+      }
+    });
     p.on("open", async () => {
       setConnected(true);
       const ids = await getSignalledPeers(p);
@@ -58,7 +76,7 @@ export const useConnection = () => {
       ids.map((id) => {
         if (id === p.id) return;
         const conn = p.connect(id);
-        registerConnection(conn); // outgoing
+        registerConnection(conn);
       });
       setPeer(p);
     });
