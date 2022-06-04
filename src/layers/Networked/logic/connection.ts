@@ -1,7 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataConnection, Peer } from "peerjs";
-import { getSignalledPeers, removeSignalledPeer } from "./signal";
 import { DataManager, useDataManager } from "./dataManager";
+import { isLocalNetwork } from "./local";
+import { LocalSignaller } from "./signallers/LocalSignaller";
+import { MuseSignaller } from "./signallers/MuseSignaller";
+import { ConnectionConfig, Signaller } from "./types";
+import { useHealth } from "./health";
 
 export type ConnectionState = {
   connected: boolean;
@@ -11,14 +15,11 @@ export type ConnectionState = {
   send: (type: string, data: any) => void;
 } & Pick<DataManager, "useStream">;
 
-type ConnectionConfig = {
-  iceServers?: RTCIceServer[];
-};
-
-export const useConnection = (config: ConnectionConfig) => {
+export const useConnection = (externalConfig: ConnectionConfig) => {
   const [peer, setPeer] = useState<Peer>();
   const connections = useMemo(() => new Map<string, DataConnection>(), []);
   const [connected, setConnected] = useState(false);
+  const [signaller, setSignaller] = useState<Signaller>();
 
   const dataManager = useDataManager();
 
@@ -33,29 +34,28 @@ export const useConnection = (config: ConnectionConfig) => {
       conn.on("close", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);
-        removeSignalledPeer(conn.peer, peer);
       });
-    });
-    conn.on("error", () => {
-      console.error("connection with peer errored");
-      removeSignalledPeer(conn.peer, peer);
     });
   };
 
   // attempt to connect to a p2p network
-  const connect = async () => {
+  const connect = async (config?: ConnectionConfig) => {
     console.log("connecting to network");
     if (peer) {
-      console.error("peer already created");
+      console.error("peer already created, aborting");
       return;
     }
     if (connected) {
-      console.error("already connected");
+      console.error("already connected, aborting");
       return;
     }
-    const locConfig: any = {};
-    if (config.iceServers) locConfig.iceServers = config.iceServers;
-    const p = new Peer({ config: locConfig });
+
+    const finalConfig = { ...externalConfig, ...config };
+
+    const peerConfig: any = {};
+    if (finalConfig.iceServers) peerConfig.iceServers = finalConfig.iceServers;
+    const p = new Peer({ config: peerConfig });
+
     p.on("connection", registerConnection); // incoming
     p.on("close", disconnect);
     p.on("error", (err) => {
@@ -63,14 +63,16 @@ export const useConnection = (config: ConnectionConfig) => {
         const messageWords = err.message.split(" ");
         const connId = messageWords[messageWords.length - 1];
         console.error(`could not establish connection to peer ${connId}`);
-        removeSignalledPeer(connId, peer);
       } else {
         console.error(err);
       }
     });
     p.on("open", async () => {
       setConnected(true);
-      const ids = await getSignalledPeers(p);
+      const s = isLocalNetwork()
+        ? new LocalSignaller(p)
+        : new MuseSignaller(p, finalConfig);
+      const ids = await s.join();
       console.log("found peers:", ids);
       if (!ids) return;
       ids.map((id) => {
@@ -79,6 +81,7 @@ export const useConnection = (config: ConnectionConfig) => {
         registerConnection(conn);
       });
       setPeer(p);
+      setSignaller(s);
     });
   };
 
@@ -93,6 +96,7 @@ export const useConnection = (config: ConnectionConfig) => {
       console.error("peer doesn't exist, no need to disconnect");
       return;
     }
+    if (signaller) signaller.leave();
     if (!peer.disconnected) peer.disconnect();
     peer.destroy();
     setConnected(false);
@@ -111,14 +115,17 @@ export const useConnection = (config: ConnectionConfig) => {
     }
   }
 
-  console.info(`peer connection ${connected ? "connected" : "disconnected"}`);
+  useHealth(0.75, signaller, disconnect);
+  useEffect(() => {
+    console.info(`peer connection ${connected ? "connected" : "disconnected"}`);
+  }, [connected]);
 
   return {
     connected,
     connect,
     disconnect,
-    send,
     connections,
+    send,
     useStream: dataManager.useStream,
   };
 };
