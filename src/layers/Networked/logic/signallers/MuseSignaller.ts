@@ -1,4 +1,4 @@
-import nodeFetch from "node-fetch";
+import nodeFetch, { Response } from "node-fetch";
 import { Peer } from "peerjs";
 import { Signaller, SignallerConfig } from "../types";
 
@@ -19,6 +19,8 @@ export class MuseSignaller implements Signaller {
   peerId: string;
 
   constructor(peer: Peer, config: Partial<SignallerConfig> = {}) {
+    console.info("using muse signaller");
+
     // set up signalling identification
     if (config.sessionId) this.sessionId = config.sessionId;
     else if (config.world) this.world = config.world;
@@ -30,17 +32,24 @@ export class MuseSignaller implements Signaller {
     if (peer.id) this.peerId = peer.id;
   }
 
+  async callBackend<T = any>(path: string, body: any): Promise<Response> {
+    return await nodeFetch(`${this.host}/sessions/${path}`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   async join(): Promise<string[] | undefined> {
     if (!this.peerId) {
       console.error("peer id not established, aborting signal");
       return;
     }
 
-    let url = `${this.host}/join?peer_id=${this.peerId}`;
-    if (this.sessionId) url += `&session_id=${this.sessionId}`;
-    else url += `&world=${this.world}`;
-
-    const response = await nodeFetch(url);
+    const body: any = { peer_id: this.peerId };
+    if (this.sessionId) body.session_id = this.sessionId;
+    else body.world = this.world;
+    const response = await this.callBackend("join", body);
     let json = await response.json();
 
     if (response.status !== 200) {
@@ -60,12 +69,8 @@ export class MuseSignaller implements Signaller {
       return;
     }
 
-    const url = `${this.host}/leave`;
     const body = { peer_id: this.peerId, session_id: this.sessionId };
-    const response = await nodeFetch(url, {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
+    const response = await this.callBackend("leave", body);
 
     if (response.status !== 200) {
       const json = (await response.json()) as BackendError;
@@ -73,22 +78,18 @@ export class MuseSignaller implements Signaller {
     }
   }
 
-  async health(): Promise<boolean> {
+  async wave(): Promise<boolean> {
     if (!this.sessionId || !this.peerId) {
-      console.error("no session id / peer id, can't perform health check");
+      console.error("no session id / peer id, can't wave");
       return false;
     }
 
-    const url = `${this.host}/health`;
     const body = { peer_id: this.peerId, session_id: this.sessionId };
-    const response = await nodeFetch(url, {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
+    const response = await this.callBackend("wave", body);
 
     if (response.status !== 200) {
       const json = (await response.json()) as BackendError;
-      console.error("health check failed ... ", json.message);
+      console.error("wave check failed ... ", json.message);
       return false;
     }
 

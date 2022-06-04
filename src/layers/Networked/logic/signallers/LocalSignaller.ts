@@ -10,6 +10,7 @@ export class LocalSignaller implements Signaller {
   peerId: string;
 
   constructor(peer: Peer) {
+    console.info("using local signaller");
     if (peer.id) this.peerId = peer.id;
   }
 
@@ -76,9 +77,9 @@ export class LocalSignaller implements Signaller {
     }
   }
 
-  async health(): Promise<boolean> {
+  async wave(): Promise<boolean> {
     if (!this.peerId) {
-      console.error("peer id not established, health failed");
+      console.error("peer id not established, wave failed");
       return false;
     }
 

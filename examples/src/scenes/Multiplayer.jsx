@@ -1,9 +1,11 @@
-import { Vector3 } from "three";
 import { StandardReality, Background } from "spacesvr";
 
 export default () => {
   return (
-    <StandardReality player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
+    <StandardReality
+      playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
+      networkedProps={{ host: "http://localhost:3005", autoconnect: false }}
+    >
       <Background color={0xffffff} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />

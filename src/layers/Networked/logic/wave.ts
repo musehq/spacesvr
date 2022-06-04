@@ -6,7 +6,7 @@ import { ConnectionState } from "./connection";
 
 const MAX_TRIES = 3;
 
-export const useHealth = (
+export const useWaving = (
   minuteFrequency: number,
   singaller: Signaller | undefined,
   disconnect: ConnectionState["disconnect"]
@@ -23,7 +23,7 @@ export const useHealth = (
       return;
     }
 
-    singaller.health().then((succeeded) => {
+    singaller.wave().then((succeeded) => {
       if (!succeeded) {
         numFailed.current += 1;
       } else {

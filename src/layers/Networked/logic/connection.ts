@@ -5,7 +5,7 @@ import { isLocalNetwork } from "./local";
 import { LocalSignaller } from "./signallers/LocalSignaller";
 import { MuseSignaller } from "./signallers/MuseSignaller";
 import { ConnectionConfig, Signaller } from "./types";
-import { useHealth } from "./health";
+import { useWaving } from "./wave";
 
 export type ConnectionState = {
   connected: boolean;
@@ -69,9 +69,10 @@ export const useConnection = (externalConfig: ConnectionConfig) => {
     });
     p.on("open", async () => {
       setConnected(true);
-      const s = isLocalNetwork()
-        ? new LocalSignaller(p)
-        : new MuseSignaller(p, finalConfig);
+      const s =
+        isLocalNetwork() && !finalConfig.host
+          ? new LocalSignaller(p)
+          : new MuseSignaller(p, finalConfig);
       const ids = await s.join();
       console.log("found peers:", ids);
       if (!ids) return;
@@ -115,7 +116,7 @@ export const useConnection = (externalConfig: ConnectionConfig) => {
     }
   }
 
-  useHealth(0.75, signaller, disconnect);
+  useWaving(0.75, signaller, disconnect);
   useEffect(() => {
     console.info(`peer connection ${connected ? "connected" : "disconnected"}`);
   }, [connected]);

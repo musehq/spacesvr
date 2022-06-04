@@ -15,6 +15,6 @@ export type ConnectionConfig = SessionConfig & SignallerConfig & ICEConfig;
 
 export interface Signaller {
   join: () => Promise<string[] | undefined>;
-  health: () => Promise<boolean>;
+  wave: () => Promise<boolean>;
   leave: () => Promise<void>;
 }
