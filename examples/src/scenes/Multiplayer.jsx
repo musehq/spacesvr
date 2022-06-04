@@ -4,7 +4,10 @@ export default () => {
   return (
     <StandardReality
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
-      networkedProps={{ host: "http://localhost:3005", autoconnect: false }}
+      networkedProps={{
+        host: "https://muse-web-pr-49.onrender.com",
+        autoconnect: true,
+      }}
     >
       <Background color={0xffffff} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />

@@ -21,7 +21,7 @@ export function Networked(props: NetworkedLayer) {
 
   // connect on start if autoconnect is enabled
   useEffect(() => {
-    if (autoconnect || connection.connected) return;
+    if (!autoconnect || connection.connected) return;
     connection.connect();
   }, [autoconnect, connection]);
 
