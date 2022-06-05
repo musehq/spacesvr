@@ -23,9 +23,8 @@ export default function NetworkedEntities() {
 
   // check for a change in player list, re-render if there is a change
   const [entityIds, setEntityIds] = useState<string[]>([]);
-  const limiter = useLimiter(30);
-  useFrame(({ clock }) => {
-    if (!connected || !limiter.isReady(clock)) return;
+  useLimitedFrame(6, () => {
+    if (!connected) return;
     const ids = Array.from(connections.keys());
     const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
     if (!sameIds) setEntityIds(ids);
@@ -35,7 +34,10 @@ export default function NetworkedEntities() {
   const entityChannel = useChannel<Entity, { [key in string]: Entity }>(
     "player",
     "stream",
-    (m, s) => (s[m.conn.peer] = m.data)
+    (m, s) => {
+      if (!m.conn) return;
+      s[m.conn.peer] = m.data;
+    }
   );
 
   // send own player data

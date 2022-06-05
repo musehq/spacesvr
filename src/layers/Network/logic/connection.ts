@@ -32,13 +32,13 @@ export const useConnection = (
   const registerConnection = (conn: DataConnection) => {
     conn.on("open", () => {
       console.log("connection opened with peer", conn.peer);
-      channels.greet(conn);
-      connections.set(conn.peer, conn);
       conn.on("data", (message: any) => channels.receive({ conn, ...message }));
       conn.on("close", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);
       });
+      channels.greet(conn);
+      connections.set(conn.peer, conn);
     });
   };
 
@@ -101,8 +101,9 @@ export const useConnection = (
       console.error("peer doesn't exist, no need to disconnect");
       return;
     }
-    if (signaller) signaller.leave();
     if (!peer.disconnected) peer.disconnect();
+    if (signaller) signaller.leave();
+    connections.forEach((conn) => conn.close());
     peer.destroy();
     setConnected(false);
     setPeer(undefined);

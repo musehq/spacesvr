@@ -21,7 +21,7 @@ export function Network(props: NetworkLayer) {
   const { children, disableEntities, autoconnect, ...connectionConfig } = props;
 
   const connection = useConnection(connectionConfig);
-  const { connected, connect } = connection;
+  const { connected, connect, disconnect } = connection;
 
   // connect on start if autoconnect is enabled
   useEffect(() => {
@@ -32,6 +32,12 @@ export function Network(props: NetworkLayer) {
   useEffect(() => {
     console.info(`network ${connected ? "connected" : "disconnected"}`);
   }, [connected]);
+
+  // disconnect on the way out (i hope it works)
+  useEffect(() => {
+    window.addEventListener("beforeunload", disconnect);
+    return () => window.removeEventListener("beforeunload", disconnect);
+  }, [disconnect]);
 
   return (
     <NetworkContext.Provider value={connection}>

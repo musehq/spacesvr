@@ -4,7 +4,7 @@ import { StreamChannel } from "./StreamChannel";
 import { SyncChannel } from "./SyncChannel";
 
 export type Message<Data = any> = {
-  conn: DataConnection;
+  conn?: DataConnection;
   id: string;
   data: Data;
 };
@@ -66,7 +66,12 @@ export const useChannels = (
       if (type === "stream") return new StreamChannel(id, reducer, connections);
       if (type === "sync") return new SyncChannel(id, reducer, connections);
       return new StreamChannel(id, reducer, connections);
-    }, [id, type, reducer]);
+    }, [id, type]);
+
+    // keep reducer up to date
+    useEffect(() => {
+      channel.reducer = reducer;
+    }, [channel, reducer]);
 
     // keep channel registered
     useEffect(() => {

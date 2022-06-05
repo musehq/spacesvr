@@ -40,6 +40,7 @@ export class SyncChannel<Data = any, State = any> implements Channel {
         conn.send({ id: this.id, data });
       }
     }
+    this.reducer({ id: this.id, data }, this.state);
   }
 
   receive(message: Message<Data> & Partial<GreetPayload>) {
