@@ -1,36 +1,40 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DataConnection, Peer } from "peerjs";
-import { DataManager, useDataManager } from "./dataManager";
 import { isLocalNetwork } from "./local";
 import { LocalSignaller } from "./signallers/LocalSignaller";
 import { MuseSignaller } from "./signallers/MuseSignaller";
-import { ConnectionConfig, Signaller } from "./types";
 import { useWaving } from "./wave";
+import { Signaller, SignallerConfig } from "./signallers";
+import { Channels, useChannels } from "./channels";
 
 export type ConnectionState = {
   connected: boolean;
   connect: () => void;
   connections: Map<string, DataConnection>;
   disconnect: () => void;
-  send: (type: string, data: any) => void;
-} & Pick<DataManager, "useStream">;
+} & Pick<Channels, "useChannel">;
 
-export const useConnection = (externalConfig: ConnectionConfig) => {
+export type ConnectionConfig = {
+  iceServers?: RTCIceServer[];
+} & SignallerConfig;
+
+export const useConnection = (
+  externalConfig: ConnectionConfig
+): ConnectionState => {
+  const [connected, setConnected] = useState(false);
   const [peer, setPeer] = useState<Peer>();
   const connections = useMemo(() => new Map<string, DataConnection>(), []);
-  const [connected, setConnected] = useState(false);
   const [signaller, setSignaller] = useState<Signaller>();
 
-  const dataManager = useDataManager();
+  const channels = useChannels(connections);
 
   // given any connection, store and set up data channels
   const registerConnection = (conn: DataConnection) => {
     conn.on("open", () => {
       console.log("connection opened with peer", conn.peer);
+      channels.greet(conn);
       connections.set(conn.peer, conn);
-      conn.on("data", (message: any) =>
-        dataManager.process({ conn, type: message.type, data: message.data })
-      );
+      conn.on("data", (message: any) => channels.listen({ conn, ...message }));
       conn.on("close", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);
@@ -104,29 +108,13 @@ export const useConnection = (externalConfig: ConnectionConfig) => {
     setPeer(undefined);
   };
 
-  function send(type: string, data: any) {
-    if (!connected) {
-      console.error("can't send message, disconnected");
-      return;
-    }
-    for (const [, conn] of connections.entries()) {
-      if (conn.open) {
-        conn.send({ type, data });
-      }
-    }
-  }
-
   useWaving(0.75, signaller, disconnect);
-  useEffect(() => {
-    console.info(`peer connection ${connected ? "connected" : "disconnected"}`);
-  }, [connected]);
 
   return {
     connected,
     connect,
     disconnect,
     connections,
-    send,
-    useStream: dataManager.useStream,
+    useChannel: channels.useChannel,
   };
 };

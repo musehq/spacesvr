@@ -1,5 +1,5 @@
 import { Peer } from "peerjs";
-import { Signaller } from "../types";
+import { Signaller } from "./";
 
 const SESSION_ID = "spacesvr-local-signalling";
 const TIMEOUT_MIN = 1.25;

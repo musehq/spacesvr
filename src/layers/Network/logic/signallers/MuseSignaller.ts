@@ -1,6 +1,6 @@
 import nodeFetch, { Response } from "node-fetch";
 import { Peer } from "peerjs";
-import { Signaller, SignallerConfig } from "../types";
+import { Signaller, SignallerConfig } from "./";
 
 type BackendSessionData = {
   session_id: string;
