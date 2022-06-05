@@ -3,25 +3,30 @@ import { useEffect, useMemo } from "react";
 import { StreamChannel } from "./StreamChannel";
 import { SyncChannel } from "./SyncChannel";
 
-export type Message<T = any> = { conn: DataConnection; id: string; data: T };
+export type Message<Data = any> = {
+  conn: DataConnection;
+  id: string;
+  data: Data;
+};
 
-export type Reducer<Data = any, State = Data> = (
+export type Reducer<Data = any, State = any> = (
   message: Message<Data>,
   state: State
 ) => void;
 
-export interface Channel<Data = any, State = Data> {
+export interface Channel<Data = any, State = any> {
   id: string;
   state: State;
   send: (data: Data) => void;
-  listen: (message: Message<Data>) => void;
+  receive: (message: Message<Data>) => void;
 }
 
 type ChannelType = "stream" | "sync";
+
 export type Channels = {
-  listen: (message: Message) => void;
+  receive: (message: Message) => void;
   greet: (conn: DataConnection) => void;
-  useChannel: <Data = any, State = Data>(
+  useChannel: <Data = any, State = any>(
     id: string,
     type: ChannelType,
     reducer: Reducer<Data, State>
@@ -36,10 +41,10 @@ export const useChannels = (
     []
   );
 
-  const listen = (message: Message) => {
+  const receive = (message: Message) => {
     for (const [id, channel] of channels.entries()) {
       if (id == message.id) {
-        channel.listen(message);
+        channel.receive(message);
       }
     }
   };
@@ -52,7 +57,7 @@ export const useChannels = (
     }
   };
 
-  const useChannel = <Data = any, State = Data>(
+  const useChannel = <Data = any, State = any>(
     id: string,
     type: ChannelType,
     reducer: Reducer<Data, State>
@@ -82,7 +87,7 @@ export const useChannels = (
   };
 
   return {
-    listen,
+    receive,
     greet,
     useChannel,
   };

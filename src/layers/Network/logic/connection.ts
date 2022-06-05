@@ -34,7 +34,7 @@ export const useConnection = (
       console.log("connection opened with peer", conn.peer);
       channels.greet(conn);
       connections.set(conn.peer, conn);
-      conn.on("data", (message: any) => channels.listen({ conn, ...message }));
+      conn.on("data", (message: any) => channels.receive({ conn, ...message }));
       conn.on("close", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);

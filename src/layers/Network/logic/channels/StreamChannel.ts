@@ -11,7 +11,7 @@ import { DataConnection } from "peerjs";
  * This is best used for data like streaming player position/rotation, where
  * old values don't matter.
  */
-export class StreamChannel<Data = any, State = Data> implements Channel {
+export class StreamChannel<Data = any, State = any> implements Channel {
   id: string;
   state: State;
   connections: Map<string, DataConnection>;
@@ -25,10 +25,10 @@ export class StreamChannel<Data = any, State = Data> implements Channel {
     this.id = id;
     this.reducer = reducer;
     this.connections = connections;
+    this.state = {} as State;
   }
 
   send(data: Data) {
-    console.log("sending data...");
     for (const [, conn] of this.connections.entries()) {
       if (conn.open) {
         conn.send({ id: this.id, data });
@@ -36,8 +36,7 @@ export class StreamChannel<Data = any, State = Data> implements Channel {
     }
   }
 
-  listen(message: Message<Data>) {
-    console.log("receiving data...");
+  receive(message: Message<Data>) {
     this.reducer(message, this.state);
   }
 }

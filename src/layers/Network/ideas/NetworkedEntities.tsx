@@ -7,10 +7,10 @@ import {
   Object3D,
 } from "three";
 import { useNetwork } from "../index";
-import { useLimiter } from "../../../logic/limiter";
+import { useLimitedFrame, useLimiter } from "../../../logic/limiter";
 
 export default function NetworkedEntities() {
-  const { connections, connected, useStream } = useNetwork();
+  const { connections, connected, useChannel } = useNetwork();
 
   const mesh = useRef<InstancedMesh>();
   const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 30), []);
@@ -31,15 +31,37 @@ export default function NetworkedEntities() {
     if (!sameIds) setEntityIds(ids);
   });
 
-  useStream<{ pos: number[]; rot: number[] }>("player", ({ conn, data }) => {
+  type Entity = { pos: number[]; rot: number[] };
+  const entityChannel = useChannel<Entity, { [key in string]: Entity }>(
+    "player",
+    "stream",
+    (m, s) => (s[m.conn.peer] = m.data)
+  );
+
+  // send own player data
+  useLimitedFrame(15, ({ camera }) => {
+    if (!connected) return;
+    entityChannel.send({
+      pos: camera.position.toArray().map((p) => parseFloat(p.toPrecision(3))),
+      rot: camera.rotation
+        .toArray()
+        .slice(0, 3)
+        .map((r) => parseFloat(r.toPrecision(3))),
+    });
+  });
+
+  // receive player data
+  useLimitedFrame(50, () => {
     if (!mesh.current) return;
-    const index = entityIds.indexOf(conn.peer);
-    if (index < 0) return;
-    const { pos, rot } = data;
-    obj.position.fromArray(pos);
-    obj.rotation.fromArray(rot);
-    obj.updateMatrix();
-    mesh.current?.setMatrixAt(index, obj.matrix);
+    for (const id of Object.keys(entityChannel.state)) {
+      const index = entityIds.indexOf(id);
+      if (index < 0) return;
+      const { pos, rot } = entityChannel.state[id];
+      obj.position.fromArray(pos);
+      obj.rotation.fromArray(rot);
+      obj.updateMatrix();
+      mesh.current?.setMatrixAt(index, obj.matrix);
+    }
   });
 
   const renderLimiter = useLimiter(40);

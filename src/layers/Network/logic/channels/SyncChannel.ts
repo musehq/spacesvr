@@ -1,10 +1,10 @@
 import { Channel, Message, Reducer } from "./index";
 import { DataConnection } from "peerjs";
 
-type GreetAddition<State = any> = {
-  greet?: boolean;
-  time?: number;
-  state?: State;
+type GreetPayload = {
+  greet: boolean;
+  time: number;
+  state: any;
 };
 
 /**
@@ -15,7 +15,7 @@ type GreetAddition<State = any> = {
  * to represent when the peer was instantiated, letting older peers take precedence.
  *
  */
-export class SyncChannel<Data = any, State = Data> implements Channel {
+export class SyncChannel<Data = any, State = any> implements Channel {
   id: string;
   state: State;
   connections: Map<string, DataConnection>;
@@ -31,10 +31,10 @@ export class SyncChannel<Data = any, State = Data> implements Channel {
     this.reducer = reducer;
     this.initTime = new Date().getTime();
     this.connections = connections;
+    this.state = {} as State;
   }
 
   send(data: Data) {
-    console.log("sending data...");
     for (const [, conn] of this.connections.entries()) {
       if (conn.open) {
         conn.send({ id: this.id, data });
@@ -42,8 +42,7 @@ export class SyncChannel<Data = any, State = Data> implements Channel {
     }
   }
 
-  listen(message: Message<Data> & GreetAddition<State>) {
-    console.log("receiving data...");
+  receive(message: Message<Data> & Partial<GreetPayload>) {
     if (message.greet) {
       if (message.time && message.state) {
         if (message.time < this.initTime) {
