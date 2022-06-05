@@ -3,18 +3,18 @@ import { createContext, ReactNode, useContext, useEffect } from "react";
 import { ConnectionState, useConnection } from "./logic/connection";
 import { ConnectionConfig } from "./logic/types";
 
-export type NetworkedState = ConnectionState;
-export const NetworkedContext = createContext({} as NetworkedState);
-export const useNetworked = (): NetworkedState => useContext(NetworkedContext);
+export type NetworkState = ConnectionState;
+export const NetworkContext = createContext({} as NetworkState);
+export const useNetwork = (): NetworkState => useContext(NetworkContext);
 
-export type NetworkedProps = {
+export type NetworkProps = {
   disableEntities?: boolean;
   autoconnect?: boolean;
 } & ConnectionConfig;
 
-type NetworkedLayer = { children: ReactNode | ReactNode[] } & NetworkedProps;
+type NetworkLayer = { children: ReactNode | ReactNode[] } & NetworkProps;
 
-export function Networked(props: NetworkedLayer) {
+export function Network(props: NetworkLayer) {
   const { children, disableEntities, autoconnect, ...connectionConfig } = props;
 
   const connection = useConnection(connectionConfig);
@@ -26,9 +26,9 @@ export function Networked(props: NetworkedLayer) {
   }, [autoconnect, connection]);
 
   return (
-    <NetworkedContext.Provider value={connection}>
+    <NetworkContext.Provider value={connection}>
       {!disableEntities && <NetworkedEntities />}
       {children}
-    </NetworkedContext.Provider>
+    </NetworkContext.Provider>
   );
 }

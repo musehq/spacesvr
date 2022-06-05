@@ -6,11 +6,11 @@ import {
   MeshNormalMaterial,
   Object3D,
 } from "three";
-import { useNetworked } from "../index";
+import { useNetwork } from "../index";
 import { useLimiter } from "../../../logic/limiter";
 
 export default function NetworkedEntities() {
-  const { connections, connected, useStream } = useNetworked();
+  const { connections, connected, useStream } = useNetwork();
 
   const mesh = useRef<InstancedMesh>();
   const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 30), []);

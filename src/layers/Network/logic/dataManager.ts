@@ -33,9 +33,9 @@ export const useDataManager = (): DataManager => {
   };
 
   const process = (message: Message) => {
-    for (const reducer of listeners) {
-      if (reducer.type !== message.type) continue;
-      reducer.callback(message);
+    for (const listener of listeners) {
+      if (listener.type !== message.type) continue;
+      listener.callback(message);
     }
   };
 

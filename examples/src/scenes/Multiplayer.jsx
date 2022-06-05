@@ -4,7 +4,7 @@ export default () => {
   return (
     <StandardReality
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
-      networkedProps={{
+      networkProps={{
         host: "https://muse-web-pr-49.onrender.com",
         autoconnect: true,
       }}

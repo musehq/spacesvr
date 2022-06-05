@@ -22,7 +22,7 @@ import { createPlayerState } from "./utils/player";
 import { useEnvironment } from "../Environment";
 import VRControllerMovement from "./controls/VRControllerMovement";
 import { PlayerState } from "./types/player";
-import { useNetworked } from "../Networked";
+import { useNetwork } from "../Network";
 import { useLimiter } from "../../logic/limiter";
 
 export const PlayerContext = createContext({} as PlayerState);
@@ -59,7 +59,7 @@ export function Player(props: PlayerLayer) {
   const defaultRaycaster = useThree((state) => state.raycaster);
 
   const { device } = useEnvironment();
-  const networked = useNetworked();
+  const networked = useNetwork();
 
   // physical body
   const [bodyRef, bodyApi] = useCapsuleCollider(pos);
