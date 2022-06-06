@@ -1,11 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useThree } from "@react-three/fiber";
-import {
-  NearestFilter,
-  RGBAFormat,
-  UnsignedByteType,
-  WebGLCubeRenderTarget,
-} from "three";
+import { NearestFilter, RGBAFormat, WebGLCubeRenderTarget } from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 
 type HDRIProps = {
@@ -20,10 +15,7 @@ export function HDRI(props: HDRIProps) {
 
   const { gl, scene } = useThree();
 
-  const loader = useMemo(
-    () => new RGBELoader().setDataType(UnsignedByteType),
-    []
-  );
+  const loader = useMemo(() => new RGBELoader(), []);
 
   useEffect(() => {
     loader.load(src, (texture) => {

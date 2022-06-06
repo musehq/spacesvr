@@ -3,7 +3,7 @@ import {
   ACESFilmicToneMapping,
   NearestFilter,
   PerspectiveCamera,
-  RGBFormat,
+  RGBAFormat,
   sRGBEncoding,
   Vector2,
   WebGLRenderer,
@@ -24,9 +24,7 @@ export const usePhotography = (
   const { size, scene } = useThree();
 
   const resolution = useMemo(() => {
-    return new Vector2(size.width, size.height)
-      .normalize()
-      .multiplyScalar(1920);
+    return new Vector2(3, 2).normalize().multiplyScalar(1920);
   }, [size]);
 
   const aspect = useMemo(() => resolution.clone().normalize(), [resolution]);
@@ -37,7 +35,7 @@ export const usePhotography = (
         stencilBuffer: true,
         minFilter: NearestFilter,
         magFilter: NearestFilter,
-        format: RGBFormat,
+        format: RGBAFormat,
       }),
     [resolution]
   );
