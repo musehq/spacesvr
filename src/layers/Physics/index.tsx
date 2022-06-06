@@ -1,4 +1,4 @@
-import { ProviderProps } from "@react-three/cannon/dist/Provider";
+import { PhysicsProps as ProviderProps } from "@react-three/cannon";
 import { ReactNode } from "react";
 import { Physics as PhysicsProvider } from "@react-three/cannon";
 

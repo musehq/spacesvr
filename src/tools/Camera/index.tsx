@@ -12,7 +12,7 @@ import CameraModel, { CAMERA_FILE_URL } from "./models/Camera";
 import { useModelState } from "./utils/load";
 import { usePhotography } from "./utils/photo";
 import { useEnvironment } from "../../layers/Environment";
-import { config, useSpring, animated } from "react-spring/three";
+import { config, useSpring, animated } from "@react-spring/three";
 import { Tool } from "../../ideas/modifiers/Tool";
 import { useKeypress } from "../../logic/keys";
 import { isTyping } from "../../logic/dom";
@@ -25,8 +25,8 @@ export function Camera() {
   const { scene } = useThree();
 
   const cam = useRef<ThrPerspectiveCamera>();
-  const group = useRef<Group>();
-  const mesh = useRef<Mesh>();
+  const group = useRef<Group>(null);
+  const mesh = useRef<Mesh>(null);
   const modelState = useModelState(CAMERA_FILE_URL);
   const [enabled, setEnabled] = useState(false);
   const photo = usePhotography(cam);

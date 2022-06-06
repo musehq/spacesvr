@@ -1,10 +1,10 @@
-import { Raycaster, Vector3 } from "three";
+import { Group, Raycaster, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
 import { MutableRefObject } from "react";
 import { PlayerState } from "../types/player";
 
 export function createPlayerState(
-  bodyApi: Api[1],
+  bodyApi: Api<Group>[1],
   position: MutableRefObject<Vector3>,
   velocity: MutableRefObject<Vector3>,
   lockControls: MutableRefObject<boolean>,

@@ -1,6 +1,7 @@
 import { ShapeType, Triplet, useCompoundBody } from "@react-three/cannon";
 import { useEffect, useState } from "react";
 import { useEnvironment } from "../../Environment";
+import { Group } from "three";
 
 // height of 0.9 (eye level) for a perceived height of 1
 const HEIGHT = 0.9;
@@ -19,7 +20,7 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
   const { paused } = useEnvironment();
   const [setup, setSetup] = useState(false);
 
-  const compoundBody = useCompoundBody(() => ({
+  const compoundBody = useCompoundBody<Group>(() => ({
     mass: 0,
     position: vPos,
     segments: 8,
@@ -41,8 +42,8 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
 export function VisibleCapsuleCollider() {
   const createSphere = (sphere: any) => (
     <mesh position={sphere.position}>
-      <sphereBufferGeometry args={sphere.args} attach="geometry" />
-      <meshStandardMaterial color="red" attach="material" wireframe={true} />
+      <sphereBufferGeometry args={sphere.args} />
+      <meshStandardMaterial color="red" wireframe={true} />
     </mesh>
   );
 

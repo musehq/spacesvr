@@ -1,9 +1,9 @@
 import { useMemo, useRef } from "react";
-import { Camera, MathUtils, Vector3 } from "three";
+import { Camera, Group, MathUtils, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
 import { useEnvironment } from "../../Environment";
 
-export const useSpringVelocity = (bodyApi: Api[1], speed: number) => {
+export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
   const direction = useRef(new Vector3());
   const { device } = useEnvironment();
   const dummy = useMemo(() => new Vector3(), []);

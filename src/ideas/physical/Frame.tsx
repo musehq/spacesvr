@@ -5,7 +5,7 @@ import {
   Material,
   MeshStandardMaterial,
 } from "three";
-import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
+import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
 
 type FrameProps = {
   width: number;
@@ -102,7 +102,7 @@ export function Frame(props: FrameProps) {
 
     const geos = [backPanel, topFrame, bottomFrame, leftFrame, rightFrame];
 
-    const geo = BufferGeometryUtils.mergeBufferGeometries(geos);
+    const geo = mergeBufferGeometries(geos);
 
     backPanel.dispose();
     topFrame.dispose();

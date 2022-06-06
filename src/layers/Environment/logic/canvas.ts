@@ -14,10 +14,9 @@ export const defaultCanvasProps: Partial<ContainerProps> = {
   camera: { position: [0, 2, 0], near: 0.01, far: 150 },
   resize: { polyfill: ResizeObserver },
   dpr: 1,
-  raycaster: {
-    enabled: isMobile,
-  },
+  events: undefined,
   // disable default enter vr button
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onCreated: () => {},
+  onCreated: () => {
+    console.log("..");
+  },
 };

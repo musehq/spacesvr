@@ -37,7 +37,7 @@ export function Tool(props: Props) {
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const groupPos = useMemo(() => new Vector3(), []);
   const dummyVec = useMemo(() => new Vector3(), []);
   const slerpVec = useMemo(() => new Vector3(), []);

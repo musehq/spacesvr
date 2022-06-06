@@ -3,7 +3,7 @@ import { GroupProps, useFrame } from "@react-three/fiber";
 import { DoubleSide, Color, Uniform, MeshStandardMaterial } from "three";
 import { Idea } from "../index";
 import { frag, vert, vertHead } from "./materials/idea";
-import { useSpring } from "react-spring";
+import { useSpring } from "@react-spring/three";
 import { useLimiter } from "../../../../logic/limiter";
 
 type Props = {

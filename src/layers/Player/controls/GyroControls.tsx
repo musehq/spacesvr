@@ -1,14 +1,14 @@
-import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector2 } from "three";
-import { config, useSpring } from "react-spring";
+import { config, useSpring } from "@react-spring/three";
 import {
   Touch,
   DefaultTouch,
   getCurrentTouch,
   tappedNipple,
 } from "../utils/touch";
+import { DeviceOrientationControls } from "../lib/DeviceOrientationControls";
 
 const ALPHA_SENSITIVITY = 0.008;
 

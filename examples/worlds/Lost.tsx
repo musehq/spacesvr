@@ -1,4 +1,4 @@
-import { StandardReality, LostWorld } from "spacesvr";
+import { LostWorld, StandardReality } from "spacesvr";
 
 export default function Lost() {
   return (

@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { config, useSpring } from "react-spring";
+import { config, useSpring } from "@react-spring/three";
 import { Vector2, Euler } from "three";
 import { useEnvironment } from "../../Environment";
 

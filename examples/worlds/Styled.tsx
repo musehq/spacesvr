@@ -1,9 +1,8 @@
-import { Vector3 } from "three";
 import { StandardReality, Background, HDRI, Camera } from "spacesvr";
 
-export default () => {
+export default function Styled() {
   return (
-    <StandardReality player={{ pos: new Vector3(5, 1, 0), rot: Math.PI }}>
+    <StandardReality playerProps={{ pos: [5, 1, 0], rot: Math.PI }}>
       <Camera />
       <Background color={0xffffff} />
       <HDRI src="https://dwvo2npct47gg.cloudfront.net/hdr/SkyMural2.hdr" />
@@ -15,4 +14,4 @@ export default () => {
       </mesh>
     </StandardReality>
   );
-};
+}

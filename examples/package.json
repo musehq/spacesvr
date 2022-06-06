@@ -3,47 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-app-rewired start",
-    "start-ssl": "HTTPS=true SSL_CRT_FILE=cert.crt SSL_KEY_FILE=cert.key react-app-rewired start",
-    "build": "react-app-rewired build",
-    "eject": "react-app-rewired eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "peerDependencies": {
-    "spacesvr": ">0"
+    "dev": "next dev",
+    "dev-ssl": "HTTPS=true SSL_CRT_FILE=cert.crt SSL_KEY_FILE=cert.key next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/three": "^0.127.1",
-    "customize-cra": "^1.0.0",
-    "peer": "^0.6.1",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.0",
-    "three": "^0.127.0",
-    "web-vitals": "^0.2.4"
+    "@types/three": "0.139.0",
+    "next": "12.1.6",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "three": "^0.139.2"
   },
   "devDependencies": {
-    "react-app-rewired": "^2.1.6"
+    "@types/node": "17.0.40",
+    "@types/react": "18.0.12",
+    "@types/react-dom": "18.0.5",
+    "typescript": "4.7.3"
   }
 }

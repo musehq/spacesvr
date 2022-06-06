@@ -29,7 +29,7 @@ export function Interactable(props: Props) {
   const { domElement } = gl;
   const { raycaster } = usePlayer();
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { current: downPos } = useRef(new Vector2());
   const limiter = useLimiter(30);

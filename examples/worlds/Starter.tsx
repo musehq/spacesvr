@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import * as THREE from "three";
 import {
   StandardReality,
   Background,
@@ -9,7 +8,7 @@ import {
   Video,
 } from "spacesvr";
 
-export default () => {
+export default function Starter() {
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
@@ -86,13 +85,6 @@ export default () => {
         rotation={[0, Math.PI, 0]}
         framed
         transparent
-        innerFrameMaterial={
-          new THREE.MeshStandardMaterial({
-            color: 0x000000,
-            roughness: 0.8,
-            metalness: 0.05,
-          })
-        }
       />
       <Interactable
         onHover={() => setHovering(true)}
@@ -121,4 +113,4 @@ export default () => {
       />
     </StandardReality>
   );
-};
+}

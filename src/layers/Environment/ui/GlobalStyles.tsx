@@ -1,5 +1,5 @@
 import { Global, css } from "@emotion/react";
-import { Helmet } from "react-helmet";
+import { useEffect } from "react";
 
 const globalStyles = css`
   @font-face {
@@ -31,12 +31,19 @@ const globalStyles = css`
 `;
 
 export default function GlobalStyles() {
+  useEffect(() => {
+    const view = document.createElement("meta");
+    view.name = "viewport";
+    view.content = "initial-scale=1, viewport-fit=cover";
+    document.head.append(view);
+    return () => {
+      document.head.removeChild(view);
+    };
+  }, []);
+
   return (
     <>
       <Global styles={globalStyles} />
-      <Helmet>
-        <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
-      </Helmet>
     </>
   );
 }

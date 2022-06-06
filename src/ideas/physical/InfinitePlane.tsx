@@ -1,4 +1,5 @@
 import { usePlane } from "@react-three/cannon";
+import { Mesh } from "three";
 
 type InfinitePlaneProps = {
   height?: number;
@@ -9,7 +10,7 @@ type InfinitePlaneProps = {
 export function InfinitePlane(props: InfinitePlaneProps) {
   const { height = -0.0001, size = [100, 100], visible } = props;
 
-  const [ref] = usePlane(() => ({
+  const [ref] = usePlane<Mesh>(() => ({
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, height, 0],
     args: size,
@@ -20,8 +21,8 @@ export function InfinitePlane(props: InfinitePlaneProps) {
 
   return (
     <mesh name="spacesvr-infinite-plane" ref={ref}>
-      <planeBufferGeometry attach="geometry" args={size} />
-      <meshPhongMaterial attach="material" color="#660000" />
+      <planeBufferGeometry args={size} />
+      <meshPhongMaterial color="#660000" />
     </mesh>
   );
 }

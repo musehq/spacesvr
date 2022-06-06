@@ -15,10 +15,9 @@ export function Arrow(props: ArrowProps) {
   return (
     <group name="spacesvr-arrow" {...rest}>
       <mesh scale={0.004}>
-        <planeBufferGeometry attach="geometry" args={[98, 51]} />
+        <planeBufferGeometry args={[98, 51]} />
         <meshStandardMaterial
           map={texture}
-          attach="material"
           alphaTest={0.5}
           transparent={true}
           normalMap={texture}

@@ -13,7 +13,7 @@ const AXIS = new Vector3(0, 1, 0);
 export function LookAtPlayer(props: Props) {
   const { enabled = true, children } = props;
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const limiter = useLimiter(50);
   const dummy1 = useMemo(() => new Vector2(), []);
   const dummy2 = useMemo(() => new Vector2(), []);

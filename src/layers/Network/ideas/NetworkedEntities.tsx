@@ -12,7 +12,7 @@ import { useLimitedFrame, useLimiter } from "../../../logic/limiter";
 export default function NetworkedEntities() {
   const { connections, connected, useChannel } = useNetwork();
 
-  const mesh = useRef<InstancedMesh>();
+  const mesh = useRef<InstancedMesh>(null);
   const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 30), []);
   const mat = useMemo(() => new MeshNormalMaterial(), []);
   const obj = useMemo(() => {
