@@ -9,6 +9,7 @@ import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/sr
 import { VRCanvas } from "@react-three/xr";
 import { defaultCanvasProps } from "./logic/canvas";
 import { EnvironmentContext, useEnvironmentState } from "./logic/environment";
+import KillEnterVRButton from "./ui/KillEnterVRButton";
 export * from "./logic/environment";
 
 export type EnvironmentProps = {
@@ -37,6 +38,7 @@ export function Environment(props: EnvironmentLayerProps) {
           <Crosshair />
         </EnvironmentContext.Provider>
         <VRCanvas {...defaultCanvasProps} {...canvasProps}>
+          <KillEnterVRButton />
           <EnvironmentContext.Provider value={state}>
             <RegisterMenuItems />
             {children}

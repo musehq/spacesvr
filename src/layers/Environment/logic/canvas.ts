@@ -1,6 +1,5 @@
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
 import { ResizeObserver } from "@juggle/resize-observer";
-import { isMobile } from "react-device-detect";
 
 export const defaultCanvasProps: Partial<ContainerProps> = {
   gl: {
@@ -15,8 +14,4 @@ export const defaultCanvasProps: Partial<ContainerProps> = {
   resize: { polyfill: ResizeObserver },
   dpr: 1,
   events: undefined,
-  // disable default enter vr button
-  onCreated: () => {
-    console.log("..");
-  },
 };
