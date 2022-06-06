@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Euler } from "three";
-import { useEnvironment } from "../../Environment";
+import { PauseEvent, useEnvironment } from "../../Environment";
 import * as THREE from "three";
 
 const MIN_POLAR_ANGLE = 0; // radians
@@ -22,7 +22,7 @@ export default function PointerLockCamera() {
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
   const { domElement } = gl;
-  const { paused, setPaused } = useEnvironment();
+  const { paused, setPaused, events } = useEnvironment();
 
   const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
   const isLocked = useRef(false);
@@ -131,9 +131,16 @@ export default function PointerLockCamera() {
   }, []);
 
   useEffect(() => {
-    if (paused) unlock();
-    else lock();
-  }, [paused]);
+    const ev: PauseEvent = (p) => {
+      if (p) unlock();
+      else lock();
+    };
+    events.push(ev);
+    return () => {
+      const ind = events.indexOf(ev);
+      if (ind >= 0) events.splice(ind, 1);
+    };
+  }, [events, lock, unlock]);
 
   return null;
 }
