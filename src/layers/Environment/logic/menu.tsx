@@ -1,4 +1,4 @@
-import { useEnvironment } from "../index";
+import { useEnvironment } from "../logic/environment";
 import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
 import { useEffect, useRef, useState } from "react";

@@ -6,7 +6,7 @@ import {
   MeshNormalMaterial,
   Object3D,
 } from "three";
-import { useNetwork } from "../index";
+import { useNetwork } from "../logic/network";
 import { useLimitedFrame, useLimiter } from "../../../logic/limiter";
 
 export default function NetworkedEntities() {

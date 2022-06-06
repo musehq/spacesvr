@@ -1,23 +1,17 @@
 import NetworkedEntities from "./ideas/NetworkedEntities";
-import { createContext, ReactNode, useContext, useEffect } from "react";
-import {
-  ConnectionConfig,
-  ConnectionState,
-  useConnection,
-} from "./logic/connection";
-
-export type NetworkState = ConnectionState;
-export const NetworkContext = createContext({} as NetworkState);
-export const useNetwork = (): NetworkState => useContext(NetworkContext);
+import { ReactNode, useEffect } from "react";
+import { ConnectionConfig, useConnection } from "./logic/connection";
+import { NetworkContext } from "./logic/network";
+export * from "./logic/network";
 
 export type NetworkProps = {
   disableEntities?: boolean;
   autoconnect?: boolean;
 } & ConnectionConfig;
 
-type NetworkLayer = { children: ReactNode | ReactNode[] } & NetworkProps;
+type NetworkLayerProps = { children: ReactNode | ReactNode[] } & NetworkProps;
 
-export function Network(props: NetworkLayer) {
+export function Network(props: NetworkLayerProps) {
   const { children, disableEntities, autoconnect, ...connectionConfig } = props;
 
   const connection = useConnection(connectionConfig);

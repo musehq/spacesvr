@@ -10,7 +10,7 @@ type Props = {
 
 const AXIS = new Vector3(0, 1, 0);
 
-export default function LookAtPlayer(props: Props) {
+export function LookAtPlayer(props: Props) {
   const { enabled = true, children } = props;
 
   const group = useRef<Group>();

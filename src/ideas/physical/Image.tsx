@@ -1,6 +1,6 @@
 import { Suspense, useMemo } from "react";
 import { DoubleSide, Material } from "three";
-import Frame from "./Frame";
+import { Frame } from "./Frame";
 import { useTexture } from "@react-three/drei";
 import { GroupProps } from "@react-three/fiber";
 

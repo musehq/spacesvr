@@ -26,7 +26,7 @@ type FrameProps = {
  * @param props
  * @constructor
  */
-export default function Frame(props: FrameProps) {
+export function Frame(props: FrameProps) {
   const {
     width,
     height,

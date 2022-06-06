@@ -1,8 +1,8 @@
-import { Signaller } from "./types";
 import { useLimiter } from "../../../logic/limiter";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { ConnectionState } from "./connection";
+import { Signaller } from "./signallers";
 
 const MAX_TRIES = 3;
 
@@ -31,6 +31,7 @@ export const useWaving = (
       }
 
       if (numFailed.current > MAX_TRIES) {
+        console.error("too many failed waves, disconnecting ...");
         disconnect();
       }
     });

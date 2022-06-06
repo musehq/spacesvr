@@ -14,3 +14,4 @@ export * from "./physical/Image";
 export * from "./physical/InfinitePlane";
 export * from "./physical/Text";
 export * from "./physical/Video";
+export * from "./mediated/LostFloor";

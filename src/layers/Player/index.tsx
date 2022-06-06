@@ -41,11 +41,11 @@ export type PlayerProps = {
 type PlayerLayer = { children: ReactNode[] | ReactNode } & PlayerProps;
 
 /**
- * Player represents a physics-enabled player in the environment, complete with a
+ * Player represents a user controlled entity, complete with a
  * control scheme and a physical representation that interacts with other physics-
  * enabled objects.
  *
- * There should only be one player per environment.
+ *
  *
  * @constructor
  */

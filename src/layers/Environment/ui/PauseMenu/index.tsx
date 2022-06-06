@@ -12,7 +12,7 @@ import {
 } from "./components/components";
 import { MenuItem } from "../../logic/menu";
 import { useKeyboardLayout } from "./logic/keyboard";
-import { useEnvironment } from "../../index";
+import { useEnvironment } from "../../logic/environment";
 import { Idea } from "../../../basis";
 
 type PauseItem = Omit<MenuItem, "action"> & {
