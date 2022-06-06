@@ -1,5 +1,6 @@
 export type SessionConfig = {
   sessionId?: string;
+  sessionPassword?: string;
   world?: string;
 };
 
