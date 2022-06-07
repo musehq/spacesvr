@@ -1,13 +1,14 @@
-import React, { ReactNode, useRef } from "react";
+import { ReactNode, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 
 type Props = {
-  children: ReactNode | ReactNode[];
+  children: ReactNode;
   pos?: [number, number];
   face?: boolean;
   distance?: number;
   pinY?: boolean;
+  t?: number;
 };
 
 const SCALE = 0.0025;
@@ -22,16 +23,24 @@ const SCALE = 0.0025;
  * @constructor
  */
 export function Tool(props: Props) {
-  const { children, pos, face = true, pinY = false, distance = 1 } = props;
+  const {
+    children,
+    pos,
+    face = true,
+    pinY = false,
+    distance = 1,
+    t = 1,
+  } = props;
 
   const DISTANCE = distance * 0.05;
 
-  const { size, camera } = useThree();
+  const camera = useThree((state) => state.camera);
+  const size = useThree((state) => state.size);
 
-  const group = useRef<Group>();
-  const groupPos = useRef(new Vector3());
-
-  const { current: dummyVector } = useRef(new Vector3());
+  const group = useRef<Group>(null);
+  const groupPos = useMemo(() => new Vector3(), []);
+  const dummyVec = useMemo(() => new Vector3(), []);
+  const slerpVec = useMemo(() => new Vector3(), []);
 
   useFrame(() => {
     if (!group.current) return;
@@ -39,18 +48,20 @@ export function Tool(props: Props) {
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
       const yPos = 0.04 * pos[1];
-      dummyVector.set(xPos * distance, yPos * distance, -DISTANCE);
+      dummyVec.set(xPos * distance, yPos * distance, -DISTANCE);
       const moveQuaternion = camera.quaternion.clone();
       if (!pinY) {
         moveQuaternion.x = 0;
         moveQuaternion.z = 0;
       }
-      dummyVector.applyQuaternion(moveQuaternion);
+      dummyVec.applyQuaternion(moveQuaternion);
 
-      group.current.getWorldPosition(groupPos.current);
-      const deltaPos = groupPos.current.sub(camera.position);
-      group.current.position.sub(deltaPos);
-      group.current.position.add(dummyVector);
+      group.current.getWorldPosition(groupPos);
+      slerpVec.copy(group.current.position);
+      const deltaPos = groupPos.sub(camera.position);
+      slerpVec.sub(deltaPos);
+      slerpVec.add(dummyVec);
+      group.current.position.lerp(slerpVec, t);
     }
 
     if (face) {
@@ -59,10 +70,8 @@ export function Tool(props: Props) {
   });
 
   return (
-    <group name="spacesvr-tool">
-      <group ref={group}>
-        <group scale={SCALE * distance}>{children}</group>
-      </group>
+    <group name="tool" ref={group}>
+      <group scale={SCALE * distance}>{children}</group>
     </group>
   );
 }

@@ -2,8 +2,8 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Group, Vector2 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { isMobile } from "react-device-detect";
-import { useLimiter } from "../../utils/limiter";
-import { usePlayer } from "../../layers/reality/layers/player";
+import { useLimiter } from "../../logic/limiter";
+import { usePlayer } from "../../layers/Player";
 
 type Props = {
   onClick?: () => void;
@@ -29,7 +29,7 @@ export function Interactable(props: Props) {
   const { domElement } = gl;
   const { raycaster } = usePlayer();
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { current: downPos } = useRef(new Vector2());
   const limiter = useLimiter(30);
