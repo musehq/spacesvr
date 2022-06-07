@@ -1,7 +1,7 @@
 <br/>
 <br/>
 <p align="center">
-    <img width="500" src="https://imgur.com/GkZtmMI.jpg" alt="logo" />
+    <img width="500" src="https://d27rt3a60hh1lx.cloudfront.net/spacesvr/spacesvr.png" alt="logo" />
 </p>
 <h3 align="center">
      spacesvr
@@ -21,6 +21,11 @@
 <p align="center">
     <a href="https://muse.place?utm_source=npmjs">www.muse.place</a> · <a href="https://spacesvr.vercel.app/">demo</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
+<p align="center">
+<a href="https://muse.place?utm_source=npmjs&utm_campaign=logo">
+    <img width="50" src="https://d27rt3a60hh1lx.cloudfront.net/images/muselogogray.png" alt="logo" />
+</a>
+</p>
 
 <br/>
 <br/>
