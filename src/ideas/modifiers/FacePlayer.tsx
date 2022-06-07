@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
-import { Group } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../utils/limiter";
+import { useLimiter } from "../../logic/limiter";
+import { Group } from "three";
 
 type FacePlayerProps = {
   children: ReactNode | ReactNode[];
@@ -13,7 +13,7 @@ type FacePlayerProps = {
 export function FacePlayer(props: FacePlayerProps) {
   const { children, lockX = false, lockY = false, lockZ = false } = props;
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const limiter = useLimiter(45);
 
   useFrame(({ clock, camera }) => {

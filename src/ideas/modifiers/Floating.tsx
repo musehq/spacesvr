@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Group } from "three";
-import { useLimiter } from "../../utils/limiter";
+import { useLimiter } from "../../logic/limiter";
 
 type FloatingProps = {
   height?: number;
@@ -12,7 +12,7 @@ type FloatingProps = {
 export function Floating(props: FloatingProps) {
   const { children, height = 0.2, speed = 1 } = props;
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const seed = useRef(Math.random());
   const limiter = useLimiter(75);
 

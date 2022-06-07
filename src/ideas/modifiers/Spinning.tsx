@@ -1,7 +1,7 @@
 import { ReactNode, useRef, useState } from "react";
 import { Group } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../utils/limiter";
+import { useLimiter } from "../../logic/limiter";
 
 type Props = {
   children: ReactNode;
@@ -13,7 +13,7 @@ type Props = {
 export function Spinning(props: Props) {
   const { children, xSpeed = 0, ySpeed = 1, zSpeed = 0 } = props;
 
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const [seed] = useState(Math.random());
   const limiter = useLimiter(75);
 
