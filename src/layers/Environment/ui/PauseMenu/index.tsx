@@ -10,9 +10,8 @@ import {
   Title,
   Window,
 } from "./components/components";
-import { MenuItem } from "../../logic/menu";
-import { useKeyboardLayout } from "./logic/keyboard";
-import { useEnvironment } from "../../logic/environment";
+import { useKeyboardLayout } from "../../../../logic/keyboard";
+import { MenuItem, useEnvironment } from "../../logic/environment";
 import { Idea } from "../../../basis";
 
 type PauseItem = Omit<MenuItem, "action"> & {
@@ -49,7 +48,7 @@ export default function PauseMenu(props: PauseMenuProps) {
   const PAUSE_ITEMS: PauseItem[] = [
     ...pauseMenuItems,
     {
-      text: "v2.0.0",
+      text: "v2.0.1",
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
