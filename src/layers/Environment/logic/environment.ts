@@ -6,8 +6,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { MenuItem } from "./menu";
 import { Device, DeviceState, useDevice } from "./device";
+
+export type MenuItem = { text: string; action: () => void };
 
 export type PauseEvent = (p: boolean) => void;
 export type EnvironmentState = {

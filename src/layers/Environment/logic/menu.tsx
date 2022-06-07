@@ -1,10 +1,8 @@
-import { useEnvironment } from "../logic/environment";
+import { MenuItem, useEnvironment } from "../logic/environment";
 import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
 import { useEffect, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
-
-export type MenuItem = { text: string; action: () => void };
 
 /**
  * Component to register menu items to the environment.
@@ -16,8 +14,6 @@ export function RegisterMenuItems() {
   const { setMenuItems } = useEnvironment();
   const vrMenu = useVRMenuItem();
   const fsMenu = useFsMenuItem();
-
-  //TODO: too many re-renders
 
   useEffect(() => {
     const arr: MenuItem[] = [];
