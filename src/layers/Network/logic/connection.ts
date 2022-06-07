@@ -9,7 +9,7 @@ import { Channels, useChannels } from "./channels";
 
 export type ConnectionState = {
   connected: boolean;
-  connect: () => void;
+  connect: (config?: ConnectionConfig) => Promise<void>;
   connections: Map<string, DataConnection>;
   disconnect: () => void;
 } & Pick<Channels, "useChannel">;

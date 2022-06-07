@@ -13,6 +13,7 @@ import KillEnterVRButton from "./ui/KillEnterVRButton";
 export * from "./logic/environment";
 
 export type EnvironmentProps = {
+  name?: string;
   pauseMenu?: ReactNode;
   loadingScreen?: ReactNode;
   dev?: boolean;
@@ -24,9 +25,16 @@ type EnvironmentLayerProps = {
 } & EnvironmentProps;
 
 export function Environment(props: EnvironmentLayerProps) {
-  const { loadingScreen, pauseMenu, dev, canvasProps, children } = props;
+  const {
+    loadingScreen,
+    pauseMenu,
+    dev,
+    canvasProps,
+    name = "spacesvr",
+    children,
+  } = props;
 
-  const state = useEnvironmentState();
+  const state = useEnvironmentState(name);
 
   return (
     <>
@@ -34,7 +42,7 @@ export function Environment(props: EnvironmentLayerProps) {
       <Container ref={state.containerRef}>
         <EnvironmentContext.Provider value={state}>
           {loadingScreen || <LoadingScreen />}
-          {pauseMenu || <PauseMenu dev={dev} />}
+          {pauseMenu || <PauseMenu dev={dev} title={name} />}
           <Crosshair />
         </EnvironmentContext.Provider>
         <VRCanvas {...defaultCanvasProps} {...canvasProps}>

@@ -15,7 +15,7 @@ type BackendError = {
 export class MuseSignaller implements Signaller {
   sessionId: string;
   sessionPassword?: string;
-  world?: string;
+  worldName?: string;
   host: string;
   peerId: string;
 
@@ -24,8 +24,8 @@ export class MuseSignaller implements Signaller {
 
     // set up signalling identification
     if (config.sessionId) this.sessionId = config.sessionId;
-    else if (config.world) this.world = config.world;
-    else this.world = window.location.pathname;
+    else if (config.worldName) this.worldName = config.worldName;
+    else this.worldName = window.location.pathname;
 
     // where to point requests to
     this.host = config.host || "https://muse-web.onrender.com";
@@ -51,7 +51,7 @@ export class MuseSignaller implements Signaller {
 
     const body: any = { peer_id: this.peerId };
     if (this.sessionId) body.session_id = this.sessionId;
-    else body.world = this.world;
+    else body.world = this.worldName;
     if (this.sessionPassword) body.password = this.sessionPassword;
     const response = await this.callBackend("join", body);
     let json = await response.json();

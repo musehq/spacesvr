@@ -1,7 +1,7 @@
 export type SessionConfig = {
   sessionId?: string;
   sessionPassword?: string;
-  world?: string;
+  worldName?: string;
 };
 
 export type SignallerConfig = {
