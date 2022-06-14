@@ -1143,6 +1143,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@geckos.io/snapshot-interpolation@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@geckos.io/snapshot-interpolation/-/snapshot-interpolation-1.1.0.tgz#d89a29930b859838b8403eeebc7683f343efa752"
+  integrity sha512-Hu+tZuMpBZTyPMgqHkgv78fIzCrTpz5DeyaAktwaGL8tyYaNTGrtR9TrtKzBKgpt0YNlpHYJrT0TAfGzrl1XVw==
+
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
