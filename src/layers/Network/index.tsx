@@ -1,5 +1,5 @@
 import NetworkedEntities from "./ideas/NetworkedEntities";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { ConnectionConfig, useConnection } from "./logic/connection";
 import { NetworkContext } from "./logic/network";
 export * from "./logic/network";
@@ -23,8 +23,12 @@ export function Network(props: NetworkLayerProps) {
   }, [autoconnect, connected]);
 
   // log status on changes
+  const lastVal = useRef(false);
   useEffect(() => {
-    console.info(`network ${connected ? "connected" : "disconnected"}`);
+    if (lastVal.current !== connected) {
+      console.info(`network ${connected ? "connected" : "disconnected"}`);
+      lastVal.current = connected;
+    }
   }, [connected]);
 
   // disconnect on the way out (i hope it works)
