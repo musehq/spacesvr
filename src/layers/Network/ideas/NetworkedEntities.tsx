@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
 import {
   CylinderBufferGeometry,
   InstancedMesh,
@@ -7,11 +6,12 @@ import {
   Object3D,
 } from "three";
 import { useNetwork } from "../logic/network";
-import { useLimitedFrame, useLimiter } from "../../../logic/limiter";
+import { useLimitedFrame } from "../../../logic/limiter";
 import { SnapshotInterpolation } from "@geckos.io/snapshot-interpolation";
 import {
   Snapshot,
   Entity as EntityState,
+  Quat,
 } from "@geckos.io/snapshot-interpolation/lib/types";
 
 export default function NetworkedEntities() {
@@ -35,7 +35,7 @@ export default function NetworkedEntities() {
     if (!sameIds) setEntityIds(ids);
   });
 
-  const NETWORK_FPS = 10;
+  const NETWORK_FPS = 12;
   type Entity = { pos: number[]; rot: number[] };
   const SI = useMemo(() => new SnapshotInterpolation(NETWORK_FPS), []);
   const entityChannel = useChannel<Entity, { [key in string]: Entity }>(
@@ -50,9 +50,12 @@ export default function NetworkedEntities() {
         x: s[key].pos[0],
         y: s[key].pos[1],
         z: s[key].pos[2],
-        rx: s[key].rot[0],
-        ry: s[key].rot[1],
-        rz: s[key].rot[2],
+        q: {
+          x: s[key].rot[0],
+          y: s[key].rot[1],
+          z: s[key].rot[2],
+          w: s[key].rot[3],
+        },
       }));
 
       const snapshot: Snapshot = {
@@ -69,11 +72,8 @@ export default function NetworkedEntities() {
   useLimitedFrame(NETWORK_FPS, ({ camera }) => {
     if (!connected) return;
     entityChannel.send({
-      pos: camera.position.toArray().map((p) => parseFloat(p.toPrecision(3))),
-      rot: camera.rotation
-        .toArray()
-        .slice(0, 3)
-        .map((r) => parseFloat(r.toPrecision(3))),
+      pos: camera.position.toArray(),
+      rot: camera.quaternion.toArray(),
     });
   });
 
@@ -81,28 +81,26 @@ export default function NetworkedEntities() {
   useLimitedFrame(55, () => {
     if (!mesh.current) return;
 
-    const snapshot = SI.calcInterpolation("x y z rx ry rz");
+    const snapshot = SI.calcInterpolation("x y z q(quat)");
     if (!snapshot) return;
 
     let i = 0;
     for (const entityState of snapshot.state) {
-      const { x, y, z, rx, ry, rz } = entityState;
+      const { x, y, z, q } = entityState;
       obj.position.x = x as number;
       obj.position.y = y as number;
       obj.position.z = z as number;
       obj.position.y -= 0.2; // they were floating before, idk where the constant comes from really
-      obj.rotation.x = rx as number;
-      obj.rotation.y = ry as number;
-      obj.rotation.z = rz as number;
+      const quat = q as Quat;
+      obj.quaternion.x = quat.x;
+      obj.quaternion.y = quat.y;
+      obj.quaternion.z = quat.z;
+      obj.quaternion.w = quat.w;
       obj.updateMatrix();
       mesh.current.setMatrixAt(i, obj.matrix);
       i++;
     }
-  });
 
-  const renderLimiter = useLimiter(40);
-  useFrame(({ clock }) => {
-    if (!mesh.current || !renderLimiter.isReady(clock)) return;
     mesh.current.instanceMatrix.needsUpdate = true;
   });
 
