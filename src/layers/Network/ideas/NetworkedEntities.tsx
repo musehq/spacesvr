@@ -13,7 +13,7 @@ export default function NetworkedEntities() {
   const { connections, connected, useChannel } = useNetwork();
 
   const mesh = useRef<InstancedMesh>(null);
-  const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 30), []);
+  const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 32), []);
   const mat = useMemo(() => new MeshNormalMaterial(), []);
   const obj = useMemo(() => {
     const o = new Object3D();
@@ -60,6 +60,7 @@ export default function NetworkedEntities() {
       if (index < 0) return;
       const { pos, rot } = entityChannel.state[id];
       obj.position.fromArray(pos);
+      obj.position.y -= 0.2; // they were floating before, idk where the constant comes from really
       obj.rotation.fromArray(rot);
       obj.updateMatrix();
       mesh.current?.setMatrixAt(index, obj.matrix);

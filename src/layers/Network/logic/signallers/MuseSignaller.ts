@@ -36,7 +36,7 @@ export class MuseSignaller implements Signaller {
   }
 
   async callBackend<T = any>(path: string, body: any): Promise<Response> {
-    return await nodeFetch(`${this.host}/sessions/${path}`, {
+    return await nodeFetch(`${this.host}/session/${path}`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: { "Content-Type": "application/json" },
