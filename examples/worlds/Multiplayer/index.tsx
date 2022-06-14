@@ -5,7 +5,10 @@ export default function Multiplayer() {
   return (
     <StandardReality
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
-      networkProps={{ autoconnect: true }}
+      networkProps={{
+        host: "https://muse-web-pr-56.onrender.com",
+        autoconnect: true,
+      }}
     >
       <Background color={0xffffff} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />
