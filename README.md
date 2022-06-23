@@ -45,7 +45,7 @@ spacesvr is actively maintained by [Muse](https://www.muse.place?utm_source=npmj
 
 - [Visit the codesandbox](https://codesandbox.io/s/e9w29) to instantly play with the package
 - [Clone the starter repo](https://github.com/spacesvr/spacesvr-starter) to start using with Next.js
-- [Sign up for muse](www.muse.place?utm_source=npmjs&utm_campaign=no_code) to build using our no-code editor
+- [Sign up for muse](https://www.muse.place?utm_source=npmjs&utm_campaign=no_code) to build using our no-code editor
 
 ## Develop
 
