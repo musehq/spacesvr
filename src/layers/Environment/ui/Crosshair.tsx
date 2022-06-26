@@ -10,18 +10,22 @@ const Element = styled.div`
 
   &::before {
     content: "";
-    display: block;
-    height: 11px;
-    border-left: 1px solid #fff;
-    margin-bottom: -6px;
+    position: absolute;
+    height: 16px;
+    width: 1.5px;
+    transform: translate(-50%, -50%);
+    border-radius: 6px;
+    background: #fff;
   }
 
   &::after {
     content: "";
-    display: block;
-    width: 11px;
-    border-top: 1px solid #fff;
-    margin-left: -5px;
+    position: absolute;
+    width: 16px;
+    height: 1.5px;
+    transform: translate(-50%, -50%);
+    border-radius: 6px;
+    background: #fff;
   }
 `;
 
