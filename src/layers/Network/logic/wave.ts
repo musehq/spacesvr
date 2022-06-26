@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { ConnectionState } from "./connection";
 import { Signaller } from "./signallers";
 
-const MAX_TRIES = 3;
+const MAX_TRIES = 4;
 
 export const useWaving = (
   minuteFrequency: number,
@@ -13,13 +13,13 @@ export const useWaving = (
 ) => {
   const numFailed = useRef(0);
 
-  const limiter = useLimiter(1 / (minuteFrequency * 60));
+  const waveLimiter = useLimiter(1 / (minuteFrequency * 60));
+  const failLimiter = useLimiter(1 / 10);
   useFrame(({ clock }) => {
-    if (
-      !singaller ||
-      !limiter.isReady(clock) ||
-      numFailed.current > MAX_TRIES
-    ) {
+    if (!singaller || numFailed.current > MAX_TRIES) return;
+
+    const FAIL_STATE = numFailed.current > 0;
+    if (!(FAIL_STATE ? failLimiter : waveLimiter).isReady(clock)) {
       return;
     }
 

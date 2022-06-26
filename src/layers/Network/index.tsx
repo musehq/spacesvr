@@ -19,8 +19,8 @@ export function Network(props: NetworkLayerProps) {
 
   // connect on start if autoconnect is enabled
   useEffect(() => {
-    if (autoconnect && !connected) connect();
-  }, [autoconnect, connected]);
+    if (autoconnect) connect();
+  }, [autoconnect]);
 
   // log status on changes
   const lastVal = useRef(false);

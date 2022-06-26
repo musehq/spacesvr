@@ -109,7 +109,7 @@ export const useConnection = (
     setPeer(undefined);
   };
 
-  useWaving(0.75, signaller, disconnect);
+  useWaving(1, signaller, disconnect);
 
   return {
     connected,
