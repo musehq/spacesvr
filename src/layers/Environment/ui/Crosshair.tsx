@@ -15,7 +15,7 @@ const Element = styled.div`
     width: 1.5px;
     transform: translate(-50%, -50%);
     border-radius: 6px;
-    background: #fff;
+    background: #ffffff;
   }
 
   &::after {
@@ -25,7 +25,7 @@ const Element = styled.div`
     height: 1.5px;
     transform: translate(-50%, -50%);
     border-radius: 6px;
-    background: #fff;
+    background: #ffffff;
   }
 `;
 
