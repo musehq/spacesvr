@@ -2,7 +2,9 @@ import { LostWorld, StandardReality } from "spacesvr";
 
 export default function Lost() {
   return (
-    <StandardReality>
+    <StandardReality
+      environmentProps={{ dev: process.env.NODE_ENV === "development" }}
+    >
       <LostWorld />
     </StandardReality>
   );
