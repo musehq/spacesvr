@@ -28,13 +28,6 @@ const globalStyles = css`
       font-size: 24px;
     }
   }
-
-  // used to remove the "enter vr" button from react-xr
-  body > button,
-  body > a {
-    display: none;
-    pointer-events: none;
-  }
 `;
 
 export default function GlobalStyles() {
