@@ -1,28 +1,16 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { Group, Vector2 } from "three";
 import { useFrame, useThree } from "@react-three/fiber";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Group, Vector2 } from "three";
 import { isMobile } from "react-device-detect";
-import { useLimiter } from "../../logic/limiter";
-import { usePlayer } from "../../layers/Player";
-
-type Props = {
-  onClick?: () => void;
-  onHover?: () => void;
-  onUnHover?: () => void;
-  children: ReactNode | ReactNode[];
-};
+import { InteractableProps } from "../index";
+import { usePlayer } from "../../../../layers/Player";
+import { useLimiter } from "../../../../logic/limiter";
 
 /**
- *
- * Interactable adds on click and hover methods to any group of Object3D's.
- *
  * This is a bit convoluted for the sake of working with the ClickDragControls
  * (i.e. the test for a double click)
- *
- * @param props
- * @constructor
  */
-export function Interactable(props: Props) {
+export default function MobileDesktopInteractable(props: InteractableProps) {
   const { onClick, onHover, onUnHover, children } = props;
 
   const gl = useThree((state) => state.gl);
