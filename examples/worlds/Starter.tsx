@@ -16,6 +16,8 @@ export default function Starter() {
     "https://d27rt3a60hh1lx.cloudfront.net/audio/LucidMondayMix.mp3"
   );
 
+  const [size, setSize] = useState(1);
+
   setTimeout(() => {
     setAudio(
       "https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3"
@@ -89,9 +91,10 @@ export default function Starter() {
       <Interactable
         onHover={() => setHovering(true)}
         onUnHover={() => setHovering(false)}
+        onClick={() => setSize(Math.random() + 1)}
       >
         <mesh position={[-3, 0.5, 0]}>
-          <boxBufferGeometry args={[1, 0.25, 0.1]} />
+          <boxBufferGeometry args={[size, size * 0.25, size * 0.1]} />
           <meshStandardMaterial color={hovering ? "red" : "blue"} />
         </mesh>
       </Interactable>

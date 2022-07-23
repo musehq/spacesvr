@@ -76,7 +76,12 @@ export const useVRMenuItem = (): MenuItem | undefined => {
 
     if (session.current === undefined) {
       const sessionInit = {
-        optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking"],
+        optionalFeatures: [
+          "local-floor",
+          "bounded-floor",
+          "hand-tracking",
+          "layers",
+        ],
       };
       xr.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
     } else {
