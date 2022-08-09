@@ -1,20 +1,10 @@
 import { useMemo } from "react";
-import { DoubleSide, Material } from "three";
+import { DoubleSide } from "three";
 import { Frame } from "../../Frame";
 import { useKTX2 } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
+import { ImageProps } from "../index";
 
-type KTX2Props = {
-  src: string;
-  size?: number;
-  framed?: boolean;
-  frameMaterial?: Material;
-  frameWidth?: number;
-  innerFrameMaterial?: Material;
-  transparent?: boolean;
-} & GroupProps;
-
-function UnsuspensedKTX2(props: KTX2Props) {
+export function KTX2(props: ImageProps) {
   const {
     src,
     size = 1,
@@ -55,8 +45,4 @@ function UnsuspensedKTX2(props: KTX2Props) {
       )}
     </group>
   );
-}
-
-export function KTX2(props: KTX2Props) {
-  return <UnsuspensedKTX2 {...props} />;
 }

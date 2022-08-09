@@ -4,7 +4,7 @@ import { KTX2 } from "./components/KTX2";
 import { Material } from "three";
 import { GroupProps } from "@react-three/fiber";
 
-type ImageProps = {
+export type ImageProps = {
   src: string;
   size?: number;
   framed?: boolean;

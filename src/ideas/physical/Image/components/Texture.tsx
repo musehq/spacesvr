@@ -1,20 +1,10 @@
 import { useMemo } from "react";
-import { DoubleSide, Material } from "three";
+import { DoubleSide } from "three";
 import { Frame } from "../../Frame";
 import { useTexture } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
+import { ImageProps } from "../index";
 
-type TextureProps = {
-  src: string;
-  size?: number;
-  framed?: boolean;
-  frameMaterial?: Material;
-  frameWidth?: number;
-  innerFrameMaterial?: Material;
-  transparent?: boolean;
-} & GroupProps;
-
-function UnsuspensedTexture(props: TextureProps) {
+export function Texture(props: ImageProps) {
   const {
     src,
     size = 1,
@@ -55,8 +45,4 @@ function UnsuspensedTexture(props: TextureProps) {
       )}
     </group>
   );
-}
-
-export function Texture(props: TextureProps) {
-  return <UnsuspensedTexture {...props} />;
 }
