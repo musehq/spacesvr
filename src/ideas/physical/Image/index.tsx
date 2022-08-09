@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { JpegPng } from "./components/JpegPng";
+import { Texture } from "./components/Texture";
 import { KTX2 } from "./components/KTX2";
 import { Material } from "three";
 import { GroupProps } from "@react-three/fiber";
@@ -27,15 +27,10 @@ export function Image(props: ImageProps) {
 
   const modUrl = src.toLowerCase();
   const IS_KTX2 = modUrl.endsWith(".ktx2");
-  const IS_JPEG_PNG =
-    modUrl.endsWith(".jpg") ||
-    modUrl.endsWith(".jpeg") ||
-    modUrl.endsWith(".png");
 
   return (
     <Suspense fallback={null}>
-      {IS_JPEG_PNG && <JpegPng {...props} />}
-      {IS_KTX2 && <KTX2 {...props} />}
+      {IS_KTX2 ? <KTX2 {...props} /> : <Texture {...props} />}
     </Suspense>
   );
 }

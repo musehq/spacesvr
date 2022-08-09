@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from "react";
+import { useMemo } from "react";
 import { DoubleSide, Material } from "three";
 import { Frame } from "../../Frame";
 import { useKTX2 } from "@react-three/drei";
@@ -58,9 +58,5 @@ function UnsuspensedKTX2(props: KTX2Props) {
 }
 
 export function KTX2(props: KTX2Props) {
-  return (
-    <Suspense fallback={null}>
-      <UnsuspensedKTX2 {...props} />
-    </Suspense>
-  );
+  return <UnsuspensedKTX2 {...props} />;
 }

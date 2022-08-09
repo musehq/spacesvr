@@ -1,10 +1,10 @@
-import { Suspense, useMemo } from "react";
+import { useMemo } from "react";
 import { DoubleSide, Material } from "three";
 import { Frame } from "../../Frame";
 import { useTexture } from "@react-three/drei";
 import { GroupProps } from "@react-three/fiber";
 
-type JpegPngProps = {
+type TextureProps = {
   src: string;
   size?: number;
   framed?: boolean;
@@ -14,7 +14,7 @@ type JpegPngProps = {
   transparent?: boolean;
 } & GroupProps;
 
-function UnsuspensedJpegPng(props: JpegPngProps) {
+function UnsuspensedTexture(props: TextureProps) {
   const {
     src,
     size = 1,
@@ -35,7 +35,7 @@ function UnsuspensedJpegPng(props: JpegPngProps) {
     HEIGHT = (height / max) * size;
 
   return (
-    <group name="spacesvr-jpeg-png" {...props}>
+    <group name="spacesvr-texture" {...props}>
       <mesh>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
         <meshBasicMaterial
@@ -57,10 +57,6 @@ function UnsuspensedJpegPng(props: JpegPngProps) {
   );
 }
 
-export function JpegPng(props: JpegPngProps) {
-  return (
-    <Suspense fallback={null}>
-      <UnsuspensedJpegPng {...props} />
-    </Suspense>
-  );
+export function Texture(props: TextureProps) {
+  return <UnsuspensedTexture {...props} />;
 }
