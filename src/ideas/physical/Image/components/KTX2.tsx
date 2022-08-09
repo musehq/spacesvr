@@ -1,20 +1,10 @@
-import { Suspense, useMemo } from "react";
-import { DoubleSide, Material } from "three";
-import { Frame } from "./Frame";
-import { useTexture } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
+import { useMemo } from "react";
+import { DoubleSide } from "three";
+import { Frame } from "../../Frame";
+import { useKTX2 } from "@react-three/drei";
+import { ImageProps } from "../index";
 
-type ImageProps = {
-  src: string;
-  size?: number;
-  framed?: boolean;
-  frameMaterial?: Material;
-  frameWidth?: number;
-  innerFrameMaterial?: Material;
-  transparent?: boolean;
-} & GroupProps;
-
-function UnsuspensedImage(props: ImageProps) {
+export function KTX2(props: ImageProps) {
   const {
     src,
     size = 1,
@@ -25,7 +15,7 @@ function UnsuspensedImage(props: ImageProps) {
     transparent,
   } = props;
 
-  const texture = useTexture(src);
+  const texture = useKTX2(src);
 
   const width = useMemo(() => texture.image.width, [texture]);
   const height = useMemo(() => texture.image.height, [texture]);
@@ -35,8 +25,8 @@ function UnsuspensedImage(props: ImageProps) {
     HEIGHT = (height / max) * size;
 
   return (
-    <group name="spacesvr-image" {...props}>
-      <mesh>
+    <group name="spacesvr-ktx2" {...props}>
+      <mesh rotation={[0, Math.PI, Math.PI]}>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
         <meshBasicMaterial
           map={texture}
@@ -54,13 +44,5 @@ function UnsuspensedImage(props: ImageProps) {
         />
       )}
     </group>
-  );
-}
-
-export function Image(props: ImageProps) {
-  return (
-    <Suspense fallback={null}>
-      <UnsuspensedImage {...props} />
-    </Suspense>
   );
 }
