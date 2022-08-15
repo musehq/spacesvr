@@ -7,8 +7,8 @@ import {
   getMeshesUUID,
   getTransformedMeshGeo,
 } from "./utils/mesh";
-import { generateBVHGeo } from "./utils/bvh";
 import TrimeshCollider from "./components/TrimeshCollider";
+import { generateSimplifiedGeo } from "./utils/simplify";
 
 type CollidableProps = {
   children: ReactNode | ReactNode[];
@@ -72,10 +72,10 @@ export default function Collidable(props: CollidableProps) {
       setCollisionGeos(geos);
     } else {
       const perc = triLimit / triCount;
-      const bvhGeos = geos
-        .map((g) => generateBVHGeo(g, getGeometryTriCount(g) * perc))
+      const simpGeos = geos
+        .map((g) => generateSimplifiedGeo(g, getGeometryTriCount(g) * perc))
         .filter((g) => g) as BufferGeometry[];
-      setCollisionGeos(bvhGeos);
+      setCollisionGeos(simpGeos);
     }
   }, [children, triLimit, enabled]);
 

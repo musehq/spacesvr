@@ -57,8 +57,7 @@
     "nipplejs": "0.8.1",
     "node-fetch": "^2.6.1",
     "peerjs": "^1.4.6",
-    "react-device-detect": "^1.13.1",
-    "three-mesh-bvh": "^0.5.15"
+    "react-device-detect": "^1.13.1"
   },
   "peerDependencies": {
     "react": ">=18.1",

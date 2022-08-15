@@ -235,7 +235,15 @@ An infinite floor styled to the Lost World.
 
 #### Collidable
 
-Enables colliders for its children using 1 of 3 strategies. Read more about the strategies [here](https://musehq.notion.site/Collider-Model-b1ac884dc5b4488c96ae8ee8ffd859f7).
+Enables colliders for its children either by a named collider mesh or using all meshes and capping collective triangle count to triLimit prop.
+
+```tsx
+<Collidable
+  triLimit={1000} // max number of triangles before it uses bvh
+  enabled={true}
+  hideCollisionMeshes={false} // set visible to false on meshes used for collision
+/>
+```
 
 #### FacePlayer
 
