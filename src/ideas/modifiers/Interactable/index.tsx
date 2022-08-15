@@ -2,11 +2,13 @@ import { ReactNode } from "react";
 import { useEnvironment } from "../../../layers/Environment";
 import XRInteractable from "./components/XRInteractable";
 import MobileDesktopInteractable from "./components/MobileDesktopInteractable";
+import { Raycaster } from "three";
 
 export type InteractableProps = {
   onClick?: () => void;
   onHover?: () => void;
   onUnHover?: () => void;
+  raycaster?: Raycaster;
   children: ReactNode | ReactNode[];
 };
 
