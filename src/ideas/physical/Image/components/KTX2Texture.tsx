@@ -4,7 +4,7 @@ import { Frame } from "../../Frame";
 import { useKTX2 } from "@react-three/drei";
 import { ImageProps } from "../index";
 
-export function KTX2(props: ImageProps) {
+export function KTX2Texture(props: ImageProps) {
   const {
     src,
     size = 1,

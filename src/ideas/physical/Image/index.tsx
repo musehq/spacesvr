@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { Texture } from "./components/Texture";
-import { KTX2 } from "./components/KTX2";
+import { ImageTexture } from "./components/ImageTexture";
+import { KTX2Texture } from "./components/KTX2Texture";
 import { Material } from "three";
 import { GroupProps } from "@react-three/fiber";
 
@@ -15,22 +15,13 @@ export type ImageProps = {
 } & GroupProps;
 
 export function Image(props: ImageProps) {
-  const {
-    src,
-    size = 1,
-    framed,
-    frameMaterial,
-    frameWidth = 1,
-    innerFrameMaterial,
-    transparent,
-  } = props;
+  const { src } = props;
 
-  const modUrl = src.toLowerCase();
-  const IS_KTX2 = modUrl.endsWith(".ktx2");
+  const IS_KTX2 = src.toLowerCase().endsWith(".ktx2");
 
   return (
     <Suspense fallback={null}>
-      {IS_KTX2 ? <KTX2 {...props} /> : <Texture {...props} />}
+      {IS_KTX2 ? <KTX2Texture {...props} /> : <ImageTexture {...props} />}
     </Suspense>
   );
 }

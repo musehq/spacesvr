@@ -4,7 +4,7 @@ import { Frame } from "../../Frame";
 import { useTexture } from "@react-three/drei";
 import { ImageProps } from "../index";
 
-export function Texture(props: ImageProps) {
+export function ImageTexture(props: ImageProps) {
   const {
     src,
     size = 1,
