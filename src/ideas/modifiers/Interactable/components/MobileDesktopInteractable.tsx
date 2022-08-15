@@ -1,30 +1,37 @@
-import { useFrame, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Group, Vector2 } from "three";
 import { isMobile } from "react-device-detect";
 import { InteractableProps } from "../index";
 import { usePlayer } from "../../../../layers/Player";
-import { useLimiter } from "../../../../logic/limiter";
+import { useLimitedFrame } from "../../../../logic/limiter";
 
 /**
  * This is a bit convoluted for the sake of working with the ClickDragControls
  * (i.e. the test for a double click)
  */
 export default function MobileDesktopInteractable(props: InteractableProps) {
-  const { onClick, onHover, onUnHover, children } = props;
+  const {
+    onClick,
+    onHover,
+    onUnHover,
+    raycaster: passedRaycaster,
+    children,
+  } = props;
 
   const gl = useThree((state) => state.gl);
   const { domElement } = gl;
-  const { raycaster } = usePlayer();
+  const { raycaster: playerRaycaster } = usePlayer();
+
+  const raycaster = passedRaycaster || playerRaycaster;
 
   const group = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
   const { current: downPos } = useRef(new Vector2());
-  const limiter = useLimiter(30);
 
   // continuously update the hover state
-  useFrame(({ clock }) => {
-    if (!group.current || !limiter.isReady(clock) || !raycaster) return;
+  useLimitedFrame(25, () => {
+    if (!group.current) return;
 
     const intersections = raycaster.intersectObject(group.current, true);
     if (intersections && intersections.length > 0) {

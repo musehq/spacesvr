@@ -233,6 +233,18 @@ An infinite floor styled to the Lost World.
 
 ### /modifiers/
 
+#### Collidable
+
+Enables colliders for its children either by a named collider mesh or using all meshes and capping collective triangle count to triLimit prop.
+
+```tsx
+<Collidable
+  triLimit={1000} // max number of triangles before it uses bvh
+  enabled={true}
+  hideCollisionMeshes={false} // set visible to false on meshes used for collision
+/>
+```
+
 #### FacePlayer
 
 Turns its children into a billboard, always facing the camera.
