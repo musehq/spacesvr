@@ -8,8 +8,10 @@ interface KeyboardLayoutMap {
   get: (key: string) => any;
 }
 
-interface Navigator {
-  keyboard: Keyboard;
+declare global {
+  interface Navigator {
+    keyboard: Keyboard;
+  }
 }
 
 /**
@@ -21,15 +23,13 @@ export const useKeyboardLayout = (): string => {
   const [layout, setLayout] = useState("W/A/S/D");
 
   useEffect(() => {
-    // @ts-ignore
-    if (navigator.keyboard) {
-      // @ts-ignore
-      const keyboard = navigator.keyboard;
-      keyboard.getLayoutMap().then((keyboardLayoutMap: KeyboardLayoutMap) => {
-        const upKey = keyboardLayoutMap.get("KeyW");
-        if (upKey === "z") setLayout("Z/Q/S/D");
-      });
-    }
+    const IS_IN_IFRAME = window.self !== window.top;
+    if (!navigator.keyboard || IS_IN_IFRAME) return;
+    const keyboard = navigator.keyboard;
+    keyboard.getLayoutMap().then((keyboardLayoutMap: KeyboardLayoutMap) => {
+      const upKey = keyboardLayoutMap.get("KeyW");
+      if (upKey === "z") setLayout("Z/Q/S/D");
+    });
   }, []);
 
   return layout;
