@@ -233,6 +233,10 @@ An infinite floor styled to the Lost World.
 
 ### /modifiers/
 
+#### Collidable
+
+Enables colliders for its children using 1 of 3 strategies. Read more about the strategies [here](https://musehq.notion.site/Collider-Model-b1ac884dc5b4488c96ae8ee8ffd859f7).
+
 #### FacePlayer
 
 Turns its children into a billboard, always facing the camera.
