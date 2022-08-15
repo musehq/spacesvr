@@ -17,7 +17,7 @@ type CollidableProps = {
   hideCollisionMeshes?: boolean;
 };
 
-export default function Collidable(props: CollidableProps) {
+export function Collidable(props: CollidableProps) {
   const {
     children,
     triLimit = 1000,
