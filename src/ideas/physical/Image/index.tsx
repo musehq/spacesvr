@@ -11,7 +11,6 @@ export type ImageProps = {
   frameMaterial?: Material;
   frameWidth?: number;
   innerFrameMaterial?: Material;
-  transparent?: boolean;
 } & GroupProps;
 
 export function Image(props: ImageProps) {

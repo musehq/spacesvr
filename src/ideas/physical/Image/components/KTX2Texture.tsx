@@ -12,7 +12,6 @@ export function KTX2Texture(props: ImageProps) {
     frameMaterial,
     frameWidth = 1,
     innerFrameMaterial,
-    transparent,
   } = props;
 
   const texture = useKTX2(src);
@@ -28,11 +27,7 @@ export function KTX2Texture(props: ImageProps) {
     <group name="spacesvr-ktx2" {...props}>
       <mesh rotation={[0, Math.PI, Math.PI]}>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
-        <meshBasicMaterial
-          map={texture}
-          side={DoubleSide}
-          transparent={transparent}
-        />
+        <meshBasicMaterial map={texture} side={DoubleSide} transparent />
       </mesh>
       {framed && (
         <Frame
