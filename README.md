@@ -366,7 +366,6 @@ Quickly add an image to your scene
   src="https://link-to-your-image.png"
   size={1} // size, default normalized to longest side = 1
   framed // adds a frame
-  transparent // enables transparency on the image
 />
 ```
 

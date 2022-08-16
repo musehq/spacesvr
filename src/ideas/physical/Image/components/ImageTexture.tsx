@@ -12,7 +12,6 @@ export function ImageTexture(props: ImageProps) {
     frameMaterial,
     frameWidth = 1,
     innerFrameMaterial,
-    transparent,
   } = props;
 
   const texture = useTexture(src);
@@ -28,11 +27,7 @@ export function ImageTexture(props: ImageProps) {
     <group name="spacesvr-texture" {...props}>
       <mesh>
         <planeBufferGeometry args={[WIDTH, HEIGHT]} />
-        <meshBasicMaterial
-          map={texture}
-          side={DoubleSide}
-          transparent={transparent}
-        />
+        <meshBasicMaterial map={texture} side={DoubleSide} transparent />
       </mesh>
       {framed && (
         <Frame
