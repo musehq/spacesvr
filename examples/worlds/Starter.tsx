@@ -58,7 +58,7 @@ export default function Starter() {
         framed
       />
       <Image
-        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        src="https://d1htv66kutdwsl.cloudfront.net/ff3aff8a-b3f9-4325-a274-d4ba44676bab/7f386117-5837-4d34-926c-f00ffa56c833.ktx2"
         position={[-9.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
       />
@@ -74,7 +74,7 @@ export default function Starter() {
         rotation={[0, Math.PI, 0]}
       />
       <Image
-        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        src="https://d1htv66kutdwsl.cloudfront.net/e7edec86-52b6-4734-9c43-ffd70bc5bef6/9d1e5c18-3fb5-4844-8b31-1a08b800976e.ktx2"
         position={[-12.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
