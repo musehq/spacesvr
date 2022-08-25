@@ -1,3 +1,4 @@
+export * from "./assets";
 export * from "./collision";
 export * from "./dom";
 export * from "./keyboard";
