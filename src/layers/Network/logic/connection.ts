@@ -6,6 +6,7 @@ import { MuseSignaller } from "./signallers/MuseSignaller";
 import { useWaving } from "./wave";
 import { Signaller, SignallerConfig } from "./signallers";
 import { Channels, useChannels } from "./channels";
+import { useVoice } from "../voice";
 
 export type ConnectionState = {
   connected: boolean;
@@ -16,6 +17,7 @@ export type ConnectionState = {
 
 export type ConnectionConfig = {
   iceServers?: RTCIceServer[];
+  voice?: boolean;
 } & SignallerConfig;
 
 export const useConnection = (
@@ -110,6 +112,7 @@ export const useConnection = (
   };
 
   useWaving(1, signaller, disconnect);
+  useVoice(externalConfig.voice, peer, connections);
 
   return {
     connected,
