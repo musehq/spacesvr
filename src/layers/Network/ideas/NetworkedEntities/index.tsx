@@ -3,7 +3,6 @@ import {
   CylinderBufferGeometry,
   InstancedMesh,
   MeshNormalMaterial,
-  PositionalAudio,
 } from "three";
 import { useNetwork } from "../../logic/network";
 import { useLimitedFrame } from "../../../../logic/limiter";
@@ -24,7 +23,6 @@ export default function NetworkedEntities() {
   const mat = useMemo(() => new MeshNormalMaterial(), []);
   const obj = useObj();
 
-  const posAudios = useMemo<PositionalAudio[]>(() => [], []);
   const entities = useEntities();
 
   // set up channel to send/receive data
@@ -91,7 +89,7 @@ export default function NetworkedEntities() {
       obj.updateMatrix();
       mesh.current.setMatrixAt(i, obj.matrix);
 
-      const audio = posAudios[i];
+      const audio = entities[i].posAudio;
       if (audio) {
         obj.matrix.decompose(audio.position, audio.quaternion, audio.scale);
       }
