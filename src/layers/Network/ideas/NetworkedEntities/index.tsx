@@ -1,72 +1,64 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import {
   CylinderBufferGeometry,
   InstancedMesh,
   MeshNormalMaterial,
-  Object3D,
+  PositionalAudio,
 } from "three";
-import { useNetwork } from "../logic/network";
-import { useLimitedFrame } from "../../../logic/limiter";
+import { useNetwork } from "../../logic/network";
+import { useLimitedFrame } from "../../../../logic/limiter";
 import { SnapshotInterpolation } from "@geckos.io/snapshot-interpolation";
 import {
   Snapshot,
   Entity as EntityState,
   Quat,
 } from "@geckos.io/snapshot-interpolation/lib/types";
+import { useObj } from "./logic/resources";
+import { useEntities } from "./logic/entity";
 
 export default function NetworkedEntities() {
-  const { connections, connected, useChannel } = useNetwork();
+  const { connected, useChannel } = useNetwork();
 
   const mesh = useRef<InstancedMesh>(null);
   const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 32), []);
   const mat = useMemo(() => new MeshNormalMaterial(), []);
-  const obj = useMemo(() => {
-    const o = new Object3D();
-    o.matrixAutoUpdate = false;
-    return o;
-  }, []);
+  const obj = useObj();
 
-  // check for a change in player list, re-render if there is a change
-  const [entityIds, setEntityIds] = useState<string[]>([]);
-  useLimitedFrame(6, () => {
-    if (!connected) return;
-    const ids = Array.from(connections.keys());
-    const sameIds = ids.sort().join(",") === entityIds.sort().join(",");
-    if (!sameIds) setEntityIds(ids);
-  });
+  const posAudios = useMemo<PositionalAudio[]>(() => [], []);
+  const entities = useEntities();
 
+  // set up channel to send/receive data
   const NETWORK_FPS = 12;
-  type Entity = { pos: number[]; rot: number[] };
+  type EntityTransform = { pos: number[]; rot: number[] };
   const SI = useMemo(() => new SnapshotInterpolation(NETWORK_FPS), []);
-  const entityChannel = useChannel<Entity, { [key in string]: Entity }>(
-    "player",
-    "stream",
-    (m, s) => {
-      if (!m.conn) return;
-      s[m.conn.peer] = m.data;
+  const entityChannel = useChannel<
+    EntityTransform,
+    { [id: string]: EntityTransform }
+  >("player", "stream", (m, s) => {
+    if (!m.conn) return;
+    s[m.conn.peer] = m.data;
 
-      const state: EntityState[] = Object.keys(s).map((key) => ({
-        id: key,
-        x: s[key].pos[0],
-        y: s[key].pos[1],
-        z: s[key].pos[2],
-        q: {
-          x: s[key].rot[0],
-          y: s[key].rot[1],
-          z: s[key].rot[2],
-          w: s[key].rot[3],
-        },
-      }));
+    const state: EntityState[] = Object.keys(s).map((key) => ({
+      id: key,
+      x: s[key].pos[0],
+      y: s[key].pos[1],
+      z: s[key].pos[2],
+      q: {
+        x: s[key].rot[0],
+        y: s[key].rot[1],
+        z: s[key].rot[2],
+        w: s[key].rot[3],
+      },
+    }));
 
-      const snapshot: Snapshot = {
-        id: Math.random().toString(),
-        time: new Date().getTime(),
-        state,
-      };
+    const snapshot: Snapshot = {
+      id: Math.random().toString(),
+      time: new Date().getTime(),
+      state,
+    };
 
-      SI.vault.add(snapshot);
-    }
-  );
+    SI.vault.add(snapshot);
+  });
 
   // send own player data
   useLimitedFrame(NETWORK_FPS, ({ camera }) => {
@@ -98,6 +90,11 @@ export default function NetworkedEntities() {
       obj.quaternion.w = quat.w;
       obj.updateMatrix();
       mesh.current.setMatrixAt(i, obj.matrix);
+
+      const audio = posAudios[i];
+      if (audio) {
+        obj.matrix.decompose(audio.position, audio.quaternion, audio.scale);
+      }
       i++;
     }
 
@@ -110,9 +107,18 @@ export default function NetworkedEntities() {
 
   return (
     <group>
+      {entities.map(
+        (entity) =>
+          entity.posAudio && (
+            <primitive
+              key={entity.posAudio.userData.peerId}
+              object={entity.posAudio}
+            />
+          )
+      )}
       <instancedMesh
         ref={mesh}
-        args={[geo, mat, entityIds.length]}
+        args={[geo, mat, entities.length]}
         matrixAutoUpdate={false}
       />
     </group>

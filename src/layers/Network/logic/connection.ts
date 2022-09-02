@@ -6,12 +6,13 @@ import { MuseSignaller } from "./signallers/MuseSignaller";
 import { useWaving } from "./wave";
 import { Signaller, SignallerConfig } from "./signallers";
 import { Channels, useChannels } from "./channels";
-import { useVoice } from "../voice";
+import { useVoice } from "./voice";
 
 export type ConnectionState = {
   connected: boolean;
   connect: (config?: ConnectionConfig) => Promise<void>;
   connections: Map<string, DataConnection>;
+  voiceStreams: Map<string, MediaStream>;
   disconnect: () => void;
 } & Pick<Channels, "useChannel">;
 
@@ -112,13 +113,14 @@ export const useConnection = (
   };
 
   useWaving(1, signaller, disconnect);
-  useVoice(externalConfig.voice, peer, connections);
+  const voiceStreams = useVoice(externalConfig.voice, peer, connections);
 
   return {
     connected,
     connect,
     disconnect,
     connections,
+    voiceStreams,
     useChannel: channels.useChannel,
   };
 };

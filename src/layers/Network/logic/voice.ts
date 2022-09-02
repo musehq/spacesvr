@@ -1,5 +1,5 @@
 import { DataConnection, Peer, MediaConnection } from "peerjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 declare global {
   interface Navigator {
@@ -15,8 +15,13 @@ export const useVoice = (
   enable: boolean | undefined,
   peer: Peer | undefined,
   connections: Map<string, DataConnection>
-): void => {
+): Map<string, MediaStream> => {
   const [stream, setStream] = useState<MediaStream>();
+  const voiceStreams = useMemo<Map<string, MediaStream>>(
+    () => new Map<string, MediaStream>(),
+    []
+  );
+  const [ct, setCt] = useState(0);
 
   // attempt to request permission for microphone, only try once
   const [attempted, setAttempted] = useState(false);
@@ -53,20 +58,16 @@ export const useVoice = (
       mediaConn.answer(stream);
 
       mediaConn.on("stream", (stream: MediaStream) => {
-        const audioElem = document.createElement("audio");
-        audioElem.id = mediaConn.peer;
-        audioElem.autoplay = true;
-        audioElem.srcObject = stream;
-        document.body.appendChild(audioElem);
+        voiceStreams.set(mediaConn.peer, stream);
       });
 
       mediaConn.on("close", () => {
-        const audioElem = document.getElementById(mediaConn.peer);
-        if (audioElem) audioElem.remove();
+        console.log("closing voice stream with peer", mediaConn.peer);
+        voiceStreams.delete(mediaConn.peer);
       });
 
       mediaConn.on("error", (err: any) => {
-        console.log(err);
+        console.error(err);
       });
     };
 
@@ -74,5 +75,7 @@ export const useVoice = (
     peer.on("connection", (dataConn) => {
       handleMediaConn(peer.call(dataConn.peer, stream));
     });
-  }, [connections, peer, stream]);
+  }, [connections, peer, stream, voiceStreams]);
+
+  return voiceStreams;
 };
