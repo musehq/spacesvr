@@ -7,6 +7,7 @@ import { useWaving } from "./wave";
 import { Signaller, SignallerConfig } from "./signallers";
 import { Channels, useChannels } from "./channels";
 import { useVoice } from "./voice";
+import { getMuseIceServers } from "./ice";
 
 export type ConnectionState = {
   connected: boolean;
@@ -59,8 +60,14 @@ export const useConnection = (
 
     const finalConfig = { ...externalConfig, ...config };
 
+    if (!finalConfig.iceServers) {
+      const servers = await getMuseIceServers(finalConfig.host);
+      if (servers) finalConfig.iceServers = servers;
+    }
+
     const peerConfig: any = {};
     if (finalConfig.iceServers) peerConfig.iceServers = finalConfig.iceServers;
+
     const p = new Peer({ config: peerConfig });
 
     p.on("connection", registerConnection); // incoming
