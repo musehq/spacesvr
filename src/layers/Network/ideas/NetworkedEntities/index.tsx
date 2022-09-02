@@ -89,10 +89,13 @@ export default function NetworkedEntities() {
       obj.updateMatrix();
       mesh.current.setMatrixAt(i, obj.matrix);
 
-      const audio = entities[i].posAudio;
+      const audio = entities[i]?.posAudio;
       if (audio) {
         obj.matrix.decompose(audio.position, audio.quaternion, audio.scale);
+        audio.updateMatrix();
+        audio.rotateY(Math.PI); // for some reason it's flipped
       }
+
       i++;
     }
 
@@ -108,10 +111,7 @@ export default function NetworkedEntities() {
       {entities.map(
         (entity) =>
           entity.posAudio && (
-            <primitive
-              key={entity.posAudio.userData.peerId}
-              object={entity.posAudio}
-            />
+            <primitive key={entity.posAudio.uuid} object={entity.posAudio} />
           )
       )}
       <instancedMesh

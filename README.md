@@ -190,7 +190,7 @@ type PlayerState = {
 
 #### Network Layer
 
-_Provides multiplayer out-of-the-box. Muse provides signalling servers for everyone, but not STUN/TURN servers, which [you need for best performance](https://www.twilio.com/docs/stun-turn/faq#faq-what-is-nat)._
+_Provides multiplayer out-of-the-box. Muse provides signalling servers and STUN/TURN for everyone :)._
 
 ```tsx
 type NetworkProps = {
@@ -200,6 +200,7 @@ type NetworkProps = {
   host?: string; // signalling host url, uses Muse's servers by default
   sessionId?: string; // if you know the session id you want to use, enter it here
   worldName?: string; // the worldname to hash your signal peers by, by default set to the path name
+  voice?: boolean; // whether to enable spatial voice chat, false by default
 };
 ```
 

@@ -21,7 +21,6 @@ export const useVoice = (
     () => new Map<string, MediaStream>(),
     []
   );
-  const [ct, setCt] = useState(0);
 
   // attempt to request permission for microphone, only try once
   const [attempted, setAttempted] = useState(false);
@@ -67,13 +66,18 @@ export const useVoice = (
       });
 
       mediaConn.on("error", (err: any) => {
-        console.error(err);
+        console.error("error with voice stream with peer", mediaConn.peer, err);
+        voiceStreams.delete(mediaConn.peer);
       });
     };
 
     peer.on("call", handleMediaConn);
     peer.on("connection", (dataConn) => {
       handleMediaConn(peer.call(dataConn.peer, stream));
+      dataConn.on("close", () => {
+        console.log("closing voice stream with peer", dataConn.peer);
+        voiceStreams.delete(dataConn.peer);
+      });
     });
   }, [connections, peer, stream, voiceStreams]);
 
