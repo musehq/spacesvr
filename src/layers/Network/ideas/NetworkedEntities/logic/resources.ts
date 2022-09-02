@@ -5,6 +5,7 @@ import { AudioListener, Object3D } from "three";
 export const useListener = (): AudioListener => {
   const cam = useThree((st) => st.camera);
   return useMemo(() => {
+    console.log("creating listener");
     const listen = new AudioListener();
     cam.add(listen);
     return listen;

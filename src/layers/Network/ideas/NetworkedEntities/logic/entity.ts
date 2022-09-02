@@ -66,18 +66,25 @@ export const useEntities = (): Entity[] => {
         if (!entity) continue;
 
         const stream = voiceStreams.get(id)!;
+        console.log(stream);
         if (!stream) continue;
 
         const audioElem = document.createElement("audio");
         audioElem.srcObject = stream;
+        // audioElem.muted = true;
         audioElem.autoplay = true;
+        audioElem.loop = true;
+        //@ts-ignore
+        audioElem.playsinline = true;
+
         const posAudio = new PositionalAudio(listener);
         posAudio.userData.peerId = id;
-        posAudio.setMediaStreamSource(audioElem.srcObject);
+        posAudio.setMediaStreamSource(stream);
         posAudio.setRefDistance(3);
         posAudio.setDirectionalCone(200, 290, 0.2);
-        audioElem.muted = true;
-        // posAudio.add(new PositionalAudioHelper(posAudio, 1));
+        posAudio.setVolume(0.75);
+
+        posAudio.add(new PositionalAudioHelper(posAudio, 1));
         entity.posAudio = posAudio;
       }
 

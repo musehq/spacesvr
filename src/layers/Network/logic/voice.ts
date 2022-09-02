@@ -56,8 +56,8 @@ export const useVoice = (
       console.log("media connection opened with peer", mediaConn.peer);
       mediaConn.answer(stream);
 
-      mediaConn.on("stream", (stream: MediaStream) => {
-        voiceStreams.set(mediaConn.peer, stream);
+      mediaConn.on("stream", (str: MediaStream) => {
+        voiceStreams.set(mediaConn.peer, str);
       });
 
       mediaConn.on("close", () => {
