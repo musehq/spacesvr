@@ -15,6 +15,7 @@ export type ConnectionState = {
   connections: Map<string, DataConnection>;
   voiceStreams: Map<string, MediaStream>;
   disconnect: () => void;
+  setVoice: (v: boolean) => void;
 } & Pick<Channels, "useChannel">;
 
 export type ConnectionConfig = {
@@ -120,7 +121,9 @@ export const useConnection = (
   };
 
   useWaving(1, signaller, disconnect);
-  const voiceStreams = useVoice(externalConfig.voice, peer, connections);
+
+  const [voice, setVoice] = useState(externalConfig.voice);
+  const voiceStreams = useVoice(voice, peer, connections);
 
   return {
     connected,
@@ -129,5 +132,6 @@ export const useConnection = (
     connections,
     voiceStreams,
     useChannel: channels.useChannel,
+    setVoice,
   };
 };
