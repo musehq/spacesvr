@@ -71,7 +71,7 @@ export const useEntities = (): Entity[] => {
 
         const audioElem = document.createElement("audio");
         audioElem.srcObject = stream;
-        // audioElem.muted = true;
+        audioElem.muted = true;
         audioElem.autoplay = true;
         audioElem.loop = true;
         //@ts-ignore
@@ -80,11 +80,13 @@ export const useEntities = (): Entity[] => {
         const posAudio = new PositionalAudio(listener);
         posAudio.userData.peerId = id;
         posAudio.setMediaStreamSource(stream);
-        posAudio.setRefDistance(3);
+        posAudio.setRefDistance(2);
         posAudio.setDirectionalCone(200, 290, 0.2);
-        posAudio.setVolume(0.75);
+        posAudio.setVolume(0.6);
 
-        posAudio.add(new PositionalAudioHelper(posAudio, 1));
+        listener.context.resume();
+
+        // posAudio.add(new PositionalAudioHelper(posAudio, 1));
         entity.posAudio = posAudio;
       }
 
