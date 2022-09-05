@@ -1,8 +1,9 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLimitedFrame } from "../../../../../logic/limiter";
 import { useNetwork } from "../../../logic/network";
 import { PositionalAudio } from "three";
 import { useListener } from "./resources";
+import { useEnvironment } from "../../../../Environment";
 import { PositionalAudioHelper } from "three/examples/jsm/helpers/PositionalAudioHelper";
 
 type Entity = {
@@ -12,10 +13,13 @@ type Entity = {
 
 export const useEntities = (): Entity[] => {
   const { connections, connected, voiceStreams } = useNetwork();
+  const { paused } = useEnvironment();
 
   const listener = useListener();
   const [ct, setCt] = useState(0);
   const rerender = () => setCt(Math.random());
+  const [firstPaused, setFirstPaused] = useState(true);
+  useEffect(() => setFirstPaused(paused && firstPaused), [paused, firstPaused]);
 
   const entities = useMemo<Entity[]>(() => [], []);
 
@@ -49,7 +53,11 @@ export const useEntities = (): Entity[] => {
       rerender();
     }
 
-    if (!sameIds(voiceIds.current, Array.from(voiceStreams.keys()))) {
+    // dont run until first time unpaused to make sure audio context is running from first press
+    if (
+      !firstPaused &&
+      !sameIds(voiceIds.current, Array.from(voiceStreams.keys()))
+    ) {
       voiceIds.current = Array.from(voiceStreams.keys());
 
       // remove voice streams that are no longer connected
@@ -83,8 +91,6 @@ export const useEntities = (): Entity[] => {
         posAudio.setRefDistance(2);
         posAudio.setDirectionalCone(200, 290, 0.2);
         posAudio.setVolume(0.6);
-
-        listener.context.resume();
 
         // posAudio.add(new PositionalAudioHelper(posAudio, 1));
         entity.posAudio = posAudio;
