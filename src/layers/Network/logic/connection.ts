@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataConnection, Peer } from "peerjs";
 import { isLocalNetwork } from "./local";
 import { LocalSignaller } from "./signallers/LocalSignaller";
@@ -122,7 +122,8 @@ export const useConnection = (
 
   useWaving(1, signaller, disconnect);
 
-  const [voice, setVoice] = useState(externalConfig.voice);
+  const [voice, setVoice] = useState(!!externalConfig.voice);
+  useEffect(() => setVoice(!!externalConfig.voice), [externalConfig.voice]);
   const voiceStreams = useVoice(voice, peer, connections);
 
   return {

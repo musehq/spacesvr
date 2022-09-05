@@ -1,18 +1,23 @@
 import { DataConnection, Peer, MediaConnection } from "peerjs";
 import { useEffect, useMemo, useState } from "react";
 
+type GetUserMedia = (
+  options: { video?: boolean; audio?: boolean },
+  success: (stream: any) => void,
+  error?: (error: string) => void
+) => void;
+
 declare global {
   interface Navigator {
-    getUserMedia(
-      options: { video?: boolean; audio?: boolean },
-      success: (stream: any) => void,
-      error?: (error: string) => void
-    ): void;
+    getUserMedia: GetUserMedia;
+    webkitGetUserMedia?: GetUserMedia;
+    mozGetUserMedia?: GetUserMedia;
+    msGetUserMedia?: GetUserMedia;
   }
 }
 
 export const useVoice = (
-  enable: boolean | undefined,
+  enabled: boolean,
   peer: Peer | undefined,
   connections: Map<string, DataConnection>
 ): Map<string, MediaStream> => {
@@ -25,32 +30,24 @@ export const useVoice = (
   // attempt to request permission for microphone, only try once
   const [attempted, setAttempted] = useState(false);
   useEffect(() => {
-    if (!enable || attempted) return;
+    if (!enabled || attempted) return;
+
+    setAttempted(true);
 
     navigator.getUserMedia =
       navigator.getUserMedia ||
-      // @ts-ignore
       navigator.webkitGetUserMedia ||
-      // @ts-ignore
       navigator.mozGetUserMedia ||
-      // @ts-ignore
       navigator.msGetUserMedia;
 
-    setAttempted(true);
-    navigator.getUserMedia(
-      { audio: true },
-      (stream: MediaStream) => {
-        setStream(stream);
-      },
-      (err) => {
-        console.error(err);
-        setStream(undefined);
-      }
-    );
-  }, [attempted, enable, peer]);
+    navigator.getUserMedia({ audio: true }, setStream, (err) => {
+      console.error(err);
+    });
+  }, [attempted, enabled, peer]);
 
+  // actually call peers and respond to calls
   useEffect(() => {
-    if (!peer || !stream || !connections) return;
+    if (!peer || !stream) return;
 
     const handleMediaConn = (mediaConn: MediaConnection) => {
       console.log("media connection opened with peer", mediaConn.peer);

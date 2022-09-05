@@ -190,7 +190,7 @@ type PlayerState = {
 
 #### Network Layer
 
-_Provides multiplayer out-of-the-box. Muse provides signalling servers and STUN/TURN for everyone :)._
+_Provides multiplayer out-of-the-box. Muse provides signalling servers and [STUN/TURN](https://www.twilio.com/docs/stun-turn/faq#faq-what-is-nat) servers for everyone :)._
 
 ```tsx
 type NetworkProps = {
