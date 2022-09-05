@@ -1,5 +1,5 @@
 import { DataConnection, Peer, MediaConnection } from "peerjs";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type GetUserMedia = (
   options: { video?: boolean; audio?: boolean },
@@ -40,16 +40,17 @@ export const useVoice = (
       navigator.mozGetUserMedia ||
       navigator.msGetUserMedia;
 
-    navigator.getUserMedia({ audio: true }, setStream, (err) => {
-      console.error(err);
-    });
+    navigator.getUserMedia(
+      { audio: true },
+      (str) => setStream(str),
+      (err) => {
+        console.error(err);
+      }
+    );
   }, [attempted, enabled, peer]);
 
-  // actually call peers and respond to calls
-  useEffect(() => {
-    if (!peer || !stream) return;
-
-    const handleMediaConn = (mediaConn: MediaConnection) => {
+  const handleMediaConn = useCallback(
+    (mediaConn: MediaConnection) => {
       console.log("media connection opened with peer", mediaConn.peer);
       mediaConn.answer(stream);
 
@@ -66,17 +67,35 @@ export const useVoice = (
         console.error("error with voice stream with peer", mediaConn.peer, err);
         voiceStreams.delete(mediaConn.peer);
       });
-    };
+    },
+    [stream, voiceStreams]
+  );
 
-    peer.on("call", handleMediaConn);
-    peer.on("connection", (dataConn) => {
-      handleMediaConn(peer.call(dataConn.peer, stream));
-      dataConn.on("close", () => {
-        console.log("closing voice stream with peer", dataConn.peer);
-        voiceStreams.delete(dataConn.peer);
+  const callPeer = useCallback(
+    (conn: DataConnection, peer: Peer, stream: MediaStream) => {
+      console.log("calling peer with id", conn.peer);
+      handleMediaConn(peer.call(conn.peer, stream));
+      conn.on("close", () => {
+        console.log("closing voice stream with peer", conn.peer);
+        voiceStreams.delete(conn.peer);
       });
-    });
-  }, [connections, peer, stream, voiceStreams]);
+    },
+    [handleMediaConn, voiceStreams]
+  );
+
+  useEffect(() => {
+    if (!peer || !stream) return;
+
+    // set up incoming and outgoing calls for any future connections
+    peer.on("call", handleMediaConn);
+    peer.on("connection", (conn) => callPeer(conn, peer, stream));
+
+    // call any already connected peers
+    for (const [peerId, conn] of connections) {
+      if (voiceStreams.has(peerId)) return;
+      callPeer(conn, peer, stream);
+    }
+  }, [callPeer, connections, handleMediaConn, peer, stream, voiceStreams]);
 
   return voiceStreams;
 };

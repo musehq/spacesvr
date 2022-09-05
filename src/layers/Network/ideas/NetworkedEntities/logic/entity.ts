@@ -82,7 +82,7 @@ export const useEntities = (): Entity[] => {
         audioElem.autoplay = true;
         audioElem.loop = true;
         //@ts-ignore
-        audioElem.playsinline = true;
+        audioElem.playsInline = true;
 
         const posAudio = new PositionalAudio(listener);
         posAudio.userData.peerId = id;
