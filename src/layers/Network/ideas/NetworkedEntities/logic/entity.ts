@@ -74,7 +74,6 @@ export const useEntities = (): Entity[] => {
         if (!entity) continue;
 
         const stream = voiceStreams.get(id)!;
-        console.log(stream);
         if (!stream) continue;
 
         const audioElem = document.createElement("audio");
