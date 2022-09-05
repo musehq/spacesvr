@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataConnection, Peer } from "peerjs";
 import { isLocalNetwork } from "./local";
 import { LocalSignaller } from "./signallers/LocalSignaller";
@@ -6,16 +6,21 @@ import { MuseSignaller } from "./signallers/MuseSignaller";
 import { useWaving } from "./wave";
 import { Signaller, SignallerConfig } from "./signallers";
 import { Channels, useChannels } from "./channels";
+import { useVoice } from "./voice";
+import { getMuseIceServers } from "./ice";
 
 export type ConnectionState = {
   connected: boolean;
   connect: (config?: ConnectionConfig) => Promise<void>;
   connections: Map<string, DataConnection>;
+  voiceStreams: Map<string, MediaStream>;
   disconnect: () => void;
+  setVoice: (v: boolean) => void;
 } & Pick<Channels, "useChannel">;
 
 export type ConnectionConfig = {
   iceServers?: RTCIceServer[];
+  voice?: boolean;
 } & SignallerConfig;
 
 export const useConnection = (
@@ -56,8 +61,14 @@ export const useConnection = (
 
     const finalConfig = { ...externalConfig, ...config };
 
+    if (!finalConfig.iceServers) {
+      const servers = await getMuseIceServers(finalConfig.host);
+      if (servers) finalConfig.iceServers = servers;
+    }
+
     const peerConfig: any = {};
     if (finalConfig.iceServers) peerConfig.iceServers = finalConfig.iceServers;
+
     const p = new Peer({ config: peerConfig });
 
     p.on("connection", registerConnection); // incoming
@@ -111,11 +122,17 @@ export const useConnection = (
 
   useWaving(1, signaller, disconnect);
 
+  const [voice, setVoice] = useState(!!externalConfig.voice);
+  useEffect(() => setVoice(!!externalConfig.voice), [externalConfig.voice]);
+  const voiceStreams = useVoice(voice, peer, connections);
+
   return {
     connected,
     connect,
     disconnect,
     connections,
+    voiceStreams,
     useChannel: channels.useChannel,
+    setVoice,
   };
 };
