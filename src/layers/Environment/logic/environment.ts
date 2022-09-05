@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { Device, DeviceState, useDevice } from "./device";
+import { AudioContext } from "three";
 
 export type MenuItem = { text: string; action: () => void };
 
@@ -33,6 +34,12 @@ export const useEnvironmentState = (name: string): EnvironmentState => {
 
   const setPaused = (p: boolean) => {
     setPausedValue(p);
+
+    // hook into paused click event to make sure global context is running
+    // https://github.com/mrdoob/three.js/blob/342946c8392639028da439b6dc0597e58209c696/src/audio/AudioContext.js#L9
+    const context = AudioContext.getContext();
+    if (context.state !== "running") context.resume();
+
     // call all pause events
     events.map((ev: PauseEvent) => ev.apply(null, [p]));
   };
