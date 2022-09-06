@@ -1,6 +1,7 @@
 import { DataConnection, Peer, MediaConnection } from "peerjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMicrophone } from "./mic";
+import { useEnvironment } from "../../Environment";
 
 type GetUserMedia = (
   options: { video?: boolean; audio?: boolean },
@@ -31,10 +32,24 @@ export const useVoiceConnections = (
   connections: Map<string, DataConnection>
 ): Map<string, MediaConnection> => {
   const mediaConns = useMemo<Map<string, MediaConnection>>(() => new Map(), []);
+
   const localStream = useMicrophone(enabled);
 
-  const handleMediaConn = useCallback(
-    (mediaConn: MediaConnection) => {
+  // handle calling and answering peers
+  useEffect(() => {
+    if (!peer || !localStream) return;
+
+    const call = (conn: DataConnection) => {
+      console.log("calling peer with id", conn.peer);
+      handleMediaConn(peer.call(conn.peer, localStream));
+      conn.on("close", () => {
+        console.log("closing voice stream with peer", conn.peer);
+        mediaConns.delete(conn.peer);
+      });
+    };
+
+    // handle a new media connection (incoming or created
+    const handleMediaConn = (mediaConn: MediaConnection) => {
       console.log("media connection opened with peer", mediaConn.peer);
       mediaConn.answer(localStream);
       mediaConns.set(mediaConn.peer, mediaConn);
@@ -48,27 +63,7 @@ export const useVoiceConnections = (
         console.error("error with voice stream with peer", mediaConn.peer, err);
         mediaConns.delete(mediaConn.peer);
       });
-    },
-    [localStream, mediaConns]
-  );
-
-  const callPeer = useCallback(
-    (conn: DataConnection, peer: Peer, stream: MediaStream) => {
-      console.log("calling peer with id", conn.peer);
-      handleMediaConn(peer.call(conn.peer, stream));
-      conn.on("close", () => {
-        console.log("closing voice stream with peer", conn.peer);
-        mediaConns.delete(conn.peer);
-      });
-    },
-    [handleMediaConn, mediaConns]
-  );
-
-  // handle calling of peers
-  useEffect(() => {
-    if (!peer || !localStream) return;
-
-    const call = (conn: DataConnection) => callPeer(conn, peer, localStream);
+    };
 
     // set up incoming and outgoing calls for any future connections
     peer.on("call", handleMediaConn);
@@ -77,22 +72,14 @@ export const useVoiceConnections = (
     // call any already connected peers
     for (const [peerId, conn] of connections) {
       if (mediaConns.has(peerId)) return;
-      callPeer(conn, peer, localStream);
+      call(conn);
     }
 
     return () => {
       peer.removeListener("call", handleMediaConn);
       peer.removeListener("connection", call);
     };
-  }, [
-    callPeer,
-    connections,
-    handleMediaConn,
-    peer,
-    localStream,
-    mediaConns,
-    enabled,
-  ]);
+  }, [connections, peer, localStream, mediaConns, enabled]);
 
   // close all media connections with peers on disable
   useEffect(() => {
