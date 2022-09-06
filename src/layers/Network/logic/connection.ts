@@ -43,6 +43,10 @@ export const useConnection = (
         console.log("connection closed with peer");
         connections.delete(conn.peer);
       });
+      conn.on("error", () => {
+        console.log("connection closed with peer");
+        connections.delete(conn.peer);
+      });
       channels.greet(conn);
       connections.set(conn.peer, conn);
     });

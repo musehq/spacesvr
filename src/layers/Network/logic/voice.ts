@@ -68,16 +68,31 @@ export const useVoiceConnections = (
   useEffect(() => {
     if (!peer || !localStream) return;
 
+    const call = (conn: DataConnection) => callPeer(conn, peer, localStream);
+
     // set up incoming and outgoing calls for any future connections
     peer.on("call", handleMediaConn);
-    peer.on("connection", (conn) => callPeer(conn, peer, localStream));
+    peer.on("connection", call);
 
     // call any already connected peers
     for (const [peerId, conn] of connections) {
       if (mediaConns.has(peerId)) return;
       callPeer(conn, peer, localStream);
     }
-  }, [callPeer, connections, handleMediaConn, peer, localStream, mediaConns]);
+
+    return () => {
+      peer.removeListener("call", handleMediaConn);
+      peer.removeListener("connection", call);
+    };
+  }, [
+    callPeer,
+    connections,
+    handleMediaConn,
+    peer,
+    localStream,
+    mediaConns,
+    enabled,
+  ]);
 
   // close all media connections with peers on disable
   useEffect(() => {

@@ -82,7 +82,6 @@ export const useEntities = (): Entity[] => {
         posAudio.setMediaStreamSource(audioElem.srcObject);
         posAudio.setRefDistance(2);
         posAudio.setDirectionalCone(200, 290, 0.35);
-        posAudio.setVolume(0.8);
 
         // posAudio.add(new PositionalAudioHelper(posAudio, 1));
         e.posAudio = posAudio;
