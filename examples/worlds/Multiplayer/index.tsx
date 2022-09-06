@@ -1,6 +1,5 @@
 import { StandardReality, Background, Model } from "spacesvr";
 import LightSwitch from "./ideas/LightSwitch";
-import PingPongMulti from "./ideas/PingPongMulti";
 
 export default function Multiplayer() {
   return (
@@ -8,7 +7,6 @@ export default function Multiplayer() {
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
       networkProps={{ autoconnect: true, voice: true }}
     >
-      {/*<PingPongMulti />*/}
       <Background color={0xffffff} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />
       <ambientLight />

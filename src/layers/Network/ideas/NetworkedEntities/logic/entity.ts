@@ -12,7 +12,7 @@ type Entity = {
 };
 
 export const useEntities = (): Entity[] => {
-  const { connections, connected, mediaConnections } = useNetwork();
+  const { connections, connected, voiceStreams } = useNetwork();
   const { paused } = useEnvironment();
 
   const listener = useListener();
@@ -23,54 +23,61 @@ export const useEntities = (): Entity[] => {
 
   const entities = useMemo<Entity[]>(() => [], []);
 
-  const needsAudio = (e: Entity) => mediaConnections.has(e.id) && !e.posAudio;
+  const sameIds = (ids1: string[], ids2: string[]) =>
+    ids1.sort().join(",") === ids2.sort().join(",");
 
   // check for a change in player list, re-render if there is a change
-  useLimitedFrame(5, () => {
+  const connectionIds = useRef<string[]>([]);
+  const voiceIds = useRef<string[]>([]);
+  useLimitedFrame(6, () => {
     if (!connected) return;
 
-    // changed flag to trigger re-render at the end
-    let changed = false;
+    // check for changes in connections
+    if (!sameIds(connectionIds.current, Array.from(connections.keys()))) {
+      connectionIds.current = Array.from(connections.keys());
 
-    // remove old entities
-    entities.map((e) => {
-      if (!connections.has(e.id)) {
-        if (e.posAudio) {
-          e.posAudio.remove();
-          e.posAudio = undefined;
-        }
-        entities.splice(entities.indexOf(e), 1);
-        changed = true;
-      }
-    });
-
-    // add in new entities
-    for (const id of Array.from(connections.keys())) {
-      if (!entities.some((e) => e.id === id)) {
-        entities.push({ id, posAudio: undefined });
-        changed = true;
-      }
-    }
-
-    // dont run until first time unpaused to make sure audio context is running from first press
-    if (!firstPaused) {
-      // remove media connections streams that are no longer connected
+      // remove entities that are no longer connected
       entities.map((e) => {
-        if (!mediaConnections.has(e.id)) {
-          e.posAudio?.remove();
-          e.posAudio = undefined;
-          changed = true;
+        if (!connectionIds.current.includes(e.id)) {
+          entities.splice(entities.indexOf(e), 1);
         }
       });
 
-      entities.filter(needsAudio).map((e) => {
-        // add in new media connections if the stream is active
-        const mediaConn = mediaConnections.get(e.id);
-        if (!mediaConn) return;
-        if (!mediaConn.remoteStream) return;
+      // add in new entities
+      for (const id of connectionIds.current) {
+        if (!entities.some((e) => e.id === id)) {
+          entities.push({ id, posAudio: undefined });
+        }
+      }
+
+      rerender();
+    }
+
+    // dont run until first time unpaused to make sure audio context is running from first press
+    if (
+      !firstPaused &&
+      !sameIds(voiceIds.current, Array.from(voiceStreams.keys()))
+    ) {
+      voiceIds.current = Array.from(voiceStreams.keys());
+
+      // remove voice streams that are no longer connected
+      entities.map((e) => {
+        if (!voiceIds.current.includes(e.id)) {
+          e.posAudio?.remove();
+          e.posAudio = undefined;
+        }
+      });
+
+      // add in new voice streams
+      for (const id of voiceIds.current) {
+        const entity = entities.find((e) => e.id === id);
+        if (!entity) continue;
+
+        const stream = voiceStreams.get(id)!;
+        if (!stream) continue;
 
         const audioElem = document.createElement("audio");
-        audioElem.srcObject = mediaConn.remoteStream; // remote is incoming, local is own voice
+        audioElem.srcObject = stream;
         audioElem.muted = true;
         audioElem.autoplay = true;
         audioElem.loop = true;
@@ -78,19 +85,18 @@ export const useEntities = (): Entity[] => {
         audioElem.playsInline = true;
 
         const posAudio = new PositionalAudio(listener);
-        posAudio.userData.peerId = e.id;
-        posAudio.setMediaStreamSource(audioElem.srcObject);
+        posAudio.userData.peerId = id;
+        posAudio.setMediaStreamSource(stream);
         posAudio.setRefDistance(2);
-        posAudio.setDirectionalCone(200, 290, 0.35);
+        posAudio.setDirectionalCone(200, 290, 0.2);
+        posAudio.setVolume(0.6);
 
         // posAudio.add(new PositionalAudioHelper(posAudio, 1));
-        e.posAudio = posAudio;
+        entity.posAudio = posAudio;
+      }
 
-        changed = true;
-      });
+      rerender();
     }
-
-    if (changed) rerender();
   });
 
   return entities;
