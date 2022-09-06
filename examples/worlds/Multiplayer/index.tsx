@@ -1,4 +1,4 @@
-import { StandardReality, Background } from "spacesvr";
+import { StandardReality, Background, Model } from "spacesvr";
 import LightSwitch from "./ideas/LightSwitch";
 
 export default function Multiplayer() {
@@ -15,6 +15,7 @@ export default function Multiplayer() {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
+      <Model src="https://d27rt3a60hh1lx.cloudfront.net/models/Camera-1652915410/camera_02_cleaned.glb.gz" />
     </StandardReality>
   );
 }

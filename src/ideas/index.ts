@@ -14,4 +14,5 @@ export * from "./physical/Fog";
 export * from "./physical/Frame";
 export * from "./physical/HDRI";
 export * from "./physical/InfinitePlane";
+export * from "./physical/Model";
 export * from "./physical/Video";
