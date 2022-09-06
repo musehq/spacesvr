@@ -49,13 +49,11 @@ export default function NetworkedEntities() {
       },
     }));
 
-    const snapshot: Snapshot = {
+    SI.vault.add({
       id: Math.random().toString(),
       time: new Date().getTime(),
       state,
-    };
-
-    SI.vault.add(snapshot);
+    });
   });
 
   // send own player data
@@ -77,23 +75,27 @@ export default function NetworkedEntities() {
     let i = 0;
     for (const entityState of snapshot.state) {
       const { x, y, z, q } = entityState;
-      obj.position.x = x as number;
-      obj.position.y = y as number;
-      obj.position.z = z as number;
+      obj.position.set(x as number, y as number, z as number);
       obj.position.y -= 0.2; // they were floating before, idk where the constant comes from really
       const quat = q as Quat;
-      obj.quaternion.x = quat.x;
-      obj.quaternion.y = quat.y;
-      obj.quaternion.z = quat.z;
-      obj.quaternion.w = quat.w;
+      obj.quaternion.set(
+        quat.x as number,
+        quat.y as number,
+        quat.z as number,
+        quat.w as number
+      );
       obj.updateMatrix();
       mesh.current.setMatrixAt(i, obj.matrix);
 
-      const audio = entities[i]?.posAudio;
-      if (audio) {
-        obj.matrix.decompose(audio.position, audio.quaternion, audio.scale);
-        audio.updateMatrix();
-        audio.rotateY(Math.PI); // for some reason it's flipped
+      const posAudio = entities[i]?.posAudio;
+      if (posAudio) {
+        obj.matrix.decompose(
+          posAudio.position,
+          posAudio.quaternion,
+          posAudio.scale
+        );
+        posAudio.rotation.y += Math.PI; // for some reason it's flipped
+        posAudio.updateMatrix();
       }
 
       i++;
@@ -107,11 +109,15 @@ export default function NetworkedEntities() {
   }
 
   return (
-    <group>
+    <group name="spacesvr-entities">
       {entities.map(
         (entity) =>
           entity.posAudio && (
-            <primitive key={entity.posAudio.uuid} object={entity.posAudio} />
+            <primitive
+              key={entity.posAudio.uuid}
+              object={entity.posAudio}
+              matrixAutoUpdate={false}
+            />
           )
       )}
       <instancedMesh

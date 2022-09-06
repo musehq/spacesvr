@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { DataConnection, Peer } from "peerjs";
+import { DataConnection, MediaConnection, Peer } from "peerjs";
 import { isLocalNetwork } from "./local";
 import { LocalSignaller } from "./signallers/LocalSignaller";
 import { MuseSignaller } from "./signallers/MuseSignaller";
 import { useWaving } from "./wave";
 import { Signaller, SignallerConfig } from "./signallers";
 import { Channels, useChannels } from "./channels";
-import { useVoice } from "./voice";
+import { useVoiceConnections } from "./voice";
 import { getMuseIceServers } from "./ice";
 
 export type ConnectionState = {
   connected: boolean;
   connect: (config?: ConnectionConfig) => Promise<void>;
   connections: Map<string, DataConnection>;
-  voiceStreams: Map<string, MediaStream>;
+  mediaConnections: Map<string, MediaConnection>;
   disconnect: () => void;
   voice: boolean;
   setVoice: (v: boolean) => void;
@@ -40,6 +40,10 @@ export const useConnection = (
       console.log("connection opened with peer", conn.peer);
       conn.on("data", (message: any) => channels.receive({ conn, ...message }));
       conn.on("close", () => {
+        console.log("connection closed with peer");
+        connections.delete(conn.peer);
+      });
+      conn.on("error", () => {
         console.log("connection closed with peer");
         connections.delete(conn.peer);
       });
@@ -125,16 +129,16 @@ export const useConnection = (
 
   const [voice, setVoice] = useState(!!externalConfig.voice);
   useEffect(() => setVoice(!!externalConfig.voice), [externalConfig.voice]);
-  const voiceStreams = useVoice(voice, peer, connections);
+  const mediaConnections = useVoiceConnections(voice, peer, connections);
 
   return {
     connected,
     connect,
     disconnect,
     connections,
-    voiceStreams,
     useChannel: channels.useChannel,
     voice,
     setVoice,
+    mediaConnections,
   };
 };
