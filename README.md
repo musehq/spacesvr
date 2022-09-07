@@ -212,6 +212,9 @@ type NetworkState = {
   connect: (config?: ConnectionConfig) => Promise<void>; // when autoconnect is off, use this to manually connect
   connections: Map<string, DataConnection>; // reference to active peer connections
   disconnect: () => void;
+  voice: boolean; // whether voice is enabled
+  setVoice: (v: boolean) => void; // enable/disable voice
+  mediaConnections: Map<string, MediaConnection>; // reference to active media connections
   useChannel: <Data = any, State = any>(
     id: string,
     type: ChannelType,
@@ -379,6 +382,17 @@ Adds an infinite plane to walk on (added by default with the Environment Layer)
   height={-0.0001} // offset a slight amount
   size={[100, 100]}
   visible={false}
+/>
+```
+
+#### Model
+
+Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt.
+
+```tsx
+<Model
+  src="https://link-to-your-model.glb"
+  center={false} // whether to center the model so its bounds are centered on its origin
 />
 ```
 
