@@ -15,6 +15,7 @@ export type ConnectionState = {
   connections: Map<string, DataConnection>;
   voiceStreams: Map<string, MediaStream>;
   disconnect: () => void;
+  voice: boolean;
   setVoice: (v: boolean) => void;
 } & Pick<Channels, "useChannel">;
 
@@ -133,6 +134,7 @@ export const useConnection = (
     connections,
     voiceStreams,
     useChannel: channels.useChannel,
+    voice,
     setVoice,
   };
 };
