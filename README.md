@@ -7,7 +7,7 @@
      spacesvr
 </h3>
 <h5 align="center">
-     A standardized reality for future of the 3D Web.
+     A standardized reality for the future of the 3D Web.
 </h5>
 
 <div align="center">
@@ -37,7 +37,7 @@
 
 The mission of spacesvr is to organize and implement the standards for experiencing 3D content on the web in the same way that there exists standards for experiencing 2D content with HTML/CSS/JS.
 
-spacesvr is designed to empower the artist. Instead of worrying about file structures or basic functionality like cross-device compatability, artists should spend their time telling their story. As such, consumption is optimized for simplicity, and the organization provides a framework to mediate along.
+spacesvr is designed to empower the artist. Instead of worrying about file structures or basic functionality like cross-device compatability, artists should spend their time telling their story. As such, consumption is optimized for simplicity, and the organization provides a framework to tell stories.
 
 spacesvr is actively maintained by [Muse](https://www.muse.place?utm_source=npmjs&utm_campaign=learn_more), a YC-backed startup that provides tooling for visually building worlds. Muse's mission is to accelerate the adoption of 3D websites by increasing their accessibility, both for the end user and for the creator. Muse is completely built on spacesvr.
 
