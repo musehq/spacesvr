@@ -35,19 +35,20 @@ export const useMicrophone = (enabled = true): MediaStream | undefined => {
 
     setAttempted(true);
 
-    navigator.getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia ||
-      navigator.msGetUserMedia;
-
-    navigator.getUserMedia(
-      { audio: true },
-      (str) => setLocalStream(str),
-      (err) => {
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      })
+      .then((stream) => {
+        setLocalStream(stream);
+      })
+      .catch((err) => {
         console.error(err);
-      }
-    );
+      });
   }, [attempted, enabled, firstPaused]);
 
   return localStream;

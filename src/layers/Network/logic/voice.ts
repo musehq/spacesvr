@@ -1,22 +1,6 @@
 import { DataConnection, Peer, MediaConnection } from "peerjs";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useMicrophone } from "./mic";
-import { useEnvironment } from "../../Environment";
-
-type GetUserMedia = (
-  options: { video?: boolean; audio?: boolean },
-  success: (stream: any) => void,
-  error?: (error: string) => void
-) => void;
-
-declare global {
-  interface Navigator {
-    getUserMedia: GetUserMedia;
-    webkitGetUserMedia?: GetUserMedia;
-    mozGetUserMedia?: GetUserMedia;
-    msGetUserMedia?: GetUserMedia;
-  }
-}
 
 /**
  * When enabled, is responsible for requesting mic permissions, calling and answering peers to create media connections,
