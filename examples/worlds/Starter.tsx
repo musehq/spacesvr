@@ -6,6 +6,7 @@ import {
   Audio,
   Image,
   Video,
+  Camera,
 } from "spacesvr";
 
 export default function Starter() {
@@ -111,6 +112,7 @@ export default function Starter() {
         rotation={[0, -Math.PI, 0]}
         muted
       />
+      <Camera />
     </StandardReality>
   );
 }

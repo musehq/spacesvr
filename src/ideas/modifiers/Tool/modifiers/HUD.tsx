@@ -1,9 +1,9 @@
 import { ReactNode, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Group, Vector3 } from "three";
+import { Group, Quaternion, Vector3 } from "three";
 
-type Props = {
-  children: ReactNode;
+type HUDProps = {
+  children?: ReactNode | ReactNode[];
   pos?: [number, number];
   face?: boolean;
   distance?: number;
@@ -11,18 +11,7 @@ type Props = {
   t?: number;
 };
 
-const SCALE = 0.0025;
-
-/**
- * Tool modifier will place its children in constant view of the camera
- *
- * pos will determine relative placement on [x, y] axis
- * face will make item face the player (defaults to true)
- *
- * @param props
- * @constructor
- */
-export function Tool(props: Props) {
+export default function HUD(props: HUDProps) {
   const {
     children,
     pos,
@@ -33,35 +22,37 @@ export function Tool(props: Props) {
   } = props;
 
   const DISTANCE = distance * 0.05;
+  const SCALE = 0.0025;
 
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
 
   const group = useRef<Group>(null);
-  const groupPos = useMemo(() => new Vector3(), []);
-  const dummyVec = useMemo(() => new Vector3(), []);
+  const worldPos = useMemo(() => new Vector3(), []);
+  const locPos = useMemo(() => new Vector3(), []);
+  const dummyQuat = useMemo(() => new Quaternion(), []);
   const slerpVec = useMemo(() => new Vector3(), []);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!group.current) return;
 
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
       const yPos = 0.04 * pos[1];
-      dummyVec.set(xPos * distance, yPos * distance, -DISTANCE);
-      const moveQuaternion = camera.quaternion.clone();
+      locPos.set(xPos * distance, yPos * distance, -DISTANCE);
+      dummyQuat.copy(camera.quaternion);
       if (!pinY) {
-        moveQuaternion.x = 0;
-        moveQuaternion.z = 0;
+        dummyQuat.x = 0;
+        dummyQuat.z = 0;
       }
-      dummyVec.applyQuaternion(moveQuaternion);
+      locPos.applyQuaternion(dummyQuat);
 
-      group.current.getWorldPosition(groupPos);
+      group.current.getWorldPosition(worldPos);
       slerpVec.copy(group.current.position);
-      const deltaPos = groupPos.sub(camera.position);
+      const deltaPos = worldPos.sub(camera.position);
       slerpVec.sub(deltaPos);
-      slerpVec.add(dummyVec);
-      group.current.position.lerp(slerpVec, t);
+      slerpVec.add(locPos);
+      group.current.position.lerp(slerpVec, 1 - Math.pow(t, delta));
     }
 
     if (face) {
@@ -70,7 +61,7 @@ export function Tool(props: Props) {
   });
 
   return (
-    <group name="tool" ref={group}>
+    <group name="hud" ref={group}>
       <group scale={SCALE * distance}>{children}</group>
     </group>
   );
