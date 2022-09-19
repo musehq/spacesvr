@@ -8,6 +8,7 @@ import {
   Video,
   Camera,
 } from "spacesvr";
+import WalkieTalie from "../../src/tools/WalkieTalkie";
 
 export default function Starter() {
   const [url, setUrl] = useState(
@@ -113,6 +114,7 @@ export default function Starter() {
         muted
       />
       <Camera />
+      <WalkieTalie />
     </StandardReality>
   );
 }

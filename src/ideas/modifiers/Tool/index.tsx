@@ -34,7 +34,7 @@ export function Tool(props: ToolProps) {
     face = true,
     pinY = false,
     distance = 1,
-    t = 1,
+    t = 0.01,
   } = props;
 
   const toolbelt = useToolbelt();

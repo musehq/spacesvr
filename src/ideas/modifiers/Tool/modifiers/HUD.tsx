@@ -32,6 +32,7 @@ export default function HUD(props: HUDProps) {
   const locPos = useMemo(() => new Vector3(), []);
   const dummyQuat = useMemo(() => new Quaternion(), []);
   const slerpVec = useMemo(() => new Vector3(), []);
+  const lastLocPos = useMemo(() => new Vector3(), []);
 
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -46,13 +47,17 @@ export default function HUD(props: HUDProps) {
         dummyQuat.z = 0;
       }
       locPos.applyQuaternion(dummyQuat);
+      slerpVec.copy(lastLocPos);
+      slerpVec.lerp(locPos, 1 - Math.pow(t, delta));
+      lastLocPos.copy(slerpVec);
+      locPos.copy(slerpVec);
 
       group.current.getWorldPosition(worldPos);
       slerpVec.copy(group.current.position);
       const deltaPos = worldPos.sub(camera.position);
       slerpVec.sub(deltaPos);
       slerpVec.add(locPos);
-      group.current.position.lerp(slerpVec, 1 - Math.pow(t, delta));
+      group.current.position.copy(slerpVec);
     }
 
     if (face) {
