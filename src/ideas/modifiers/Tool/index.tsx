@@ -4,6 +4,7 @@ import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
 import { useSpring, animated } from "@react-spring/three";
 import { useVisible } from "../../../logic/visible";
+import MobileDrag from "./modifiers/MobileDrag";
 
 type ToolProps = {
   children: ReactNode;
@@ -49,15 +50,17 @@ export function Tool(props: ToolProps) {
 
   useEffect(() => {
     toolbelt.grant(name, keymap);
-    return () => {
-      toolbelt.revoke(name);
-    };
+    return () => toolbelt.revoke(name);
   }, [name, keymap, toolbelt.grant, toolbelt.revoke, toolbelt]);
 
   return (
     <group name={`tool-${name}`}>
       <HUD pos={pos} face={face} pinY={pinY} distance={distance} t={t}>
-        <animated.group position-y={posY}>{visible && children}</animated.group>
+        <MobileDrag enabled={ENABLED}>
+          <animated.group position-y={posY}>
+            {visible && children}
+          </animated.group>
+        </MobileDrag>
       </HUD>
     </group>
   );

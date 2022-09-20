@@ -6,15 +6,15 @@ import {
   Mesh,
   PerspectiveCamera as ThrPerspectiveCamera,
 } from "three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { MeshProps, useFrame, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, Text } from "@react-three/drei";
-import CameraModel, { CAMERA_FILE_URL } from "./models/Camera";
-import { useModelState } from "./utils/load";
+import CameraModel from "./models/Camera";
 import { usePhotography } from "./utils/photo";
 import { useEnvironment } from "../../layers/Environment";
 import { config, useSpring, animated } from "@react-spring/three";
 import { Tool } from "../../ideas/modifiers/Tool";
 import { useToolbelt } from "../../layers/Toolbelt";
+import { Interactable } from "../../ideas";
 
 const AUDIO_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/tools/camera/shutter-sound.mp3";
@@ -27,7 +27,6 @@ export function Camera() {
   const cam = useRef<ThrPerspectiveCamera>();
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
-  const modelState = useModelState(CAMERA_FILE_URL);
   const photo = usePhotography(cam);
   const [pressShutter, setPressShutter] = useState(false);
 
@@ -56,39 +55,41 @@ export function Camera() {
     state.gl.setRenderTarget(null);
   });
 
+  const onClick = () => {
+    setPressShutter(true);
+    const audio = new Audio(AUDIO_URL);
+    audio.play();
+    photo.takePicture();
+  };
+
   useEffect(() => {
-    if (!ENABLED || paused || pressShutter) return;
-    const onClick = () => {
-      setPressShutter(true);
-      const audio = new Audio(AUDIO_URL);
-      audio.play();
-      photo.takePicture();
-    };
+    if (!ENABLED || paused || pressShutter || device.mobile) return;
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, [ENABLED, paused, photo, pressShutter]);
+  }, [ENABLED, paused, photo, pressShutter, device, onClick]);
 
   useEffect(() => {
     if (pressShutter) setTimeout(() => setPressShutter(false), 750);
   }, [pressShutter]);
 
-  if (!device.desktop) {
-    return null;
-  }
+  const BoxApproximation = (props: MeshProps) => (
+    <mesh position-z={-0.5} {...props}>
+      <boxBufferGeometry args={[4, 2, 1]} />
+      <meshLambertMaterial color="gray" />
+    </mesh>
+  );
 
   return (
     <group name="camera" ref={group}>
       <Tool name="Camera" keymap="p" pos={[0, 0]} distance={5} pinY t={0.1}>
         <group scale={2.5}>
-          {modelState === "loaded" ? (
-            <Suspense fallback={null}>
-              <CameraModel rotation-y={Math.PI} />
-            </Suspense>
-          ) : (
-            <mesh position-z={-0.5}>
-              <boxBufferGeometry args={[4, 2, 1]} />
-              <meshLambertMaterial color="gray" />
-            </mesh>
+          <Suspense fallback={<BoxApproximation />}>
+            <CameraModel rotation-y={Math.PI} />
+          </Suspense>
+          {device.mobile && (
+            <Interactable onClick={onClick}>
+              <BoxApproximation visible={false} />
+            </Interactable>
           )}
           <group name="content" position={[0, -0.18, 0.15]} scale={2}>
             <animated.group scale-y={shutterY}>

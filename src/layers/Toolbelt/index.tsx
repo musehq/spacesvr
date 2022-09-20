@@ -9,6 +9,7 @@ import {
 } from "react";
 import { ToolKey } from "./types/char";
 import { isTyping } from "../../logic";
+import ToolSwitcher from "./modifiers/ToolSwitcher";
 
 type Tool = {
   name: string;
@@ -16,9 +17,12 @@ type Tool = {
 };
 
 type ToolbeltState = {
+  tools: Tool[];
   activeTool?: Tool;
   grant: (name: string, key: ToolKey) => void;
   revoke: (name: string) => void;
+  hide: () => void;
+  setActiveIndex: (i: number) => void;
 };
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
@@ -31,7 +35,7 @@ export default function Toolbelt(props: ToolbeltProps) {
   const { children } = props;
 
   const tools = useMemo<Tool[]>(() => [], []);
-  const [activeToolName, setActiveToolName] = useState<string>();
+  const [activeIndex, setActiveIndex] = useState<number>();
 
   const grant = useCallback(
     (name: string, key: ToolKey) => {
@@ -59,28 +63,28 @@ export default function Toolbelt(props: ToolbeltProps) {
   useEffect(() => {
     const handleKeypress = (e: KeyboardEvent) => {
       if (isTyping() || e.metaKey || e.ctrlKey) return;
-      tools.map((tool) => {
+      tools.map((tool, i) => {
         if (e.key === tool.key || e.key.toLowerCase() === tool.key) {
-          if (activeToolName === tool.name) {
-            setActiveToolName(undefined);
-          } else {
-            setActiveToolName(tool.name);
-          }
+          setActiveIndex(activeIndex === i ? undefined : i);
         }
       });
     };
     document.addEventListener("keydown", handleKeypress);
     return () => document.removeEventListener("keydown", handleKeypress);
-  }, [activeToolName, tools]);
+  }, [activeIndex, tools]);
 
   const value = {
-    activeTool: tools.find((tool) => tool.name === activeToolName),
+    tools,
+    activeTool: activeIndex !== undefined ? tools[activeIndex] : undefined,
     grant,
     revoke,
+    hide: () => setActiveIndex(undefined),
+    setActiveIndex,
   };
 
   return (
     <ToolbeltContext.Provider value={value}>
+      <ToolSwitcher />
       {children}
     </ToolbeltContext.Provider>
   );
