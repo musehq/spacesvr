@@ -64,11 +64,11 @@ export const useEntities = (): Entity[] => {
       });
 
       entities.filter(needsAudio).map((e) => {
-        console.log("adding audio for", e.id);
         // add in new media connections if the stream is active
         const mediaConn = mediaConnections.get(e.id);
         if (!mediaConn) return;
         if (!mediaConn.remoteStream) return;
+        console.log("adding audio for", e.id);
 
         const audioElem = document.createElement("audio");
         audioElem.srcObject = mediaConn.remoteStream; // remote is incoming, local is own voice
@@ -93,8 +93,6 @@ export const useEntities = (): Entity[] => {
 
     if (changed) rerender();
   });
-
-  useEffect(() => console.log("changed audio values"), [ct]);
 
   return entities;
 };

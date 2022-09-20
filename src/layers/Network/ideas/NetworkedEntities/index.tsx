@@ -8,7 +8,6 @@ import { useNetwork } from "../../logic/network";
 import { useLimitedFrame } from "../../../../logic/limiter";
 import { SnapshotInterpolation } from "@geckos.io/snapshot-interpolation";
 import {
-  Snapshot,
   Entity as EntityState,
   Quat,
 } from "@geckos.io/snapshot-interpolation/lib/types";
