@@ -21,16 +21,8 @@ export const useVoiceConnections = (
 
   // handle calling and answering peers
   useEffect(() => {
-    if (!peer || !localStream) return;
-
-    const call = (conn: DataConnection) => {
-      console.log("calling peer with id", conn.peer);
-      handleMediaConn(peer.call(conn.peer, localStream));
-      conn.on("close", () => {
-        console.log("closing voice stream with peer", conn.peer);
-        mediaConns.delete(conn.peer);
-      });
-    };
+    if (!peer || !localStream || !enabled) return;
+    console.log("running voice connection effect");
 
     // handle a new media connection (incoming or created
     const handleMediaConn = (mediaConn: MediaConnection) => {
@@ -49,9 +41,22 @@ export const useVoiceConnections = (
       });
     };
 
+    const call = (conn: DataConnection) => {
+      console.log("calling peer with id", conn.peer);
+      handleMediaConn(peer.call(conn.peer, localStream));
+      conn.on("close", () => {
+        console.log("closing voice stream with peer", conn.peer);
+        mediaConns.delete(conn.peer);
+      });
+    };
+
+    const handleDataConn = (conn: DataConnection) => {
+      conn.on("open", () => call(conn));
+    };
+
     // set up incoming and outgoing calls for any future connections
     peer.on("call", handleMediaConn);
-    peer.on("connection", call);
+    peer.on("connection", handleDataConn);
 
     // call any already connected peers
     for (const [peerId, conn] of connections) {
