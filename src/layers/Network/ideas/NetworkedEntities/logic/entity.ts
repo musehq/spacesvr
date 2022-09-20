@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLimitedFrame } from "../../../../../logic/limiter";
 import { useNetwork } from "../../../logic/network";
 import { PositionalAudio } from "three";
@@ -26,7 +26,7 @@ export const useEntities = (): Entity[] => {
   const needsAudio = (e: Entity) => mediaConnections.has(e.id) && !e.posAudio;
 
   // check for a change in player list, re-render if there is a change
-  useLimitedFrame(5, () => {
+  useLimitedFrame(3, () => {
     if (!connected) return;
 
     // changed flag to trigger re-render at the end
@@ -64,6 +64,7 @@ export const useEntities = (): Entity[] => {
       });
 
       entities.filter(needsAudio).map((e) => {
+        console.log("adding audio for", e.id);
         // add in new media connections if the stream is active
         const mediaConn = mediaConnections.get(e.id);
         if (!mediaConn) return;
@@ -92,6 +93,8 @@ export const useEntities = (): Entity[] => {
 
     if (changed) rerender();
   });
+
+  useEffect(() => console.log("changed audio values"), [ct]);
 
   return entities;
 };
