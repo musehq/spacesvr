@@ -16,3 +16,4 @@ export * from "./physical/HDRI";
 export * from "./physical/InfinitePlane";
 export * from "./physical/Model";
 export * from "./physical/Video";
+export * from "./ux/TextInput";
