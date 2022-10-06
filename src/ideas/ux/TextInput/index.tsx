@@ -7,8 +7,6 @@ import { Interactable } from "../../modifiers/Interactable";
 import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
 import { Mesh } from "three";
-// @ts-ignore
-import { getCaretAtPoint } from "troika-three-text";
 import { syncOnChange } from "./logic/sync";
 import {
   getClickedCaret,
@@ -16,7 +14,7 @@ import {
   getWordBoundsAtCaret,
   handleShiftSelect,
 } from "./logic/select";
-import Blink from "./modifiers/Blink";
+import { useCaretBlink } from "./logic/blink";
 
 type TextProps = {
   value?: string;
@@ -118,6 +116,7 @@ export function TextInput(props: TextProps) {
   }, []);
 
   const scrollLeft = useRef(0);
+  const blink = useCaretBlink(0.65);
   if (textRef.current && input && caret.current && highlight.current) {
     const _text = textRef.current;
     const _caret = caret.current;
@@ -130,6 +129,8 @@ export function TextInput(props: TextProps) {
     syncOnChange(_text, "selectionEnd", input.selectionEnd);
 
     _text.sync(() => {
+      blink.reset();
+
       const caretPositions = _text.textRenderInfo.caretPositions;
       const TEXT_SELECTED =
         input.selectionStart !== input.selectionEnd && focused;
@@ -260,12 +261,12 @@ export function TextInput(props: TextProps) {
             {""}
           </Text>
         </Suspense>
-        <Blink>
+        <group name="blink" ref={blink.blinkRef}>
           <mesh name="caret" ref={caret} visible={false}>
             <planeBufferGeometry args={[0.075 * fontSize, fontSize]} />
             <meshBasicMaterial color="black" />
           </mesh>
-        </Blink>
+        </group>
         <mesh name="highlight" ref={highlight} visible={false}>
           <boxBufferGeometry args={[1, fontSize, DEPTH * 0.45]} />
           <meshStandardMaterial

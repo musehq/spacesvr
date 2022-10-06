@@ -81,7 +81,6 @@ export const useTextInput = (
       if (input !== document.activeElement) return;
       if (onChange) input.value = onChange(input.value);
       setValue(input.value);
-      console.log("sent off", input.value);
     };
 
     const onSelectionChange = () => {
