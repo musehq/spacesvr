@@ -5,9 +5,7 @@ import { GroupProps } from "@react-three/fiber";
 function DummyText(props: GroupProps) {
   const [val, setVal] = useState("");
 
-  return (
-    <TextInput value={val} setValue={setVal} position-y={0.9} {...props} />
-  );
+  return <TextInput position-y={0.9} {...props} />;
 }
 
 export default function Lost() {

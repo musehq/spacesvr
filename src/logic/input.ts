@@ -1,32 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePlayer } from "../layers/Player";
 import { useEnvironment } from "../layers/Environment";
 import { Vector3 } from "three";
 import { isTyping } from "./dom";
-import { useThree } from "@react-three/fiber";
+import { useRerender } from "./rerender";
 
-export const useHTMLInput = (
-  type: "file" | "text"
-): HTMLInputElement | undefined => {
-  const [input, setInput] = useState<HTMLInputElement>();
+export const useHTMLInput = (type: "file" | "text"): HTMLInputElement => {
+  const input = useMemo(() => {
+    const inp = document.createElement("input");
+    document.body.appendChild(inp);
+    return inp;
+  }, []);
 
   useEffect(() => {
-    if (!input) {
-      const inp = document.createElement("input");
-      inp.setAttribute("type", type);
-      inp.style.zIndex = "-99";
-      inp.style.opacity = "0";
-      inp.style.fontSize = "16px"; // this disables zoom on mobile
-      inp.style.position = "absolute";
-      inp.style.left = "50%";
-      inp.style.top = "0";
-      inp.style.transform = "translate(-50%, 0%)";
-
-      document.body.appendChild(inp);
-
-      setInput(inp);
-    }
+    input.setAttribute("type", type);
+    input.style.zIndex = "-99";
+    input.style.opacity = "0";
+    input.style.fontSize = "16px"; // this disables zoom on mobile
+    input.style.position = "absolute";
+    input.style.left = "50%";
+    input.style.top = "0";
+    input.style.transform = "translate(-50%, 0%)";
   }, [input, type]);
+
+  useEffect(() => {
+    return () => {
+      document.body.removeChild(input);
+    };
+  }, [input]);
 
   return input;
 };
@@ -38,37 +39,23 @@ export const useTextInput = (
 ) => {
   const input = useHTMLInput("text");
 
-  const gl = useThree((st) => st.gl);
   const { paused } = useEnvironment();
   const { controls, velocity } = usePlayer();
 
-  const [selection, setSelection] = useState<[number | null, number | null]>([
-    null,
-    null,
-  ]);
+  const rerender = useRerender();
   const [focused, setFocused] = useState(false);
   const protectClick = useRef(false); // used to click off of the input to blur
 
   // input setup
   useEffect(() => {
-    if (!input) return;
-
-    input.addEventListener("focus", () => {
-      setFocused(true);
-      setSelection([input.selectionStart, input.selectionEnd]);
-    });
-    input.addEventListener("blur", () => {
-      setFocused(false);
-      setSelection([null, null]);
-    });
-
+    input.addEventListener("focus", () => setFocused(true));
+    input.addEventListener("blur", () => setFocused(false));
     input.autocomplete = "off";
-    setSelection([0, null]);
   }, [input]);
 
   // blur on pause
   useEffect(() => {
-    if (input && focused && paused) input.blur();
+    if (focused && paused) input.blur();
   }, [input, focused, paused]);
 
   // stop player from moving while they type (free up wasd)
@@ -84,50 +71,44 @@ export const useTextInput = (
 
   // set up event listeners
   useEffect(() => {
-    // blur on clicking outside of input
     const onDocClick = () => {
-      if (input) {
-        if (!protectClick.current) input.blur();
-        else input.focus();
-      }
+      if (!protectClick.current) input.blur();
+      else input.focus();
       protectClick.current = false;
     };
 
-    // keyup event
     const onKeyup = () => {
-      if (!focused || !input) return;
+      if (input !== document.activeElement) return;
       if (onChange) input.value = onChange(input.value);
-      setSelection([input.selectionStart, input.selectionEnd]);
       setValue(input.value);
+      console.log("sent off", input.value);
     };
 
     const onSelectionChange = () => {
-      if (!input) return;
-      setSelection([input.selectionStart, input.selectionEnd]);
+      if (input !== document.activeElement) return;
+      rerender();
     };
 
     document.addEventListener("click", onDocClick);
-    if (input) input.addEventListener("input", onKeyup);
+    input.addEventListener("input", onKeyup);
     document.addEventListener("selectionchange", onSelectionChange);
 
     return () => {
       document.removeEventListener("click", onDocClick);
-      if (input) input.removeEventListener("input", onKeyup);
+      input.removeEventListener("input", onKeyup);
       document.removeEventListener("selectionchange", onSelectionChange);
     };
-  }, [focused, input, controls, setValue, onChange, gl.domElement]);
+  }, [input, onChange, rerender, setValue]);
 
   // keep the input's value in sync with the passed state value
-  // useEffect(() => {
-  //   if (!input) return;
-  //   input.value = value || "";
-  // }, [value, input]);
+  useEffect(() => {
+    input.value = value;
+  }, [input, value]);
 
   const focusInput = () => {
-    if (!input) return;
     protectClick.current = true;
     input.focus();
   };
 
-  return { input, focused, selection, focusInput };
+  return { input, focused, focusInput };
 };

@@ -1,80 +1,98 @@
-import { useMemo, useRef } from "react";
+import { useRef, Suspense, useState, useCallback } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
-import { GroupProps } from "@react-three/fiber";
+import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
 import { useTextInput } from "../../../logic/input";
 import { Interactable } from "../../modifiers/Interactable";
-import { useKeypress } from "../../../logic/keys";
+import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
-import { Mesh, Vector2 } from "three";
+import { Mesh } from "three";
 // @ts-ignore
 import { getCaretAtPoint } from "troika-three-text";
+import { syncOnChange } from "./logic/sync";
+import {
+  getClickedCaret,
+  getClickType,
+  getWordBoundsAtCaret,
+  handleShiftSelect,
+} from "./logic/select";
+import Blink from "./modifiers/Blink";
 
 type TextProps = {
-  value: string;
-  setValue: (s: string) => void;
-  fontSize?: number;
-  onSubmit?: () => void;
+  value?: string;
+  setValue?: (s: string) => void;
   onChange?: (s: string) => string;
+  onSubmit?: () => void;
+  font?: string;
+  fontSize?: number;
   width?: number;
 } & GroupProps;
 
 export function TextInput(props: TextProps) {
   const {
-    fontSize = 0.1,
     value,
     setValue,
     onChange,
     onSubmit,
+    font,
+    fontSize = 0.1,
     width = 1,
     ...rest
   } = props;
 
+  const clock = useThree((st) => st.clock);
   const { raycaster } = usePlayer();
 
   const textRef = useRef<any>();
   const caret = useRef<Mesh>(null);
   const highlight = useRef<Mesh>(null);
+  const [localValue, setLocalValue] = useState("");
 
-  const { input, focused, selection, focusInput } = useTextInput(
-    value,
-    setValue,
+  const { input, focused, focusInput } = useTextInput(
+    value || localValue,
+    setValue || setLocalValue,
     onChange
   );
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
-  const dummy = useMemo(() => new Vector2(), []);
-  const lastSelection = useRef<[number | null, number | null]>([null, null]);
-  const lastFocused = useRef<boolean>(false);
-  const scrollLeft = useRef(0);
 
-  const BORDER = 0.01;
-  const OUTER_WIDTH = width;
-  const PADDING_X = 0;
-  const INNER_WIDTH = OUTER_WIDTH - PADDING_X * 2;
-  const FONT_SIZE = fontSize;
+  const BORDER = fontSize * 0.1;
+  const PADDING_X = fontSize * 0.5;
+  const INNER_WIDTH = width - PADDING_X * 2;
 
+  const INPUT_HEIGHT = fontSize * 1.75;
+  const INPUT_WIDTH = width;
+
+  const OUTER_HEIGHT = INPUT_HEIGHT + BORDER;
+  const OUTER_WIDTH = width + BORDER * 2;
+
+  const DEPTH = fontSize * 0.5;
+  const RADIUS = Math.min(INPUT_WIDTH, INPUT_HEIGHT, DEPTH) * 0.5;
+
+  const shift = useShiftHold();
+  const lastClickTime = useRef(0);
+  const lastDoubleClickTime = useRef(0);
   const registerClick = () => {
     focusInput();
     const _text = textRef.current;
     if (!_text || !_text.textRenderInfo || !input || !focused) return;
-    const intersections = raycaster.intersectObject(_text, true);
-    if (intersections.length > 0) {
-      const inter = intersections[0];
-      const textPos = _text.worldPositionToTextCoords(inter.point, dummy);
-      const car = getCaretAtPoint(_text.textRenderInfo, textPos.x, textPos.y);
-      input.setSelectionRange(car.charIndex, car.charIndex);
+    const car = getClickedCaret(_text, raycaster);
+    if (!car) return;
+    if (!shift.current) {
+      const clickType = getClickType(clock, lastClickTime, lastDoubleClickTime);
+      if (clickType === 1) {
+        input.setSelectionRange(car.charIndex, car.charIndex);
+      } else if (clickType === 2) {
+        const wordBounds = getWordBoundsAtCaret(input.value, car.charIndex);
+        input.setSelectionRange(wordBounds[0], wordBounds[1]);
+      } else {
+        input.setSelectionRange(0, input.value.length);
+      }
+    } else {
+      lastClickTime.current = 0;
+      lastDoubleClickTime.current = 0;
+      handleShiftSelect(input, car.charIndex);
     }
-  };
-
-  const textStyles: Partial<typeof Text.defaultProps> = {
-    anchorX: "left",
-    maxWidth: INNER_WIDTH,
-    textAlign: "left",
-    fontSize: FONT_SIZE,
-    color: "black",
-    // @ts-ignore
-    whiteSpace: "nowrap",
   };
 
   useKeypress(
@@ -86,50 +104,58 @@ export function TextInput(props: TextProps) {
     [focused, onSubmit]
   );
 
+  const updateText = useCallback((leftOffset: number, width: number) => {
+    const _text = textRef.current;
+    if (!_text) return;
+    if (!_text.clipRect) _text.clipRect = [0, 0, 0, 0];
+    _text.clipRect[0] = leftOffset;
+    _text.clipRect[1] = -Infinity;
+    _text.clipRect[2] = width + leftOffset;
+    _text.clipRect[3] = Infinity;
+    _text.minWidth = width;
+    _text.position.x = -width / 2 - leftOffset;
+    _text.sync();
+  }, []);
+
+  const scrollLeft = useRef(0);
   if (textRef.current && input && caret.current && highlight.current) {
     const _text = textRef.current;
     const _caret = caret.current;
     const _highlight = highlight.current;
 
-    if (
-      selection[0] !== lastSelection.current[0] ||
-      selection[1] !== lastSelection.current[1]
-    ) {
-      lastSelection.current = selection;
-      _text._needsSync = true;
-    }
+    _text.text = input.value;
 
-    if (focused !== lastFocused.current) {
-      lastFocused.current = focused;
-      _text._needsSync = true;
-    }
-
-    _text.text = value;
+    syncOnChange(_text, "focused", focused);
+    syncOnChange(_text, "selectionStart", input.selectionStart);
+    syncOnChange(_text, "selectionEnd", input.selectionEnd);
 
     _text.sync(() => {
       const caretPositions = _text.textRenderInfo.caretPositions;
-      let offsetX;
-      const TEXT_SELECTED = selection[0] !== selection[1] && focused;
+      const TEXT_SELECTED =
+        input.selectionStart !== input.selectionEnd && focused;
 
+      _caret.visible = false;
+      _highlight.visible = false;
+
+      // CASE 1: not focused
       if (!focused) {
-        offsetX = 0;
-        _caret.visible = false;
-      } else {
-        const activeSelection =
-          TEXT_SELECTED && input.selectionDirection === "forward"
-            ? selection[1]
-            : selection[0];
+        updateText(0, INNER_WIDTH);
+      }
 
-        offsetX = scrollLeft.current / INNER_WIDTH;
+      // CASE 2: focused, maybe selected, get caret in view
+      if (focused) {
         _caret.visible = true;
 
-        // position caret based on cursor position
-        _caret.position.x = -INNER_WIDTH / 2 - offsetX; // get it all the way to the left
+        const activeSel =
+          (TEXT_SELECTED && input.selectionDirection === "forward"
+            ? input.selectionEnd
+            : input.selectionStart) || 0;
 
-        const index = Math.min(
-          (activeSelection || 0) * 3,
-          value.length * 3 - 2
-        );
+        // get it all the way to the left
+        _caret.position.x = -INNER_WIDTH / 2 - scrollLeft.current;
+
+        // move it to the right character
+        const index = Math.min(activeSel * 3, input.value.length * 3 - 2);
         const caretX = caretPositions[index];
         if (caretX !== undefined) {
           _caret.position.x += caretX;
@@ -137,30 +163,21 @@ export function TextInput(props: TextProps) {
 
         // scroll to keep caret in view if it goes too far right
         if (_caret.position.x > INNER_WIDTH / 2) {
-          if (activeSelection === value.length) {
+          if (activeSel === input.value.length) {
             // scroll one char right
             scrollLeft.current += _caret.position.x - INNER_WIDTH / 2;
             _caret.position.x = INNER_WIDTH / 2;
           } else {
-            // scroll halfway
-            const diff = Math.min(INNER_WIDTH / 2, _caret.position.x);
-            scrollLeft.current += diff;
-            _caret.position.x -= diff;
+            // center caret
+            scrollLeft.current += _caret.position.x;
+            _caret.position.x -= _caret.position.x;
           }
         }
 
         // scroll to keep caret in view if it goes too far left
         if (_caret.position.x < -INNER_WIDTH / 2) {
-          if (selection[0] === 0 || selection[0] === null) {
-            // scroll one char left
-            scrollLeft.current += _caret.position.x + INNER_WIDTH / 2;
-            _caret.position.x = -INNER_WIDTH / 2;
-          } else {
-            // scroll halfway
-            const diff = Math.max(-INNER_WIDTH / 2, _caret.position.x);
-            scrollLeft.current += diff;
-            _caret.position.x -= diff;
-          }
+          scrollLeft.current += _caret.position.x;
+          _caret.position.x = 0;
         }
 
         // right adjust
@@ -174,35 +191,37 @@ export function TextInput(props: TextProps) {
 
         // left adjust
         if (scrollLeft.current < 0) {
-          _caret.position.x -= scrollLeft.current;
+          _caret.position.x += scrollLeft.current;
           scrollLeft.current = 0;
         }
 
-        // update the offset
-        offsetX = scrollLeft.current / INNER_WIDTH;
+        updateText(scrollLeft.current, INNER_WIDTH);
       }
 
-      if (!TEXT_SELECTED) {
-        _highlight.visible = false;
-      } else {
+      // CASE 3: focused and selected, show highlight
+      if (TEXT_SELECTED) {
         _highlight.visible = true;
         _caret.visible = false;
 
+        const finalCharIndex = input.value.length * 3 - 2;
+
         const startIndex = Math.min(
-          (selection[0] || 0) * 3,
-          value.length * 3 - 2
+          (input.selectionStart || 0) * 3,
+          finalCharIndex
         );
         const startX = caretPositions[startIndex];
+
         const endIndex = Math.min(
-          (selection[1] || 0) * 3,
-          value.length * 3 - 2
+          (input.selectionEnd || 0) * 3,
+          finalCharIndex
         );
         const endX = caretPositions[endIndex];
+
         if (startX !== undefined && endX !== undefined) {
-          const width = endX - startX;
+          const highWidth = endX - startX;
           _highlight.position.x =
-            -INNER_WIDTH / 2 + startX - offsetX + width / 2;
-          _highlight.scale.x = width;
+            -INNER_WIDTH / 2 + startX - scrollLeft.current + highWidth / 2;
+          _highlight.scale.x = highWidth;
 
           const leftEdge = _highlight.position.x - _highlight.scale.x / 2;
           if (leftEdge < -INNER_WIDTH / 2) {
@@ -219,53 +238,60 @@ export function TextInput(props: TextProps) {
           }
         }
       }
-
-      // update the text offset
-      if (!_text.clipRect) _text.clipRect = [0, 0, 0, 0];
-      _text.clipRect[0] = -PADDING_X + offsetX;
-      _text.clipRect[1] = -Infinity;
-      _text.clipRect[2] = INNER_WIDTH + PADDING_X + offsetX;
-      _text.clipRect[3] = Infinity;
-      _text.minWidth = INNER_WIDTH;
-      _text.position.x = -INNER_WIDTH / 2 - offsetX;
-
-      _text.sync();
     });
   }
 
-  const TEXT_WIDTH = OUTER_WIDTH + 0.1;
-  const TEXT_HEIGHT = FONT_SIZE * 1.75;
-  const TEXT_DEPTH = 0.1;
-
   return (
     <group name="spacesvr-text-input" {...rest}>
-      <Text name="displayText" ref={textRef} {...textStyles} position-z={0.051}>
-        {""}
-      </Text>
-      <mesh name="caret" ref={caret} position-z={0.051}>
-        <planeBufferGeometry args={[0.075 * FONT_SIZE, FONT_SIZE]} />
-        <meshBasicMaterial color="black" />
-      </mesh>
-      <mesh name="highlight" ref={highlight} position-z={0.051}>
-        <boxBufferGeometry args={[1, FONT_SIZE, TEXT_DEPTH * 0.25]} />
-        <meshStandardMaterial color="blue" transparent opacity={0.3} />
-      </mesh>
+      <group name="content" position-z={DEPTH / 2 + 0.001}>
+        <Suspense fallback={null}>
+          <Text
+            name="text"
+            ref={textRef}
+            color="black"
+            anchorX="left"
+            fontSize={fontSize}
+            font={font}
+            maxWidth={INNER_WIDTH}
+            // @ts-ignore
+            whiteSpace="nowrap"
+            frustumCulled={false}
+          >
+            {""}
+          </Text>
+        </Suspense>
+        <Blink>
+          <mesh name="caret" ref={caret} visible={false}>
+            <planeBufferGeometry args={[0.075 * fontSize, fontSize]} />
+            <meshBasicMaterial color="black" />
+          </mesh>
+        </Blink>
+        <mesh name="highlight" ref={highlight} visible={false}>
+          <boxBufferGeometry args={[1, fontSize, DEPTH * 0.45]} />
+          <meshStandardMaterial
+            color="blue"
+            transparent
+            opacity={0.3}
+            depthWrite={false}
+          />
+        </mesh>
+      </group>
       <Interactable
-        key={`${focused}-${selection[0]}-${selection[1]}`}
+        key={`${focused}-${input?.selectionStart}-${input?.selectionEnd}`}
         onClick={() => registerClick()}
       >
         <RoundedBox
-          args={[TEXT_WIDTH, TEXT_HEIGHT, TEXT_DEPTH]}
-          radius={0.025}
-          smoothness={4}
+          args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
+          radius={RADIUS}
+          smoothness={8}
         >
           <meshStandardMaterial color="white" />
         </RoundedBox>
       </Interactable>
       <RoundedBox
-        args={[TEXT_WIDTH + BORDER, TEXT_HEIGHT + BORDER, TEXT_DEPTH]}
-        radius={0.025}
-        smoothness={4}
+        args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
+        radius={RADIUS}
+        smoothness={8}
         position-z={-0.001}
       >
         {/* @ts-ignore */}
