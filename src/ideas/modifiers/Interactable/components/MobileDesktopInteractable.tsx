@@ -1,11 +1,15 @@
 import { useThree } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Group, Intersection, Mesh, Vector2 } from "three";
+import { Group, Intersection, Mesh, Vector3 } from "three";
 import { InteractableProps } from "../index";
 import { usePlayer } from "../../../../layers/Player";
 import { useLimitedFrame } from "../../../../logic/limiter";
 import { useEnvironment } from "../../../../layers/Environment";
 import { enableBVHRaycast } from "../../../../logic/bvh";
+
+type Down = { start: Vector3; time: number };
+const CLICK_TIMEOUT = 0.4; // seconds
+const MAX_DRAG = 0.1; // meters
 
 export default function MobileDesktopInteractable(props: InteractableProps) {
   const {
@@ -17,11 +21,12 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
   } = props;
 
   const gl = useThree((state) => state.gl);
+  const clock = useThree((state) => state.clock);
   const { device } = useEnvironment();
   const player = usePlayer();
 
   const group = useRef<Group>(null);
-  const downPos = useMemo(() => new Vector2(), []);
+  const down = useMemo<Down>(() => ({ start: new Vector3(), time: 0 }), []);
   const intersection = useRef<Intersection>();
 
   const RAYCASTER = passedRaycaster || player.raycaster;
@@ -52,21 +57,28 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
   });
 
   // handle mouse up or touch end
-  const endPress = useCallback(
-    (x: number, y: number) => {
-      if (!onClick || !group.current) return;
-      const dist = downPos.distanceTo(new Vector2(x, y));
-      if (dist > 5) return;
-      // either look for hover state or re-do raycast
-      if (DETECT_HOVER) {
-        if (intersection.current) onClick(intersection.current);
-      } else {
-        const inter = getIntersection();
-        if (inter) onClick(inter);
-      }
-    },
-    [DETECT_HOVER, downPos, getIntersection, onClick]
-  );
+  const endPress = useCallback(() => {
+    if (!onClick || !group.current) return;
+    const newPos = RAYCASTER.ray.at(1, new Vector3());
+    const dist = down.start.distanceTo(newPos);
+    const timeDiff = clock.getElapsedTime() - down.time;
+    if (dist > MAX_DRAG || timeDiff > CLICK_TIMEOUT) return;
+    // either look for hover state or re-do raycast
+    if (DETECT_HOVER) {
+      if (intersection.current) onClick(intersection.current);
+    } else {
+      const inter = getIntersection();
+      if (inter) onClick(inter);
+    }
+  }, [
+    DETECT_HOVER,
+    RAYCASTER,
+    clock,
+    down.start,
+    down.time,
+    getIntersection,
+    onClick,
+  ]);
 
   // enable bvh raycasting for children
   useEffect(() => {
@@ -79,33 +91,29 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
   }, []);
 
   useEffect(() => {
+    const startPress = () => {
+      RAYCASTER.ray.at(1, down.start);
+      down.time = clock.getElapsedTime();
+    };
+
     if (device.mobile) {
-      const onTouchStart = (e: TouchEvent) =>
-        downPos.set(e.touches[0].clientX, e.touches[0].clientY);
-
-      const onTouchEnd = (e: TouchEvent) =>
-        endPress(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-
-      gl.domElement.addEventListener("touchstart", onTouchStart);
-      gl.domElement.addEventListener("touchend", onTouchEnd);
+      gl.domElement.addEventListener("touchstart", startPress);
+      gl.domElement.addEventListener("touchend", endPress);
 
       return () => {
-        gl.domElement.removeEventListener("touchstart", onTouchStart);
-        gl.domElement.removeEventListener("touchend", onTouchEnd);
+        gl.domElement.removeEventListener("touchstart", startPress);
+        gl.domElement.removeEventListener("touchend", endPress);
+      };
+    } else {
+      gl.domElement.addEventListener("mousedown", startPress);
+      gl.domElement.addEventListener("mouseup", endPress);
+
+      return () => {
+        gl.domElement.removeEventListener("mousedown", startPress);
+        gl.domElement.removeEventListener("mouseup", endPress);
       };
     }
-
-    const onMouseDown = (e: MouseEvent) => downPos.set(e.clientX, e.clientY);
-    const onMouseUp = (e: MouseEvent) => endPress(e.clientX, e.clientY);
-
-    gl.domElement.addEventListener("mousedown", onMouseDown);
-    gl.domElement.addEventListener("mouseup", onMouseUp);
-
-    return () => {
-      gl.domElement.removeEventListener("mousedown", onMouseDown);
-      gl.domElement.removeEventListener("mouseup", onMouseUp);
-    };
-  }, [device.mobile, downPos, endPress, gl.domElement]);
+  }, [RAYCASTER.ray, clock, device.mobile, down, endPress, gl.domElement]);
 
   return (
     <group name="spacesvr-interactable" ref={group}>

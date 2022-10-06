@@ -1,4 +1,4 @@
-import { useRef, Suspense, useState, useCallback } from "react";
+import { useRef, Suspense, useState, useCallback, useEffect } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -15,15 +15,17 @@ import {
   handleShiftSelect,
 } from "./logic/select";
 import { useCaretBlink } from "./logic/blink";
+import { useDragSelect } from "./logic/drag";
 
 type TextProps = {
   value?: string;
   setValue?: (s: string) => void;
   onChange?: (s: string) => string;
-  onSubmit?: () => void;
+  onSubmit?: (s: string) => void;
   font?: string;
   fontSize?: number;
   width?: number;
+  placeholder?: string;
 } & GroupProps;
 
 export function TextInput(props: TextProps) {
@@ -35,6 +37,7 @@ export function TextInput(props: TextProps) {
     font,
     fontSize = 0.1,
     width = 1,
+    placeholder,
     ...rest
   } = props;
 
@@ -75,7 +78,7 @@ export function TextInput(props: TextProps) {
     const _text = textRef.current;
     if (!_text || !_text.textRenderInfo || !input || !focused) return;
     const car = getClickedCaret(_text, raycaster);
-    if (!car) {
+    if (car === null) {
       // clicked in empty space in the text box
       input.setSelectionRange(input.value.length, input.value.length);
     } else if (!shift.current) {
@@ -95,13 +98,15 @@ export function TextInput(props: TextProps) {
     }
   };
 
+  useDragSelect(input, textRef, focusInput);
+
   useKeypress(
     "Enter",
     () => {
       if (!focused || !onSubmit) return;
-      onSubmit();
+      onSubmit(input.value);
     },
-    [focused, onSubmit]
+    [input, focused, onSubmit]
   );
 
   const updateText = useCallback((leftOffset: number, width: number) => {
@@ -124,11 +129,18 @@ export function TextInput(props: TextProps) {
     const _caret = caret.current;
     const _highlight = highlight.current;
 
-    _text.text = input.value;
+    if (!focused && placeholder && input.value === "") {
+      _text.text = placeholder;
+      _text.color = "#828282";
+    } else {
+      _text.text = input.value;
+      _text.color = "black";
+    }
 
     syncOnChange(_text, "focused", focused);
     syncOnChange(_text, "selectionStart", input.selectionStart);
     syncOnChange(_text, "selectionEnd", input.selectionEnd);
+    syncOnChange(_text, "fontSize", fontSize);
 
     _text.sync(() => {
       blink.reset();
@@ -279,7 +291,7 @@ export function TextInput(props: TextProps) {
           />
         </mesh>
       </group>
-      <Interactable onClick={() => registerClick()}>
+      <Interactable onClick={registerClick}>
         <RoundedBox
           args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
           radius={RADIUS}

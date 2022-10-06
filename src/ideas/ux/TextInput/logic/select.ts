@@ -13,21 +13,36 @@ export const handleShiftSelect = (
   input: HTMLInputElement,
   newIndex: number
 ) => {
+  const HAS_SELECTION = input.selectionStart !== input.selectionEnd;
+
+  if (!HAS_SELECTION) {
+    if (newIndex < (input.selectionStart || 0)) {
+      input.setSelectionRange(newIndex, input.selectionStart || 0, "backward");
+    } else {
+      input.setSelectionRange(input.selectionStart || 0, newIndex, "forward");
+    }
+    return;
+  }
+
   // shift clicking to select text
   const isForward = input.selectionDirection === "forward";
   const start = input.selectionStart || 0;
   const end = input.selectionEnd || 0;
   if (isForward) {
-    if (newIndex > start) {
-      input.setSelectionRange(input.selectionStart, newIndex);
+    if (start === newIndex) {
+      input.setSelectionRange(start, newIndex, "none");
+    } else if (newIndex > start) {
+      input.setSelectionRange(start, newIndex, "forward");
     } else {
-      input.setSelectionRange(newIndex, input.selectionStart);
+      input.setSelectionRange(newIndex, start, "backward");
     }
   } else {
-    if (newIndex < end) {
-      input.setSelectionRange(newIndex, input.selectionEnd);
+    if (end === newIndex) {
+      input.setSelectionRange(newIndex, end, "none");
+    } else if (newIndex < end) {
+      input.setSelectionRange(newIndex, end, "backward");
     } else {
-      input.setSelectionRange(input.selectionEnd, newIndex);
+      input.setSelectionRange(end, newIndex, "forward");
     }
   }
 };
