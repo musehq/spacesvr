@@ -1286,13 +1286,13 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.4.5.tgz#9c71e5ff866b5484a7ef3db822bf6c10e77bdd8c"
   integrity sha512-mpRIamoHwql0ogxEUh9yr4TP0xU5CWyZxVQeccGkHHF8kPMErtDXJlxyo0lj+telRF35XNihtPTWoflqtyARmg==
 
-"@react-three/cannon@^6.3.0":
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-6.3.0.tgz#7773270bcdb797a4287b7d389159eb9433dc3bec"
-  integrity sha512-ZLX/LtJRRi2J/jFcZsZ19q6lrTBQxm5OtY0D9GOdV1vNiwyM9ACRoaMXMHN0zUdaUn7Psls9w5n1VfF5FY4C7Q==
+"@react-three/cannon@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-6.4.0.tgz#89aee95752c0f02caac04fa97675ccec59bd9b61"
+  integrity sha512-hrT7ploQOCKyP/vVSm9RWN2r2WPxjpTHDNnkxzwa/doK3IyREJ+40Ghor7E7pf76sjRgJFBrypVUSpKDcescTA==
   dependencies:
     "@pmndrs/cannon-worker-api" "^2.1.0"
-    cannon-es "^0.19.0"
+    cannon-es "^0.20.0"
     cannon-es-debugger "^1.0.0"
 
 "@react-three/drei@9.11.3":
@@ -1858,10 +1858,10 @@ cannon-es-debugger@^1.0.0:
   resolved "https://registry.yarnpkg.com/cannon-es-debugger/-/cannon-es-debugger-1.0.0.tgz#28c6679b30dcf608e978225239f447a8fe55ccb4"
   integrity sha512-sE9lDOBAYFKlh+0w+cvWKwUhJef8HYnUSVPWPL0jD15MAuVRQKno4QYZSGxgOoJkMR3mQqxL4bxys2b3RSWH8g==
 
-cannon-es@^0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.19.0.tgz#f62fa04097e375877db8f3895f27bb6d499395c0"
-  integrity sha512-fu9UXrjFmAQXq3JyBVPbtyc53suX+QHzikZEJykxroVNnIx1xHq0jZenK8qwhdwbBAtDL9n/47TyPELuSQwZuA==
+cannon-es@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/cannon-es/-/cannon-es-0.20.0.tgz#bf2f62a674701f37e3d861c90668a32d4d32f082"
+  integrity sha512-eZhWTZIkFOnMAJOgfXJa9+b3kVlvG+FX4mdkpePev/w/rP5V8NRquGyEozcjPfEoXUlb+p7d9SUcmDSn14prOA==
 
 chalk@^2.0.0:
   version "2.4.2"
