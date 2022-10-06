@@ -75,8 +75,10 @@ export function TextInput(props: TextProps) {
     const _text = textRef.current;
     if (!_text || !_text.textRenderInfo || !input || !focused) return;
     const car = getClickedCaret(_text, raycaster);
-    if (!car) return;
-    if (!shift.current) {
+    if (!car) {
+      // clicked in empty space in the text box
+      input.setSelectionRange(input.value.length, input.value.length);
+    } else if (!shift.current) {
       const clickType = getClickType(clock, lastClickTime, lastDoubleClickTime);
       if (clickType === 1) {
         input.setSelectionRange(car.charIndex, car.charIndex);
@@ -277,10 +279,7 @@ export function TextInput(props: TextProps) {
           />
         </mesh>
       </group>
-      <Interactable
-        key={`${focused}-${input?.selectionStart}-${input?.selectionEnd}`}
-        onClick={() => registerClick()}
-      >
+      <Interactable onClick={() => registerClick()}>
         <RoundedBox
           args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
           radius={RADIUS}

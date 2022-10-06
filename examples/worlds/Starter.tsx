@@ -6,6 +6,7 @@ import {
   Audio,
   Image,
   Video,
+  TextInput,
 } from "spacesvr";
 
 export default function Starter() {
@@ -95,6 +96,7 @@ export default function Starter() {
           <meshStandardMaterial color={hovering ? "red" : "blue"} />
         </mesh>
       </Interactable>
+      <TextInput position={[1, 0.9, -0.5]} />
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
