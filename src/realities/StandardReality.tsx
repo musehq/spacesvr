@@ -2,7 +2,7 @@ import { Physics, PhysicsProps } from "../layers/Physics";
 import { Environment, EnvironmentProps } from "../layers/Environment";
 import { Network, NetworkProps } from "../layers/Network";
 import { Player, PlayerProps } from "../layers/Player";
-import { InfinitePlane } from "../ideas/physical/InfinitePlane";
+import { InfinitePlane } from "../ideas/environment/InfinitePlane";
 import { ReactNode } from "react";
 
 type StandardRealityProps = {

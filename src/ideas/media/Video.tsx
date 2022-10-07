@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GroupProps, useThree } from "@react-three/fiber";
-import { Frame } from "./Frame";
+import { Frame } from "../mediated/Frame";
 import {
   DoubleSide,
   Material,

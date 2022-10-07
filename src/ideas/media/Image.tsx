@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { CompressedTexture, DoubleSide, Material } from "three";
 import { GroupProps } from "@react-three/fiber";
 import { useImage } from "../../logic/assets";
-import { Frame } from "./Frame";
+import { Frame } from "../mediated/Frame";
 
 type ImageProps = {
   src: string;
