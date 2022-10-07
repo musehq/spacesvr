@@ -1,6 +1,13 @@
-import { RefTree } from "./types/world";
 import { Idea } from "./idea";
 import { Vector3 } from "three";
+
+type RefNode = {
+  id: string;
+  props: any;
+  children?: RefNode[];
+};
+
+type RefTree = RefNode[];
 
 /**
  * a world is a set of ideas

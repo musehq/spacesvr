@@ -25,8 +25,7 @@ type NpmDependencies = {
 };
 
 /**
- * an idea is the fundamental atom of the ideal reality.
- * everything is an idea, whether the idea is accurately visualized or not.
+ * an idea is the fundamental substrate of reality.
  */
 export class Idea {
   // definition
