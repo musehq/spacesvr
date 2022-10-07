@@ -77,7 +77,7 @@ export const useTextInput = (
       protectClick.current = false;
     };
 
-    const onKeyup = () => {
+    const onInput = () => {
       if (input !== document.activeElement) return;
       if (onChange) input.value = onChange(input.value);
       setValue(input.value);
@@ -89,12 +89,12 @@ export const useTextInput = (
     };
 
     document.addEventListener("click", onDocClick);
-    input.addEventListener("input", onKeyup);
+    input.addEventListener("input", onInput);
     document.addEventListener("selectionchange", onSelectionChange);
 
     return () => {
       document.removeEventListener("click", onDocClick);
-      input.removeEventListener("input", onKeyup);
+      input.removeEventListener("input", onInput);
       document.removeEventListener("selectionchange", onSelectionChange);
     };
   }, [input, onChange, rerender, setValue]);
@@ -104,6 +104,7 @@ export const useTextInput = (
     input.value = value;
   }, [input, value]);
 
+  // call to focus input and protect the click from blurring the input
   const focusInput = () => {
     protectClick.current = true;
     input.focus();

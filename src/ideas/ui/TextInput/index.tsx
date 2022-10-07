@@ -258,24 +258,24 @@ export function TextInput(props: TextProps) {
     });
   }
 
+  // scroll the input if user is dragging a selection to the left or right
+  const SCROLL_BUFFER = fontSize;
+  const MOVE_SPEED = fontSize * 0.25;
   useLimitedFrame(1, () => {
     const _text = textRef.current;
     const _caret = caret.current;
-    const _highlight = highlight.current;
-    if (!_text || !_caret || !_highlight) return;
     const TEXT_SELECTED =
       input.selectionStart !== input.selectionEnd && focused;
+    if (!_text || !_caret || !TEXT_SELECTED) return;
 
-    const SCROLL_RIGHT_FOR_HIGHLIGHT =
-      TEXT_SELECTED && _caret.position.x > INNER_WIDTH / 2 - fontSize;
-    if (SCROLL_RIGHT_FOR_HIGHLIGHT) {
-      scrollLeft.current += fontSize * 0.25;
+    // scroll to the right
+    if (_caret.position.x > INNER_WIDTH / 2 - SCROLL_BUFFER) {
+      scrollLeft.current += MOVE_SPEED;
     }
 
-    const SCROLL_LEFT_FOR_HIGHLIGHT =
-      TEXT_SELECTED && _caret.position.x < -INNER_WIDTH / 2 + fontSize;
-    if (SCROLL_LEFT_FOR_HIGHLIGHT) {
-      scrollLeft.current -= fontSize * 0.25;
+    // scroll to the left
+    if (_caret.position.x < -INNER_WIDTH / 2 + SCROLL_BUFFER) {
+      scrollLeft.current -= MOVE_SPEED;
     }
   });
 
@@ -293,7 +293,6 @@ export function TextInput(props: TextProps) {
             maxWidth={INNER_WIDTH}
             // @ts-ignore
             whiteSpace="nowrap"
-            frustumCulled={false}
           >
             {""}
           </Text>

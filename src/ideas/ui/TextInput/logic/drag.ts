@@ -57,6 +57,7 @@ export const useDragSelect = (
       const car = getClickedCaret(_text, raycaster);
       if (car === null) return;
       focusInput();
+      e.stopPropagation(); // stop touch controls from running so screen doesn't move while dragging
       startCar.current = car.charIndex;
       if (device.mobile) {
         gl.domElement.addEventListener("touchmove", touchMove);
@@ -65,7 +66,6 @@ export const useDragSelect = (
         gl.domElement.addEventListener("mousemove", handleMove);
         gl.domElement.addEventListener("mouseup", dragEnd);
       }
-      e.stopPropagation();
     };
 
     if (device.mobile) {
