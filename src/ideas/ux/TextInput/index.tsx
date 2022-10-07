@@ -1,4 +1,4 @@
-import { useRef, Suspense, useState, useCallback, useEffect } from "react";
+import { useRef, Suspense, useState, useCallback } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -16,6 +16,7 @@ import {
 } from "./logic/select";
 import { useCaretBlink } from "./logic/blink";
 import { useDragSelect } from "./logic/drag";
+import { useLimitedFrame } from "../../../logic/limiter";
 
 type TextProps = {
   value?: string;
@@ -141,6 +142,7 @@ export function TextInput(props: TextProps) {
     syncOnChange(_text, "selectionStart", input.selectionStart);
     syncOnChange(_text, "selectionEnd", input.selectionEnd);
     syncOnChange(_text, "fontSize", fontSize);
+    syncOnChange(_text, "scrollLeft", scrollLeft.current);
 
     _text.sync(() => {
       blink.reset();
@@ -255,6 +257,27 @@ export function TextInput(props: TextProps) {
       }
     });
   }
+
+  useLimitedFrame(1, () => {
+    const _text = textRef.current;
+    const _caret = caret.current;
+    const _highlight = highlight.current;
+    if (!_text || !_caret || !_highlight) return;
+    const TEXT_SELECTED =
+      input.selectionStart !== input.selectionEnd && focused;
+
+    const SCROLL_RIGHT_FOR_HIGHLIGHT =
+      TEXT_SELECTED && _caret.position.x > INNER_WIDTH / 2 - fontSize;
+    if (SCROLL_RIGHT_FOR_HIGHLIGHT) {
+      scrollLeft.current += fontSize * 0.25;
+    }
+
+    const SCROLL_LEFT_FOR_HIGHLIGHT =
+      TEXT_SELECTED && _caret.position.x < -INNER_WIDTH / 2 + fontSize;
+    if (SCROLL_LEFT_FOR_HIGHLIGHT) {
+      scrollLeft.current -= fontSize * 0.25;
+    }
+  });
 
   return (
     <group name="spacesvr-text-input" {...rest}>

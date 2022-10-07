@@ -56,22 +56,6 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
     }
   });
 
-  // handle mouse up or touch end
-  const endPress = useCallback(() => {
-    if (!onClick || !group.current) return;
-    const newPos = RAYCASTER.ray.at(1, new Vector3());
-    const dist = down.start.distanceTo(newPos);
-    const timeDiff = clock.getElapsedTime() - down.time;
-    if (dist > MAX_DRAG || timeDiff > CLICK_TIMEOUT) return;
-    // either look for hover state or re-do raycast
-    if (DETECT_HOVER) {
-      if (intersection.current) onClick(intersection.current);
-    } else {
-      const inter = getIntersection();
-      if (inter) onClick(inter);
-    }
-  }, [DETECT_HOVER, RAYCASTER, clock, down, getIntersection, onClick]);
-
   // enable bvh raycasting for children
   useEffect(() => {
     if (!group.current) return;
@@ -88,24 +72,38 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
       down.time = clock.getElapsedTime();
     };
 
-    if (device.mobile) {
-      gl.domElement.addEventListener("touchstart", startPress);
-      gl.domElement.addEventListener("touchend", endPress);
+    const endPress = () => {
+      if (!onClick || !group.current) return;
+      const newPos = RAYCASTER.ray.at(1, new Vector3());
+      const dist = down.start.distanceTo(newPos);
+      const timeDiff = clock.getElapsedTime() - down.time;
+      if (dist > MAX_DRAG || timeDiff > CLICK_TIMEOUT) return;
+      // either look for hover state or re-do raycast
+      if (DETECT_HOVER) {
+        if (intersection.current) onClick(intersection.current);
+      } else {
+        const inter = getIntersection();
+        if (inter) onClick(inter);
+      }
+    };
 
-      return () => {
-        gl.domElement.removeEventListener("touchstart", startPress);
-        gl.domElement.removeEventListener("touchend", endPress);
-      };
-    } else {
-      gl.domElement.addEventListener("mousedown", startPress);
-      gl.domElement.addEventListener("mouseup", endPress);
+    gl.domElement.addEventListener("mousedown", startPress);
+    gl.domElement.addEventListener("mouseup", endPress);
 
-      return () => {
-        gl.domElement.removeEventListener("mousedown", startPress);
-        gl.domElement.removeEventListener("mouseup", endPress);
-      };
-    }
-  }, [RAYCASTER, clock, device.mobile, down, endPress, gl.domElement]);
+    return () => {
+      gl.domElement.removeEventListener("mousedown", startPress);
+      gl.domElement.removeEventListener("mouseup", endPress);
+    };
+  }, [
+    DETECT_HOVER,
+    RAYCASTER,
+    clock,
+    device.mobile,
+    down,
+    getIntersection,
+    gl.domElement,
+    onClick,
+  ]);
 
   return (
     <group name="spacesvr-interactable" ref={group}>
