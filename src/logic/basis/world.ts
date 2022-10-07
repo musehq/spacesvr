@@ -1,5 +1,5 @@
 import { RefTree } from "./types/world";
-import { Idea } from "../idea";
+import { Idea } from "./idea";
 import { Vector3 } from "three";
 
 /**

@@ -227,6 +227,7 @@ type NetworkState = {
 
 ### _types of ideas_
 
+- [basis/](#basis) for visualizations of fundamental metaphysics
 - [environment/](#environment) for setting up the environment
 - [media/](#media) for importing common media types
 - [mediated/](#mediated) for some basic art assets
@@ -234,6 +235,32 @@ type NetworkState = {
 - [ui/](#ui) for guiding and interacting with the user
 
 ---
+
+### basis/
+
+#### VisualIdea
+
+Visualize an Idea
+
+```tsx
+<VisualIdea idea={new Idea()} />
+```
+
+#### VisualSite
+
+Visualize a Site
+
+```tsx
+<VisualSite idea={new Site()} />
+```
+
+#### VisualWorld
+
+Visualize a World
+
+```tsx
+<VisualWorld idea={new World()} />
+```
 
 ### environment/
 

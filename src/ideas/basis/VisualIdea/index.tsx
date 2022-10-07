@@ -1,51 +1,25 @@
 import { useMemo } from "react";
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { DoubleSide, Color, Uniform, MeshStandardMaterial } from "three";
-import { Idea } from "../index";
+import { Idea } from "../../../logic/basis/idea";
 import { frag, vert, vertHead } from "./materials/idea";
 import { useSpring } from "@react-spring/three";
-import { useLimiter } from "../../../../logic/limiter";
+import { useLimiter } from "../../../logic/limiter";
 
-type Props = {
-  size?: number | [number, number, number];
-  idea?: Idea;
-} & Partial<Idea> &
-  GroupProps;
+type VisualIdeaProps = { idea?: Idea } & GroupProps;
 
-/**
- * Pure Idea
- *
- *
- * @param props
- * @constructor
- */
-export function VisualIdea(props: Props) {
-  const {
-    size = 1,
-    idea,
-    mediation = 0,
-    specificity = 0,
-    utility = 0.5,
-    ...restProps
-  } = props;
+export function VisualIdea(props: VisualIdeaProps) {
+  const { idea, ...rest } = props;
 
-  const HEX = idea
-    ? idea.getHex()
-    : new Idea().setFromCreation(mediation, specificity, utility).getHex();
+  const hex = useMemo(() => idea?.getHex() || "#808080", [idea]);
   const seed = useMemo(() => Math.random(), []);
-  const color = useMemo(() => new Color(HEX), [HEX]);
+  const color = useMemo(() => new Color(hex), [hex]);
+
   const RADIUS = 4;
   const NOISE_AMPLITUDE = 0.82;
   const NOISE_FREQ = 0.154;
-  const SIZE: [number, number, number] = Array.isArray(size)
-    ? [size[0] * 0.2, size[1] * 0.2, size[2] * 0.2]
-    : [size * 0.2, size * 0.2, size * 0.2];
 
-  const { m, s, u } = useSpring({
-    m: mediation,
-    s: specificity,
-    u: utility,
-  });
+  const { col } = useSpring({ col: hex });
 
   const mat = useMemo(() => {
     const material = new MeshStandardMaterial({
@@ -92,18 +66,14 @@ export function VisualIdea(props: Props) {
     mat.userData.shader.uniforms.time.value =
       clock.getElapsedTime() / 6 + seed * 1000;
 
-    mat.userData.shader.uniforms.color.value.set(
-      new Idea().setFromCreation(m.get(), s.get(), u.get()).getHex()
-    );
+    mat.userData.shader.uniforms.color.value.set(col.get());
   });
 
   return (
-    <group {...restProps} name="idea">
-      <group scale={SIZE}>
-        <mesh material={mat}>
-          <sphereBufferGeometry args={[RADIUS, 64, 32]} />
-        </mesh>
-      </group>
+    <group name="spacesvr-basis-idea" {...rest}>
+      <mesh material={mat} scale={0.2}>
+        <sphereBufferGeometry args={[RADIUS, 48, 32]} />
+      </mesh>
     </group>
   );
 }
