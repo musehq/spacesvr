@@ -70,15 +70,7 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
       const inter = getIntersection();
       if (inter) onClick(inter);
     }
-  }, [
-    DETECT_HOVER,
-    RAYCASTER,
-    clock,
-    down.start,
-    down.time,
-    getIntersection,
-    onClick,
-  ]);
+  }, [DETECT_HOVER, RAYCASTER, clock, down, getIntersection, onClick]);
 
   // enable bvh raycasting for children
   useEffect(() => {
@@ -113,7 +105,7 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
         gl.domElement.removeEventListener("mouseup", endPress);
       };
     }
-  }, [RAYCASTER.ray, clock, device.mobile, down, endPress, gl.domElement]);
+  }, [RAYCASTER, clock, device.mobile, down, endPress, gl.domElement]);
 
   return (
     <group name="spacesvr-interactable" ref={group}>
