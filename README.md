@@ -225,7 +225,137 @@ type NetworkState = {
 
 ## Ideas
 
-### /mediated/
+### _types of ideas_
+
+- [environment/](#environment) for setting up the environment
+- [media/](#media) for importing common media types
+- [mediated/](#mediated) for some basic art assets
+- [modifiers/](#modifiers) for modifying other ideas. they don't render anything themselves
+- [ui/](#ui) for guiding and interacting with the user
+
+---
+
+### environment/
+
+#### Background
+
+Set the background color of your space
+
+```tsx
+<Background color="blue" />
+```
+
+#### Fog
+
+Add fog to your scene.
+
+```tsx
+<Fog color="white" near={10} far={100} />
+```
+
+#### InfinitePlane
+
+Adds an infinite plane to walk on (added by default with the Environment Layer)
+
+```tsx
+<InfinitePlane
+  height={-0.0001} // offset a slight amount
+  size={[100, 100]}
+  visible={false}
+/>
+```
+
+---
+
+### media/
+
+#### Audio
+
+A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
+
+```tsx
+<Audio
+  url="https://link-to-your-audio.mp3"
+  position={[0, 4, 0]}
+  volume={1}
+  rollOff={1}
+  dCone={new Vector3(coneInnerAngle, coneOuterAngle, coneOuterGain)} // defaults should be fine
+  fftSize={128}
+/>
+```
+
+#### HDRI
+
+Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
+
+```tsx
+<HDRI
+  src="https://link-to-your-hdri.hdr"
+  disableBackground={false} // used to disable visual hdr (skybox)
+  disableEnvironment={false} // used to disable environment map
+/>
+```
+
+#### Image
+
+Quickly add an image to your scene
+
+```tsx
+<Image
+  src="https://link-to-your-image.png"
+  size={1} // size, default normalized to longest side = 1
+  framed // adds a frame
+/>
+```
+
+#### Model
+
+Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt.
+
+```tsx
+<Model
+  src="https://link-to-your-model.glb"
+  center={false} // whether to center the model so its bounds are centered on its origin
+/>
+```
+
+#### Video
+
+Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
+
+```tsx
+<Video
+  src="https://link-to-your-video.mp4"
+  size={1} // size, default normalized to longest side = 1
+  volume={1}
+  muted // mutes the video
+  framed // adds a frame
+/>
+```
+
+---
+
+### mediated/
+
+#### Frame
+
+Builds a frame to showcase media, especially images.
+
+width: number;
+height: number;
+thickness?: number;
+material?: Material;
+innerFrameMaterial?: Material;
+
+```tsx
+<Frame
+  width={1}
+  height={1}
+  thickness={0.1} // optional, default 0.1
+  material={new MeshBasicMaterial({ color: "red" })} // optional, default is a black MeshStandardMaterial
+  innerFrameMaterial={new MeshBasicMaterial({ color: "blue" })} // optional, default is no inner frame
+/>
+```
 
 #### LostFloor
 
@@ -235,7 +365,9 @@ An infinite floor styled to the Lost World.
 <LostFloor />
 ```
 
-### /modifiers/
+---
+
+### modifiers/
 
 #### Collidable
 
@@ -308,7 +440,28 @@ Provides the UX for its children to become a tool, meaning it will show up in ca
 />
 ```
 
-### /physical/
+---
+
+### ui/
+
+#### TextInput
+
+A text input component made to mimic an HTML input element. Supports all shortcuts, drag to select, shift click, double/triple click.
+
+```tsx
+const [text, setText] = useState("");
+
+<TextInput
+  value={text} // value and setValue are optional but obviously recommended
+  setValue={setText}
+  onChange={(s: string) => s.replaceAll(" ", "_")} // optional onChange function
+  onSubmit={(s: string) => alert(s)} // optional onSubmit function, called when enter is pressed
+  font={"https://link-to-your-font.ttf"} // optional font
+  fontSize={0.1} // font size, default 0.1
+  width={1} // width, default 1
+  placeholder="Enter your name"
+/>;
+```
 
 #### Arrow
 
@@ -316,96 +469,4 @@ An arrow icon
 
 ```tsx
 <Arrow dark={false} />
-```
-
-#### Audio
-
-A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
-
-```tsx
-<Audio
-  url="https://link-to-your-audio.mp3"
-  position={[0, 4, 0]}
-  volume={1}
-  rollOff={1}
-  dCone={new Vector3(coneInnerAngle, coneOuterAngle, coneOuterGain)} // defaults should be fine
-  fftSize={128}
-/>
-```
-
-#### Background
-
-Set the background color of your space
-
-```tsx
-<Background color="blue" />
-```
-
-#### Fog
-
-Add fog to your scene.
-
-```tsx
-<Fog color="white" near={10} far={100} />
-```
-
-#### HDRI
-
-Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
-
-```tsx
-<HDRI
-  src="https://link-to-your-hdri.hdr"
-  disableBackground={false} // used to disable visual hdr (skybox)
-  disableEnvironment={false} // used to disable environment map
-/>
-```
-
-#### Image
-
-Quickly add an image to your scene
-
-```tsx
-<Image
-  src="https://link-to-your-image.png"
-  size={1} // size, default normalized to longest side = 1
-  framed // adds a frame
-/>
-```
-
-#### InfinitePlane
-
-Adds an infinite plane to walk on (added by default with the Environment Layer)
-
-```tsx
-<InfinitePlane
-  height={-0.0001} // offset a slight amount
-  size={[100, 100]}
-  visible={false}
-/>
-```
-
-#### Model
-
-Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt.
-
-```tsx
-<Model
-  src="https://link-to-your-model.glb"
-  center={false} // whether to center the model so its bounds are centered on its origin
-/>
-```
-
-#### Video
-
-Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
-
-```tsx
-<Video
-  src="https://link-to-your-video.mp4"
-  size={1} // size, default normalized to longest side = 1
-  volume={1}
-  muted // mutes the video
-  framed // adds a frame
-/>
 ```
