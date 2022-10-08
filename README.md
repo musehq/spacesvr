@@ -499,3 +499,16 @@ An arrow icon
 ```tsx
 <Arrow dark={false} />
 ```
+
+#### Switch
+
+A boolean switch
+
+```tsx
+const [value, setValue] = useState(false);
+
+<Switch
+  value={value} // value and setValue are optional but obviously recommended
+  setValue={setValue}
+/>;
+```

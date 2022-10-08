@@ -1,5 +1,5 @@
-import { GroupProps, useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
+import { GroupProps } from "@react-three/fiber";
+import { useImage } from "../../logic/assets";
 
 type ArrowProps = { dark?: boolean } & GroupProps;
 
@@ -10,7 +10,7 @@ const IMAGE_SRC_DARK =
 export function Arrow(props: ArrowProps) {
   const { dark, ...rest } = props;
 
-  const texture = useLoader(TextureLoader, dark ? IMAGE_SRC_DARK : IMAGE_SRC);
+  const texture = useImage(dark ? IMAGE_SRC_DARK : IMAGE_SRC);
 
   return (
     <group name="spacesvr-arrow" {...rest}>
@@ -20,7 +20,6 @@ export function Arrow(props: ArrowProps) {
           map={texture}
           alphaTest={0.5}
           transparent={true}
-          normalMap={texture}
         />
       </mesh>
     </group>
