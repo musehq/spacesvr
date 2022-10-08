@@ -262,6 +262,8 @@ Visualize a World
 <VisualWorld idea={new World()} />
 ```
 
+---
+
 ### environment/
 
 #### Background
