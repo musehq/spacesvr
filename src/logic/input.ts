@@ -5,7 +5,9 @@ import { Vector3 } from "three";
 import { isTyping } from "./dom";
 import { useRerender } from "./rerender";
 
-export const useHTMLInput = (type: "file" | "text"): HTMLInputElement => {
+export const useHTMLInput = (
+  type: "file" | "text" | "password"
+): HTMLInputElement => {
   const input = useMemo(() => {
     const inp = document.createElement("input");
     document.body.appendChild(inp);
@@ -33,11 +35,12 @@ export const useHTMLInput = (type: "file" | "text"): HTMLInputElement => {
 };
 
 export const useTextInput = (
+  type: "text" | "password" | "number",
   value: string,
-  setValue: (s: string) => void,
-  onChange?: (s: string) => string
+  onChange: (s: string) => void
 ) => {
-  const input = useHTMLInput("text");
+  // number isn't selectable, so we use text
+  const input = useHTMLInput(type === "password" ? "password" : "text");
 
   const { paused } = useEnvironment();
   const { controls, velocity } = usePlayer();
@@ -71,16 +74,25 @@ export const useTextInput = (
 
   // set up event listeners
   useEffect(() => {
+    const formatNumber = (s: string) => {
+      const re = /[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)/;
+      const res = s.match(re);
+      if (!res) return "";
+      if (res.input !== res[0]) return value;
+      else return res[0];
+    };
+
     const onDocClick = () => {
-      if (!protectClick.current) input.blur();
-      else input.focus();
+      const focused = input === document.activeElement;
+      if (!protectClick.current && focused) input.blur();
+      else if (protectClick.current && !focused) input.focus();
       protectClick.current = false;
     };
 
     const onInput = () => {
       if (input !== document.activeElement) return;
-      if (onChange) input.value = onChange(input.value);
-      setValue(input.value);
+      if (type === "number") input.value = formatNumber(input.value);
+      onChange(input.value);
     };
 
     const onSelectionChange = () => {
@@ -97,11 +109,14 @@ export const useTextInput = (
       input.removeEventListener("input", onInput);
       document.removeEventListener("selectionchange", onSelectionChange);
     };
-  }, [input, onChange, rerender, setValue]);
+  }, [input, onChange, rerender, type, value]);
 
   // keep the input's value in sync with the passed state value
   useEffect(() => {
-    input.value = value;
+    if (input.value !== value) {
+      input.value = value;
+      rerender();
+    }
   }, [input, value]);
 
   // call to focus input and protect the click from blurring the input

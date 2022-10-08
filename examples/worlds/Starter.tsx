@@ -11,6 +11,14 @@ import {
 import Switch from "../../src/ideas/ui/Switch";
 
 export default function Starter() {
+  const [value, setValue] = useState("hello world");
+
+  useEffect(() => {
+    if (value === "rand") {
+      setValue(Math.random().toString());
+    }
+  }, [value]);
+
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
@@ -47,7 +55,7 @@ export default function Starter() {
         <planeBufferGeometry args={[200, 200]} />
         <meshBasicMaterial color={"purple"} />
       </mesh>
-      <mesh position-y={0.5} position-x={3}>
+      <mesh position-y={0.5} position-x={-5}>
         <boxBufferGeometry args={[1, 1, 1]} />
         <meshNormalMaterial />
       </mesh>
@@ -97,13 +105,38 @@ export default function Starter() {
           <meshStandardMaterial color={hovering ? "red" : "blue"} />
         </mesh>
       </Interactable>
-      <TextInput
-        position={[1, 0.9, -0.5]}
-        placeholder="First Name"
-        font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
-        fontSize={0.1}
-        width={1}
-      />
+      <group position={[1, 0.9, -0.5]}>
+        <TextInput
+          placeholder="First Name"
+          font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
+          fontSize={0.1}
+          width={1}
+          value={value}
+          onChange={setValue}
+          onBlur={() => console.log("blur!")}
+          onFocus={() => console.log("focus!")}
+        />
+        <TextInput
+          position-x={1}
+          type="password"
+          placeholder="password"
+          fontSize={0.1}
+          width={1}
+        />
+        <TextInput
+          position-x={2}
+          placeholder="email"
+          fontSize={0.1}
+          width={1}
+        />
+        <TextInput
+          position-x={3}
+          type="number"
+          placeholder="number"
+          fontSize={0.175}
+          width={1}
+        />
+      </group>
       <Switch position={[1, 0.7, -0.5]} />
       <Image
         name="outside-eddie"
