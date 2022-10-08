@@ -8,6 +8,7 @@ import {
   Video,
   TextInput,
 } from "spacesvr";
+import Switch from "../../src/ideas/ui/Switch";
 
 export default function Starter() {
   const [url, setUrl] = useState(
@@ -103,6 +104,7 @@ export default function Starter() {
         fontSize={0.1}
         width={1}
       />
+      <Switch position={[1, 0.7, -0.5]} />
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"

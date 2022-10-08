@@ -6,7 +6,7 @@ import { useTextInput } from "../../../logic/input";
 import { Interactable } from "../../modifiers/Interactable";
 import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
-import { Mesh } from "three";
+import { Mesh, Raycaster } from "three";
 import { syncOnChange } from "./logic/sync";
 import {
   getClickedCaret,
@@ -27,6 +27,7 @@ type TextProps = {
   fontSize?: number;
   width?: number;
   placeholder?: string;
+  raycaster?: Raycaster;
 } & GroupProps;
 
 export function TextInput(props: TextProps) {
@@ -39,11 +40,13 @@ export function TextInput(props: TextProps) {
     fontSize = 0.1,
     width = 1,
     placeholder,
+    raycaster: passedRaycaster,
     ...rest
   } = props;
 
   const clock = useThree((st) => st.clock);
-  const { raycaster } = usePlayer();
+  const player = usePlayer();
+  const RAYCASTER = passedRaycaster || player.raycaster;
 
   const textRef = useRef<any>();
   const caret = useRef<Mesh>(null);
@@ -78,7 +81,7 @@ export function TextInput(props: TextProps) {
     focusInput();
     const _text = textRef.current;
     if (!_text || !_text.textRenderInfo || !input || !focused) return;
-    const car = getClickedCaret(_text, raycaster);
+    const car = getClickedCaret(_text, RAYCASTER);
     if (car === null) {
       // clicked in empty space in the text box
       input.setSelectionRange(input.value.length, input.value.length);
@@ -99,7 +102,7 @@ export function TextInput(props: TextProps) {
     }
   };
 
-  useDragSelect(input, textRef, focusInput);
+  useDragSelect(input, textRef, RAYCASTER, focusInput);
 
   useKeypress(
     "Enter",
@@ -313,7 +316,7 @@ export function TextInput(props: TextProps) {
           />
         </mesh>
       </group>
-      <Interactable onClick={registerClick}>
+      <Interactable onClick={registerClick} raycaster={RAYCASTER}>
         <RoundedBox
           args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
           radius={RADIUS}
