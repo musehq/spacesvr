@@ -1,10 +1,31 @@
 // @ts-ignore
 import * as culori from "culori";
-import { NpmDependencies, Schema } from "./types/idea";
+
+type Type = {
+  name: string;
+  type:
+    | "string"
+    | "image"
+    | "color"
+    | "position"
+    | "rotation"
+    | "scale"
+    | "vector3"
+    | "video"
+    | "boolean"
+    | "number"
+    | "react";
+  default?: any;
+};
+
+type Schema = Type[];
+
+type NpmDependencies = {
+  [key: string]: string;
+};
 
 /**
- * an idea is the fundamental atom of the ideal reality.
- * everything is an idea, whether the idea is accurately visualized or not.
+ * an idea is the fundamental substrate of reality.
  */
 export class Idea {
   // definition

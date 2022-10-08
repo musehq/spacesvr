@@ -59,7 +59,7 @@ export function Player(props: PlayerLayer) {
   const { device } = useEnvironment();
 
   // physical body
-  const [bodyRef, bodyApi] = useCapsuleCollider(pos);
+  const [, bodyApi] = useCapsuleCollider(pos);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   // local state
@@ -67,37 +67,45 @@ export function Player(props: PlayerLayer) {
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
   const raycaster = useMemo(
-    () => new Raycaster(new Vector3(), new Vector3(), 0, 1.5),
+    () => new Raycaster(new Vector3(), new Vector3(), 0, 2),
     []
   );
 
-  // setup player
+  // initial rotation
   useEffect(() => {
-    // store position and velocity
-    bodyApi.position.subscribe((p) => position.current.fromArray(p));
-    bodyApi.velocity.subscribe((v) => velocity.current.fromArray(v));
-
     // rotation happens before position move
     camera.rotation.setFromQuaternion(
       new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), rot)
     );
   }, []);
 
+  // due to use-cannon bugs, we have to manually check for the active subscription
+  const activeSubId = useRef<number>();
+  useEffect(() => {
+    const subId = Math.random();
+    activeSubId.current = subId;
+    bodyApi.position.subscribe((p) => {
+      if (activeSubId.current !== subId) return;
+      position.current.fromArray(p);
+    });
+    bodyApi.velocity.subscribe((v) => {
+      if (activeSubId.current !== subId) return;
+      velocity.current.fromArray(v);
+    });
+  }, [bodyApi, bodyApi.position, bodyApi.velocity]);
+
   useFrame(() => {
     const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
-    // update raycaster
+    // update raycaster on desktop (mobile uses default)
     if (device.desktop) {
       raycaster.ray.origin.copy(position.current);
-      const lookAt = new Vector3(0, 0, -1);
-      lookAt.applyQuaternion(cam.quaternion);
-      raycaster.ray.direction.copy(lookAt);
+      raycaster.ray.direction.set(0, 0, -1);
+      raycaster.ray.direction.applyQuaternion(cam.quaternion);
     }
 
-    // update camera position
     camera.position.copy(position.current);
 
-    // update velocity
     if (!lockControls.current) {
       updateVelocity(cam, velocity.current);
     }
@@ -132,9 +140,7 @@ export function Player(props: PlayerLayer) {
       {device.xr && (
         <VRControllerMovement position={position} direction={direction} />
       )}
-      <group name="player" ref={bodyRef}>
-        {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
-      </group>
+      {SHOW_PLAYER_HITBOX && <VisibleCapsuleCollider />}
       {children}
     </PlayerContext.Provider>
   );

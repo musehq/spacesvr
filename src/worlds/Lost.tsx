@@ -1,5 +1,5 @@
-import { Fog } from "../ideas/physical/Fog";
-import { Background } from "../ideas/physical/Background";
+import { Fog } from "../ideas/environment/Fog";
+import { Background } from "../ideas/environment/Background";
 import { LostFloor } from "../ideas/mediated/LostFloor";
 
 export function LostWorld() {
