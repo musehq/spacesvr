@@ -481,14 +481,16 @@ A text input component made to mimic an HTML input element. Supports all shortcu
 const [text, setText] = useState("");
 
 <TextInput
-  value={text} // value and setValue are optional but obviously recommended
-  setValue={setText}
-  onChange={(s: string) => s.replaceAll(" ", "_")} // optional onChange function
-  onSubmit={(s: string) => alert(s)} // optional onSubmit function, called when enter is pressed
+  type="text" // text | password | number, default is text
+  value={text} // control the input value
+  onChange={setText} // optional onChange function
+  onSubmit={(s: string) => console.log(s)} // optional onSubmit function, called when enter is pressed
+  onFocus={() => console.log("focused")} // optional onFocus function
+  onBlur={() => console.log("blurred")} // optional onBlur function
   font={"https://link-to-your-font.ttf"} // optional font
   fontSize={0.1} // font size, default 0.1
   width={1} // width, default 1
-  placeholder="Enter your name"
+  placeholder="Enter your name" // optional placeholder text
 />;
 ```
 

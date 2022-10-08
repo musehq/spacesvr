@@ -1,4 +1,11 @@
-import { useRef, Suspense, useState, useCallback } from "react";
+import {
+  useRef,
+  Suspense,
+  useState,
+  useCallback,
+  useEffect,
+  memo,
+} from "react";
 import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -20,22 +27,26 @@ import { useLimitedFrame } from "../../../logic/limiter";
 
 type TextProps = {
   value?: string;
-  setValue?: (s: string) => void;
-  onChange?: (s: string) => string;
+  onChange?: (s: string) => void;
   onSubmit?: (s: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  type?: "text" | "password" | "number";
   font?: string;
   fontSize?: number;
   width?: number;
   placeholder?: string;
   raycaster?: Raycaster;
-} & GroupProps;
+} & Omit<GroupProps, "type">;
 
 export function TextInput(props: TextProps) {
   const {
     value,
-    setValue,
     onChange,
     onSubmit,
+    onFocus,
+    onBlur,
+    type = "text",
     font,
     fontSize = 0.1,
     width = 1,
@@ -54,10 +65,22 @@ export function TextInput(props: TextProps) {
   const [localValue, setLocalValue] = useState("");
 
   const { input, focused, focusInput } = useTextInput(
+    type,
     value || localValue,
-    setValue || setLocalValue,
-    onChange
+    onChange || setLocalValue
   );
+
+  useEffect(() => {
+    if (!onFocus) return;
+    input.addEventListener("focus", onFocus);
+    return () => input.removeEventListener("focus", onFocus);
+  }, [input, onFocus]);
+
+  useEffect(() => {
+    if (!onBlur) return;
+    input.addEventListener("blur", onBlur);
+    return () => input.removeEventListener("blur", onBlur);
+  }, [input, onBlur]);
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
 
@@ -137,7 +160,11 @@ export function TextInput(props: TextProps) {
       _text.text = placeholder;
       _text.color = "#828282";
     } else {
-      _text.text = input.value;
+      if (type === "password") {
+        _text.text = input.value.replace(/./g, "•");
+      } else {
+        _text.text = input.value;
+      }
       _text.color = "black";
     }
 
@@ -146,6 +173,7 @@ export function TextInput(props: TextProps) {
     syncOnChange(_text, "selectionEnd", input.selectionEnd);
     syncOnChange(_text, "fontSize", fontSize);
     syncOnChange(_text, "scrollLeft", scrollLeft.current);
+    syncOnChange(_text, "width", width);
 
     _text.sync(() => {
       blink.reset();
