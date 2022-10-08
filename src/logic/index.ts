@@ -1,3 +1,4 @@
+export * from "./basis";
 export * from "./assets";
 export * from "./bvh";
 export * from "./collision";

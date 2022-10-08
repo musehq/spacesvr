@@ -1,7 +1,7 @@
-import { World } from "../world";
+import { World } from "./world";
 
 /**
- * A site is just a delivery method of a world.
+ * A site is a delivery method of a world.
  */
 export class Site {
   id: string;

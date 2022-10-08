@@ -1,3 +1,6 @@
+export * from "./basis/VisualIdea";
+export * from "./basis/VisualSite";
+export * from "./basis/VisualWorld";
 export * from "./mediated/LostFloor";
 export * from "./modifiers/Collidable";
 export * from "./modifiers/Interactable";

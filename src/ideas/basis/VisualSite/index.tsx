@@ -1,17 +1,16 @@
-import { Site } from "../index";
-import { VisualWorld } from "../../world/VisualWorld";
+import { Site } from "../../../logic/basis/site";
+import { VisualWorld } from "../VisualWorld";
 import { Text } from "@react-three/drei";
-import { LookAtPlayer } from "../../../../ideas/modifiers/LookAtPlayer";
+import { LookAtPlayer } from "../../modifiers/LookAtPlayer";
+import { GroupProps } from "@react-three/fiber";
 
-type VisualSiteProps = {
-  site: Site;
-};
+type VisualSiteProps = { site: Site } & GroupProps;
 
 export default function VisualSite(props: VisualSiteProps) {
-  const { site } = props;
+  const { site, ...rest } = props;
 
   return (
-    <group name="visual-site">
+    <group name="spacesvr-basis-site" {...rest}>
       <VisualWorld world={site.world} />
       <LookAtPlayer>
         <Text
