@@ -1,18 +1,18 @@
 import { MutableRefObject, useEffect, useRef } from "react";
 import { getClickedCaret, handleShiftSelect } from "./select";
-import { usePlayer } from "../../../../layers/Player";
 import { useThree } from "@react-three/fiber";
 import { useEnvironment } from "../../../../layers/Environment";
+import { Raycaster } from "three";
 
 export const useDragSelect = (
   input: HTMLInputElement,
   text: MutableRefObject<any>,
+  raycaster: Raycaster,
   focusInput: () => void
 ) => {
   const gl = useThree((state) => state.gl);
   const mouse = useThree((state) => state.mouse);
   const camera = useThree((state) => state.camera);
-  const { raycaster } = usePlayer();
   const { device } = useEnvironment();
 
   const startCar = useRef(0);
