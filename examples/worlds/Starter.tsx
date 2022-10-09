@@ -7,8 +7,8 @@ import {
   Image,
   Video,
   TextInput,
+  Switch,
 } from "spacesvr";
-import Switch from "../../src/ideas/ui/Switch";
 
 export default function Starter() {
   const [value, setValue] = useState("hello world");
@@ -134,10 +134,11 @@ export default function Starter() {
           type="number"
           placeholder="number"
           fontSize={0.175}
+          onChange={(s) => console.log(s)}
           width={1}
         />
       </group>
-      <Switch position={[1, 0.7, -0.5]} />
+      <Switch position={[1, 0.7, -0.5]} onChange={(b) => console.log(b)} />
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
