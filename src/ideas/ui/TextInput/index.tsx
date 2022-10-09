@@ -1,11 +1,4 @@
-import {
-  useRef,
-  Suspense,
-  useState,
-  useCallback,
-  useEffect,
-  memo,
-} from "react";
+import { useRef, Suspense, useState, useCallback, useEffect } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -64,11 +57,13 @@ export function TextInput(props: TextProps) {
   const highlight = useRef<Mesh>(null);
   const [localValue, setLocalValue] = useState("");
 
-  const { input, focused, focusInput } = useTextInput(
-    type,
-    value || localValue,
-    onChange || setLocalValue
-  );
+  const val = value ?? localValue;
+  const setVal = (s: string) => {
+    if (onChange) onChange(s);
+    setLocalValue(s);
+  };
+
+  const { input, focused, focusInput } = useTextInput(type, val, setVal);
 
   useEffect(() => {
     if (!onFocus) return;
@@ -132,6 +127,7 @@ export function TextInput(props: TextProps) {
     () => {
       if (!focused || !onSubmit) return;
       onSubmit(input.value);
+      input.blur();
     },
     [input, focused, onSubmit]
   );

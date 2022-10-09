@@ -510,7 +510,7 @@ A boolean switch
 const [value, setValue] = useState(false);
 
 <Switch
-  value={value} // value and setValue are optional but obviously recommended
-  setValue={setValue}
+  value={value} // control the switch value
+  onChange={setValue} // optional onChange function
 />;
 ```

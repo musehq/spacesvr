@@ -9,18 +9,21 @@ import { useState } from "react";
 
 type SwitchProps = {
   value?: boolean;
-  setValue?: (value: boolean) => void;
+  onChange?: (value: boolean) => void;
   raycaster?: Raycaster;
 } & GroupProps;
 
-export default function Switch(props: SwitchProps) {
-  const { value, setValue, raycaster: passedRaycaster, ...rest } = props;
+export function Switch(props: SwitchProps) {
+  const { value, onChange, raycaster: passedRaycaster, ...rest } = props;
 
   const [localValue, setLocalValue] = useState(false);
 
   // if no value is passed, use local state
   const val = value ?? localValue;
-  const setVal = setValue ?? setLocalValue;
+  const setVal = (v: boolean) => {
+    if (onChange) onChange(v);
+    setLocalValue(v);
+  };
 
   const SIZE = 0.075;
   const BORDER = SIZE * 0.05;
