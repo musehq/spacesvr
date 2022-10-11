@@ -21,7 +21,7 @@ export function Anchor(props: AnchorProps) {
   };
 
   return (
-    <group name={`anchor-${href}`} {...rest}>
+    <group name={`spacesvr-anchor-${href}`} {...rest}>
       <Interactable onClick={onClick}>{children}</Interactable>
     </group>
   );

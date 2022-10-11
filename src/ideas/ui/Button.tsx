@@ -4,7 +4,7 @@ import { GroupProps } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
-import { Color, Raycaster } from "three";
+import { Color, Mesh, Raycaster } from "three";
 
 type ButtonProps = {
   children?: string;
@@ -90,7 +90,7 @@ export function Button(props: ButtonProps) {
   const RADIUS = Math.min(WIDTH, HEIGHT, DEPTH) * 0.5;
 
   return (
-    <group name={`button-${children}`} {...rest}>
+    <group name={`spacesvr-button-${children}`} {...rest}>
       <animated.group scale={scale}>
         <Text
           ref={textRef}
@@ -112,15 +112,18 @@ export function Button(props: ButtonProps) {
           onUnHover={() => setHovered(false)}
           raycaster={raycaster}
         >
-          <RoundedBox
-            args={[WIDTH, HEIGHT, DEPTH]}
-            radius={RADIUS}
-            smoothness={10}
-          >
-            {/* @ts-ignore */}
-            <animated.meshStandardMaterial color={animColor} />
-          </RoundedBox>
+          <mesh visible={false} name="hitbox">
+            <boxBufferGeometry args={[WIDTH, HEIGHT, DEPTH]} />
+          </mesh>
         </Interactable>
+        <RoundedBox
+          args={[WIDTH, HEIGHT, DEPTH]}
+          radius={RADIUS}
+          smoothness={8}
+        >
+          {/* @ts-ignore */}
+          <animated.meshStandardMaterial color={animColor} />
+        </RoundedBox>
       </animated.group>
     </group>
   );
