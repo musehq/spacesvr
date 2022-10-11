@@ -40,7 +40,7 @@ export function TextInput(props: TextProps) {
     onFocus,
     onBlur,
     type = "text",
-    font,
+    font = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf",
     fontSize = 0.1,
     width = 1,
     placeholder,

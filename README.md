@@ -527,7 +527,7 @@ A simple button
   fontSize={0.1} // font size, default 0.05
   maxWidth={1} // max width, default no max width
   textColor="red" // text color, default black
-  color="green" // button color, default #aaa
+  color="green" // button color, default white
   outline={false} // whether to show an outline, default true
   outlineColor="#9f9f9f" // outline color, default white
 >
