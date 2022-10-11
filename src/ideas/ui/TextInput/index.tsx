@@ -1,11 +1,4 @@
-import {
-  useRef,
-  Suspense,
-  useState,
-  useCallback,
-  useEffect,
-  memo,
-} from "react";
+import { useRef, Suspense, useState, useCallback, useEffect } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
@@ -47,7 +40,7 @@ export function TextInput(props: TextProps) {
     onFocus,
     onBlur,
     type = "text",
-    font,
+    font = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf",
     fontSize = 0.1,
     width = 1,
     placeholder,
@@ -64,11 +57,13 @@ export function TextInput(props: TextProps) {
   const highlight = useRef<Mesh>(null);
   const [localValue, setLocalValue] = useState("");
 
-  const { input, focused, focusInput } = useTextInput(
-    type,
-    value || localValue,
-    onChange || setLocalValue
-  );
+  const val = value ?? localValue;
+  const setVal = (s: string) => {
+    if (onChange) onChange(s);
+    setLocalValue(s);
+  };
+
+  const { input, focused, focusInput } = useTextInput(type, val, setVal);
 
   useEffect(() => {
     if (!onFocus) return;
@@ -132,6 +127,7 @@ export function TextInput(props: TextProps) {
     () => {
       if (!focused || !onSubmit) return;
       onSubmit(input.value);
+      input.blur();
     },
     [input, focused, onSubmit]
   );
@@ -202,11 +198,15 @@ export function TextInput(props: TextProps) {
         // get it all the way to the left
         _caret.position.x = -INNER_WIDTH / 2 - scrollLeft.current;
 
-        // move it to the right character
-        const index = Math.min(activeSel * 3, input.value.length * 3 - 2);
-        const caretX = caretPositions[index];
-        if (caretX !== undefined) {
-          _caret.position.x += caretX;
+        // calculate char indexes and x positions
+        const lastIndex = caretPositions.length - 2;
+        const activeIndex = Math.min(activeSel * 3, input.value.length * 3 - 2);
+        const lastCaretX = caretPositions[lastIndex];
+        const activeCaretX = caretPositions[activeIndex] || lastCaretX; // fallback for fast typing
+
+        // move it to the active character
+        if (activeCaretX !== undefined) {
+          _caret.position.x += activeCaretX;
         }
 
         // scroll to keep caret in view if it goes too far right
@@ -229,8 +229,6 @@ export function TextInput(props: TextProps) {
         }
 
         // right adjust
-        const len = caretPositions.length;
-        const lastCaretX = caretPositions[len - 2];
         const lastCharOffset = INNER_WIDTH - lastCaretX + scrollLeft.current;
         if (lastCharOffset > 0 && scrollLeft.current > 0) {
           _caret.position.x += lastCharOffset;

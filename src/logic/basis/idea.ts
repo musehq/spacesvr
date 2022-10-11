@@ -1,55 +1,21 @@
 // @ts-ignore
 import * as culori from "culori";
 
-type Type = {
-  name: string;
-  type:
-    | "string"
-    | "image"
-    | "color"
-    | "position"
-    | "rotation"
-    | "scale"
-    | "vector3"
-    | "video"
-    | "boolean"
-    | "number"
-    | "react";
-  default?: any;
-};
-
-type Schema = Type[];
-
-type NpmDependencies = {
-  [key: string]: string;
-};
-
 /**
  * an idea is the fundamental substrate of reality.
  */
 export class Idea {
-  // definition
+  // identifiers
   id: string;
-  props: any;
-
-  // aliases
   name: string;
-
-  // size
-  schema: Schema;
-  npm_dependencies: NpmDependencies;
-
-  // thought
-  purpose: string;
-  predecessor: string;
 
   // mediation
   mediation: number; // [0, 1)
   specificity: number; // [0, 1]
   utility: number; // [0, 1]
 
-  constructor() {
-    this.setFromCreation();
+  constructor(m = 0, s = 0, u = 0.5) {
+    this.setFromCreation(m, s, u);
     return this;
   }
 
@@ -57,6 +23,21 @@ export class Idea {
     this.mediation = m;
     this.specificity = s;
     this.utility = u;
+
+    return this;
+  }
+
+  setFromHex(hex: string) {
+    const color = culori.oklch(culori.rgb(hex));
+
+    if (!color) {
+      console.warn("idea :: setFromHex - invalid hex color");
+      return this;
+    }
+
+    this.mediation = color.h / 360;
+    this.specificity = color.c / 0.322;
+    this.utility = color.l;
 
     return this;
   }
@@ -69,7 +50,7 @@ export class Idea {
     return this;
   }
 
-  updateUtility(utility: number) {
+  setUtility(utility: number) {
     this.utility = utility;
 
     return this;
@@ -93,6 +74,10 @@ export class Idea {
 
     const newU = 0.5 - (this.utility - 0.5);
     return new Idea().setFromCreation(newM, newS, newU);
+  }
+
+  clone(): Idea {
+    return new Idea(this.mediation, this.specificity, this.utility);
   }
 }
 
