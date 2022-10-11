@@ -198,11 +198,15 @@ export function TextInput(props: TextProps) {
         // get it all the way to the left
         _caret.position.x = -INNER_WIDTH / 2 - scrollLeft.current;
 
-        // move it to the right character
-        const index = Math.min(activeSel * 3, input.value.length * 3 - 2);
-        const caretX = caretPositions[index];
-        if (caretX !== undefined) {
-          _caret.position.x += caretX;
+        // calculate char indexes and x positions
+        const lastIndex = caretPositions.length - 2;
+        const activeIndex = Math.min(activeSel * 3, input.value.length * 3 - 2);
+        const lastCaretX = caretPositions[lastIndex];
+        const activeCaretX = caretPositions[activeIndex] || lastCaretX; // fallback for fast typing
+
+        // move it to the active character
+        if (activeCaretX !== undefined) {
+          _caret.position.x += activeCaretX;
         }
 
         // scroll to keep caret in view if it goes too far right
@@ -225,8 +229,6 @@ export function TextInput(props: TextProps) {
         }
 
         // right adjust
-        const len = caretPositions.length;
-        const lastCaretX = caretPositions[len - 2];
         const lastCharOffset = INNER_WIDTH - lastCaretX + scrollLeft.current;
         if (lastCharOffset > 0 && scrollLeft.current > 0) {
           _caret.position.x += lastCharOffset;
