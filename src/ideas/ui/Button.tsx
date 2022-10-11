@@ -1,10 +1,10 @@
 import { RoundedBox, Text } from "@react-three/drei";
 import { animated, config, useSpring } from "@react-spring/three";
 import { GroupProps } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
-import { Raycaster } from "three";
+import { Color, Raycaster } from "three";
 
 type ButtonProps = {
   children?: string;
@@ -28,7 +28,7 @@ export function Button(props: ButtonProps) {
     fontSize = 0.05,
     maxWidth = 0.25,
     textColor = "black",
-    color = "#aaa",
+    color = "#fff",
     outline = true,
     outlineColor = "white",
     idea,
@@ -42,8 +42,18 @@ export function Button(props: ButtonProps) {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  const REST_COLOR = idea ? idea.getHex() : color;
-  const HOVER_COLOR = idea ? idea.getHex() : "#fff";
+  const REST_COLOR = useMemo(() => {
+    return idea ? idea.getHex() : color;
+  }, [color, idea]);
+
+  const HOVER_COLOR = useMemo(() => {
+    const hoverIdea = idea
+      ? idea.clone()
+      : new Idea().setFromHex("#" + new Color(REST_COLOR).getHexString());
+    const offset = 0.175 * (hoverIdea.utility > 0.5 ? -1 : 1);
+    hoverIdea.setUtility(hoverIdea.utility + offset);
+    return hoverIdea.getHex();
+  }, [REST_COLOR, idea]);
 
   const { animColor, scale } = useSpring({
     animColor: hovered ? HOVER_COLOR : REST_COLOR,
