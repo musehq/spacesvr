@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import {
   StandardReality,
-  Background,
   Interactable,
   Audio,
   Image,
   Video,
   TextInput,
   Switch,
+  HDRI,
+  LostFloor,
 } from "spacesvr";
+import Title from "../ideas/Title";
+import Link from "../ideas/Link";
 
-export default function Starter() {
+export default function Workshop() {
   const [value, setValue] = useState("hello world");
 
   useEffect(() => {
@@ -47,23 +50,25 @@ export default function Starter() {
   const [hovering, setHovering] = useState(false);
 
   return (
-    <StandardReality playerProps={{ pos: [0, 2, 0] }}>
-      <Background color={0xffffff} />
-      <fog attach="fog" args={[0xffffff, 10, 90]} />
+    <StandardReality>
+      <Title position-z={-1.5} position-y={1.2}>
+        welcome to the workshop
+      </Title>
+      <Link href="/" position-z={-1.5} position-y={0.8}>
+        back to the hub
+      </Link>
       <ambientLight />
-      <mesh rotation-x={-Math.PI / 2}>
-        <planeBufferGeometry args={[200, 200]} />
-        <meshBasicMaterial color={"purple"} />
-      </mesh>
+      <LostFloor />
       <mesh position-y={0.5} position-x={-5}>
         <boxBufferGeometry args={[1, 1, 1]} />
         <meshNormalMaterial />
       </mesh>
       <Audio url={audio} />
+      <HDRI src="https://dwvo2npct47gg.cloudfront.net/hdr/SkyMural2.hdr" />
       <Image
         src={url}
         size={3}
-        position={[-6.5, 2, 6.4]}
+        position={[-4.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
         framed
       />
@@ -105,7 +110,7 @@ export default function Starter() {
           <meshStandardMaterial color={hovering ? "red" : "blue"} />
         </mesh>
       </Interactable>
-      <group position={[1, 0.9, -0.5]}>
+      <group position={[1, 0.9, -0.5]} rotation-y={-Math.PI / 2}>
         <TextInput
           placeholder="First Name"
           font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
@@ -137,8 +142,8 @@ export default function Starter() {
           onChange={(s) => console.log(s)}
           width={1}
         />
+        <Switch position={[1, -0.3, 0]} onChange={(b) => console.log(b)} />
       </group>
-      <Switch position={[1, 0.7, -0.5]} onChange={(b) => console.log(b)} />
       <Image
         name="outside-eddie"
         src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"

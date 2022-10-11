@@ -339,12 +339,13 @@ Quickly add an image to your scene
 
 #### Model
 
-Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt.
+Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt. Clones the gltf scene so the same file can be re-used.
 
 ```tsx
 <Model
   src="https://link-to-your-model.glb"
-  center={false} // whether to center the model so its bounds are centered on its origin
+  center // whether to center the model so its bounds are centered on its origin, default false
+  normalize // whether to normalize the model to a height/width/depth of 1, default false
 />
 ```
 
@@ -410,6 +411,33 @@ Enables colliders for its children either by a named collider mesh or using all 
 />
 ```
 
+#### Interactable
+
+Makes its children react to onclick and on hover methods
+
+```tsx
+<Interactable
+  onClick={() => console.log("Ive been clicked!")}
+  onHovered={() => console.log("Ive been hovered!")}
+  onUnHovered={() => console.log("Ive been unhovered?")}
+>
+  <Stuff />
+</Interactable>
+```
+
+#### Anchor
+
+Makes its children link out to when clicked. handles leaving vr session.
+
+```tsx
+<Anchor
+  href="https://link-to-your-website.com"
+  target="_blank" // optional, default is _self
+>
+  <Stuff />
+</Anchor>
+```
+
 #### FacePlayer
 
 Turns its children into a billboard, always facing the camera.
@@ -424,20 +452,6 @@ Lazily floats its children.
 
 ```tsx
 <Floating height={0.2} speed={1} />
-```
-
-#### Interactable
-
-Makes its children react to onclick and on hover methods
-
-```tsx
-<Interactable
-  onClick={() => console.log("Ive been clicked!")}
-  onHovered={() => console.log("Ive been hovered!")}
-  onUnHovered={() => console.log("Ive been unhovered?")}
->
-  <Stuff />
-</Interactable>
 ```
 
 #### LookAtPlayer
@@ -500,6 +514,25 @@ An arrow icon
 
 ```tsx
 <Arrow dark={false} />
+```
+
+#### Button
+
+A simple button
+
+```tsx
+<Button
+  onClick={() => console.log("Ive been clicked!")}
+  font="https://link-to-your-font.ttf" // optional font, default is Quicksand
+  fontSize={0.1} // font size, default 0.05
+  maxWidth={1} // max width, default no max width
+  textColor="red" // text color, default black
+  color="green" // button color, default white
+  outline={false} // whether to show an outline, default true
+  outlineColor="#9f9f9f" // outline color, default white
+>
+  Click me!
+</Button>
 ```
 
 #### Switch
