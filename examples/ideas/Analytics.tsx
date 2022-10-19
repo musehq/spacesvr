@@ -8,3 +8,7 @@ if (IS_PROD && !IS_LOCAL) {
     api_host: "https://app.posthog.com",
   });
 }
+
+export default function Analytics() {
+  return null;
+}

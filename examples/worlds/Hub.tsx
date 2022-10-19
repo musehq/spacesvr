@@ -1,12 +1,14 @@
 import { LostWorld, StandardReality, Image } from "spacesvr";
 import Link from "../ideas/Link";
 import Title from "../ideas/Title";
+import Analytics from "../ideas/Analytics";
 
 export default function Hub() {
   return (
     <StandardReality
       environmentProps={{ dev: process.env.NODE_ENV === "development" }}
     >
+      <Analytics />
       <LostWorld />
       <group position-z={-1.5}>
         <Title

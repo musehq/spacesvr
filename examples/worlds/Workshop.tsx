@@ -10,6 +10,7 @@ import {
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
+import Analytics from "../ideas/Analytics";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -40,6 +41,7 @@ export default function Workshop() {
 
   return (
     <StandardReality>
+      <Analytics />
       <LostWorld />
       <group position-z={-2} position-x={-1}>
         <Title position-y={1.2}>welcome to the workshop</Title>
