@@ -3,6 +3,7 @@ import Link from "../ideas/Link";
 import Title from "../ideas/Title";
 import Test from "../ideas/Text";
 import { useState } from "react";
+import Analytics from "../ideas/Analytics";
 
 export default function Media() {
   const MODELS = [
@@ -21,6 +22,7 @@ export default function Media() {
 
   return (
     <StandardReality>
+      <Analytics />
       <LostWorld />
       <Title position-z={-1.5} position-y={1.2}>
         welcome to the media world

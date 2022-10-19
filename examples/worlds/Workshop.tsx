@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import {
   StandardReality,
   Interactable,
-  Audio,
   Image,
   Video,
   TextInput,
   Switch,
-  HDRI,
-  LostFloor,
+  LostWorld,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
+import Analytics from "../ideas/Analytics";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -25,17 +24,8 @@ export default function Workshop() {
   const [url, setUrl] = useState(
     "https://dwvo2npct47gg.cloudfront.net/gallery/bladi/IMG_8334.jpg"
   );
-  const [audio, setAudio] = useState(
-    "https://d27rt3a60hh1lx.cloudfront.net/audio/LucidMondayMix.mp3"
-  );
 
   const [size, setSize] = useState(1);
-
-  setTimeout(() => {
-    setAudio(
-      "https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/whoisabnel/dark.mp3"
-    );
-  }, 10000);
 
   useEffect(() => {
     setTimeout(
@@ -51,20 +41,30 @@ export default function Workshop() {
 
   return (
     <StandardReality>
-      <Title position-z={-1.5} position-y={1.2}>
-        welcome to the workshop
-      </Title>
-      <Link href="/" position-z={-1.5} position-y={0.8}>
-        back to the hub
-      </Link>
-      <ambientLight />
-      <LostFloor />
-      <mesh position-y={0.5} position-x={-5}>
-        <boxBufferGeometry args={[1, 1, 1]} />
-        <meshNormalMaterial />
-      </mesh>
-      <Audio url={audio} />
-      <HDRI src="https://dwvo2npct47gg.cloudfront.net/hdr/SkyMural2.hdr" />
+      <Analytics />
+      <LostWorld />
+      <group position-z={-2} position-x={-1}>
+        <Title position-y={1.2}>welcome to the workshop</Title>
+        <Link href="/" position-y={0.8}>
+          back to the hub
+        </Link>
+      </group>
+      <group position-x={-6} position-z={-3}>
+        <mesh position-y={0.5}>
+          <boxBufferGeometry args={[1, 1, 1]} />
+          <meshNormalMaterial />
+        </mesh>
+        <Interactable
+          onHover={() => setHovering(true)}
+          onUnHover={() => setHovering(false)}
+          onClick={() => setSize(Math.random() + 1)}
+        >
+          <mesh position={[2, 0.5, 0]}>
+            <boxBufferGeometry args={[size, size * 0.25, size * 0.1]} />
+            <meshStandardMaterial color={hovering ? "red" : "blue"} />
+          </mesh>
+        </Interactable>
+      </group>
       <Image
         src={url}
         size={3}
@@ -100,17 +100,7 @@ export default function Workshop() {
         rotation={[0, Math.PI, 0]}
         framed
       />
-      <Interactable
-        onHover={() => setHovering(true)}
-        onUnHover={() => setHovering(false)}
-        onClick={() => setSize(Math.random() + 1)}
-      >
-        <mesh position={[-3, 0.5, 0]}>
-          <boxBufferGeometry args={[size, size * 0.25, size * 0.1]} />
-          <meshStandardMaterial color={hovering ? "red" : "blue"} />
-        </mesh>
-      </Interactable>
-      <group position={[1, 0.9, -0.5]} rotation-y={-Math.PI / 2}>
+      <group position={[1, 0.9, -5.5]}>
         <TextInput
           placeholder="First Name"
           font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
@@ -122,20 +112,20 @@ export default function Workshop() {
           onFocus={() => console.log("focus!")}
         />
         <TextInput
-          position-x={1}
+          position-x={1.1}
           type="password"
           placeholder="password"
           fontSize={0.1}
           width={1}
         />
         <TextInput
-          position-x={2}
+          position-x={2.2}
           placeholder="email"
           fontSize={0.1}
           width={1}
         />
         <TextInput
-          position-x={3}
+          position-x={3.3}
           type="number"
           placeholder="number"
           fontSize={0.175}
