@@ -19,7 +19,7 @@
 </div>
 
 <p align="center">
-    <a href="https://muse.place?utm_source=npmjs">www.muse.place</a> · <a href="https://spacesvr.vercel.app/">demo</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place?utm_source=npmjs">www.muse.place</a> · <a href="https://spacesvr.io/">demo</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
 <p align="center">
 <a href="https://muse.place?utm_source=npmjs&utm_campaign=logo">
@@ -69,7 +69,7 @@ function World() {
 }
 ```
 
-_this is all the code for [this demo](https://spacesvr.vercel.app)_
+_this is the starting point for [this demo](https://spacesvr.io)_
 
 <br/>
 
