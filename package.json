@@ -8,14 +8,23 @@
     "spaces",
     "webxr",
     "environment",
-    "webvr"
+    "webvr",
+    "muse",
+    "3d website",
+    "virtual reality",
+    "3d",
+    "three js"
   ],
-  "author": "Muse",
   "license": "MIT",
-  "homepage": "https://muse.place",
+  "homepage": "https://spacesvr.io",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/spacesvr/spacesvr.git"
+  },
+  "author": {
+    "name": "alex shortt",
+    "email": "alexander.shortt@gmail.com",
+    "url": "https://muse.place/alex"
   },
   "main": "main.cjs.js",
   "module": "main.js",
