@@ -1,6 +1,9 @@
 import { StandardReality, Background, Model } from "spacesvr";
 import LightSwitch from "./ideas/LightSwitch";
 import PingPongMulti from "./ideas/PingPongMulti";
+import Title from "../../ideas/Title";
+import Link from "../../ideas/Link";
+import Analytics from "../../ideas/Analytics";
 
 export default function Multiplayer() {
   return (
@@ -8,6 +11,13 @@ export default function Multiplayer() {
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
       networkProps={{ autoconnect: true, voice: true }}
     >
+      <Analytics />
+      <Title position-z={-1.5} position-y={1.2}>
+        welcome to the multiplayer world
+      </Title>
+      <Link href="/" position-z={-1.5} position-y={0.8}>
+        back to the hub
+      </Link>
       {/*<PingPongMulti />*/}
       <Background color={0xffffff} />
       <fog attach="fog" args={[0xffffff, 10, 90]} />

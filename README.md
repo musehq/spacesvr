@@ -19,7 +19,7 @@
 </div>
 
 <p align="center">
-    <a href="https://muse.place?utm_source=npmjs">www.muse.place</a> · <a href="https://spacesvr.vercel.app/">demo</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
+    <a href="https://muse.place?utm_source=npmjs">www.muse.place</a> · <a href="https://spacesvr.io/">demo</a> · <a href="https://discord.gg/nFHrmUbaz5">discord</a>
 <p>
 <p align="center">
 <a href="https://muse.place?utm_source=npmjs&utm_campaign=logo">
@@ -69,7 +69,7 @@ function World() {
 }
 ```
 
-_this is all the code for [this demo](https://spacesvr.vercel.app)_
+_this is the starting point for [this demo](https://spacesvr.io)_
 
 <br/>
 
@@ -225,7 +225,167 @@ type NetworkState = {
 
 ## Ideas
 
-### /mediated/
+### _types of ideas_
+
+- [basis/](#basis) for visualizations of fundamental metaphysics
+- [environment/](#environment) for setting up the environment
+- [media/](#media) for importing common media types
+- [mediated/](#mediated) for some basic art assets
+- [modifiers/](#modifiers) for modifying other ideas. they don't render anything themselves
+- [ui/](#ui) for guiding and interacting with the user
+
+---
+
+### basis/
+
+#### VisualIdea
+
+Visualize an Idea
+
+```tsx
+<VisualIdea idea={new Idea()} />
+```
+
+#### VisualSite
+
+Visualize a Site
+
+```tsx
+<VisualSite idea={new Site()} />
+```
+
+#### VisualWorld
+
+Visualize a World
+
+```tsx
+<VisualWorld idea={new World()} />
+```
+
+---
+
+### environment/
+
+#### Background
+
+Set the background color of your space
+
+```tsx
+<Background color="blue" />
+```
+
+#### Fog
+
+Add fog to your scene.
+
+```tsx
+<Fog color="white" near={10} far={100} />
+```
+
+#### InfinitePlane
+
+Adds an infinite plane to walk on (added by default with the Environment Layer)
+
+```tsx
+<InfinitePlane
+  height={-0.0001} // offset a slight amount
+  size={[100, 100]}
+  visible={false}
+/>
+```
+
+---
+
+### media/
+
+#### Audio
+
+A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
+
+```tsx
+<Audio
+  url="https://link-to-your-audio.mp3"
+  position={[0, 4, 0]}
+  volume={1}
+  rollOff={1}
+  dCone={new Vector3(coneInnerAngle, coneOuterAngle, coneOuterGain)} // defaults should be fine
+  fftSize={128}
+/>
+```
+
+#### HDRI
+
+Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
+
+```tsx
+<HDRI
+  src="https://link-to-your-hdri.hdr"
+  disableBackground={false} // used to disable visual hdr (skybox)
+  disableEnvironment={false} // used to disable environment map
+/>
+```
+
+#### Image
+
+Quickly add an image to your scene
+
+```tsx
+<Image
+  src="https://link-to-your-image.png"
+  size={1} // size, default normalized to longest side = 1
+  framed // adds a frame
+/>
+```
+
+#### Model
+
+Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt. Clones the gltf scene so the same file can be re-used.
+
+```tsx
+<Model
+  src="https://link-to-your-model.glb"
+  center // whether to center the model so its bounds are centered on its origin, default false
+  normalize // whether to normalize the model to a height/width/depth of 1, default false
+/>
+```
+
+#### Video
+
+Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
+
+```tsx
+<Video
+  src="https://link-to-your-video.mp4"
+  size={1} // size, default normalized to longest side = 1
+  volume={1}
+  muted // mutes the video
+  framed // adds a frame
+/>
+```
+
+---
+
+### mediated/
+
+#### Frame
+
+Builds a frame to showcase media, especially images.
+
+width: number;
+height: number;
+thickness?: number;
+material?: Material;
+innerFrameMaterial?: Material;
+
+```tsx
+<Frame
+  width={1}
+  height={1}
+  thickness={0.1} // optional, default 0.1
+  material={new MeshBasicMaterial({ color: "red" })} // optional, default is a black MeshStandardMaterial
+  innerFrameMaterial={new MeshBasicMaterial({ color: "blue" })} // optional, default is no inner frame
+/>
+```
 
 #### LostFloor
 
@@ -235,7 +395,9 @@ An infinite floor styled to the Lost World.
 <LostFloor />
 ```
 
-### /modifiers/
+---
+
+### modifiers/
 
 #### Collidable
 
@@ -247,6 +409,33 @@ Enables colliders for its children either by a named collider mesh or using all 
   enabled={true}
   hideCollisionMeshes={false} // set visible to false on meshes used for collision
 />
+```
+
+#### Interactable
+
+Makes its children react to onclick and on hover methods
+
+```tsx
+<Interactable
+  onClick={() => console.log("Ive been clicked!")}
+  onHovered={() => console.log("Ive been hovered!")}
+  onUnHovered={() => console.log("Ive been unhovered?")}
+>
+  <Stuff />
+</Interactable>
+```
+
+#### Anchor
+
+Makes its children link out to when clicked. handles leaving vr session.
+
+```tsx
+<Anchor
+  href="https://link-to-your-website.com"
+  target="_blank" // optional, default is _self
+>
+  <Stuff />
+</Anchor>
 ```
 
 #### FacePlayer
@@ -263,20 +452,6 @@ Lazily floats its children.
 
 ```tsx
 <Floating height={0.2} speed={1} />
-```
-
-#### Interactable
-
-Makes its children react to onclick and on hover methods
-
-```tsx
-<Interactable
-  onClick={() => console.log("Ive been clicked!")}
-  onHovered={() => console.log("Ive been hovered!")}
-  onUnHovered={() => console.log("Ive been unhovered?")}
->
-  <Stuff />
-</Interactable>
 ```
 
 #### LookAtPlayer
@@ -308,7 +483,30 @@ Provides the UX for its children to become a tool, meaning it will show up in ca
 />
 ```
 
-### /physical/
+---
+
+### ui/
+
+#### TextInput
+
+A text input component made to mimic an HTML input element. Supports all shortcuts, drag to select, shift click, double/triple click.
+
+```tsx
+const [text, setText] = useState("");
+
+<TextInput
+  type="text" // text | password | number, default is text
+  value={text} // control the input value
+  onChange={setText} // optional onChange function
+  onSubmit={(s: string) => console.log(s)} // optional onSubmit function, called when enter is pressed
+  onFocus={() => console.log("focused")} // optional onFocus function
+  onBlur={() => console.log("blurred")} // optional onBlur function
+  font={"https://link-to-your-font.ttf"} // optional font
+  fontSize={0.1} // font size, default 0.1
+  width={1} // width, default 1
+  placeholder="Enter your name" // optional placeholder text
+/>;
+```
 
 #### Arrow
 
@@ -318,94 +516,34 @@ An arrow icon
 <Arrow dark={false} />
 ```
 
-#### Audio
+#### Button
 
-A positional audio component that will play the passed in audio url. Handles media playback rules for Safari, iOS, etc.
+A simple button
 
 ```tsx
-<Audio
-  url="https://link-to-your-audio.mp3"
-  position={[0, 4, 0]}
-  volume={1}
-  rollOff={1}
-  dCone={new Vector3(coneInnerAngle, coneOuterAngle, coneOuterGain)} // defaults should be fine
-  fftSize={128}
-/>
+<Button
+  onClick={() => console.log("Ive been clicked!")}
+  font="https://link-to-your-font.ttf" // optional font, default is Quicksand
+  fontSize={0.1} // font size, default 0.05
+  maxWidth={1} // max width, default no max width
+  textColor="red" // text color, default black
+  color="green" // button color, default white
+  outline={false} // whether to show an outline, default true
+  outlineColor="#9f9f9f" // outline color, default white
+>
+  Click me!
+</Button>
 ```
 
-#### Background
+#### Switch
 
-Set the background color of your space
-
-```tsx
-<Background color="blue" />
-```
-
-#### Fog
-
-Add fog to your scene.
+A boolean switch
 
 ```tsx
-<Fog color="white" near={10} far={100} />
-```
+const [value, setValue] = useState(false);
 
-#### HDRI
-
-Set the scene background to an hdr file. You can find free hdr files here: https://hdrihaven.com/
-
-```tsx
-<HDRI
-  src="https://link-to-your-hdri.hdr"
-  disableBackground={false} // used to disable visual hdr (skybox)
-  disableEnvironment={false} // used to disable environment map
-/>
-```
-
-#### Image
-
-Quickly add an image to your scene
-
-```tsx
-<Image
-  src="https://link-to-your-image.png"
-  size={1} // size, default normalized to longest side = 1
-  framed // adds a frame
-/>
-```
-
-#### InfinitePlane
-
-Adds an infinite plane to walk on (added by default with the Environment Layer)
-
-```tsx
-<InfinitePlane
-  height={-0.0001} // offset a slight amount
-  size={[100, 100]}
-  visible={false}
-/>
-```
-
-#### Model
-
-Quickly add a GLTF/GLB model to your scene. Will handle Suspense, KTX2, Draco, Meshopt.
-
-```tsx
-<Model
-  src="https://link-to-your-model.glb"
-  center={false} // whether to center the model so its bounds are centered on its origin
-/>
-```
-
-#### Video
-
-Add a video file to your space with positional audio. Handles media playback rules for Safari, iOS, etc.
-
-```tsx
-<Video
-  src="https://link-to-your-video.mp4"
-  size={1} // size, default normalized to longest side = 1
-  volume={1}
-  muted // mutes the video
-  framed // adds a frame
-/>
+<Switch
+  value={value} // control the switch value
+  onChange={setValue} // optional onChange function
+/>;
 ```

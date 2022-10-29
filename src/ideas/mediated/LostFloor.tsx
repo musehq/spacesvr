@@ -15,16 +15,16 @@ export function LostFloor() {
         fragHead +
         shader.fragmentShader.replace(
           "#include <color_fragment>",
-          "#include <color_fragment>\n  " + fragColorFragment
+          "#include <color_fragment>\n" + fragColorFragment
         );
     };
     return m;
   }, []);
 
   return (
-    <group name="floor">
+    <group name="spacesvr-lost-floor">
       <mesh rotation-x={-Math.PI / 2} material={mat}>
-        <planeBufferGeometry args={[300, 300]} />
+        <planeBufferGeometry args={[10000, 10000, 1, 1]} />
       </mesh>
     </group>
   );
@@ -198,6 +198,6 @@ const fragHead = `
 `;
 
 const fragColorFragment = `
-  diffuseColor.rgb -= 0.1 * (snoise(vPos) + 1.) / 2.;
+  diffuseColor.rgb -= 0.2 * (snoise(vPos) + 1.) / 2.;
   diffuseColor.r -= 0.1 * (snoise(-vPos) + 1.) / 2.;
 `;

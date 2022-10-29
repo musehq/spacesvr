@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "2.3.2",
+  "version": "2.5.1",
   "private": true,
   "description": "A standardized reality for future of the 3D Web",
   "keywords": [
@@ -8,14 +8,23 @@
     "spaces",
     "webxr",
     "environment",
-    "webvr"
+    "webvr",
+    "muse",
+    "3d website",
+    "virtual reality",
+    "3d",
+    "three js"
   ],
-  "author": "Muse",
   "license": "MIT",
-  "homepage": "https://muse.place",
+  "homepage": "https://spacesvr.io",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/spacesvr/spacesvr.git"
+  },
+  "author": {
+    "name": "alex shortt",
+    "email": "alexander.shortt@gmail.com",
+    "url": "https://muse.place/alex"
   },
   "main": "main.cjs.js",
   "module": "main.js",
@@ -49,7 +58,7 @@
     "@geckos.io/snapshot-interpolation": "^1.1.0",
     "@juggle/resize-observer": "^3.2.0",
     "@react-spring/three": "^9.4.5",
-    "@react-three/cannon": "^6.3.0",
+    "@react-three/cannon": "^6.4.0",
     "@react-three/drei": "9.11.3",
     "@react-three/fiber": "^8.0.22",
     "@react-three/xr": "^4.0.1",
