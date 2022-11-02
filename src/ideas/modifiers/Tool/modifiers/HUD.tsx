@@ -21,9 +21,6 @@ export default function HUD(props: HUDProps) {
     t = 1,
   } = props;
 
-  const DISTANCE = distance * 0.05;
-  const SCALE = 0.0025;
-
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
 
@@ -40,7 +37,7 @@ export default function HUD(props: HUDProps) {
     if (pos !== undefined) {
       const xPos = (pos[0] * 0.00008 * size.width) / 2;
       const yPos = 0.04 * pos[1];
-      locPos.set(xPos * distance, yPos * distance, -DISTANCE);
+      locPos.set(xPos * distance, yPos * distance, -distance);
       dummyQuat.copy(camera.quaternion);
       if (!pinY) {
         dummyQuat.x = 0;
@@ -67,7 +64,7 @@ export default function HUD(props: HUDProps) {
 
   return (
     <group name="hud" ref={group}>
-      <group scale={SCALE * distance}>{children}</group>
+      {children}
     </group>
   );
 }

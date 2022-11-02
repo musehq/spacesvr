@@ -6,7 +6,12 @@ import {
   Mesh,
   PerspectiveCamera as ThrPerspectiveCamera,
 } from "three";
-import { MeshProps, useFrame, useThree } from "@react-three/fiber";
+import {
+  createPortal,
+  MeshProps,
+  useFrame,
+  useThree,
+} from "@react-three/fiber";
 import { PerspectiveCamera, Text } from "@react-three/drei";
 import CameraModel from "./models/Camera";
 import { usePhotography } from "./utils/photo";
@@ -81,8 +86,8 @@ export function Camera() {
 
   return (
     <group name="camera" ref={group}>
-      <Tool name="Camera" keymap="p" pos={[0, 0]} distance={5} pinY t={0.1}>
-        <group scale={2.5}>
+      <Tool name="Camera" keymap="p" pos={[0, 0]} distance={0.3} pinY t={0.1}>
+        <group scale={0.05}>
           <Suspense fallback={<BoxApproximation />}>
             <CameraModel rotation-y={Math.PI} />
           </Suspense>
@@ -111,12 +116,10 @@ export function Camera() {
           </group>
         </group>
       </Tool>
-      <PerspectiveCamera
-        ref={cam}
-        position-z={0.9 * 4.4}
-        near={0.1}
-        far={150}
-      />
+      {createPortal(
+        <PerspectiveCamera ref={cam} near={0.1} far={200} />,
+        scene
+      )}
     </group>
   );
 }

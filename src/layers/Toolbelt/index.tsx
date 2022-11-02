@@ -10,6 +10,8 @@ import {
 import { ToolKey } from "./types/char";
 import { isTyping } from "../../logic";
 import ToolSwitcher from "./modifiers/ToolSwitcher";
+import { Scene } from "three";
+import { useFrame, useThree } from "@react-three/fiber";
 
 type Tool = {
   name: string;
@@ -23,6 +25,7 @@ type ToolbeltState = {
   revoke: (name: string) => void;
   hide: () => void;
   setActiveIndex: (i: number) => void;
+  hudScene: Scene;
 };
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
@@ -33,6 +36,9 @@ type ToolbeltProps = {
 
 export default function Toolbelt(props: ToolbeltProps) {
   const { children } = props;
+
+  const [hudScene] = useState(() => new Scene());
+  const { camera, scene } = useThree();
 
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number>();
@@ -80,7 +86,20 @@ export default function Toolbelt(props: ToolbeltProps) {
     revoke,
     hide: () => setActiveIndex(undefined),
     setActiveIndex,
+    hudScene,
   };
+
+  useFrame(
+    ({ gl }) =>
+      void ((gl.autoClear = false),
+      gl.clearDepth(),
+      gl.render(hudScene, camera)),
+    10
+  );
+  useFrame(
+    ({ gl }) => void ((gl.autoClear = true), gl.render(scene, camera)),
+    1
+  );
 
   return (
     <ToolbeltContext.Provider value={value}>

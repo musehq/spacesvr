@@ -5,6 +5,7 @@ import HUD from "./modifiers/HUD";
 import { useSpring, animated } from "@react-spring/three";
 import { useVisible } from "../../../logic/visible";
 import MobileDrag from "./modifiers/MobileDrag";
+import { createPortal } from "@react-three/fiber";
 
 type ToolProps = {
   children: ReactNode;
@@ -54,14 +55,19 @@ export function Tool(props: ToolProps) {
   }, [name, keymap, toolbelt.grant, toolbelt.revoke, toolbelt]);
 
   return (
-    <group name={`tool-${name}`}>
-      <HUD pos={pos} face={face} pinY={pinY} distance={distance} t={t}>
-        <MobileDrag enabled={ENABLED}>
-          <animated.group position-y={posY}>
-            {visible && children}
-          </animated.group>
-        </MobileDrag>
-      </HUD>
-    </group>
+    <>
+      {createPortal(
+        <group name={`tool-${name}`}>
+          <HUD pos={pos} face={face} pinY={pinY} distance={distance} t={t}>
+            <MobileDrag enabled={ENABLED}>
+              <animated.group position-y={posY}>
+                {visible && children}
+              </animated.group>
+            </MobileDrag>
+          </HUD>
+        </group>,
+        toolbelt.hudScene
+      )}
+    </>
   );
 }
