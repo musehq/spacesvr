@@ -43,7 +43,7 @@ export function Tool(props: ToolProps) {
   const ENABLED = toolbelt.activeTool?.name === name;
 
   const { posY, prog } = useSpring({
-    posY: ENABLED ? 0 : -30,
+    posY: ENABLED ? 0 : -3,
     prog: ENABLED ? 1 : 0,
   });
 
@@ -57,12 +57,10 @@ export function Tool(props: ToolProps) {
   return (
     <>
       {createPortal(
-        <group name={`tool-${name}`}>
+        <group name={`tool-${name}`} visible={visible}>
           <HUD pos={pos} face={face} pinY={pinY} distance={distance} t={t}>
             <MobileDrag enabled={ENABLED}>
-              <animated.group position-y={posY}>
-                {visible && children}
-              </animated.group>
+              <animated.group position-y={posY}>{children}</animated.group>
             </MobileDrag>
           </HUD>
         </group>,

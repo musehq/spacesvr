@@ -26,7 +26,7 @@ const AUDIO_URL =
 
 export function Camera() {
   const { device, paused } = useEnvironment();
-  const { scene } = useThree();
+  const { scene, camera } = useThree();
   const toolbelt = useToolbelt();
 
   const cam = useRef<ThrPerspectiveCamera>();
@@ -53,6 +53,7 @@ export function Camera() {
     cam.current.position.add(dummy);
     mesh.current.getWorldQuaternion(qummy);
     cam.current.rotation.setFromQuaternion(qummy);
+    cam.current.position.add(camera.position);
 
     // render to camera viewfinder
     state.gl.setRenderTarget(photo.target);
@@ -79,7 +80,7 @@ export function Camera() {
 
   const BoxApproximation = (props: MeshProps) => (
     <mesh position-z={-0.5} {...props}>
-      <boxBufferGeometry args={[4, 2, 1]} />
+      <boxBufferGeometry args={[3.5, 1.75, 1]} />
       <meshLambertMaterial color="gray" />
     </mesh>
   );

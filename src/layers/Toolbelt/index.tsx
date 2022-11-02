@@ -10,8 +10,9 @@ import {
 import { ToolKey } from "./types/char";
 import { isTyping } from "../../logic";
 import ToolSwitcher from "./modifiers/ToolSwitcher";
-import { Scene } from "three";
-import { useFrame, useThree } from "@react-three/fiber";
+import { PerspectiveCamera, Scene } from "three";
+import { createPortal, useFrame, useThree } from "@react-three/fiber";
+import Lights from "./ideas/Lights";
 
 type Tool = {
   name: string;
@@ -74,6 +75,12 @@ export default function Toolbelt(props: ToolbeltProps) {
           setActiveIndex(activeIndex === i ? undefined : i);
         }
       });
+      if (e.key == "Tab") {
+        setActiveIndex(
+          activeIndex === undefined ? 0 : (activeIndex + 1) % tools.length
+        );
+        e.preventDefault();
+      }
     };
     document.addEventListener("keydown", handleKeypress);
     return () => document.removeEventListener("keydown", handleKeypress);
@@ -89,21 +96,33 @@ export default function Toolbelt(props: ToolbeltProps) {
     hudScene,
   };
 
-  useFrame(
-    ({ gl }) =>
-      void ((gl.autoClear = false),
-      gl.clearDepth(),
-      gl.render(hudScene, camera)),
-    10
-  );
-  useFrame(
-    ({ gl }) => void ((gl.autoClear = true), gl.render(scene, camera)),
-    1
-  );
+  // hud render loop, use copied camera to render at 0,0,0
+  const [camClone] = useState(() => (camera as PerspectiveCamera).clone());
+  useFrame(({ gl }) => {
+    const _cam = camera as PerspectiveCamera;
+    camClone.position.set(0, 0, 0);
+    camClone.quaternion.copy(_cam.quaternion);
+    camClone.near = _cam.near;
+    camClone.far = _cam.far;
+    camClone.aspect = _cam.aspect;
+    camClone.fov = _cam.fov;
+    camClone.updateProjectionMatrix();
+
+    gl.autoClear = false;
+    gl.clearDepth();
+    gl.render(hudScene, camClone);
+  }, 10);
+
+  // main render loop
+  useFrame(({ gl }) => {
+    gl.autoClear = true;
+    gl.render(scene, camera);
+  }, 1);
 
   return (
     <ToolbeltContext.Provider value={value}>
       <ToolSwitcher />
+      {createPortal(<Lights />, hudScene)}
       {children}
     </ToolbeltContext.Provider>
   );
