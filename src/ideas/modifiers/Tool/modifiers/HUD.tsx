@@ -26,35 +26,29 @@ export default function HUD(props: HUDProps) {
 
   const group = useRef<Group>(null);
   const worldPos = useMemo(() => new Vector3(), []);
-  const locPos = useMemo(() => new Vector3(), []);
-  const dummyQuat = useMemo(() => new Quaternion(), []);
-  const slerpVec = useMemo(() => new Vector3(), []);
-  const lastLocPos = useMemo(() => new Vector3(), []);
+  const camPos = useMemo(() => new Vector3(), []);
+  const quat = useMemo(() => new Quaternion(), []);
 
   useFrame((_, delta) => {
     if (!group.current) return;
 
     if (pos !== undefined) {
-      const xPos = (pos[0] * 0.00008 * size.width) / 2;
-      const yPos = 0.04 * pos[1];
-      locPos.set(xPos * distance, yPos * distance, -distance);
-      dummyQuat.copy(camera.quaternion);
-      if (!pinY) {
-        dummyQuat.x = 0;
-        dummyQuat.z = 0;
-      }
-      locPos.applyQuaternion(dummyQuat);
-      slerpVec.copy(lastLocPos);
-      slerpVec.lerp(locPos, 1 - Math.pow(t, delta));
-      lastLocPos.copy(slerpVec);
-      locPos.copy(slerpVec);
+      // screen space
+      const x = pos[0] * 0.00008 * size.width * 0.5;
+      const y = pos[1] * 0.04;
+      camPos.set(x * distance, y * distance, -distance);
 
+      // rotate to match camera angle, slerp rotation
+      quat.slerp(camera.quaternion, 1 - Math.pow(t, delta));
+      if (!pinY) {
+        quat.x = 0;
+        quat.z = 0;
+      }
+      camPos.applyQuaternion(quat);
+
+      // match group position to camera
       group.current.getWorldPosition(worldPos);
-      slerpVec.copy(group.current.position);
-      const deltaPos = worldPos.sub(camera.position);
-      slerpVec.sub(deltaPos);
-      slerpVec.add(locPos);
-      group.current.position.copy(slerpVec);
+      group.current.position.sub(worldPos).add(camera.position).add(camPos);
     }
 
     if (face) {
