@@ -108,9 +108,14 @@ export default function Toolbelt(props: ToolbeltProps) {
     camClone.fov = _cam.fov;
     camClone.updateProjectionMatrix();
 
+    // for all intents and purposes, the hud items are placed in real world coordinates
+    // this is very important for raycasting
+    hudScene.position.set(0, 0, 0);
     gl.autoClear = false;
     gl.clearDepth();
     gl.render(hudScene, camClone);
+    hudScene.position.copy(camera.position);
+    hudScene.updateMatrixWorld(true);
   }, 10);
 
   // main render loop

@@ -53,7 +53,6 @@ export function Camera() {
     cam.current.position.add(dummy);
     mesh.current.getWorldQuaternion(qummy);
     cam.current.rotation.setFromQuaternion(qummy);
-    cam.current.position.add(camera.position);
 
     // render to camera viewfinder
     state.gl.setRenderTarget(photo.target);

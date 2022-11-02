@@ -73,7 +73,7 @@ export default function MobileDrag(props: MobileDrag) {
         startDrag.current = undefined;
       }
 
-      set({ offset: [(delta.x / aspect) * 8, (delta.y / aspect) * 8, 0] });
+      set({ offset: [(delta.x / aspect) * 0.1, (delta.y / aspect) * 0.1, 0] });
     };
 
     const endTouch = (e: TouchEvent) => {
