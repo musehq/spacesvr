@@ -13,6 +13,7 @@ import Title from "../ideas/Title";
 import Link from "../ideas/Link";
 import Analytics from "../ideas/Analytics";
 import WalkieTalkie from "../../src/tools/WalkieTalkie";
+import NavigatorTool from "../../src/tools/Navigator";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -42,7 +43,9 @@ export default function Workshop() {
   const [hovering, setHovering] = useState(false);
 
   return (
-    <StandardReality>
+    <StandardReality
+      environmentProps={{ dev: process.env.NODE_ENV === "development" }}
+    >
       <Analytics />
       <LostWorld />
       <group position-z={-2} position-x={-1}>
@@ -154,6 +157,7 @@ export default function Workshop() {
       />
       <Camera />
       <WalkieTalkie />
+      <NavigatorTool />
     </StandardReality>
   );
 }
