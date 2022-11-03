@@ -2,8 +2,9 @@ import { useThree } from "@react-three/fiber";
 import { ReactNode, useEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/three";
 import { useEnvironment, usePlayer } from "../../../../layers";
-import { Group, Vector2 } from "three";
+import { Group } from "three";
 import { useToolbelt } from "../../../../layers/Toolbelt";
+import { useDrag } from "../../../../logic/drag";
 
 type DraggableProps = {
   distance: number;
@@ -16,13 +17,12 @@ export default function Draggable(props: DraggableProps) {
 
   const toolbelt = useToolbelt();
   const { tools } = toolbelt;
-  const { viewport, size, clock, gl } = useThree();
+  const { viewport, size, gl } = useThree();
   const { raycaster } = usePlayer();
   const { device } = useEnvironment();
 
-  const startDrag = useRef<Vector2>();
-  const velocity = useRef<Vector2>(new Vector2());
-  const lastTouchRead = useRef(0);
+  const BOTTOM_EDGE_RANGE = size.height * 0.075;
+  const SIDE_EDGE_RANGE = size.width * 0.07;
 
   const group = useRef<Group>(null);
 
@@ -32,6 +32,7 @@ export default function Draggable(props: DraggableProps) {
     config: { mass: 4, friction: 90, tension: 800 },
   }));
 
+  // animate position on tool switches
   const lastActiveIndex = useRef<number>();
   useEffect(() => {
     const thisTool = tools.find((t) => t.name == name);
@@ -68,98 +69,57 @@ export default function Draggable(props: DraggableProps) {
     spring.offset,
   ]);
 
-  useEffect(() => {
-    if (!device.mobile) return;
-
-    const startTouch = (e: TouchEvent) => {
-      if (!group.current || !device.mobile) return;
-      const intersections = raycaster.intersectObject(group.current, true);
-      if (intersections.length > 0) {
-        const touch = e.touches[0];
-        startDrag.current = new Vector2(touch.clientX, touch.clientY);
-        lastTouchRead.current = clock.getElapsedTime();
-        e.stopPropagation();
-      }
-    };
-
-    const moveTouch = (e: TouchEvent) => {
-      if (!startDrag.current || !device.mobile) return;
-      const touch = e.touches[0];
-      const endDrag = new Vector2(touch.clientX, touch.clientY);
-      const delta = endDrag.sub(startDrag.current);
-      delta.y *= -1;
-
-      const time = clock.getElapsedTime();
-      const elapsed = time - lastTouchRead.current;
-      velocity.current.set(
-        delta.x / elapsed / aspect,
-        delta.y / elapsed / aspect
-      );
-      lastTouchRead.current = time;
-
-      set({
-        offset: [
-          (delta.x / aspect) * distance * 0.5,
-          (delta.y / aspect) * distance * (delta.y > 0 ? 0.1 : 0.35),
-          0,
-        ],
-      });
-    };
-
-    const endTouch = (e: TouchEvent) => {
-      if (!startDrag.current || !device.mobile) return;
-      const touch = e.changedTouches[0];
-
-      set({ offset: [0, 0, 0] });
-
-      // swipe down
-      const bottomEdgeDist = size.height - touch.clientY;
-      if (
-        bottomEdgeDist < size.height * 0.075 &&
-        velocity.current.y < 0 &&
-        Math.abs(velocity.current.y) > Math.abs(velocity.current.x * 0.5)
-      ) {
-        toolbelt.hide();
-        startDrag.current = undefined;
-        return;
-      }
-
-      // swipe left or right
-      const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
-      if (
-        xEdgeDist < size.width * 0.07 &&
-        Math.abs(velocity.current.x) > Math.abs(velocity.current.y * 0.5)
-      ) {
-        if (velocity.current.x > 0) {
-          toolbelt.next();
+  // handle the mobile drag for interactivity and gestures
+  const valid = useRef(false);
+  useDrag(
+    {
+      onStart: ({ e }) => {
+        if (!group.current || !device.mobile) return;
+        const intersections = raycaster.intersectObject(group.current, true);
+        if (intersections.length > 0) {
+          valid.current = true;
+          e.stopPropagation();
         } else {
-          toolbelt.prev();
+          valid.current = false;
         }
-        startDrag.current = undefined;
-        return;
-      }
-    };
+      },
+      onMove: ({ delta }) => {
+        if (!valid.current) return;
 
-    gl.domElement.addEventListener("touchstart", startTouch);
-    gl.domElement.addEventListener("touchmove", moveTouch);
-    gl.domElement.addEventListener("touchend", endTouch);
-    return () => {
-      gl.domElement.removeEventListener("touchstart", startTouch);
-      gl.domElement.removeEventListener("touchmove", moveTouch);
-      gl.domElement.removeEventListener("touchend", endTouch);
-    };
-  }, [
-    aspect,
-    clock,
-    device.mobile,
-    distance,
-    gl.domElement,
-    raycaster,
-    set,
-    size.height,
-    size.width,
-    toolbelt,
-  ]);
+        set({
+          offset: [
+            (delta.x / aspect) * distance * 0.5,
+            (-delta.y / aspect) * distance * (delta.y < 0 ? 0.1 : 0.35),
+            0,
+          ],
+        });
+      },
+      onEnd: ({ touch, delta }) => {
+        if (!valid.current) return;
+        set({ offset: [0, 0, 0] });
+        const bottomEdgeDist = size.height - touch.clientY;
+        const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
+
+        if (
+          bottomEdgeDist < BOTTOM_EDGE_RANGE &&
+          delta.y < 0 &&
+          Math.abs(delta.y) > Math.abs(delta.x * 0.5)
+        ) {
+          toolbelt.hide();
+        } else if (
+          xEdgeDist < SIDE_EDGE_RANGE &&
+          Math.abs(delta.x) > Math.abs(delta.y * 0.5)
+        ) {
+          if (delta.x > 0) {
+            toolbelt.next();
+          } else {
+            toolbelt.prev();
+          }
+        }
+      },
+    },
+    gl.domElement
+  );
 
   return (
     <group name="draggable" ref={group}>

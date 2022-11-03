@@ -1,88 +1,65 @@
-import { useCallback, useEffect, useRef } from "react";
-import { Vector2 } from "three";
+import { useRef } from "react";
 import { useToolbelt } from "../index";
 import { useThree } from "@react-three/fiber";
-import { useEnvironment } from "../../Environment";
+import { useDrag } from "../../../logic/drag";
 
 export default function ToolSwitcher() {
   const toolbelt = useToolbelt();
-  const { viewport, size, clock, gl } = useThree();
-  const { device } = useEnvironment();
+  const { size, gl } = useThree();
 
-  const startDrag = useRef<Vector2>();
-  const velocity = useRef<Vector2>(new Vector2());
-  const lastTouchRead = useRef(0);
-  const switched = useRef(false);
+  const registered = useRef(false);
+  const type = useRef<"side" | "bottom">("side");
 
-  const aspect = size.width / viewport.width;
+  const DETECT_RANGE_X = screen.width * 0.04;
+  const DRAG_RANGE_X = screen.width * 0.08;
 
-  const RANGE_X = screen.width * 0.075; // 7.5% on each edge
-  const RANGE_Y = screen.height * 0.085;
+  const DETECT_RANGE_Y = screen.height * 0.085;
+  const DRAG_RANGE_Y = screen.height * 0.17;
 
-  const moveTouch = useCallback(
-    (e: TouchEvent) => {
-      if (!startDrag.current || !device.mobile || switched.current) return;
-      const touch = e.touches[0];
-      const endDrag = new Vector2(touch.clientX, touch.clientY);
-      const delta = endDrag.sub(startDrag.current);
+  useDrag(
+    {
+      onStart: ({ e, touch }) => {
+        if (toolbelt.activeTool !== undefined) return;
 
-      const time = clock.getElapsedTime();
-      const elapsed = time - lastTouchRead.current;
-      velocity.current.set(
-        delta.x / elapsed / aspect,
-        delta.y / elapsed / aspect
-      );
-      lastTouchRead.current = time;
+        const inBottomEdge = size.height - touch.clientY < DETECT_RANGE_Y;
+        const inSideEdge =
+          Math.min(touch.clientX, size.width - touch.clientX) < DETECT_RANGE_X;
 
-      if (delta.y < -RANGE_Y * 2 && velocity.current.y < 0) {
-        switched.current = true;
-        if (toolbelt.activeTool) {
-          const i = toolbelt.tools.findIndex(
-            (t) => t.name === toolbelt.activeTool?.name
-          );
-          const newIndex = (i + 1) % toolbelt.tools.length;
-          toolbelt.setActiveIndex(newIndex);
-        } else {
-          toolbelt.setActiveIndex(0);
+        // ignore corners or no match
+        if (inBottomEdge == inSideEdge) return;
+        if (inBottomEdge) type.current = "bottom";
+        if (inSideEdge) type.current = "side";
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      },
+      onMove: ({ delta }) => {
+        if (type.current == "bottom" && delta.y < -DRAG_RANGE_Y) {
+          registered.current = true;
+          if (toolbelt.activeTool) {
+            const i = toolbelt.tools.findIndex(
+              (t) => t.name === toolbelt.activeTool?.name
+            );
+            const newIndex = (i + 1) % toolbelt.tools.length;
+            toolbelt.setActiveIndex(newIndex);
+          } else {
+            toolbelt.setActiveIndex(0);
+          }
         }
-      }
+
+        if (type.current == "side" && Math.abs(delta.x) > DRAG_RANGE_X) {
+          registered.current = true;
+          if (delta.x > 0) {
+            toolbelt.next();
+          } else {
+            toolbelt.prev();
+          }
+        }
+      },
     },
-    [RANGE_X, clock, device.mobile, toolbelt]
+    gl.domElement
   );
-
-  useEffect(() => {
-    const startTouch = (e: TouchEvent) => {
-      if (!device.mobile || toolbelt.activeTool !== undefined) return;
-      switched.current = false;
-      startDrag.current = undefined;
-      const touch = e.touches[0];
-      // get bottom edge
-      const inEdge = size.height - touch.clientY < RANGE_Y;
-      if (!inEdge) return;
-      startDrag.current = new Vector2(touch.clientX, touch.clientY);
-      lastTouchRead.current = clock.getElapsedTime();
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    };
-
-    gl.domElement.addEventListener("touchstart", startTouch);
-    gl.domElement.addEventListener("touchmove", moveTouch);
-    return () => {
-      gl.domElement.removeEventListener("touchstart", startTouch);
-      gl.domElement.removeEventListener("touchmove", moveTouch);
-    };
-  }, [
-    device,
-    aspect,
-    gl.domElement,
-    clock,
-    size.width,
-    size.height,
-    toolbelt,
-    RANGE_X,
-    moveTouch,
-  ]);
 
   return null;
 }
