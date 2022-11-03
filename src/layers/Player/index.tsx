@@ -79,19 +79,17 @@ export function Player(props: PlayerLayer) {
     );
   }, []);
 
-  // due to use-cannon bugs, we have to manually check for the active subscription
-  const activeSubId = useRef<number>();
   useEffect(() => {
-    const subId = Math.random();
-    activeSubId.current = subId;
-    bodyApi.position.subscribe((p) => {
-      if (activeSubId.current !== subId) return;
-      position.current.fromArray(p);
-    });
-    bodyApi.velocity.subscribe((v) => {
-      if (activeSubId.current !== subId) return;
-      velocity.current.fromArray(v);
-    });
+    const unsubPos = bodyApi.position.subscribe((p) =>
+      position.current.fromArray(p)
+    );
+    const unsubVel = bodyApi.velocity.subscribe((v) =>
+      velocity.current.fromArray(v)
+    );
+    return () => {
+      unsubPos();
+      unsubVel();
+    };
   }, [bodyApi, bodyApi.position, bodyApi.velocity]);
 
   useFrame(() => {
