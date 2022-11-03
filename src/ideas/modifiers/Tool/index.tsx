@@ -2,9 +2,9 @@ import { ReactNode, useEffect } from "react";
 import { ToolKey } from "../../../layers/Toolbelt/types/char";
 import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
-import { useSpring, animated } from "@react-spring/three";
+import { useSpring } from "@react-spring/three";
 import { useVisible } from "../../../logic/visible";
-import MobileDrag from "./modifiers/MobileDrag";
+import Draggable from "./modifiers/Draggable";
 import { createPortal } from "@react-three/fiber";
 
 type ToolProps = {
@@ -13,7 +13,6 @@ type ToolProps = {
   keymap: ToolKey;
   pos?: [number, number];
   face?: boolean;
-  distance?: number;
   pinY?: boolean;
   t?: number;
 };
@@ -35,33 +34,30 @@ export function Tool(props: ToolProps) {
     pos,
     face = true,
     pinY = false,
-    distance = 1,
     t = 0.01,
   } = props;
 
   const toolbelt = useToolbelt();
   const ENABLED = toolbelt.activeTool?.name === name;
 
-  const { posY, prog } = useSpring({
-    posY: ENABLED ? 0 : -3,
-    prog: ENABLED ? 1 : 0,
-  });
+  const DISTANCE = 1;
 
+  const { prog } = useSpring({ prog: ENABLED ? 1 : 0 });
   const visible = useVisible(prog);
 
   useEffect(() => {
     toolbelt.grant(name, keymap);
     return () => toolbelt.revoke(name);
-  }, [name, keymap, toolbelt.grant, toolbelt.revoke, toolbelt]);
+  }, [name, keymap, toolbelt.grant, toolbelt.revoke]);
 
   return (
     <>
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
-          <HUD pos={pos} face={face} pinY={pinY} distance={distance} t={t}>
-            <MobileDrag enabled={ENABLED}>
-              <animated.group position-y={posY}>{children}</animated.group>
-            </MobileDrag>
+          <HUD pos={pos} face={face} pinY={pinY} t={t} distance={DISTANCE}>
+            <Draggable distance={DISTANCE} name={name}>
+              {children}
+            </Draggable>
           </HUD>
         </group>,
         toolbelt.hudScene

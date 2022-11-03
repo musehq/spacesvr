@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Vector2 } from "three";
-import { useToolbelt } from "../../index";
+import { useToolbelt } from "../index";
 import { useThree } from "@react-three/fiber";
-import { useEnvironment } from "../../../Environment";
+import { useEnvironment } from "../../Environment";
 
 export default function ToolSwitcher() {
   const toolbelt = useToolbelt();
@@ -17,7 +17,7 @@ export default function ToolSwitcher() {
   const aspect = size.width / viewport.width;
 
   const RANGE_X = screen.width * 0.075; // 7.5% on each edge
-  const RANGE_Y = screen.height * 0.07;
+  const RANGE_Y = screen.height * 0.085;
 
   const moveTouch = useCallback(
     (e: TouchEvent) => {

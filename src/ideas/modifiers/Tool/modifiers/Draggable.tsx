@@ -1,17 +1,21 @@
 import { useThree } from "@react-three/fiber";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/three";
 import { useEnvironment, usePlayer } from "../../../../layers";
 import { Group, Vector2 } from "three";
 import { useToolbelt } from "../../../../layers/Toolbelt";
-import { useLimitedFrame } from "../../../../logic";
 
-type MobileDrag = { enabled: boolean; children: ReactNode | ReactNode[] };
+type DraggableProps = {
+  distance: number;
+  name: string;
+  children: ReactNode | ReactNode[];
+};
 
-export default function MobileDrag(props: MobileDrag) {
-  const { enabled, children } = props;
+export default function Draggable(props: DraggableProps) {
+  const { distance, name, children } = props;
 
   const toolbelt = useToolbelt();
+  const { tools } = toolbelt;
   const { viewport, size, clock, gl } = useThree();
   const { raycaster } = usePlayer();
   const { device } = useEnvironment();
@@ -25,26 +29,50 @@ export default function MobileDrag(props: MobileDrag) {
   const aspect = size.width / viewport.width;
   const [spring, set] = useSpring(() => ({
     offset: [0, 0, 0] as [number, number, number],
-    config: { mass: 2, friction: 40, tension: 800 },
+    config: { mass: 4, friction: 90, tension: 800 },
   }));
 
-  const [text] = useState(document.createElement("h1"));
+  const lastActiveIndex = useRef<number>();
+  useEffect(() => {
+    const thisTool = tools.find((t) => t.name == name);
+    if (!thisTool) return;
+    const thisIndex = tools.indexOf(thisTool);
+    const activeIndex = toolbelt.activeIndex;
+    if (thisIndex == -1) return;
+
+    const x = size.width * 0.0015;
+
+    if (activeIndex === undefined) {
+      set({ offset: [0, -1, distance] });
+    } else if (thisIndex === activeIndex) {
+      if (lastActiveIndex.current !== undefined) {
+        spring.offset.update({ immediate: true });
+        set({ offset: [toolbelt.direction === "right" ? -x : x, 0, distance] });
+        spring.offset.finish();
+        spring.offset.update({ immediate: false });
+      }
+      set({ offset: [0, 0, 0] });
+    } else {
+      set({ offset: [toolbelt.direction === "right" ? x : -x, 0, distance] });
+    }
+
+    lastActiveIndex.current = activeIndex;
+  }, [
+    name,
+    set,
+    toolbelt.activeIndex,
+    tools,
+    size.width,
+    toolbelt.direction,
+    distance,
+    spring.offset,
+  ]);
 
   useEffect(() => {
-    text.style.position = "absolute";
-    text.style.top = "" + (enabled ? 2 : 0) + "em";
-    text.style.left = "0";
-    text.style.color = "red";
-    text.style.zIndex = "200";
-    document.body.appendChild(text);
-    return () => {
-      document.body.removeChild(text);
-    };
-  }, [enabled, text]);
+    if (!device.mobile) return;
 
-  useEffect(() => {
     const startTouch = (e: TouchEvent) => {
-      if (!group.current || !device.mobile || !enabled) return;
+      if (!group.current || !device.mobile) return;
       const intersections = raycaster.intersectObject(group.current, true);
       if (intersections.length > 0) {
         const touch = e.touches[0];
@@ -69,32 +97,37 @@ export default function MobileDrag(props: MobileDrag) {
       );
       lastTouchRead.current = time;
 
-      const vel = velocity.current.length().toFixed(2);
-      console.log(vel);
+      set({
+        offset: [
+          (delta.x / aspect) * distance * 0.5,
+          (delta.y / aspect) * distance * (delta.y > 0 ? 0.1 : 0.35),
+          0,
+        ],
+      });
+    };
 
-      set({ offset: [(delta.x / aspect) * 0.2, (delta.y / aspect) * 0.1, 0] });
+    const endTouch = (e: TouchEvent) => {
+      if (!startDrag.current || !device.mobile) return;
+      const touch = e.changedTouches[0];
 
-      const bottomEdgeDist = size.height - touch.clientY;
-      const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
+      set({ offset: [0, 0, 0] });
 
       // swipe down
+      const bottomEdgeDist = size.height - touch.clientY;
       if (
         bottomEdgeDist < size.height * 0.075 &&
         velocity.current.y < 0 &&
         Math.abs(velocity.current.y) > Math.abs(velocity.current.x * 0.5)
       ) {
-        text.innerText = "swipe down";
         toolbelt.hide();
-        set({ offset: [0, 0, 0] });
         startDrag.current = undefined;
         return;
       }
 
-      text.innerText = "" + bottomEdgeDist;
-
       // swipe left or right
+      const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
       if (
-        xEdgeDist < size.width * 0.025 &&
+        xEdgeDist < size.width * 0.07 &&
         Math.abs(velocity.current.x) > Math.abs(velocity.current.y * 0.5)
       ) {
         if (velocity.current.x > 0) {
@@ -107,16 +140,6 @@ export default function MobileDrag(props: MobileDrag) {
       }
     };
 
-    const endTouch = (e: TouchEvent) => {
-      if (!startDrag.current || !device.mobile) return;
-      const touch = e.changedTouches[0];
-      const endDrag = new Vector2(touch.clientX, touch.clientY);
-      const delta = endDrag.sub(startDrag.current);
-      console.log("final offset:");
-      console.log(delta.length().toFixed(4));
-      set({ offset: [0, 0, 0] });
-    };
-
     gl.domElement.addEventListener("touchstart", startTouch);
     gl.domElement.addEventListener("touchmove", moveTouch);
     gl.domElement.addEventListener("touchend", endTouch);
@@ -126,29 +149,20 @@ export default function MobileDrag(props: MobileDrag) {
       gl.domElement.removeEventListener("touchend", endTouch);
     };
   }, [
-    raycaster,
-    device,
-    set,
     aspect,
-    gl.domElement,
     clock,
-    size.width,
+    device.mobile,
+    distance,
+    gl.domElement,
+    raycaster,
+    set,
     size.height,
+    size.width,
     toolbelt,
-    enabled,
-    text,
   ]);
 
-  useLimitedFrame(1, () => {
-    if (!enabled) {
-      set({ offset: [0, 0, 0] });
-    }
-  });
-
-  if (!device.mobile) return <>{children}</>;
-
   return (
-    <group name="mobile-drag" ref={group}>
+    <group name="draggable" ref={group}>
       <animated.group position={spring.offset}>{children}</animated.group>
     </group>
   );

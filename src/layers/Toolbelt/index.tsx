@@ -9,7 +9,7 @@ import {
 } from "react";
 import { ToolKey } from "./types/char";
 import { isTyping } from "../../logic";
-import ToolSwitcher from "./modifiers/ToolSwitcher";
+import ToolSwitcher from "./ideas/ToolSwitcher";
 import { PerspectiveCamera, Scene } from "three";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import Lights from "./ideas/Lights";
@@ -27,8 +27,10 @@ type ToolbeltState = {
   hide: () => void;
   next: () => void;
   prev: () => void;
+  activeIndex: number | undefined;
   setActiveIndex: (i: number) => void;
   hudScene: Scene;
+  direction: "left" | "right";
 };
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
@@ -45,6 +47,8 @@ export default function Toolbelt(props: ToolbeltProps) {
 
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number>();
+
+  const [direction, setDirection] = useState<"left" | "right">("right");
 
   const grant = useCallback(
     (name: string, key: ToolKey) => {
@@ -78,9 +82,10 @@ export default function Toolbelt(props: ToolbeltProps) {
         }
       });
       if (e.key == "Tab") {
-        setActiveIndex(
-          activeIndex === undefined ? 0 : (activeIndex + 1) % tools.length
-        );
+        setDirection("right");
+        if (activeIndex === undefined) setActiveIndex(0);
+        else if (activeIndex === tools.length - 1) setActiveIndex(undefined);
+        else setActiveIndex((activeIndex + 1) % tools.length);
         e.preventDefault();
       }
     };
@@ -88,25 +93,36 @@ export default function Toolbelt(props: ToolbeltProps) {
     return () => document.removeEventListener("keydown", handleKeypress);
   }, [activeIndex, tools]);
 
+  const next = useCallback(() => {
+    setDirection("right");
+    setActiveIndex((actInd) =>
+      actInd !== undefined ? (actInd + 1) % tools.length : 0
+    );
+  }, [tools]);
+
+  const prev = useCallback(() => {
+    setDirection("left");
+    setActiveIndex((actInd) =>
+      actInd !== undefined ? (actInd - 1 + tools.length) % tools.length : 0
+    );
+  }, [tools]);
+
+  const hide = useCallback(() => {
+    setActiveIndex(undefined);
+  }, []);
+
   const value = {
     tools,
     activeTool: activeIndex !== undefined ? tools[activeIndex] : undefined,
     grant,
     revoke,
-    hide: () => setActiveIndex(undefined),
-    next: () =>
-      setActiveIndex(
-        activeIndex !== undefined ? (activeIndex + 1) % tools.length : 0
-      ),
-    prev: () => {
-      setActiveIndex(
-        activeIndex !== undefined
-          ? (activeIndex - 1 + tools.length) % tools.length
-          : 0
-      );
-    },
+    hide,
+    next,
+    prev,
+    activeIndex,
     setActiveIndex,
     hudScene,
+    direction,
   };
 
   // hud render loop, use copied camera to render at 0,0,0
