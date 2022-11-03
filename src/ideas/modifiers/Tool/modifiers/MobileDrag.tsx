@@ -1,5 +1,5 @@
 import { useThree } from "@react-three/fiber";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { animated, useSpring } from "@react-spring/three";
 import { useEnvironment, usePlayer } from "../../../../layers";
 import { Group, Vector2 } from "three";
@@ -28,6 +28,20 @@ export default function MobileDrag(props: MobileDrag) {
     config: { mass: 2, friction: 40, tension: 800 },
   }));
 
+  const [text] = useState(document.createElement("h1"));
+
+  useEffect(() => {
+    text.style.position = "absolute";
+    text.style.top = "" + (enabled ? 2 : 0) + "em";
+    text.style.left = "0";
+    text.style.color = "red";
+    text.style.zIndex = "200";
+    document.body.appendChild(text);
+    return () => {
+      document.body.removeChild(text);
+    };
+  }, [enabled, text]);
+
   useEffect(() => {
     const startTouch = (e: TouchEvent) => {
       if (!group.current || !device.mobile || !enabled) return;
@@ -36,9 +50,7 @@ export default function MobileDrag(props: MobileDrag) {
         const touch = e.touches[0];
         startDrag.current = new Vector2(touch.clientX, touch.clientY);
         lastTouchRead.current = clock.getElapsedTime();
-        e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
       }
     };
 
@@ -51,29 +63,48 @@ export default function MobileDrag(props: MobileDrag) {
 
       const time = clock.getElapsedTime();
       const elapsed = time - lastTouchRead.current;
-      velocity.current.set(delta.x / elapsed, delta.y / elapsed);
-      lastTouchRead.current = time;
-      console.log(velocity.current.length().toFixed(4));
-
-      const edgeDist = Math.min(
-        Math.abs(touch.clientX),
-        Math.abs(size.width - touch.clientX),
-        Math.abs(touch.clientY),
-        Math.abs(size.height - touch.clientY)
+      velocity.current.set(
+        delta.x / elapsed / aspect,
+        delta.y / elapsed / aspect
       );
+      lastTouchRead.current = time;
 
+      const vel = velocity.current.length().toFixed(2);
+      console.log(vel);
+
+      set({ offset: [(delta.x / aspect) * 0.2, (delta.y / aspect) * 0.1, 0] });
+
+      const bottomEdgeDist = size.height - touch.clientY;
+      const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
+
+      // swipe down
       if (
-        edgeDist < 80 &&
-        velocity.current.length() > 20000 &&
+        bottomEdgeDist < size.height * 0.075 &&
         velocity.current.y < 0 &&
-        Math.abs(velocity.current.y) > Math.abs(velocity.current.x * 0.1)
+        Math.abs(velocity.current.y) > Math.abs(velocity.current.x * 0.5)
       ) {
+        text.innerText = "swipe down";
         toolbelt.hide();
         set({ offset: [0, 0, 0] });
         startDrag.current = undefined;
+        return;
       }
 
-      set({ offset: [(delta.x / aspect) * 0.1, (delta.y / aspect) * 0.1, 0] });
+      text.innerText = "" + bottomEdgeDist;
+
+      // swipe left or right
+      if (
+        xEdgeDist < size.width * 0.025 &&
+        Math.abs(velocity.current.x) > Math.abs(velocity.current.y * 0.5)
+      ) {
+        if (velocity.current.x > 0) {
+          toolbelt.next();
+        } else {
+          toolbelt.prev();
+        }
+        startDrag.current = undefined;
+        return;
+      }
     };
 
     const endTouch = (e: TouchEvent) => {
@@ -105,6 +136,7 @@ export default function MobileDrag(props: MobileDrag) {
     size.height,
     toolbelt,
     enabled,
+    text,
   ]);
 
   useLimitedFrame(1, () => {

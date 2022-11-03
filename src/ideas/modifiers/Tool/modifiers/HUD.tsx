@@ -37,7 +37,10 @@ export default function HUD(props: HUDProps) {
       group.current.position.set(x * distance, y * distance, -distance);
 
       // rotate to match camera angle, slerp rotation
-      quat.slerp(camera.quaternion, 1 - Math.pow(t, delta));
+      quat.slerp(
+        camera.quaternion,
+        1 - Math.pow(t * 0.0005 * size.width, delta)
+      );
       if (!pinY) {
         quat.x = 0;
         quat.z = 0;

@@ -17,6 +17,7 @@ export default function ToolSwitcher() {
   const aspect = size.width / viewport.width;
 
   const RANGE_X = screen.width * 0.075; // 7.5% on each edge
+  const RANGE_Y = screen.height * 0.07;
 
   const moveTouch = useCallback(
     (e: TouchEvent) => {
@@ -27,16 +28,13 @@ export default function ToolSwitcher() {
 
       const time = clock.getElapsedTime();
       const elapsed = time - lastTouchRead.current;
-      velocity.current.set(delta.x / elapsed, delta.y / elapsed);
+      velocity.current.set(
+        delta.x / elapsed / aspect,
+        delta.y / elapsed / aspect
+      );
       lastTouchRead.current = time;
-      console.log(velocity.current.length().toFixed(4));
 
-      console.log(delta.x, Math.abs(velocity.current.x), RANGE_X * 2);
-
-      if (
-        (Math.abs(delta.x) > RANGE_X && velocity.current.x > 15000) ||
-        Math.abs(delta.x) > RANGE_X * 2
-      ) {
+      if (delta.y < -RANGE_Y * 2 && velocity.current.y < 0) {
         switched.current = true;
         if (toolbelt.activeTool) {
           const i = toolbelt.tools.findIndex(
@@ -54,12 +52,12 @@ export default function ToolSwitcher() {
 
   useEffect(() => {
     const startTouch = (e: TouchEvent) => {
-      if (!device.mobile) return;
+      if (!device.mobile || toolbelt.activeTool !== undefined) return;
       switched.current = false;
       startDrag.current = undefined;
       const touch = e.touches[0];
-      const inEdge =
-        touch.clientX < RANGE_X || size.width - touch.clientX < RANGE_X;
+      // get bottom edge
+      const inEdge = size.height - touch.clientY < RANGE_Y;
       if (!inEdge) return;
       startDrag.current = new Vector2(touch.clientX, touch.clientY);
       lastTouchRead.current = clock.getElapsedTime();
@@ -68,10 +66,10 @@ export default function ToolSwitcher() {
       e.stopImmediatePropagation();
     };
 
-    gl.domElement.addEventListener("touchstart", startTouch, true);
+    gl.domElement.addEventListener("touchstart", startTouch);
     gl.domElement.addEventListener("touchmove", moveTouch);
     return () => {
-      gl.domElement.removeEventListener("touchstart", startTouch, true);
+      gl.domElement.removeEventListener("touchstart", startTouch);
       gl.domElement.removeEventListener("touchmove", moveTouch);
     };
   }, [

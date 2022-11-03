@@ -25,6 +25,8 @@ type ToolbeltState = {
   grant: (name: string, key: ToolKey) => void;
   revoke: (name: string) => void;
   hide: () => void;
+  next: () => void;
+  prev: () => void;
   setActiveIndex: (i: number) => void;
   hudScene: Scene;
 };
@@ -92,6 +94,17 @@ export default function Toolbelt(props: ToolbeltProps) {
     grant,
     revoke,
     hide: () => setActiveIndex(undefined),
+    next: () =>
+      setActiveIndex(
+        activeIndex !== undefined ? (activeIndex + 1) % tools.length : 0
+      ),
+    prev: () => {
+      setActiveIndex(
+        activeIndex !== undefined
+          ? (activeIndex - 1 + tools.length) % tools.length
+          : 0
+      );
+    },
     setActiveIndex,
     hudScene,
   };
