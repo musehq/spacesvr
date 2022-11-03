@@ -26,7 +26,7 @@ const AUDIO_URL =
 
 export function Camera() {
   const { device, paused } = useEnvironment();
-  const { scene, camera } = useThree();
+  const { scene } = useThree();
   const toolbelt = useToolbelt();
 
   const cam = useRef<ThrPerspectiveCamera>();
@@ -111,7 +111,7 @@ export function Camera() {
               outlineColor="black"
               outlineWidth={0.01}
             >
-              click to take a picture
+              {`${device.mobile ? "tap" : "click"} to take a picture`}
             </Text>
           </group>
         </group>

@@ -34,6 +34,7 @@ export const useDrag = (
   const [downPoint] = useState(new Vector2());
   const [dragPoint] = useState(new Vector2());
   const [velocity] = useState(new Vector2());
+  const [delta] = useState(new Vector2());
 
   const lastTouchRead = useRef(0);
 
@@ -71,24 +72,26 @@ export const useDrag = (
 
   const endDrag = useCallback(
     (e: TouchEvent) => {
-      const touch = e.touches[0];
+      const touch = e.changedTouches[0];
       dragPoint.set(touch.clientX, touch.clientY);
-      const delta = dragPoint.sub(downPoint);
+      delta.copy(dragPoint).sub(downPoint);
 
       if (callback.onEnd) {
         callback.onEnd({ e, touch, downPoint, dragPoint, velocity, delta });
       }
     },
-    [callback, downPoint, dragPoint, velocity]
+    [callback, delta, downPoint, dragPoint, velocity]
   );
 
   useEffect(() => {
     const elem = (domElem || document) as Document;
     elem.addEventListener("touchstart", startDrag);
     elem.addEventListener("touchmove", moveDrag);
+    elem.addEventListener("touchend", endDrag);
     return () => {
       elem.removeEventListener("touchstart", startDrag);
       elem.removeEventListener("touchmove", moveDrag);
+      elem.removeEventListener("touchend", endDrag);
     };
   }, [domElem, moveDrag, startDrag]);
 

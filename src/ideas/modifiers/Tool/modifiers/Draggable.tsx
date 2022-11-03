@@ -35,11 +35,19 @@ export default function Draggable(props: DraggableProps) {
   // animate position on tool switches
   const lastActiveIndex = useRef<number>();
   useEffect(() => {
+    if (lastActiveIndex.current === toolbelt.activeIndex) return;
+
     const thisTool = tools.find((t) => t.name == name);
-    if (!thisTool) return;
+    if (!thisTool) {
+      lastActiveIndex.current = toolbelt.activeIndex;
+      return;
+    }
     const thisIndex = tools.indexOf(thisTool);
     const activeIndex = toolbelt.activeIndex;
-    if (thisIndex == -1) return;
+    if (thisIndex == -1) {
+      lastActiveIndex.current = activeIndex;
+      return;
+    }
 
     const x = size.width * 0.0015;
 
@@ -96,13 +104,14 @@ export default function Draggable(props: DraggableProps) {
       },
       onEnd: ({ touch, delta }) => {
         if (!valid.current) return;
+
         set({ offset: [0, 0, 0] });
         const bottomEdgeDist = size.height - touch.clientY;
         const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
 
         if (
           bottomEdgeDist < BOTTOM_EDGE_RANGE &&
-          delta.y < 0 &&
+          delta.y > 0 &&
           Math.abs(delta.y) > Math.abs(delta.x * 0.5)
         ) {
           toolbelt.hide();

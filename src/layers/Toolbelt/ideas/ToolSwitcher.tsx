@@ -16,9 +16,11 @@ export default function ToolSwitcher() {
   const DETECT_RANGE_Y = screen.height * 0.085;
   const DRAG_RANGE_Y = screen.height * 0.17;
 
+  const valid = useRef(false);
   useDrag(
     {
       onStart: ({ e, touch }) => {
+        valid.current = false;
         if (toolbelt.activeTool !== undefined) return;
 
         const inBottomEdge = size.height - touch.clientY < DETECT_RANGE_Y;
@@ -30,11 +32,15 @@ export default function ToolSwitcher() {
         if (inBottomEdge) type.current = "bottom";
         if (inSideEdge) type.current = "side";
 
+        valid.current = true;
+        registered.current = false;
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
       },
       onMove: ({ delta }) => {
+        if (!valid.current || registered.current) return;
+
         if (type.current == "bottom" && delta.y < -DRAG_RANGE_Y) {
           registered.current = true;
           if (toolbelt.activeTool) {
