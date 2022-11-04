@@ -1,17 +1,23 @@
 import { Tool } from "../../ideas/modifiers/Tool";
 import { RoundedBox } from "@react-three/drei";
+import { Image } from "../../ideas/media/Image";
 
 export default function NavigatorTool() {
   const TOOL_NAME = "Navigator";
 
+  const LOGO_URL =
+    "https://d27rt3a60hh1lx.cloudfront.net/images/muselogogray.png";
+
   return (
-    <Tool name={TOOL_NAME} keymap="n" pos={[0, 0]} orderIndex={-100}>
+    <Tool name={TOOL_NAME} keymap="n" pos={[-0.7, -0.7]} orderIndex={-100} face>
       <RoundedBox
-        args={[0.35, 0.75, 0.1]}
-        radius={Math.min(0.25, 0.75, 0.1) * 0.5}
+        position-z={-0.075 / 2 - 0.001}
+        args={[0.3, 0.6, 0.075]}
+        radius={Math.min(0.3, 0.6, 0.075) * 0.5}
       >
-        <meshStandardMaterial color="purple" />
+        <meshStandardMaterial color="#fae0fd" />
       </RoundedBox>
+      <Image src={LOGO_URL} size={0.15} />
     </Tool>
   );
 }

@@ -6,6 +6,7 @@ import { useSpring } from "@react-spring/three";
 import { useVisible } from "../../../logic/visible";
 import Draggable from "./modifiers/Draggable";
 import { createPortal } from "@react-three/fiber";
+import { FacePlayer } from "../FacePlayer";
 
 type ToolProps = {
   children: ReactNode;
@@ -32,7 +33,7 @@ export function Tool(props: ToolProps) {
     children,
     name,
     keymap,
-    pos,
+    pos = [0, 0],
     face = true,
     pinY = false,
     t = 0.01,
@@ -56,9 +57,14 @@ export function Tool(props: ToolProps) {
     <>
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
-          <HUD pos={pos} face={face} pinY={pinY} t={t} distance={DISTANCE}>
-            <Draggable distance={DISTANCE} name={name} enabled={ENABLED}>
-              {children}
+          <HUD pos={pos} pinY={pinY} t={t} distance={DISTANCE}>
+            <Draggable
+              distance={DISTANCE}
+              name={name}
+              enabled={ENABLED}
+              pos={pos}
+            >
+              <FacePlayer enabled={face}>{children}</FacePlayer>
             </Draggable>
           </HUD>
         </group>,

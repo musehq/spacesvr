@@ -1,11 +1,11 @@
 import { ReactNode, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Group, Quaternion } from "three";
+import { Group, PerspectiveCamera, Quaternion } from "three";
+import { getHudPos } from "../logic/screen";
 
 type HUDProps = {
   children?: ReactNode | ReactNode[];
-  pos?: [number, number];
-  face?: boolean;
+  pos: [number, number];
   distance?: number;
   pinY?: boolean;
   t?: number;
@@ -17,14 +17,7 @@ type HUDProps = {
  * @constructor
  */
 export default function HUD(props: HUDProps) {
-  const {
-    children,
-    pos = [0, 0],
-    face = true,
-    pinY = false,
-    distance = 1,
-    t = 1,
-  } = props;
+  const { children, pos, pinY = false, distance = 1, t = 1 } = props;
 
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
@@ -35,9 +28,8 @@ export default function HUD(props: HUDProps) {
   useFrame((_, delta) => {
     if (!group.current) return;
 
-    // screen space
-    const x = pos[0] * 0.00008 * size.width * 0.5;
-    const y = pos[1] * 0.04;
+    // calculate x position based on camera and screen width
+    const { x, y } = getHudPos(pos, camera as PerspectiveCamera, distance);
     group.current.position.set(x * distance, y * distance, -distance);
 
     // rotate to match camera angle, slerp rotation
@@ -47,10 +39,6 @@ export default function HUD(props: HUDProps) {
       quat.z = 0;
     }
     group.current.position.applyQuaternion(quat);
-
-    if (face) {
-      group.current.quaternion.copy(camera.quaternion);
-    }
   });
 
   return (

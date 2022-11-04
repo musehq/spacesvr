@@ -2,25 +2,29 @@ import { useThree } from "@react-three/fiber";
 import { ReactNode, useEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/three";
 import { useEnvironment, usePlayer } from "../../../../layers";
-import { Group } from "three";
+import { Group, PerspectiveCamera } from "three";
 import { useToolbelt } from "../../../../layers/Toolbelt";
 import { useDrag } from "../../../../logic/drag";
+import { getHudPos } from "../logic/screen";
 
 type DraggableProps = {
   distance: number;
   name: string;
   enabled: boolean;
+  pos: [number, number];
   children: ReactNode | ReactNode[];
 };
 
 export default function Draggable(props: DraggableProps) {
-  const { distance, name, enabled, children } = props;
+  const { distance, name, enabled, pos, children } = props;
 
   const toolbelt = useToolbelt();
   const { tools } = toolbelt;
   const { viewport, size, gl } = useThree();
   const { raycaster } = usePlayer();
   const { device } = useEnvironment();
+
+  const camera = useThree((state) => state.camera);
 
   const DOWN_SWIPE_DIST = size.height * 0.28;
   const SIDE_SWIPE_DIST = size.width * 0.3;
@@ -41,20 +45,30 @@ export default function Draggable(props: DraggableProps) {
     const activeIndex = toolbelt.activeIndex;
     if (thisIndex == -1) return;
 
-    const x = size.width * 0.0015;
+    const _cam = camera as PerspectiveCamera;
+    const { x: leftX } = getHudPos([-1.15, 0], _cam, distance);
+    const { x: rightX } = getHudPos([1.15, 0], _cam, distance);
+    const { x } = getHudPos(pos, _cam, distance);
 
     if (activeIndex === undefined) {
+      // hide it
       set({ offset: [0, -1, distance] });
     } else if (thisIndex === activeIndex) {
+      // show it
       if (toolbelt.direction !== "up") {
+        // unless the tool was hidden as will fly in bottom to top,
+        const swipeInX = (toolbelt.direction === "left" ? rightX : leftX) - x;
         spring.offset.update({ immediate: true });
-        set({ offset: [toolbelt.direction === "right" ? -x : x, 0, distance] });
+        set({ offset: [swipeInX, 0, distance] });
         spring.offset.finish();
         spring.offset.update({ immediate: false });
       }
+
       set({ offset: [0, 0, 0] });
     } else {
-      set({ offset: [toolbelt.direction === "right" ? x : -x, 0, distance] });
+      // swipe it away
+      const swipeOutX = (toolbelt.direction === "left" ? leftX : rightX) - x;
+      set({ offset: [swipeOutX, 0, distance] });
     }
   }, [
     name,
@@ -65,6 +79,8 @@ export default function Draggable(props: DraggableProps) {
     toolbelt.direction,
     distance,
     spring.offset,
+    camera,
+    pos,
   ]);
 
   // handle the mobile drag for interactivity and gestures
@@ -82,8 +98,6 @@ export default function Draggable(props: DraggableProps) {
       },
       onMove: ({ delta }) => {
         if (!valid.current) return;
-
-        console.log(size.width);
 
         set({
           offset: [
