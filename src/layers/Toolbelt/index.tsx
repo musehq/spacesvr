@@ -82,10 +82,18 @@ export default function Toolbelt(props: ToolbeltProps) {
         }
       });
       if (e.key == "Tab") {
-        setDirection("right");
-        if (activeIndex === undefined) setActiveIndex(0);
-        else if (activeIndex === tools.length - 1) setActiveIndex(undefined);
-        else setActiveIndex((activeIndex + 1) % tools.length);
+        if (e.shiftKey) {
+          setDirection("left");
+          if (activeIndex === undefined) setActiveIndex(tools.length - 1);
+          else if (activeIndex === 0) setActiveIndex(undefined);
+          else setActiveIndex((activeIndex - 1 + tools.length) % tools.length);
+        } else {
+          setDirection("right");
+          if (activeIndex === undefined) setActiveIndex(0);
+          else if (activeIndex === tools.length - 1) setActiveIndex(undefined);
+          else setActiveIndex((activeIndex + 1) % tools.length);
+        }
+
         e.preventDefault();
       }
     };
