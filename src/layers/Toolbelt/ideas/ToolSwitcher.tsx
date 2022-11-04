@@ -21,14 +21,16 @@ export default function ToolSwitcher() {
     {
       onStart: ({ e, touch }) => {
         valid.current = false;
-        if (toolbelt.activeTool !== undefined) return;
 
         const inBottomEdge = size.height - touch.clientY < DETECT_RANGE_Y;
         const inSideEdge =
           Math.min(touch.clientX, size.width - touch.clientX) < DETECT_RANGE_X;
 
         // ignore corners or no match
-        if (inBottomEdge == inSideEdge) return;
+        if (inBottomEdge === inSideEdge) return;
+        // don't trigger bottom swipe if there's an active tool
+        if (inBottomEdge && toolbelt.activeIndex !== undefined) return;
+
         if (inBottomEdge) type.current = "bottom";
         if (inSideEdge) type.current = "side";
 
@@ -43,15 +45,7 @@ export default function ToolSwitcher() {
 
         if (type.current == "bottom" && delta.y < -DRAG_RANGE_Y) {
           registered.current = true;
-          if (toolbelt.activeTool) {
-            const i = toolbelt.tools.findIndex(
-              (t) => t.name === toolbelt.activeTool?.name
-            );
-            const newIndex = (i + 1) % toolbelt.tools.length;
-            toolbelt.setActiveIndex(newIndex);
-          } else {
-            toolbelt.setActiveIndex(0);
-          }
+          toolbelt.show();
         }
 
         if (type.current == "side" && Math.abs(delta.x) > DRAG_RANGE_X) {

@@ -19,6 +19,8 @@ type Tool = {
   key: ToolKey;
 };
 
+type Direction = "left" | "right" | "up";
+
 type ToolbeltState = {
   tools: Tool[];
   activeTool?: Tool;
@@ -27,10 +29,11 @@ type ToolbeltState = {
   hide: () => void;
   next: () => void;
   prev: () => void;
+  show: () => void;
   activeIndex: number | undefined;
   setActiveIndex: (i: number) => void;
   hudScene: Scene;
-  direction: "left" | "right";
+  direction: Direction;
 };
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
@@ -48,7 +51,7 @@ export default function Toolbelt(props: ToolbeltProps) {
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number>();
 
-  const [direction, setDirection] = useState<"left" | "right">("right");
+  const [direction, setDirection] = useState<Direction>("right");
 
   const grant = useCallback(
     (name: string, key: ToolKey) => {
@@ -119,6 +122,11 @@ export default function Toolbelt(props: ToolbeltProps) {
     setActiveIndex(undefined);
   }, []);
 
+  const show = useCallback(() => {
+    setDirection("up");
+    setActiveIndex(0);
+  }, []);
+
   const value = {
     tools,
     activeTool: activeIndex !== undefined ? tools[activeIndex] : undefined,
@@ -127,6 +135,7 @@ export default function Toolbelt(props: ToolbeltProps) {
     hide,
     next,
     prev,
+    show,
     activeIndex,
     setActiveIndex,
     hudScene,

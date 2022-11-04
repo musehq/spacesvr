@@ -55,7 +55,7 @@ export function Tool(props: ToolProps) {
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
           <HUD pos={pos} face={face} pinY={pinY} t={t} distance={DISTANCE}>
-            <Draggable distance={DISTANCE} name={name}>
+            <Draggable distance={DISTANCE} name={name} enabled={ENABLED}>
               {children}
             </Draggable>
           </HUD>

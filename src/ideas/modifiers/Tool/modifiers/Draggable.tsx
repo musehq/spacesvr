@@ -9,11 +9,12 @@ import { useDrag } from "../../../../logic/drag";
 type DraggableProps = {
   distance: number;
   name: string;
+  enabled: boolean;
   children: ReactNode | ReactNode[];
 };
 
 export default function Draggable(props: DraggableProps) {
-  const { distance, name, children } = props;
+  const { distance, name, enabled, children } = props;
 
   const toolbelt = useToolbelt();
   const { tools } = toolbelt;
@@ -21,8 +22,8 @@ export default function Draggable(props: DraggableProps) {
   const { raycaster } = usePlayer();
   const { device } = useEnvironment();
 
-  const BOTTOM_EDGE_RANGE = size.height * 0.075;
-  const SIDE_EDGE_RANGE = size.width * 0.07;
+  const DOWN_SWIPE_DIST = size.height * 0.28;
+  const SIDE_SWIPE_DIST = size.width * 0.3;
 
   const group = useRef<Group>(null);
 
@@ -33,28 +34,19 @@ export default function Draggable(props: DraggableProps) {
   }));
 
   // animate position on tool switches
-  const lastActiveIndex = useRef<number>();
   useEffect(() => {
-    if (lastActiveIndex.current === toolbelt.activeIndex) return;
-
     const thisTool = tools.find((t) => t.name == name);
-    if (!thisTool) {
-      lastActiveIndex.current = toolbelt.activeIndex;
-      return;
-    }
+    if (!thisTool) return;
     const thisIndex = tools.indexOf(thisTool);
     const activeIndex = toolbelt.activeIndex;
-    if (thisIndex == -1) {
-      lastActiveIndex.current = activeIndex;
-      return;
-    }
+    if (thisIndex == -1) return;
 
     const x = size.width * 0.0015;
 
     if (activeIndex === undefined) {
       set({ offset: [0, -1, distance] });
     } else if (thisIndex === activeIndex) {
-      if (lastActiveIndex.current !== undefined) {
+      if (toolbelt.direction !== "up") {
         spring.offset.update({ immediate: true });
         set({ offset: [toolbelt.direction === "right" ? -x : x, 0, distance] });
         spring.offset.finish();
@@ -64,8 +56,6 @@ export default function Draggable(props: DraggableProps) {
     } else {
       set({ offset: [toolbelt.direction === "right" ? x : -x, 0, distance] });
     }
-
-    lastActiveIndex.current = activeIndex;
   }, [
     name,
     set,
@@ -82,49 +72,42 @@ export default function Draggable(props: DraggableProps) {
   useDrag(
     {
       onStart: ({ e }) => {
-        if (!group.current || !device.mobile) return;
+        valid.current = false;
+        if (!group.current || !device.mobile || !enabled) return;
         const intersections = raycaster.intersectObject(group.current, true);
         if (intersections.length > 0) {
           valid.current = true;
           e.stopPropagation();
-        } else {
-          valid.current = false;
         }
       },
       onMove: ({ delta }) => {
         if (!valid.current) return;
 
+        console.log(size.width);
+
         set({
           offset: [
-            (delta.x / aspect) * distance * 0.5,
-            (-delta.y / aspect) * distance * (delta.y < 0 ? 0.1 : 0.35),
+            (delta.x / aspect) * distance * 0.7,
+            (-delta.y / aspect) * distance * (delta.y < 0 ? 0.15 : 0.5),
             0,
           ],
         });
       },
-      onEnd: ({ touch, delta }) => {
+      onEnd: ({ delta }) => {
         if (!valid.current) return;
 
-        set({ offset: [0, 0, 0] });
-        const bottomEdgeDist = size.height - touch.clientY;
-        const xEdgeDist = Math.min(touch.clientX, size.width - touch.clientX);
-
-        if (
-          bottomEdgeDist < BOTTOM_EDGE_RANGE &&
-          delta.y > 0 &&
-          Math.abs(delta.y) > Math.abs(delta.x * 0.5)
-        ) {
+        if (delta.y > DOWN_SWIPE_DIST) {
           toolbelt.hide();
-        } else if (
-          xEdgeDist < SIDE_EDGE_RANGE &&
-          Math.abs(delta.x) > Math.abs(delta.y * 0.5)
-        ) {
+        } else if (Math.abs(delta.x) > SIDE_SWIPE_DIST) {
           if (delta.x > 0) {
             toolbelt.next();
           } else {
             toolbelt.prev();
           }
         }
+
+        set({ offset: [0, 0, 0] });
+        valid.current = false;
       },
     },
     gl.domElement
