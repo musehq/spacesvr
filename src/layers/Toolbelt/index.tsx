@@ -17,6 +17,7 @@ import Lights from "./ideas/Lights";
 type Tool = {
   name: string;
   key: ToolKey;
+  orderIndex?: number;
 };
 
 type Direction = "left" | "right" | "up";
@@ -24,7 +25,7 @@ type Direction = "left" | "right" | "up";
 type ToolbeltState = {
   tools: Tool[];
   activeTool?: Tool;
-  grant: (name: string, key: ToolKey) => void;
+  grant: (name: string, key: ToolKey, orderIndex?: number) => void;
   revoke: (name: string) => void;
   hide: () => void;
   next: () => void;
@@ -54,14 +55,16 @@ export default function Toolbelt(props: ToolbeltProps) {
   const [direction, setDirection] = useState<Direction>("right");
 
   const grant = useCallback(
-    (name: string, key: ToolKey) => {
+    (name: string, key: ToolKey, orderIndex?: number) => {
       // make sure no tool with same name or key exists
       if (tools.find((tool) => tool.name === name || tool.key === key)) {
         console.error(`Toolbelt: Tool with same name or key already exists`);
         return;
       }
-      const tool = { name, key };
+      const tool = { name, key, orderIndex };
       tools.push(tool);
+      tools.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+      console.log(tools);
     },
     [tools]
   );

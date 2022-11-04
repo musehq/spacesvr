@@ -15,6 +15,7 @@ type ToolProps = {
   face?: boolean;
   pinY?: boolean;
   t?: number;
+  orderIndex?: number;
 };
 
 /**
@@ -35,6 +36,7 @@ export function Tool(props: ToolProps) {
     face = true,
     pinY = false,
     t = 0.01,
+    orderIndex,
   } = props;
 
   const toolbelt = useToolbelt();
@@ -46,9 +48,9 @@ export function Tool(props: ToolProps) {
   const visible = useVisible(prog);
 
   useEffect(() => {
-    toolbelt.grant(name, keymap);
+    toolbelt.grant(name, keymap, orderIndex);
     return () => toolbelt.revoke(name);
-  }, [name, keymap, toolbelt.grant, toolbelt.revoke]);
+  }, [name, keymap, toolbelt.grant, toolbelt.revoke, orderIndex]);
 
   return (
     <>
