@@ -64,7 +64,6 @@ export default function Toolbelt(props: ToolbeltProps) {
       const tool = { name, key, orderIndex };
       tools.push(tool);
       tools.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
-      console.log(tools);
     },
     [tools]
   );

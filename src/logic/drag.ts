@@ -93,7 +93,7 @@ export const useDrag = (
       elem.removeEventListener("touchmove", moveDrag);
       elem.removeEventListener("touchend", endDrag);
     };
-  }, [domElem, moveDrag, startDrag]);
+  }, [domElem, endDrag, moveDrag, startDrag]);
 
   return {
     startDrag,

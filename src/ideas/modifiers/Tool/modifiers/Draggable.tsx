@@ -38,16 +38,19 @@ export default function Draggable(props: DraggableProps) {
   }));
 
   // animate position on tool switches
+  const lastActiveIndex = useRef<number>();
   useEffect(() => {
+    const activeIndex = toolbelt.activeIndex;
+    if (activeIndex === lastActiveIndex.current) return;
+    lastActiveIndex.current = activeIndex;
     const thisTool = tools.find((t) => t.name == name);
     if (!thisTool) return;
     const thisIndex = tools.indexOf(thisTool);
-    const activeIndex = toolbelt.activeIndex;
     if (thisIndex == -1) return;
 
     const _cam = camera as PerspectiveCamera;
-    const { x: leftX } = getHudPos([-1.15, 0], _cam, distance);
-    const { x: rightX } = getHudPos([1.15, 0], _cam, distance);
+    const { x: leftX } = getHudPos([-1.4, 0], _cam, distance);
+    const { x: rightX } = getHudPos([1.4, 0], _cam, distance);
     const { x } = getHudPos(pos, _cam, distance);
 
     if (activeIndex === undefined) {
@@ -57,7 +60,7 @@ export default function Draggable(props: DraggableProps) {
       // show it
       if (toolbelt.direction !== "up") {
         // unless the tool was hidden as will fly in bottom to top,
-        const swipeInX = (toolbelt.direction === "left" ? rightX : leftX) - x;
+        const swipeInX = (toolbelt.direction === "left" ? rightX : leftX) + x;
         spring.offset.update({ immediate: true });
         set({ offset: [swipeInX, 0, distance] });
         spring.offset.finish();

@@ -16,6 +16,7 @@ type ToolProps = {
   face?: boolean;
   pinY?: boolean;
   t?: number;
+  range?: number;
   orderIndex?: number;
 };
 
@@ -37,6 +38,7 @@ export function Tool(props: ToolProps) {
     face = true,
     pinY = false,
     t = 0.01,
+    range = 0,
     orderIndex,
   } = props;
 
@@ -57,15 +59,17 @@ export function Tool(props: ToolProps) {
     <>
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
-          <HUD pos={pos} pinY={pinY} t={t} distance={DISTANCE}>
-            <Draggable
-              distance={DISTANCE}
-              name={name}
-              enabled={ENABLED}
-              pos={pos}
-            >
-              <FacePlayer enabled={face}>{children}</FacePlayer>
-            </Draggable>
+          <HUD pos={pos} pinY={pinY} t={t} distance={DISTANCE} range={range}>
+            <FacePlayer enabled={face}>
+              <Draggable
+                distance={DISTANCE}
+                name={name}
+                enabled={ENABLED}
+                pos={pos}
+              >
+                {children}
+              </Draggable>
+            </FacePlayer>
           </HUD>
         </group>,
         toolbelt.hudScene
