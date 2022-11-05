@@ -46,6 +46,7 @@ export default function Workshop() {
   return (
     <StandardReality
       environmentProps={{ dev: process.env.NODE_ENV === "development" }}
+      toolbeltProps={{ showOnSpawn: true }}
     >
       <Analytics />
       <LostWorld />

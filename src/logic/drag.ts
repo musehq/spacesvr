@@ -42,14 +42,21 @@ export const useDrag = (
 
   const startDrag = useCallback(
     (e: TouchEvent) => {
+      e.preventDefault();
       const touch = e.touches[0];
       downPoint.set(touch.clientX, touch.clientY);
 
       if (callback.onStart) {
-        callback.onStart({ e, touch, downPoint, dragPoint, velocity });
+        callback.onStart({
+          e,
+          touch,
+          downPoint,
+          dragPoint: downPoint,
+          velocity,
+        });
       }
     },
-    [callback, downPoint, dragPoint, velocity]
+    [callback, downPoint, velocity]
   );
 
   const moveDrag = useCallback(

@@ -40,18 +40,20 @@ type ToolbeltState = {
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
 
-type ToolbeltProps = {
-  children: ReactNode[] | ReactNode;
-};
+export type ToolbeltProps = { showOnSpawn?: boolean };
 
-export default function Toolbelt(props: ToolbeltProps) {
-  const { children } = props;
+type ToolbeltLayer = { children: ReactNode[] | ReactNode } & ToolbeltProps;
+
+export default function Toolbelt(props: ToolbeltLayer) {
+  const { children, showOnSpawn } = props;
 
   const [hudScene] = useState(() => new Scene());
   const { camera, scene } = useThree();
 
   const tools = useMemo<Tool[]>(() => [], []);
-  const [activeIndex, setActiveIndex] = useState<number>();
+  const [activeIndex, setActiveIndex] = useState<number | undefined>(
+    showOnSpawn ? 0 : undefined
+  );
   const lastActiveIndex = useRef(0);
 
   const [direction, setDirection] = useState<Direction>("right");
@@ -65,7 +67,12 @@ export default function Toolbelt(props: ToolbeltProps) {
       }
       const tool = { name, key, orderIndex };
       tools.push(tool);
-      tools.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+      tools.sort((a, b) => {
+        if (a.orderIndex === undefined && b.orderIndex === undefined) return 1;
+        if (a.orderIndex === undefined) return 1;
+        if (b.orderIndex === undefined) return -1;
+        return a.orderIndex - b.orderIndex;
+      });
     },
     [tools]
   );

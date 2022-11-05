@@ -29,7 +29,7 @@ export default function Cart() {
       pos={pos}
       pinY={!open || device.mobile}
       range={open ? 0.45 : 0}
-      orderIndex={-150}
+      orderIndex={10}
     >
       <a.group position-y={posY} name="container">
         <Icon open={open} setOpen={setOpen} />
