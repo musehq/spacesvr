@@ -61,6 +61,7 @@
     "@react-three/cannon": "^6.4.0",
     "@react-three/drei": "9.11.3",
     "@react-three/fiber": "^8.0.22",
+    "@react-three/postprocessing": "^2.7.0",
     "@react-three/xr": "^4.0.1",
     "culori": "^0.18.2",
     "nipplejs": "0.8.1",

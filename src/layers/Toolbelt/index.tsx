@@ -170,13 +170,7 @@ export default function Toolbelt(props: ToolbeltLayer) {
     gl.render(hudScene, camClone);
     hudScene.position.copy(camera.position);
     hudScene.updateMatrixWorld(true);
-  }, 10);
-
-  // main render loop
-  useFrame(({ gl }) => {
-    gl.autoClear = true;
-    gl.render(scene, camera);
-  }, 1);
+  }, 100);
 
   return (
     <ToolbeltContext.Provider value={value}>

@@ -15,6 +15,8 @@ import Analytics from "../ideas/Analytics";
 import WalkieTalkie from "../../src/tools/WalkieTalkie";
 import NavigatorTool from "../../src/tools/Navigator";
 import Cart from "../../src/tools/Cart";
+import EnhanceVisuals from "../../src/ideas/modifiers/EnhanceVisuals";
+import { Bloom } from "@react-three/postprocessing";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -161,6 +163,9 @@ export default function Workshop() {
       <WalkieTalkie />
       <Cart />
       <NavigatorTool />
+      <EnhanceVisuals index={1}>
+        <Bloom />
+      </EnhanceVisuals>
     </StandardReality>
   );
 }
