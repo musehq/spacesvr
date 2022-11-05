@@ -14,6 +14,7 @@ import Link from "../ideas/Link";
 import Analytics from "../ideas/Analytics";
 import WalkieTalkie from "../../src/tools/WalkieTalkie";
 import NavigatorTool from "../../src/tools/Navigator";
+import Cart from "../../src/tools/Cart";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -157,6 +158,7 @@ export default function Workshop() {
       />
       <Camera />
       <WalkieTalkie />
+      <Cart />
       <NavigatorTool />
     </StandardReality>
   );
