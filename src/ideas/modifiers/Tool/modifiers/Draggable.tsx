@@ -62,7 +62,7 @@ export default function Draggable(props: DraggableProps) {
         const { x: rightX } = getHudPos([AMT, 0], _cam, distance);
         const { x } = getHudPos(pos, _cam, distance);
 
-        const swipeInX = (toolbelt.direction === "left" ? rightX : leftX) + x;
+        const swipeInX = toolbelt.direction === "left" ? rightX - x : leftX + x;
         spring.offset.update({ immediate: true });
         set({ offset: [swipeInX, 0, distance] });
         spring.offset.finish();

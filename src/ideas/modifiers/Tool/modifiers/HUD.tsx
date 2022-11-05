@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Group, PerspectiveCamera, Quaternion, Vector2 } from "three";
 import { getHudPos } from "../logic/screen";
@@ -24,9 +24,10 @@ export default function HUD(props: HUDProps) {
   const size = useThree((state) => state.size);
 
   const group = useRef<Group>(null);
-  const quat = useMemo(() => new Quaternion(), []);
   const [lerpPos] = useState(new Vector2().fromArray(pos));
   const [lerpedQuat] = useState(new Quaternion());
+  const [dummy1] = useState(new Quaternion());
+  const [dummy2] = useState(new Quaternion());
 
   useFrame((_, delta) => {
     if (!group.current) return;
@@ -43,12 +44,25 @@ export default function HUD(props: HUDProps) {
     );
     group.current.position.set(x, y, -distance);
 
-    // rotate to match camera angle, slerp rotation
     const RANGE_SET = range > 0;
-    quat.copy(camera.quaternion);
-    if (!RANGE_SET || (RANGE_SET && lerpedQuat.angleTo(quat) > range)) {
-      lerpedQuat.slerp(quat, alpha);
+
+    if (!RANGE_SET) {
+      lerpedQuat.slerp(camera.quaternion, alpha);
+    } else {
+      // find angle along y axis
+      dummy1.copy(lerpedQuat);
+      dummy1.x = 0;
+      dummy1.z = 0;
+      dummy1.normalize();
+      dummy2.copy(camera.quaternion);
+      dummy2.x = 0;
+      dummy2.z = 0;
+      dummy2.normalize();
+      const angle = dummy1.angleTo(dummy2);
+
+      if (angle > range) lerpedQuat.slerp(camera.quaternion, alpha);
     }
+
     if (!pinY) {
       lerpedQuat.x = 0;
       lerpedQuat.z = 0;
