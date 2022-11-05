@@ -9,6 +9,7 @@ import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/sr
 import { XRCanvas } from "@react-three/xr";
 import { defaultCanvasProps } from "./logic/canvas";
 import { EnvironmentContext, useEnvironmentState } from "./logic/environment";
+import { useFrame } from "@react-three/fiber";
 export * from "./logic/environment";
 
 export type EnvironmentProps = {
@@ -34,6 +35,14 @@ export function Environment(props: EnvironmentLayerProps) {
   } = props;
 
   const state = useEnvironmentState(name);
+
+  // main render loop
+  useFrame(({ gl, scene, camera }, delta) => {
+    // experimental
+    // if (delta > 1 / 10) return;
+    gl.autoClear = true;
+    gl.render(scene, camera);
+  }, 1);
 
   return (
     <>
