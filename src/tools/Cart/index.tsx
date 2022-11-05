@@ -25,7 +25,6 @@ export default function Cart() {
   return (
     <Tool
       name={TOOL_NAME}
-      keymap="o"
       pos={pos}
       pinY={!open || device.mobile}
       range={open ? 0.45 : 0}

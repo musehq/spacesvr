@@ -9,7 +9,7 @@ export default function NavigatorTool() {
     "https://d27rt3a60hh1lx.cloudfront.net/images/muselogogray.png";
 
   return (
-    <Tool name={TOOL_NAME} keymap="n" pos={[-0.7, -0.7]} orderIndex={0} face>
+    <Tool name={TOOL_NAME} pos={[-0.7, -0.7]} orderIndex={0} face>
       <RoundedBox
         position-z={-0.075 / 2 - 0.001}
         args={[0.3, 0.6, 0.075]}

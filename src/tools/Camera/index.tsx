@@ -86,7 +86,7 @@ export function Camera() {
 
   return (
     <group name="camera" ref={group}>
-      <Tool name="Camera" keymap="p" pos={[0, 0]} pinY>
+      <Tool name="Camera" pos={[0, 0]} pinY>
         <group scale={0.175}>
           <Suspense fallback={<BoxApproximation />}>
             <CameraModel rotation-y={Math.PI} />

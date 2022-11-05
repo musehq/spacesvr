@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { ToolKey } from "./types/char";
 import { isTyping } from "../../logic";
 import ToolSwitcher from "./ideas/ToolSwitcher";
 import { PerspectiveCamera, Scene } from "three";
@@ -17,7 +16,6 @@ import Lights from "./ideas/Lights";
 
 type Tool = {
   name: string;
-  key: ToolKey;
   orderIndex?: number;
 };
 
@@ -26,7 +24,7 @@ type Direction = "left" | "right" | "up";
 type ToolbeltState = {
   tools: Tool[];
   activeTool?: Tool;
-  grant: (name: string, key: ToolKey, orderIndex?: number) => void;
+  grant: (name: string, orderIndex?: number) => void;
   revoke: (name: string) => void;
   hide: () => void;
   next: () => void;
@@ -59,13 +57,13 @@ export default function Toolbelt(props: ToolbeltLayer) {
   const [direction, setDirection] = useState<Direction>("right");
 
   const grant = useCallback(
-    (name: string, key: ToolKey, orderIndex?: number) => {
+    (name: string, orderIndex?: number) => {
       // make sure no tool with same name or key exists
-      if (tools.find((tool) => tool.name === name || tool.key === key)) {
-        console.error(`Toolbelt: Tool with same name or key already exists`);
+      if (tools.find((tool) => tool.name === name)) {
+        console.error(`Toolbelt: Tool with same name already exists: ${name}`);
         return;
       }
-      const tool = { name, key, orderIndex };
+      const tool = { name, orderIndex };
       tools.push(tool);
       tools.sort((a, b) => {
         if (a.orderIndex === undefined && b.orderIndex === undefined) return 1;
@@ -90,11 +88,6 @@ export default function Toolbelt(props: ToolbeltLayer) {
   useEffect(() => {
     const handleKeypress = (e: KeyboardEvent) => {
       if (isTyping() || e.metaKey || e.ctrlKey) return;
-      tools.map((tool, i) => {
-        if (e.key === tool.key || e.key.toLowerCase() === tool.key) {
-          setActiveIndex(activeIndex === i ? undefined : i);
-        }
-      });
       if (e.key == "Tab") {
         if (e.shiftKey) {
           setDirection("left");

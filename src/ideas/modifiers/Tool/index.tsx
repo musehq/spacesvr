@@ -1,5 +1,4 @@
 import { ReactNode, useEffect } from "react";
-import { ToolKey } from "../../../layers/Toolbelt/types/char";
 import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
 import { useSpring } from "@react-spring/three";
@@ -11,7 +10,6 @@ import { FacePlayer } from "../FacePlayer";
 type ToolProps = {
   children: ReactNode;
   name: string;
-  keymap: ToolKey;
   pos?: [number, number];
   face?: boolean;
   pinY?: boolean;
@@ -32,7 +30,6 @@ export function Tool(props: ToolProps) {
   const {
     children,
     name,
-    keymap,
     pos = [0, 0],
     face = true,
     pinY = false,
@@ -52,9 +49,9 @@ export function Tool(props: ToolProps) {
   const visible = useVisible(prog);
 
   useEffect(() => {
-    toolbelt.grant(name, keymap, orderIndex);
+    toolbelt.grant(name, orderIndex);
     return () => toolbelt.revoke(name);
-  }, [name, keymap, toolbelt.grant, toolbelt.revoke, orderIndex]);
+  }, [name, toolbelt.grant, toolbelt.revoke, orderIndex]);
 
   return (
     <>
