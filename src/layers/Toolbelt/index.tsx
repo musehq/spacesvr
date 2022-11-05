@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { ToolKey } from "./types/char";
@@ -51,6 +52,7 @@ export default function Toolbelt(props: ToolbeltProps) {
 
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number>();
+  const lastActiveIndex = useRef(0);
 
   const [direction, setDirection] = useState<Direction>("right");
 
@@ -106,6 +108,10 @@ export default function Toolbelt(props: ToolbeltProps) {
     return () => document.removeEventListener("keydown", handleKeypress);
   }, [activeIndex, tools]);
 
+  useEffect(() => {
+    if (activeIndex !== undefined) lastActiveIndex.current = activeIndex;
+  }, [activeIndex]);
+
   const next = useCallback(() => {
     setDirection("right");
     setActiveIndex((actInd) =>
@@ -126,7 +132,7 @@ export default function Toolbelt(props: ToolbeltProps) {
 
   const show = useCallback(() => {
     setDirection("up");
-    setActiveIndex(0);
+    setActiveIndex(lastActiveIndex.current);
   }, []);
 
   const value = {

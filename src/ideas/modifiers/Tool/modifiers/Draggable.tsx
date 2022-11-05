@@ -49,9 +49,7 @@ export default function Draggable(props: DraggableProps) {
     if (thisIndex == -1) return;
 
     const _cam = camera as PerspectiveCamera;
-    const { x: leftX } = getHudPos([-1.4, 0], _cam, distance);
-    const { x: rightX } = getHudPos([1.4, 0], _cam, distance);
-    const { x } = getHudPos(pos, _cam, distance);
+    const AMT = 1.5;
 
     if (activeIndex === undefined) {
       // hide it
@@ -60,6 +58,10 @@ export default function Draggable(props: DraggableProps) {
       // show it
       if (toolbelt.direction !== "up") {
         // unless the tool was hidden as will fly in bottom to top,
+        const { x: leftX } = getHudPos([-AMT, 0], _cam, distance);
+        const { x: rightX } = getHudPos([AMT, 0], _cam, distance);
+        const { x } = getHudPos(pos, _cam, distance);
+
         const swipeInX = (toolbelt.direction === "left" ? rightX : leftX) + x;
         spring.offset.update({ immediate: true });
         set({ offset: [swipeInX, 0, distance] });
@@ -70,8 +72,11 @@ export default function Draggable(props: DraggableProps) {
       set({ offset: [0, 0, 0] });
     } else {
       // swipe it away
+      const { x: leftX } = getHudPos([-AMT, 0], _cam, distance * 2);
+      const { x: rightX } = getHudPos([AMT, 0], _cam, distance * 2);
+      const { x } = getHudPos(pos, _cam, distance);
       const swipeOutX = (toolbelt.direction === "left" ? leftX : rightX) - x;
-      set({ offset: [swipeOutX, 0, distance] });
+      set({ offset: [swipeOutX, 0, 0] });
     }
   }, [
     name,
