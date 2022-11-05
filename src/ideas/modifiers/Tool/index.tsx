@@ -60,16 +60,14 @@ export function Tool(props: ToolProps) {
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
           <HUD pos={pos} pinY={pinY} t={t} distance={DISTANCE} range={range}>
-            <FacePlayer enabled={face}>
-              <Draggable
-                distance={DISTANCE}
-                name={name}
-                enabled={ENABLED}
-                pos={pos}
-              >
-                {children}
-              </Draggable>
-            </FacePlayer>
+            <Draggable
+              distance={DISTANCE}
+              name={name}
+              enabled={ENABLED}
+              pos={pos}
+            >
+              <FacePlayer enabled={face}>{children}</FacePlayer>
+            </Draggable>
           </HUD>
         </group>,
         toolbelt.hudScene

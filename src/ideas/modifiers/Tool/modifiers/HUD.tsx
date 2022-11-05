@@ -55,6 +55,10 @@ export default function HUD(props: HUDProps) {
     }
 
     group.current.position.applyQuaternion(lerpedQuat);
+
+    // needed to that children positions are applied in screen space
+    // should probably be moved to draggable .. ? idk, maybe the supposition is that children of hud are in screen space
+    group.current.quaternion.copy(camera.quaternion);
   });
 
   return (
