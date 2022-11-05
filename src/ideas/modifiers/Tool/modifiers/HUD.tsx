@@ -8,7 +8,6 @@ type HUDProps = {
   pos: [number, number];
   distance: number;
   pinY?: boolean;
-  t?: number;
   range: number;
 };
 
@@ -18,7 +17,9 @@ type HUDProps = {
  * @constructor
  */
 export default function HUD(props: HUDProps) {
-  const { children, pos, pinY = false, distance, t = 1, range } = props;
+  const { children, pos, pinY = false, distance, range } = props;
+
+  const t = 0.01;
 
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);

@@ -4,7 +4,7 @@ import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
 import { useSpring } from "@react-spring/three";
 import { useVisible } from "../../../logic/visible";
-import Draggable from "./modifiers/Draggable";
+import OnScreen from "./modifiers/OnScreen";
 import { createPortal } from "@react-three/fiber";
 import { FacePlayer } from "../FacePlayer";
 
@@ -15,7 +15,6 @@ type ToolProps = {
   pos?: [number, number];
   face?: boolean;
   pinY?: boolean;
-  t?: number;
   range?: number;
   orderIndex?: number;
 };
@@ -37,7 +36,6 @@ export function Tool(props: ToolProps) {
     pos = [0, 0],
     face = true,
     pinY = false,
-    t = 0.01,
     range = 0,
     orderIndex,
   } = props;
@@ -47,7 +45,10 @@ export function Tool(props: ToolProps) {
 
   const DISTANCE = 1;
 
-  const { prog } = useSpring({ prog: ENABLED ? 1 : 0 });
+  const { prog } = useSpring({
+    prog: ENABLED ? 1 : 0,
+    config: { mass: 4, friction: 90, tension: 800 },
+  });
   const visible = useVisible(prog);
 
   useEffect(() => {
@@ -59,15 +60,10 @@ export function Tool(props: ToolProps) {
     <>
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
-          <HUD pos={pos} pinY={pinY} t={t} distance={DISTANCE} range={range}>
-            <Draggable
-              distance={DISTANCE}
-              name={name}
-              enabled={ENABLED}
-              pos={pos}
-            >
+          <HUD pos={pos} pinY={pinY} distance={DISTANCE} range={range}>
+            <OnScreen distance={DISTANCE} name={name} pos={pos}>
               <FacePlayer enabled={face}>{children}</FacePlayer>
-            </Draggable>
+            </OnScreen>
           </HUD>
         </group>,
         toolbelt.hudScene
