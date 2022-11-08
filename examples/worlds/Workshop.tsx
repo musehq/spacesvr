@@ -41,6 +41,12 @@ export default function Workshop() {
 
   return (
     <StandardReality>
+      <Image
+        src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98s-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
+        position={[-8, 2, 6.4]}
+        rotation={[0, Math.PI, 0]}
+        framed
+      />
       <Analytics />
       <LostWorld />
       <group position-z={-2} position-x={-1}>
@@ -119,7 +125,7 @@ export default function Workshop() {
       </group>
       <Image
         name="outside-eddie"
-        src="https://d27rt3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
+        src="https://d27rtd3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
         framed
         frameWidth={0.75}
         size={12}
