@@ -3,6 +3,7 @@ import { GroupProps } from "@react-three/fiber";
 import { useModel } from "../../logic";
 import { Box3, Vector3 } from "three";
 import { SkeletonUtils } from "three-stdlib";
+import { ErrorBoundary } from "react-error-boundary";
 
 type ModelProps = {
   src: string;
@@ -37,10 +38,28 @@ function UnsuspensedModel(props: ModelProps) {
   );
 }
 
+function FallbackModel(props: ModelProps) {
+  const { src, center, normalize, ...rest } = props;
+
+  return (
+    <group name="spacesvr-fallback-model" {...rest}>
+      <mesh>
+        <boxBufferGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="black" wireframe />
+      </mesh>
+    </group>
+  );
+}
+
 export function Model(props: ModelProps) {
   return (
-    <Suspense fallback={null}>
-      <UnsuspensedModel {...props} />
-    </Suspense>
+    <ErrorBoundary
+      fallbackRender={() => <FallbackModel {...props} />}
+      onError={(err) => console.error(err)}
+    >
+      <Suspense fallback={null}>
+        <UnsuspensedModel {...props} />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
