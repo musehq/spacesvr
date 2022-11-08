@@ -1,13 +1,4 @@
-import {
-  BoxBufferGeometry,
-  CanvasTexture,
-  Group,
-  Mesh,
-  MeshStandardMaterial,
-} from "three";
-import { GLTF } from "three-stdlib";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
+import { CanvasTexture } from "three";
 
 let fallbackTexture: CanvasTexture | undefined;
 
@@ -53,37 +44,4 @@ export function getFallbackTexture(): CanvasTexture {
   fallbackTexture = new CanvasTexture(canvas);
 
   return fallbackTexture;
-}
-
-/**
- * Provides a default model
- */
-export function getFallbackModel(): Promise<GLTF> {
-  const group = new Group();
-  const geo = new BoxBufferGeometry(1, 1, 1);
-  const mat = new MeshStandardMaterial({ color: "black", wireframe: true });
-  const mesh = new Mesh(geo, mat);
-  group.add(mesh);
-
-  const exporter = new GLTFExporter();
-  const loader = new GLTFLoader();
-  return new Promise((res) =>
-    exporter.parse(
-      group,
-      (gltf) => {
-        loader.parse(
-          gltf as ArrayBuffer,
-          "",
-          // @ts-ignore
-          (gltf) => res(gltf as GLTF),
-          (err) => console.error(err)
-        );
-      },
-      {
-        binary: true,
-        embedImages: true,
-        onlyVisible: false,
-      }
-    )
-  );
 }

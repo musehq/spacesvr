@@ -4,7 +4,7 @@ import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { suspend } from "suspend-react";
 import { useMemo } from "react";
-import { getFallbackModel, getFallbackTexture } from "./fallback";
+import { getFallbackTexture } from "./fallback";
 import { GLTF } from "three-stdlib";
 
 let ktx2loader: KTX2Loader | undefined;
@@ -52,19 +52,12 @@ export function useImage(url: string): Texture {
 export function useModel(url: string): GLTF {
   const gl = useThree((st) => st.gl);
 
-  try {
-    return useGLTF(url, true, true, (loader) => {
-      if (!ktx2loader) {
-        ktx2loader = new KTX2Loader();
-        ktx2loader.setTranscoderPath(KTX_CDN);
-        ktx2loader.detectSupport(gl);
-      }
-      loader.setKTX2Loader(ktx2loader);
-    });
-  } catch {
-    return suspend(
-      (): Promise<GLTF> => new Promise((res) => getFallbackModel().then(res)),
-      []
-    );
-  }
+  return useGLTF(url, true, true, (loader) => {
+    if (!ktx2loader) {
+      ktx2loader = new KTX2Loader();
+      ktx2loader.setTranscoderPath(KTX_CDN);
+      ktx2loader.detectSupport(gl);
+    }
+    loader.setKTX2Loader(ktx2loader);
+  });
 }
