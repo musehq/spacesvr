@@ -1,5 +1,5 @@
-import { useMemo, useRef } from "react";
-import { Camera, Group, MathUtils, Vector3 } from "three";
+import { useMemo, useRef, useState } from "react";
+import { Camera, Group, MathUtils, Quaternion, Vector3 } from "three";
 import { Api } from "@react-three/cannon";
 import { useEnvironment } from "../../Environment";
 
@@ -8,16 +8,18 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
   const { device } = useEnvironment();
   const dummy = useMemo(() => new Vector3(), []);
 
+  const [quat] = useState(new Quaternion());
+
   const updateVelocity = (cam: Camera, velocity: Vector3) => {
     // get forward/back movement and left/right movement velocities
     dummy.x = direction.current.x * 0.75;
     dummy.z = direction.current.y; // forward/back
     dummy.multiplyScalar(speed);
 
-    const moveQuaternion = cam.quaternion.clone();
-    moveQuaternion.x = 0;
-    moveQuaternion.z = 0;
-    dummy.applyQuaternion(moveQuaternion);
+    quat.copy(cam.quaternion);
+    quat.x = 0;
+    quat.z = 0;
+    dummy.applyQuaternion(quat);
     dummy.y = velocity.y;
 
     // keep y velocity intact and update velocity
