@@ -1235,7 +1235,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pmndrs/cannon-worker-api@^2.3.0":
+"@pmndrs/cannon-worker-api@^2.1.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@pmndrs/cannon-worker-api/-/cannon-worker-api-2.3.0.tgz#5ef133833ef858a264d95fc70106ca567f113475"
   integrity sha512-XFR/IABU6uIEllocfGBV9SVakQWIYrZq/Ijk2ZYTv2jYorDebvT4cW8GWIE6UO/T/NChpI+fBTGlUs6wwZW5sg==
@@ -1286,12 +1286,12 @@
   resolved "https://registry.yarnpkg.com/@react-spring/types/-/types-9.4.5.tgz#9c71e5ff866b5484a7ef3db822bf6c10e77bdd8c"
   integrity sha512-mpRIamoHwql0ogxEUh9yr4TP0xU5CWyZxVQeccGkHHF8kPMErtDXJlxyo0lj+telRF35XNihtPTWoflqtyARmg==
 
-"@react-three/cannon@^6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-6.5.0.tgz#72077716a5e51f37339134de261de5244d034787"
-  integrity sha512-C3ZC0bJwQAXQtvaNMURoVLISsbHfvASLhFmZSzseAfA6vEiza8RvcVsmByTPrKxF9udDpRmN9tQgtX6DA3deYg==
+"@react-three/cannon@6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@react-three/cannon/-/cannon-6.4.0.tgz#89aee95752c0f02caac04fa97675ccec59bd9b61"
+  integrity sha512-hrT7ploQOCKyP/vVSm9RWN2r2WPxjpTHDNnkxzwa/doK3IyREJ+40Ghor7E7pf76sjRgJFBrypVUSpKDcescTA==
   dependencies:
-    "@pmndrs/cannon-worker-api" "^2.3.0"
+    "@pmndrs/cannon-worker-api" "^2.1.0"
     cannon-es "^0.20.0"
     cannon-es-debugger "^1.0.0"
 
