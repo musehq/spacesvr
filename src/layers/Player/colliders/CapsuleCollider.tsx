@@ -21,18 +21,14 @@ export const useCapsuleCollider = (pos = [0, 0, 0]) => {
 
   const { paused } = useEnvironment();
 
-  const compoundBody = useCompoundBody<Group>(
-    () => ({
-      mass: 0,
-      position: vPos.current,
-      segments: SEGMENTS,
-      fixedRotation: true,
-      type: "Dynamic",
-      shapes: [topSphere, middleSphere, bottomSphere],
-    }),
-    undefined,
-    []
-  );
+  const compoundBody = useCompoundBody<Group>(() => ({
+    mass: 0,
+    position: vPos.current,
+    segments: SEGMENTS,
+    fixedRotation: true,
+    type: "Dynamic",
+    shapes: [topSphere, middleSphere, bottomSphere],
+  }));
 
   useEffect(() => {
     if (!paused) compoundBody[1].mass.set(62);
