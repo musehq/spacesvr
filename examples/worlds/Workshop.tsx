@@ -8,15 +8,14 @@ import {
   Switch,
   LostWorld,
   Camera,
+  WalkieTalkie,
+  NavigatorTool,
+  Cart,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
 import Analytics from "../ideas/Analytics";
-import WalkieTalkie from "../../src/tools/WalkieTalkie";
-import NavigatorTool from "../../src/tools/Navigator";
-import Cart from "../../src/tools/Cart";
-import EnhanceVisuals from "../../src/ideas/modifiers/EnhanceVisuals";
-import { Bloom } from "@react-three/postprocessing";
+import Bloom from "../ideas/Bloom";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -163,9 +162,7 @@ export default function Workshop() {
       <WalkieTalkie />
       <Cart />
       <NavigatorTool />
-      <EnhanceVisuals index={1}>
-        <Bloom />
-      </EnhanceVisuals>
+      <Bloom />
     </StandardReality>
   );
 }

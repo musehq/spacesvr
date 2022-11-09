@@ -1,7 +1,7 @@
 import { Tool } from "../../ideas/modifiers/Tool";
 import { RoundedBox } from "@react-three/drei";
 
-export default function WalkieTalkie() {
+export function WalkieTalkie() {
   const TOOL_NAME = "Walkie Talkie";
 
   return (

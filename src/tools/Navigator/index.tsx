@@ -2,7 +2,7 @@ import { Tool } from "../../ideas/modifiers/Tool";
 import { RoundedBox } from "@react-three/drei";
 import { Image } from "../../ideas/media/Image";
 
-export default function NavigatorTool() {
+export function NavigatorTool() {
   const TOOL_NAME = "Navigator";
 
   const LOGO_URL =

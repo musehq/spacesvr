@@ -5,7 +5,7 @@ import { Player, PlayerProps } from "../layers/Player";
 import { InfinitePlane } from "../ideas/environment/InfinitePlane";
 import { ReactNode } from "react";
 import Toolbelt, { ToolbeltProps } from "../layers/Toolbelt";
-import Enhance from "../layers/Enhance";
+import Visual from "../layers/Visual";
 
 type StandardRealityProps = {
   children?: ReactNode | ReactNode[];
@@ -34,10 +34,10 @@ export function StandardReality(props: StandardRealityProps) {
         <Player {...playerProps}>
           <Toolbelt {...toolbeltProps}>
             <Network {...networkProps}>
-              <Enhance>
+              <Visual>
                 {!disableGround && <InfinitePlane />}
                 {children}
-              </Enhance>
+              </Visual>
             </Network>
           </Toolbelt>
         </Player>

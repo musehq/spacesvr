@@ -9,7 +9,7 @@ type Props = {
   onPress?: (e: KeyboardEvent) => void;
 } & GroupProps;
 
-export default function Key(props: Props) {
+export function Key(props: Props) {
   const { keyCode, keyPress = [keyCode], onPress, ...rest } = props;
 
   const [pressed, setPressed] = useState(false);

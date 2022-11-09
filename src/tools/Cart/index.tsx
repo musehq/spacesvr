@@ -6,7 +6,7 @@ import Icon from "./components/Icon";
 import Instruction from "./components/Instruction";
 import Panel from "./components/Panel";
 
-export default function Cart() {
+export function Cart() {
   const TOOL_NAME = "Cart";
 
   const { device } = useEnvironment();

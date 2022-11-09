@@ -1,7 +1,6 @@
 import { a, useSpring } from "@react-spring/three";
 import { Text } from "@react-three/drei";
-import React from "react";
-import Key from "../../../ideas/ui/Key";
+import { Key } from "../../../ideas/ui/Key";
 import { useEnvironment } from "../../../layers";
 
 type InstructionProps = {
