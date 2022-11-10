@@ -28,7 +28,8 @@ export function Cart() {
       pos={pos}
       pinY={!open || device.mobile}
       range={open ? 0.45 : 0}
-      orderIndex={10}
+      orderIndex={-1000}
+      onSwitch={(e) => !e && setOpen(false)}
     >
       <a.group position-y={posY} name="container">
         <Icon open={open} setOpen={setOpen} />

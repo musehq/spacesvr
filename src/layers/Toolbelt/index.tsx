@@ -16,7 +16,7 @@ import Lights from "./ideas/Lights";
 
 type Tool = {
   name: string;
-  orderIndex?: number;
+  orderIndex: number;
 };
 
 type Direction = "left" | "right" | "up";
@@ -42,11 +42,11 @@ export type ToolbeltProps = { showOnSpawn?: boolean };
 
 type ToolbeltLayer = { children: ReactNode[] | ReactNode } & ToolbeltProps;
 
-export default function Toolbelt(props: ToolbeltLayer) {
-  const { children, showOnSpawn } = props;
+export function Toolbelt(props: ToolbeltLayer) {
+  const { children, showOnSpawn = true } = props;
 
   const [hudScene] = useState(() => new Scene());
-  const { camera, scene } = useThree();
+  const { camera } = useThree();
 
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number | undefined>(
@@ -63,14 +63,9 @@ export default function Toolbelt(props: ToolbeltLayer) {
         console.error(`Toolbelt: Tool with same name already exists: ${name}`);
         return;
       }
-      const tool = { name, orderIndex };
+      const tool = { name, orderIndex: orderIndex || 0 };
       tools.push(tool);
-      tools.sort((a, b) => {
-        if (a.orderIndex === undefined && b.orderIndex === undefined) return 1;
-        if (a.orderIndex === undefined) return 1;
-        if (b.orderIndex === undefined) return -1;
-        return a.orderIndex - b.orderIndex;
-      });
+      tools.sort((a, b) => a.orderIndex - b.orderIndex);
     },
     [tools]
   );

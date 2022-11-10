@@ -21,7 +21,7 @@ export const useVisual = () => useContext(VisualContext);
 
 type VisualLayerProps = { children: ReactNode[] | ReactNode };
 
-export default function Visual(props: VisualLayerProps) {
+export function Visual(props: VisualLayerProps) {
   const { children } = props;
   const { scene, camera, gl } = useThree();
 

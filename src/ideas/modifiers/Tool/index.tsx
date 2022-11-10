@@ -15,6 +15,7 @@ type ToolProps = {
   pinY?: boolean;
   range?: number;
   orderIndex?: number;
+  onSwitch?: (enabled: boolean) => void;
 };
 
 /**
@@ -35,6 +36,7 @@ export function Tool(props: ToolProps) {
     pinY = false,
     range = 0,
     orderIndex,
+    onSwitch,
   } = props;
 
   const toolbelt = useToolbelt();
@@ -52,6 +54,10 @@ export function Tool(props: ToolProps) {
     toolbelt.grant(name, orderIndex);
     return () => toolbelt.revoke(name);
   }, [name, toolbelt.grant, toolbelt.revoke, orderIndex]);
+
+  useEffect(() => {
+    if (onSwitch) onSwitch(toolbelt.activeTool?.name === name);
+  }, [toolbelt.activeTool, onSwitch, name]);
 
   return (
     <>

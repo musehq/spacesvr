@@ -98,7 +98,7 @@ _the following are each a fundamental unit and their own folder at the top level
 
 **realities** define how the player experiences your world. They are comparable in function to a browser. They are implemented as a React container component and composed of an ordering of layers.
 
-**tools** offer the player affordances in your world. They are implemented as ideas using the Tool modifier, accessed by single keystrokes.
+**tools** offer the player affordances in your world. They are the 3D equivalent of a browser toolbar. They are implemented using a Layer for fundamental state a modifier for registry.
 
 **worlds** are sets of ideas. They are the actual content of your site. They are implemented as compositions of ideas.
 
@@ -113,7 +113,7 @@ _the following are each a fundamental unit and their own folder at the top level
 
 #### Standard Reality
 
-The Standard Reality defines the standard experiencing the 3D web. The layers provided are the Environment Layer, Physics Layer, Player Layer, and Network Layer. Additionally, it provides an infinite ground to walk on that can be disabled.
+The Standard Reality defines the standard experiencing the 3D web. The layers provided are, in order: Environment, Physics, Player, Toolbelt, Network, Visual. Additionally, it provides an infinite ground to walk on that can be disabled.
 
 ```tsx
 <StandardReality
@@ -185,6 +185,32 @@ type PlayerState = {
   velocity: PlayerVec; //.get() and .set() for velocity
   controls: PlayerControls; //.lock() and .unlock() for stopping player movement
   raycaster: Raycaster; // reference to player's raycaster
+};
+```
+
+#### Toolbelt Layer
+
+_Provides a layer of UX to offer user interaction with the world._
+
+```tsx
+type ToolbeltProps = {
+  showOnSpawn?: boolean; // whether to show the toolbelt on spawn, default true
+};
+```
+
+```tsx
+const toolbelt = useToolbelt();
+
+type ToolbeltState = {
+  tools: Tool[];
+  activeTool?: Tool;
+  hide: () => void;
+  next: () => void;
+  prev: () => void;
+  show: () => void;
+  activeIndex: number | undefined;
+  setActiveIndex: (i: number) => void;
+  direction: Direction;
 };
 ```
 
@@ -425,6 +451,24 @@ Makes its children react to onclick and on hover methods
 </Interactable>
 ```
 
+#### Tool
+
+Turns its children into a tool, automatically registers it with the Tool Layer.
+
+```tsx
+<Tool
+  name="My Tool" // name used for identification
+  pos={[0, 0]} // where the tool should be positioned in screen space, x:[-1, 1], y:[-1, 1]
+  face={true} // whether the tool should face the user, default true
+  pinY={false} // whether the tool should be pinned on the screen space y so user can look up and down
+  range={0} // how far from the cursor the tool will stay without moving left or ight, along the x screen space axis, measured in degrees
+  orderIndex={0} // the order in which the tool should be rendered relative to other orders, default 0, sorts low to high
+  onSwitch={(enabled: boolean) => {}} // callback for when active tool switches, passes whether the given tool is enabled
+>
+  <Stuff />
+</Tool>
+```
+
 #### Anchor
 
 Makes its children link out to when clicked. handles leaving vr session.
@@ -443,7 +487,7 @@ Makes its children link out to when clicked. handles leaving vr session.
 Turns its children into a billboard, always facing the camera.
 
 ```tsx
-<FacePlayer lockX={false} lockY={false} lockZ={false} />
+<FacePlayer enabled={true} lockX={false} lockY={false} lockZ={false} />
 ```
 
 #### Floating
@@ -470,17 +514,16 @@ Makes its children spin
 <Spinning xSpeed={0} ySpeed={1} zSpeed={0} />
 ```
 
-#### Tool
+#### Visual Effect
 
-Provides the UX for its children to become a tool, meaning it will show up in camera at all times.
+Adds a render pass to the Visual Layer's render pipeline. Use to add postprocessing.
 
 ```tsx
-<Tool
-  pos={[0, 0]} // position on screen from [-1, -1] to [1, 1]
-  face={true} // whether the tool should face the screen
-  distance={1} // how far away to place the item. It will scale as it moves away
-  pinY={false} // pin the tool on the y axis
-/>
+<VisualEffect
+  index={1} // the order in which the effects are applied, sorts low to high
+>
+  <unrealBloomPass args={[new Vector2(256, 256), 0.1, 0.01, 0.95]} />
+</VisualEffect>
 ```
 
 ---
@@ -533,6 +576,18 @@ A simple button
 >
   Click me!
 </Button>
+```
+
+#### Key
+
+A Keyboard Key that responds to the corresponding key press. Useful for tutorials.
+
+```tsx
+<Key
+  keyCode="a"
+  keyPress={["a, A"]} // optional, default is keyCode, but in case there are multiple keys to look for
+  onPressed={(evt) => console.log("Ive been pressed!")} // optional callback when key is pressed
+/>
 ```
 
 #### Switch

@@ -4,8 +4,8 @@ import { Network, NetworkProps } from "../layers/Network";
 import { Player, PlayerProps } from "../layers/Player";
 import { InfinitePlane } from "../ideas/environment/InfinitePlane";
 import { ReactNode } from "react";
-import Toolbelt, { ToolbeltProps } from "../layers/Toolbelt";
-import Visual from "../layers/Visual";
+import { Toolbelt, ToolbeltProps } from "../layers/Toolbelt";
+import { Visual } from "../layers/Visual";
 
 type StandardRealityProps = {
   children?: ReactNode | ReactNode[];

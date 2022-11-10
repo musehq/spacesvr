@@ -1,12 +1,12 @@
 import { useVisual } from "../../layers/Visual";
 import { ReactElement, useEffect, useState } from "react";
 
-type EnhanceVisualsProps = {
+type VisualEffect = {
   index: number;
   children: ReactElement | ReactElement[];
 };
 
-export function VisualEffect(props: EnhanceVisualsProps) {
+export function VisualEffect(props: VisualEffect) {
   const { index, children } = props;
 
   const [uuid] = useState(() => Math.random().toString(36).substring(2));

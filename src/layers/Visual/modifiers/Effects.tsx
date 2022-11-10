@@ -18,6 +18,9 @@ import {
 
 type EffectsProps = { children: ReactNode | ReactNode[] };
 
+/**
+ *  Lots of code copied from https://github.com/pmndrs/drei/blob/master/src/core/Effects.tsx
+ */
 export function Effects(props: EffectsProps) {
   const { children } = props;
 
