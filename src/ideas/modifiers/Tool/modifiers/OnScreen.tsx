@@ -3,8 +3,8 @@ import { ReactNode, useEffect, useRef } from "react";
 import { animated, useSpring } from "@react-spring/three";
 import { PerspectiveCamera } from "three";
 import { useToolbelt } from "../../../../layers/Toolbelt";
-import { getHudPos } from "../logic/screen";
 import Draggable from "./Draggable";
+import { getHudPos } from "../../../../logic/hud";
 
 type OnScreenProps = {
   distance: number;

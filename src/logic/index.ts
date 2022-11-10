@@ -4,6 +4,7 @@ export * from "./bvh";
 export * from "./collision";
 export * from "./dom";
 export * from "./drag";
+export * from "./hud";
 export * from "./input";
 export * from "./keyboard";
 export * from "./keys";

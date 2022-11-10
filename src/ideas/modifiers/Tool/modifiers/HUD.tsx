@@ -1,7 +1,7 @@
 import { ReactNode, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Group, PerspectiveCamera, Quaternion, Vector2 } from "three";
-import { getHudPos } from "../logic/screen";
+import { getHudPos } from "../../../../logic/hud";
 
 type HUDProps = {
   children?: ReactNode | ReactNode[];

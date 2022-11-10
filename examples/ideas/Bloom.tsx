@@ -23,7 +23,7 @@ export default function Bloom() {
 
   return (
     <VisualEffect index={1}>
-      <unrealBloomPass args={[res, 0.2, 0.01, 0.95]} />
+      <unrealBloomPass args={[res, 0.1, 0.01, 0.95]} />
     </VisualEffect>
   );
 }
