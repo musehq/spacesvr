@@ -13,11 +13,15 @@ import { useMicrophone } from "./mic";
 export const useVoiceConnections = (
   enabled: boolean,
   peer: Peer | undefined,
-  connections: Map<string, DataConnection>
-): Map<string, MediaConnection> => {
+  connections: Map<string, DataConnection>,
+  inputDeviceId?: string
+): {
+  mediaConnections: Map<string, MediaConnection>;
+  localStream: MediaStream | undefined;
+} => {
   const mediaConns = useMemo<Map<string, MediaConnection>>(() => new Map(), []);
 
-  const localStream = useMicrophone(enabled);
+  const localStream = useMicrophone(enabled, inputDeviceId);
 
   // handle calling and answering peers
   useEffect(() => {
@@ -80,5 +84,5 @@ export const useVoiceConnections = (
     }
   }, [enabled, mediaConns]);
 
-  return mediaConns;
+  return { mediaConnections: mediaConns, localStream };
 };

@@ -14,14 +14,19 @@ export type ConnectionState = {
   connect: (config?: ConnectionConfig) => Promise<void>;
   connections: Map<string, DataConnection>;
   mediaConnections: Map<string, MediaConnection>;
+  localStream: MediaStream | undefined;
   disconnect: () => void;
   voice: boolean;
   setVoice: (v: boolean) => void;
+  setInputDevice: (deviceId: string) => void;
+  setOutputDevice: (deviceId: string) => void;
 } & Pick<Channels, "useChannel">;
 
 export type ConnectionConfig = {
   iceServers?: RTCIceServer[];
   voice?: boolean;
+  inputDeviceId?: string;
+  outputDeviceId?: string;
 } & SignallerConfig;
 
 export const useConnection = (
@@ -128,8 +133,15 @@ export const useConnection = (
   useWaving(1, signaller, disconnect);
 
   const [voice, setVoice] = useState(!!externalConfig.voice);
+  const [inputDeviceId, setInputDevice] = useState<string>();
+  const [outputDeviceId, setOutputDevice] = useState<string>();
   useEffect(() => setVoice(!!externalConfig.voice), [externalConfig.voice]);
-  const mediaConnections = useVoiceConnections(voice, peer, connections);
+  const { mediaConnections, localStream } = useVoiceConnections(
+    voice,
+    peer,
+    connections,
+    inputDeviceId
+  );
 
   return {
     connected,
@@ -139,6 +151,9 @@ export const useConnection = (
     useChannel: channels.useChannel,
     voice,
     setVoice,
+    localStream,
     mediaConnections,
+    setInputDevice,
+    setOutputDevice,
   };
 };

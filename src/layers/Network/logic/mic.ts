@@ -5,7 +5,10 @@ import { useEnvironment } from "../../Environment";
  * WHen enabled, will ask user for mic permissions and return the local microphone stream
  * @param enabled
  */
-export const useMicrophone = (enabled = true): MediaStream | undefined => {
+export const useMicrophone = (
+  enabled = true,
+  inputDeviceId?: string
+): MediaStream | undefined => {
   const { paused } = useEnvironment();
   const [firstPaused, setFirstPaused] = useState(true);
   useEffect(() => setFirstPaused(paused && firstPaused), [paused, firstPaused]);
@@ -31,9 +34,9 @@ export const useMicrophone = (enabled = true): MediaStream | undefined => {
   const [attempted, setAttempted] = useState(false);
   useEffect(() => {
     // https://bugs.webkit.org/show_bug.cgi?id=230902#c47
-    if (!enabled || attempted || (iOS() && firstPaused)) return;
+    if (!enabled || (iOS() && firstPaused)) return;
 
-    setAttempted(true);
+    // setAttempted(true);
 
     navigator.mediaDevices
       .getUserMedia({
@@ -41,6 +44,7 @@ export const useMicrophone = (enabled = true): MediaStream | undefined => {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
+          ...(inputDeviceId ? { deviceId: inputDeviceId } : {}),
         },
       })
       .then((stream) => {
@@ -49,7 +53,7 @@ export const useMicrophone = (enabled = true): MediaStream | undefined => {
       .catch((err) => {
         console.error(err);
       });
-  }, [attempted, enabled, firstPaused]);
+  }, [enabled, firstPaused, inputDeviceId]);
 
   return localStream;
 };
