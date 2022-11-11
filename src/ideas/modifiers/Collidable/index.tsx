@@ -91,7 +91,7 @@ export function Collidable(props: CollidableProps) {
   }, [collisionMeshes, hideCollisionMeshes]);
 
   return (
-    <group name="collidable" ref={group}>
+    <group name="spacesvr-collidable" ref={group}>
       {children}
       {enabled &&
         collisionGeos &&

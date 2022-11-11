@@ -77,7 +77,7 @@ export default function HUD(props: HUDProps) {
   });
 
   return (
-    <group name="hud" ref={group}>
+    <group name="spacesvr-hud" ref={group}>
       {children}
     </group>
   );

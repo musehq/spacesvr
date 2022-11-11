@@ -127,7 +127,7 @@ export function Frame(props: FrameProps) {
   }, [innerFrameMaterial, width, height]);
 
   return (
-    <group name="frame">
+    <group name="spacesvr-frame">
       <mesh geometry={geometry} material={material} />
       {backFrameGeometry && innerFrameMaterial && (
         <mesh geometry={backFrameGeometry} material={innerFrameMaterial} />

@@ -9,8 +9,6 @@ import {
   LostWorld,
   Camera,
   WalkieTalkie,
-  NavigatorTool,
-  Cart,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
@@ -159,8 +157,6 @@ export default function Workshop() {
       />
       <Camera />
       <WalkieTalkie />
-      <Cart />
-      <NavigatorTool />
       <Bloom />
     </StandardReality>
   );
