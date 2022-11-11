@@ -83,13 +83,15 @@ export function DropDown(props: DropDownProps) {
             </Option>
           </a.group>
         ))}
-        <a.group
-          rotation-z={rot}
-          position-x={width / 2 - 0.03 / 2 - 0.01}
-          position-z={0.01 / 2 + 0.001}
-        >
-          <Image src="/chevron-down.png" scale={0.03} />
-        </a.group>
+        {items.length > 1 && (
+          <a.group
+            rotation-z={rot}
+            position-x={width / 2 - 0.03 / 2 - 0.01}
+            position-z={0.01 / 2 + 0.001}
+          >
+            <Image src="/chevron-down.png" scale={0.03} />
+          </a.group>
+        )}
       </a.group>
     </group>
   );

@@ -4,6 +4,7 @@ import TalkieModel from "./components/TalkieModel";
 import MicAccess from "./components/MicAccess";
 import { Button } from "../../ideas";
 import { useToolbelt } from "../../layers/Toolbelt";
+import { useEnvironment } from "../../layers";
 
 const FONT_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf";
@@ -12,13 +13,14 @@ export function WalkieTalkie() {
   const TOOL_NAME = "Walkie Talkie";
 
   const toolbelt = useToolbelt();
+  const { device } = useEnvironment();
 
   const WIDTH = 0.5;
   const HEIGHT = 0.55;
   const DEPTH = 0.1;
 
   return (
-    <Tool name={TOOL_NAME} pos={[0, 0]} range={0.3} pinY>
+    <Tool name={TOOL_NAME} pos={[0, 0]} range={device.mobile ? 0 : 0.3} pinY>
       <group position-y={-0.05} scale={1.25}>
         <TalkieModel width={WIDTH} height={HEIGHT} depth={DEPTH} />
         <group name="content" position-z={0.1 / 2 + 0.001}>
