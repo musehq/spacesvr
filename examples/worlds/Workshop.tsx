@@ -8,7 +8,6 @@ import {
   Switch,
   LostWorld,
   Camera,
-  WalkieTalkie,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
@@ -156,7 +155,6 @@ export default function Workshop() {
         muted
       />
       <Camera />
-      <WalkieTalkie />
       <Bloom />
     </StandardReality>
   );

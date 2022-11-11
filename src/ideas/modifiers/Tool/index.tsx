@@ -65,7 +65,7 @@ export function Tool(props: ToolProps) {
         <group name={`tool-${name}`} visible={visible}>
           <HUD pos={pos} pinY={pinY} distance={DISTANCE} range={range}>
             <OnScreen distance={DISTANCE} name={name} pos={pos}>
-              <FacePlayer enabled={face}>{children}</FacePlayer>
+              <FacePlayer enabled={face}>{visible && children}</FacePlayer>
             </OnScreen>
           </HUD>
         </group>,

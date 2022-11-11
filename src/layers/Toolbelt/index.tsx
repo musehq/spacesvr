@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { isTyping } from "../../logic";
+import { isTyping, useRerender } from "../../logic";
 import ToolSwitcher from "./ideas/ToolSwitcher";
 import { PerspectiveCamera, Scene } from "three";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
@@ -47,6 +47,7 @@ export function Toolbelt(props: ToolbeltLayer) {
 
   const [hudScene] = useState(() => new Scene());
   const { camera } = useThree();
+  const rerender = useRerender();
 
   const tools = useMemo<Tool[]>(() => [], []);
   const [activeIndex, setActiveIndex] = useState<number | undefined>(
@@ -63,6 +64,7 @@ export function Toolbelt(props: ToolbeltLayer) {
         console.error(`Toolbelt: Tool with same name already exists: ${name}`);
         return;
       }
+      if (tools.length === 0) rerender();
       const tool = { name, orderIndex: orderIndex || 0 };
       tools.push(tool);
       tools.sort((a, b) => a.orderIndex - b.orderIndex);

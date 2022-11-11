@@ -19,7 +19,6 @@ export type ConnectionState = {
   voice: boolean;
   setVoice: (v: boolean) => void;
   setInputDevice: (deviceId: string) => void;
-  setOutputDevice: (deviceId: string) => void;
 } & Pick<Channels, "useChannel">;
 
 export type ConnectionConfig = {
@@ -134,7 +133,6 @@ export const useConnection = (
 
   const [voice, setVoice] = useState(!!externalConfig.voice);
   const [inputDeviceId, setInputDevice] = useState<string>();
-  const [outputDeviceId, setOutputDevice] = useState<string>();
   useEffect(() => setVoice(!!externalConfig.voice), [externalConfig.voice]);
   const { mediaConnections, localStream } = useVoiceConnections(
     voice,
@@ -154,6 +152,5 @@ export const useConnection = (
     localStream,
     mediaConnections,
     setInputDevice,
-    setOutputDevice,
   };
 };

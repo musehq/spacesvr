@@ -31,12 +31,9 @@ export const useMicrophone = (
   const [localStream, setLocalStream] = useState<MediaStream>();
 
   // attempt to request permission for microphone, only try once
-  const [attempted, setAttempted] = useState(false);
   useEffect(() => {
     // https://bugs.webkit.org/show_bug.cgi?id=230902#c47
     if (!enabled || (iOS() && firstPaused)) return;
-
-    // setAttempted(true);
 
     navigator.mediaDevices
       .getUserMedia({

@@ -1,4 +1,4 @@
-import { StandardReality, Background, Model, WalkieTalkie } from "spacesvr";
+import { StandardReality, Background, Model } from "spacesvr";
 import LightSwitch from "./ideas/LightSwitch";
 import PingPongMulti from "./ideas/PingPongMulti";
 import Title from "../../ideas/Title";
@@ -29,7 +29,6 @@ export default function Multiplayer() {
         <meshBasicMaterial color={"purple"} />
       </mesh>
       <Model src="https://d27rt3a60hh1lx.cloudfront.net/models/Camera-1652915410/camera_02_cleaned.glb.gz" />
-      <WalkieTalkie />
     </StandardReality>
   );
 }
