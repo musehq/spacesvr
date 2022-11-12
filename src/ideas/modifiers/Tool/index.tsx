@@ -34,7 +34,7 @@ export function Tool(props: ToolProps) {
     pos = [0, 0],
     face = true,
     pinY = false,
-    range = 0,
+    range,
     orderIndex,
     onSwitch,
   } = props;

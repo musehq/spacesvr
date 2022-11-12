@@ -4,7 +4,6 @@ import { useTransition } from "@react-spring/core";
 import { a, useSpring } from "@react-spring/three";
 import { Option } from "./Option";
 import { Image } from "../../../ideas/media/Image";
-import useTilg from "tilg";
 
 type Item = { text: string; value: string };
 

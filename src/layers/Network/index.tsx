@@ -2,7 +2,7 @@ import NetworkedEntities from "./ideas/NetworkedEntities";
 import { ReactNode, useEffect, useRef } from "react";
 import { ConnectionConfig, useConnection } from "./logic/connection";
 import { NetworkContext } from "./logic/network";
-import { WalkieTalkie } from "../../tools";
+import { WalkieTalkie } from "../../tools/WalkieTalkie";
 export * from "./logic/network";
 
 export type NetworkProps = {

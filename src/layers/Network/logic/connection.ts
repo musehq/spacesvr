@@ -25,7 +25,6 @@ export type ConnectionConfig = {
   iceServers?: RTCIceServer[];
   voice?: boolean;
   inputDeviceId?: string;
-  outputDeviceId?: string;
 } & SignallerConfig;
 
 export const useConnection = (

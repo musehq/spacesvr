@@ -8,7 +8,7 @@ type HUDProps = {
   pos: [number, number];
   distance: number;
   pinY?: boolean;
-  range: number;
+  range?: number;
 };
 
 /**
@@ -17,7 +17,7 @@ type HUDProps = {
  * @constructor
  */
 export default function HUD(props: HUDProps) {
-  const { children, pos, pinY = false, distance, range } = props;
+  const { children, pos, pinY = false, distance, range = 0 } = props;
 
   const t = 0.01;
 
@@ -25,6 +25,7 @@ export default function HUD(props: HUDProps) {
   const size = useThree((state) => state.size);
 
   const group = useRef<Group>(null);
+  const [vecPos] = useState(new Vector2());
   const [lerpPos] = useState(new Vector2().fromArray(pos));
   const [lerpedQuat] = useState(new Quaternion());
   const [dummy1] = useState(new Quaternion());
@@ -35,7 +36,8 @@ export default function HUD(props: HUDProps) {
 
     const alpha = 1 - Math.pow(t * 0.0005 * size.width, delta);
 
-    lerpPos.lerp(new Vector2().fromArray(pos), alpha);
+    vecPos.fromArray(pos);
+    lerpPos.lerp(vecPos, alpha);
 
     // calculate x position based on camera and screen width
     const { x, y } = getHudPos(
