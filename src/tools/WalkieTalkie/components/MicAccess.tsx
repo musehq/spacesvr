@@ -1,7 +1,7 @@
 import { GroupProps } from "@react-three/fiber";
 import { Image } from "../../../ideas/media/Image";
 import Pane from "./Pane";
-import { useNetwork } from "../../../layers";
+import { useNetwork } from "../../../layers/Network/logic/network";
 import { useCallback, useEffect, useState } from "react";
 import { DropDown } from "./DropDown";
 import { Spinning, Switch } from "../../../ideas";
@@ -9,7 +9,9 @@ import VoiceLevels from "./VoiceLevels";
 import { Text } from "@react-three/drei";
 import Request from "./Request";
 
-type MicAccessProps = { width: number } & GroupProps;
+type MicAccessProps = {
+  width: number;
+} & GroupProps;
 
 export default function MicAccess(props: MicAccessProps) {
   const { width, ...rest } = props;

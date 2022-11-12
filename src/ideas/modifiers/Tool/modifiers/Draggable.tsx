@@ -1,7 +1,8 @@
 import { useThree } from "@react-three/fiber";
 import { SpringRef } from "@react-spring/three";
 import { useToolbelt } from "../../../../layers/Toolbelt";
-import { useEnvironment, usePlayer } from "../../../../layers";
+import { useEnvironment } from "../../../../layers/Environment";
+import { usePlayer } from "../../../../layers/Player";
 import { ReactNode, useRef } from "react";
 import { useDrag } from "../../../../logic/drag";
 import { Group } from "three";

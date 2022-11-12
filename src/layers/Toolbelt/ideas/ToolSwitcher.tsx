@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useToolbelt } from "../index";
+import { useToolbelt } from "../logic/toolbelt";
 import { useThree } from "@react-three/fiber";
 import { useDrag } from "../../../logic/drag";
 

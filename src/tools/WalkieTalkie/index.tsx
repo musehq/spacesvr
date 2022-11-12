@@ -3,8 +3,8 @@ import { Text } from "@react-three/drei";
 import TalkieModel from "./components/TalkieModel";
 import MicAccess from "./components/MicAccess";
 import { Button } from "../../ideas";
-import { useToolbelt } from "../../layers/Toolbelt";
-import { useEnvironment } from "../../layers";
+import { useToolbelt } from "../../layers/Toolbelt/";
+import { useEnvironment } from "../../layers/Environment";
 
 const FONT_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf";

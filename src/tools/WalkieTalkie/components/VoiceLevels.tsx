@@ -1,5 +1,5 @@
 import { GroupProps, useFrame } from "@react-three/fiber";
-import { useNetwork } from "../../../layers";
+import { useNetwork } from "../../../layers/Network/logic/network";
 import { useEffect, useRef, useState } from "react";
 import { CanvasTexture } from "three";
 
