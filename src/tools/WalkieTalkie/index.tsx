@@ -20,7 +20,7 @@ export function WalkieTalkie() {
   const DEPTH = 0.1;
 
   return (
-    <Tool name={TOOL_NAME} pos={[0, 0]} range={device.mobile ? 0 : 0.3} pinY>
+    <Tool name={TOOL_NAME} pos={[0, 0]} range={device.mobile ? 0 : 0.2} pinY>
       <group position-y={-0.05} scale={1.25}>
         <TalkieModel width={WIDTH} height={HEIGHT} depth={DEPTH} />
         <group name="content" position-z={0.1 / 2 + 0.001}>
@@ -44,6 +44,7 @@ export function WalkieTalkie() {
             fontSize={0.03}
             position-y={-0.21}
             rotation-x={-0.4}
+            color="#f2445e"
           >
             close
           </Button>

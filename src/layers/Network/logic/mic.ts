@@ -36,7 +36,7 @@ export const useMicrophone = (
     if (!enabled || (iOS() && firstPaused)) return;
 
     navigator.mediaDevices
-      .getUserMedia({
+      ?.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,

@@ -26,7 +26,6 @@ export const useVoiceConnections = (
   // handle calling and answering peers
   useEffect(() => {
     if (!peer || !localStream || !enabled) return;
-    console.log("running voice connection effect");
 
     // handle a new media connection (incoming or created
     const handleMediaConn = (mediaConn: MediaConnection) => {

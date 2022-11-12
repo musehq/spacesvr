@@ -111,16 +111,24 @@ export function Toolbelt(props: ToolbeltLayer) {
 
   const next = useCallback(() => {
     setDirection("right");
-    setActiveIndex((actInd) =>
-      actInd !== undefined ? (actInd + 1) % tools.length : 0
-    );
+    if (tools.length === 1) {
+      setActiveIndex((actInd) => (actInd === undefined ? 0 : undefined));
+    } else {
+      setActiveIndex((actInd) =>
+        actInd !== undefined ? (actInd + 1) % tools.length : 0
+      );
+    }
   }, [tools]);
 
   const prev = useCallback(() => {
     setDirection("left");
-    setActiveIndex((actInd) =>
-      actInd !== undefined ? (actInd - 1 + tools.length) % tools.length : 0
-    );
+    if (tools.length === 1) {
+      setActiveIndex((actInd) => (actInd === undefined ? 0 : undefined));
+    } else {
+      setActiveIndex((actInd) =>
+        actInd !== undefined ? (actInd - 1 + tools.length) % tools.length : 0
+      );
+    }
   }, [tools]);
 
   const hide = useCallback(() => {
