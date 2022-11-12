@@ -21,11 +21,12 @@ type Photography = {
 export const usePhotography = (
   cam: MutableRefObject<PerspectiveCamera | undefined>
 ): Photography => {
-  const { size, scene } = useThree();
+  const { scene } = useThree();
 
-  const resolution = useMemo(() => {
-    return new Vector2(3, 2).normalize().multiplyScalar(1920);
-  }, [size]);
+  const resolution = useMemo(
+    () => new Vector2(3, 2).normalize().multiplyScalar(2186),
+    []
+  );
 
   const aspect = useMemo(() => resolution.clone().normalize(), [resolution]);
 

@@ -2,6 +2,7 @@ import NetworkedEntities from "./ideas/NetworkedEntities";
 import { ReactNode, useEffect, useRef } from "react";
 import { ConnectionConfig, useConnection } from "./logic/connection";
 import { NetworkContext } from "./logic/network";
+import { WalkieTalkie } from "../../tools/WalkieTalkie";
 export * from "./logic/network";
 
 export type NetworkProps = {
@@ -40,6 +41,7 @@ export function Network(props: NetworkLayerProps) {
   return (
     <NetworkContext.Provider value={connection}>
       {!disableEntities && <NetworkedEntities />}
+      {connectionConfig.voice && <WalkieTalkie />}
       {children}
     </NetworkContext.Provider>
   );
