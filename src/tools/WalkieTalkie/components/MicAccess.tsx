@@ -57,8 +57,8 @@ export default function MicAccess(props: MicAccessProps) {
         <Image
           src={
             mute || !permissionGranted
-              ? "/microphone-off.png"
-              : "/microphone.png"
+              ? "https://d27rt3a60hh1lx.cloudfront.net/icons/microphone-off.ktx2"
+              : "https://d27rt3a60hh1lx.cloudfront.net/icons/microphone.ktx2"
           }
           scale={0.075}
           position-x={-width / 2 + 0.075 / 2 + 0.04}
@@ -67,7 +67,10 @@ export default function MicAccess(props: MicAccessProps) {
           {loading ||
             (!permissionGranted && (
               <Spinning ySpeed={0} zSpeed={2}>
-                <Image src="/loader.png" scale={0.075} />
+                <Image
+                  src="https://d27rt3a60hh1lx.cloudfront.net/icons/loader.ktx2"
+                  scale={0.075}
+                />
               </Spinning>
             ))}
           {!loading && <VoiceLevels position-x={-0.01} />}

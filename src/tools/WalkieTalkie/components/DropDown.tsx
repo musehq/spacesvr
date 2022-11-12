@@ -89,7 +89,10 @@ export function DropDown(props: DropDownProps) {
             position-x={width / 2 - 0.03 / 2 - 0.01}
             position-z={0.01 / 2 + 0.001}
           >
-            <Image src="/chevron-down.png" scale={0.03} />
+            <Image
+              src="https://d27rt3a60hh1lx.cloudfront.net/icons/chevron-down.ktx2"
+              scale={0.03}
+            />
           </a.group>
         )}
       </a.group>
