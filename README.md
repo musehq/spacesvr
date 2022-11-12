@@ -249,6 +249,22 @@ type NetworkState = {
 };
 ```
 
+## Tools
+
+#### Camera Tool
+
+A tool that gives the user a camera to take pictures with. To add to your toolbelt simply add it into the World.
+
+```tsx
+<StandardReality>
+  <Camera />
+</StandardReality>
+```
+
+#### Walkie Talkie Tool
+
+A tool to configure your microphone settings. Automatically added if voice chat is enabled in the network layer.
+
 ## Ideas
 
 ### _types of ideas_
