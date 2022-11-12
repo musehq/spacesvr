@@ -87,12 +87,14 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
       }
     };
 
-    gl.domElement.addEventListener("mousedown", startPress);
-    gl.domElement.addEventListener("mouseup", endPress);
+    const startev = device.mobile ? "touchstart" : "mousedown";
+    const endev = device.mobile ? "touchend" : "mouseup";
+    gl.domElement.addEventListener(startev, startPress);
+    gl.domElement.addEventListener(endev, endPress);
 
     return () => {
-      gl.domElement.removeEventListener("mousedown", startPress);
-      gl.domElement.removeEventListener("mouseup", endPress);
+      gl.domElement.removeEventListener(startev, startPress);
+      gl.domElement.removeEventListener(endev, endPress);
     };
   }, [
     DETECT_HOVER,

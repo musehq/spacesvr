@@ -1,10 +1,10 @@
 import { RoundedBox, Text } from "@react-three/drei";
 import { animated, config, useSpring } from "@react-spring/three";
 import { GroupProps } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
-import { Color, Mesh, Raycaster } from "three";
+import { Color, Raycaster } from "three";
 
 type ButtonProps = {
   children?: string;
@@ -72,7 +72,7 @@ export function Button(props: ButtonProps) {
   };
 
   // keep dimensions up to date
-  useEffect(() => {
+  useLayoutEffect(() => {
     textRef.current.addEventListener("synccomplete", () => {
       const info = textRef.current.textRenderInfo;
       const w = info.blockBounds[2] - info.blockBounds[0];

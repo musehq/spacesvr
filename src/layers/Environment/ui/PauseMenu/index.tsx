@@ -48,7 +48,7 @@ export default function PauseMenu(props: PauseMenuProps) {
   const PAUSE_ITEMS: PauseItem[] = [
     ...pauseMenuItems,
     {
-      text: "v2.5.4",
+      text: "v2.6.0",
       link: "https://www.npmjs.com/package/spacesvr",
     },
     ...menuItems,
@@ -63,6 +63,7 @@ export default function PauseMenu(props: PauseMenuProps) {
           <p>Move – {device.mobile ? "Joystick" : layout}</p>
           <p>Look – {device.mobile ? "Drag" : "Mouse"}</p>
           <p>Pause – {device.mobile ? "Menu Button" : "Esc"}</p>
+          <p>Cycle Tool – {device.mobile ? "Edge Swipe" : "Tab"}</p>
         </Instructions>
         <Actions>
           {PAUSE_ITEMS.map((item) =>

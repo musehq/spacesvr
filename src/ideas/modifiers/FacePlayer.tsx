@@ -1,30 +1,34 @@
-import { ReactNode, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../logic/limiter";
-import { Group } from "three";
+import { ReactNode, useRef, useState } from "react";
+import { useLimitedFrame } from "../../logic/limiter";
+import { Euler, Group } from "three";
 
 type FacePlayerProps = {
   children: ReactNode | ReactNode[];
+  enabled?: boolean;
   lockX?: boolean;
   lockY?: boolean;
   lockZ?: boolean;
 };
 
 export function FacePlayer(props: FacePlayerProps) {
-  const { children, lockX = false, lockY = false, lockZ = false } = props;
+  const {
+    children,
+    enabled = true,
+    lockX = false,
+    lockY = false,
+    lockZ = false,
+  } = props;
 
   const group = useRef<Group>(null);
-  const limiter = useLimiter(45);
+  const [prev] = useState(new Euler());
 
-  useFrame(({ clock, camera }) => {
-    if (!limiter.isReady(clock)) return;
+  useLimitedFrame(50, ({ camera }) => {
+    if (!group.current) return;
 
-    if (group.current) {
-      const prev = {
-        x: group.current.rotation.x,
-        y: group.current.rotation.y,
-        z: group.current.rotation.z,
-      };
+    if (!enabled) {
+      group.current.rotation.set(0, 0, 0);
+    } else {
+      prev.copy(group.current.rotation);
       group.current.lookAt(camera.position);
       if (lockX) group.current.rotation.x = prev.x;
       if (lockY) group.current.rotation.y = prev.y;
