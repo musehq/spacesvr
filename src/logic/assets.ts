@@ -4,6 +4,8 @@ import { useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import { suspend } from "suspend-react";
 import { useMemo } from "react";
+import { getFallbackTexture } from "./fallback";
+import { GLTF } from "three-stdlib";
 
 let ktx2loader: KTX2Loader | undefined;
 const KTX_CDN = "https://cdn.jsdelivr.net/gh/pmndrs/drei-assets@master/basis/";
@@ -15,7 +17,7 @@ const KTX_CDN = "https://cdn.jsdelivr.net/gh/pmndrs/drei-assets@master/basis/";
  * https://github.com/pmndrs/drei/blob/a2daf02853f624ef6062c70ba0b218bc03e5b626/src/core/useKTX2.tsx#L7
  * @param url
  */
-export function useImage(url: string) {
+export function useImage(url: string): Texture {
   const IS_KTX2 = url.toLowerCase().endsWith("ktx2");
   const gl = useThree((st) => st.gl);
 
@@ -31,10 +33,11 @@ export function useImage(url: string) {
 
   return suspend(
     (): Promise<CompressedTexture | Texture> =>
-      new Promise((res, reject) =>
-        loader.load(url, res, undefined, (error) =>
-          reject(new Error(`Could not load ${url}: ${error.message})`))
-        )
+      new Promise((res) =>
+        loader.load(url, res, undefined, (error) => {
+          console.error(error);
+          res(getFallbackTexture());
+        })
       ),
     [url]
   );
@@ -46,7 +49,7 @@ export function useImage(url: string) {
  * For all cases, functionality is to only download decoder files if needed by the file
  * @param url
  */
-export function useModel(url: string) {
+export function useModel(url: string): GLTF {
   const gl = useThree((st) => st.gl);
 
   return useGLTF(url, true, true, (loader) => {
