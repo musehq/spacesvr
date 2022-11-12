@@ -1,13 +1,9 @@
 import { GroupProps, useFrame } from "@react-three/fiber";
 import { useNetwork } from "../../../layers";
 import { useEffect, useRef, useState } from "react";
-import { CanvasTexture, LinearFilter } from "three";
+import { CanvasTexture } from "three";
 
-type VoiceLevelsProps = {} & GroupProps;
-
-export default function VoiceLevels(props: VoiceLevelsProps) {
-  const { ...rest } = props;
-
+export default function VoiceLevels(props: GroupProps) {
   const { localStream } = useNetwork();
 
   const [analyser, setAnalyser] = useState<AnalyserNode | undefined>();
@@ -69,7 +65,7 @@ export default function VoiceLevels(props: VoiceLevelsProps) {
   if (!localStream) return null;
 
   return (
-    <group name="voice-levels" {...rest}>
+    <group name="voice-levels" {...props}>
       <mesh>
         <planeBufferGeometry args={[0.095, 0.075]} />
         <meshStandardMaterial transparent>
