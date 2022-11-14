@@ -34,12 +34,14 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
 
   const getIntersection = useCallback(() => {
     if (!group.current) return undefined;
+    RAYCASTER.firstHitOnly = true;
     const intersects = RAYCASTER.intersectObject(group.current, true);
+    RAYCASTER.firstHitOnly = false;
     return intersects.length > 0 ? intersects[0] : undefined;
   }, [RAYCASTER]);
 
   // continuously update the hover state if we have a hover handler
-  useLimitedFrame(20, () => {
+  useLimitedFrame(17, () => {
     if (!group.current || !DETECT_HOVER) return;
 
     const inter = getIntersection();
@@ -62,7 +64,7 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
 
     group.current.traverse((obj) => {
       const mesh = obj as Mesh;
-      if (mesh.isMesh) enableBVHRaycast(mesh, 500);
+      if (mesh.isMesh) enableBVHRaycast(mesh, 50);
     });
   }, []);
 
