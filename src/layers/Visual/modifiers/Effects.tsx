@@ -63,13 +63,6 @@ export function Effects(props: EffectsProps) {
       args={[scene, camera]}
     />
   );
-  passes.push(
-    <shaderPass
-      attach={`passes-${passes.length}`}
-      key="gammapass"
-      args={[GammaCorrectionShader]}
-    />
-  );
   Children.forEach(children, (el: any) => {
     el &&
       passes.push(
