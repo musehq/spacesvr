@@ -6,12 +6,7 @@ import {
   Mesh,
   PerspectiveCamera as ThrPerspectiveCamera,
 } from "three";
-import {
-  createPortal,
-  MeshProps,
-  useFrame,
-  useThree,
-} from "@react-three/fiber";
+import { createPortal, MeshProps, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, Text } from "@react-three/drei";
 import CameraModel from "./models/Camera";
 import { usePhotography } from "./utils/photo";
@@ -20,6 +15,7 @@ import { config, useSpring, animated } from "@react-spring/three";
 import { Tool } from "../../ideas/modifiers/Tool";
 import { useToolbelt } from "../../layers/Toolbelt";
 import { Interactable } from "../../ideas";
+import { useLimitedFrame } from "../../logic";
 
 const AUDIO_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/tools/camera/shutter-sound.mp3";
@@ -44,7 +40,7 @@ export function Camera() {
 
   const dummy = useMemo(() => new Vector3(), []);
   const qummy = useMemo(() => new Quaternion(), []);
-  useFrame((state) => {
+  useLimitedFrame(24, (state) => {
     if (!cam.current || !mesh.current || !group.current || !ENABLED) return;
 
     // move mesh to camera's position
@@ -55,6 +51,7 @@ export function Camera() {
     cam.current.rotation.setFromQuaternion(qummy);
 
     // render to camera viewfinder
+    state.gl.autoClear = true;
     state.gl.setRenderTarget(photo.target);
     state.gl.render(scene, cam.current);
     state.gl.setRenderTarget(null);
