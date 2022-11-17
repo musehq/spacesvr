@@ -1,8 +1,17 @@
-import { ReactNode, useRef, useState } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import { Group, PerspectiveCamera, Quaternion, Vector2 } from "three";
+import { ReactNode, useMemo, useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import {
+  Euler,
+  Group,
+  MathUtils,
+  PerspectiveCamera,
+  Quaternion,
+  Vector2,
+} from "three";
 import { getHudPos } from "../../../../logic/hud";
-import { useSpring } from "@react-spring/three";
+import { QuaterionSpring } from "../logic/quat";
+import { config, useSpring } from "@react-spring/three";
+import { usePlayer } from "../../../../layers/Player/";
 
 type HUDProps = {
   children?: ReactNode | ReactNode[];
@@ -10,46 +19,79 @@ type HUDProps = {
   distance: number;
   pinY?: boolean;
   range?: number;
+  bobStrength?: number;
 };
 
 /**
- * Place the children in front of the camera
+ * Place the children in front of the camera with some sway
+ * 1. I tried springing the quaternion, but it's not continuous and causes a jump
+ * 2. I found a continuous quaternion spring, but it was not tight enough https://gist.github.com/sketchpunk/3568150a04b973430dfe8fd29bf470c8
+ * 3. solution was to move tool in screen spacing by springing pos value offsets based on rotation velocity
+ *    springed quat rotation still used for range
+ *
  * @param props
  * @constructor
  */
 export default function HUD(props: HUDProps) {
-  const { children, pos, pinY = false, distance, range = 0 } = props;
+  const {
+    children,
+    pos,
+    pinY = false,
+    distance,
+    range = 0,
+    bobStrength,
+  } = props;
 
-  const t = 0.01;
+  const { velocity } = usePlayer();
 
-  const camera = useThree((state) => state.camera);
-  const size = useThree((state) => state.size);
-
-  const [spring, set] = useSpring(() => ({ quat: [0, 0, 0, 0] }));
+  const t = 0.00001;
 
   const group = useRef<Group>(null);
-  const [vecPos] = useState(new Vector2());
-  const [lerpPos] = useState(new Vector2().fromArray(pos));
+  const [targetPos] = useState(new Vector2());
+  const [lerpedPos] = useState(new Vector2().fromArray(pos));
   const [lerpedQuat] = useState(new Quaternion());
+  const [targetQuat] = useState(new Quaternion());
+  const [lastQuat] = useState(new Quaternion());
+  const [lastEuler] = useState(new Euler(0, 0, 0, "YXZ"));
+  const [thisEuler] = useState(new Euler(0, 0, 0, "YXZ"));
   const [dummy1] = useState(new Quaternion());
   const [dummy2] = useState(new Quaternion());
 
-  useFrame((_, delta) => {
+  const [spring, set] = useSpring(() => ({
+    offset: [0, 0],
+    config: config.stiff,
+  }));
+
+  const qs = useMemo(() => new QuaterionSpring(50, 100), []);
+
+  useFrame(({ camera, clock }, delta) => {
     if (!group.current) return;
 
-    const alpha = 1 - Math.pow(t * 0.0005 * size.width, delta);
+    const alpha = 1 - Math.pow(t, delta);
 
-    vecPos.fromArray(pos);
-    lerpPos.lerp(vecPos, alpha);
+    // apply passes pos and offset pos
+    const off = spring.offset.get();
+    targetPos.fromArray(pos);
+    targetPos.x += off[0];
+    targetPos.y += off[1];
+    lerpedPos.lerp(targetPos, alpha);
 
     // calculate x position based on camera and screen width
-    const { x, y } = getHudPos(lerpPos, camera as PerspectiveCamera, distance);
+    const hud = getHudPos(lerpedPos, camera as PerspectiveCamera, distance);
+    const { x, y } = hud;
     group.current.position.set(x, y, -distance);
 
-    const RANGE_SET = range > 0;
+    // calculate rotation velocities about the respective ROTATION axis (not screen space)
+    dummy1.copy(lastQuat);
+    dummy2.copy(camera.quaternion);
+    thisEuler.setFromQuaternion(camera.quaternion);
+    let y_axis_vel = dummy1.multiply(dummy2.invert()).y / delta;
+    let x_axis_vel = (thisEuler.x - lastEuler.x) / delta;
 
+    // implement range
+    const RANGE_SET = range > 0;
     if (!RANGE_SET) {
-      set({ quat: camera.quaternion.toArray() });
+      lerpedQuat.copy(camera.quaternion);
     } else {
       // find angle along y axis
       dummy1.copy(lerpedQuat);
@@ -62,28 +104,49 @@ export default function HUD(props: HUDProps) {
       dummy2.normalize();
       const angle = dummy1.angleTo(dummy2);
 
+      // if out of range, move it back
       if (angle > range) {
         const diff = angle - range;
-        lerpedQuat.rotateTowards(camera.quaternion, diff);
+        targetQuat.copy(lerpedQuat);
+        targetQuat.rotateTowards(camera.quaternion, diff);
         if (!pinY) {
-          lerpedQuat.x = 0;
-          lerpedQuat.z = 0;
-          lerpedQuat.normalize();
+          targetQuat.x = 0;
+          targetQuat.z = 0;
+          targetQuat.normalize();
         }
-        set({ quat: lerpedQuat.toArray() });
+      } else {
+        // disable offsets if moving camera within range
+        x_axis_vel = 0;
+        y_axis_vel = 0;
       }
+      qs.criticallyStep(lerpedQuat, targetQuat, delta);
     }
 
-    lerpedQuat.fromArray(spring.quat.get());
-    if (!pinY) {
-      lerpedQuat.x = 0;
-      lerpedQuat.z = 0;
-    }
+    // bob a bit based on player velocity
+    const vel_len = velocity.get().length() > 1 ? 1 : 0;
+    const strength = bobStrength || Math.max(lerpedPos.length(), 0.05);
+    x_axis_vel +=
+      Math.sin(clock.getElapsedTime() * 15) * vel_len * 0.2 * strength;
+    y_axis_vel +=
+      Math.cos(clock.getElapsedTime() * 20 + 12) * vel_len * 0.1 * strength;
+
+    // set spring targets based on velocities
+    const scale_ang = 0.1;
+    const max_ang = 0.3;
+    const x_off = MathUtils.clamp(-y_axis_vel * scale_ang, -max_ang, max_ang);
+    const y_off = MathUtils.clamp(-x_axis_vel * scale_ang, -max_ang, max_ang);
+    set({ offset: [x_off, y_off] });
+
+    // range dependent, move items to camera quat
     group.current.position.applyQuaternion(lerpedQuat);
 
     // needed so that children positions are applied in screen space
     // should probably be moved to draggable .. ? idk, maybe the supposition is that children of hud are in screen space
     group.current.quaternion.copy(camera.quaternion);
+
+    // update last values
+    lastQuat.copy(camera.quaternion);
+    lastEuler.setFromQuaternion(camera.quaternion);
   });
 
   return (
