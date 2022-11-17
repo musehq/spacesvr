@@ -22,6 +22,7 @@ import { createPlayerState } from "./utils/player";
 import { useEnvironment } from "../Environment";
 import VRControllerMovement from "./controls/VRControllerMovement";
 import { PlayerState } from "./types/player";
+import { config, useSpring } from "@react-spring/three";
 
 export const PlayerContext = createContext({} as PlayerState);
 export const usePlayer = () => useContext(PlayerContext);
@@ -58,6 +59,8 @@ export function Player(props: PlayerLayer) {
 
   const { device } = useEnvironment();
 
+  const { bob } = useSpring({ bob: 0, config: config.default });
+
   // physical body
   const [, bodyApi] = useCapsuleCollider(pos);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
@@ -92,7 +95,7 @@ export function Player(props: PlayerLayer) {
     };
   }, [bodyApi, bodyApi.position, bodyApi.velocity]);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     // update raycaster on desktop (mobile uses default)
@@ -106,6 +109,13 @@ export function Player(props: PlayerLayer) {
 
     if (!lockControls.current) {
       updateVelocity(cam, velocity.current);
+      if (direction.current.length() > 0.1) bob.set(1);
+      else bob.set(0);
+
+      const amt = bob.get();
+      camera.position.y += Math.sin(clock.getElapsedTime() * 20) * 0.0055 * amt;
+      camera.position.x +=
+        Math.cos(clock.getElapsedTime() * 15 + 0.3) * 0.002 * amt;
     }
   });
 
