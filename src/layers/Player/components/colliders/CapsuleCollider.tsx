@@ -1,6 +1,6 @@
 import { ShapeType, Triplet, useCompoundBody } from "@react-three/cannon";
 import { useEffect, useRef } from "react";
-import { useEnvironment } from "../../Environment";
+import { useEnvironment } from "../../../Environment";
 import { Group } from "three";
 
 // height of 0.9 (eye level) for a perceived height of 1

@@ -1,6 +1,6 @@
 import { useRef, useEffect, MutableRefObject } from "react";
 import { Vector3 } from "three";
-import { useEnvironment } from "../../Environment";
+import { useEnvironment } from "../../../Environment";
 
 type KeyboardMovementProps = {
   direction: MutableRefObject<Vector3>;

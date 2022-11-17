@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { config, useSpring } from "@react-spring/three";
 import { Vector2, Euler } from "three";
-import { useEnvironment } from "../../Environment";
+import { useEnvironment } from "../../../Environment";
 
 const DRAG_SENSITIVITY = new Vector2(0.16, 0.16);
 const HOVER_SENSITIVITY = new Vector2(0.02, 0.02);

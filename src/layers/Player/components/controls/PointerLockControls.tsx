@@ -1,7 +1,7 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Euler } from "three";
-import { PauseEvent, useEnvironment } from "../../Environment";
+import { Euler, Vector3 } from "three";
+import { PauseEvent, useEnvironment } from "../../../Environment";
 import * as THREE from "three";
 
 const MIN_POLAR_ANGLE = 0; // radians
@@ -25,6 +25,7 @@ export default function PointerLockCamera() {
   const { paused, setPaused, events } = useEnvironment();
 
   const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
+  const [dummy] = useState(new Vector3());
   const isLocked = useRef(false);
   const lock = () => domElement.requestPointerLock();
   const unlock = () => domElement.ownerDocument.exitPointerLock();
@@ -33,7 +34,8 @@ export default function PointerLockCamera() {
     if (isLocked.current) {
       const lookAt = new THREE.Vector3(0, 0, -1);
       lookAt.applyQuaternion(camera.quaternion);
-      lookAt.multiply(new THREE.Vector3(1, 0, 1)).normalize();
+      dummy.set(1, 0, 1);
+      lookAt.multiply(dummy).normalize();
     }
   });
 
