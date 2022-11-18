@@ -49,7 +49,6 @@ const SPEED = 3.6; // (m/s) 1.4 walking, 2.6 jogging, 4.1 running
 const SHOW_PLAYER_HITBOX = false;
 
 export type PlayerProps = {
-  children: ReactNode[] | ReactNode;
   pos?: number[];
   rot?: number;
   speed?: number;
@@ -58,6 +57,10 @@ export type PlayerProps = {
   };
 };
 
+type PlayerLayer = {
+  children: ReactNode[] | ReactNode;
+} & PlayerProps;
+
 /**
  * Player represents a user controlled entity, complete with a
  * control scheme and a physical representation that interacts with other physics-
@@ -65,7 +68,7 @@ export type PlayerProps = {
  *
  * @constructor
  */
-export function Player(props: PlayerProps) {
+export function Player(props: PlayerLayer) {
   const {
     children,
     pos = [0, 1, 0],
