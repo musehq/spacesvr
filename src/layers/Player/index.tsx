@@ -85,7 +85,6 @@ export function Player(props: PlayerProps) {
   // physical body
   const [, bodyApi] = useCapsuleCollider(pos);
   const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
-  const bob = useBob(direction);
 
   // local state
   const position = useRef(new Vector3());
@@ -95,6 +94,8 @@ export function Player(props: PlayerProps) {
     () => new Raycaster(new Vector3(), new Vector3(), 0, 2),
     []
   );
+
+  const bob = useBob(velocity, direction);
 
   // initial rotation
   useEffect(() => {
