@@ -63,7 +63,7 @@ export function Key(props: Props) {
               {/* @ts-ignore */}
               <animated.meshStandardMaterial color={color} />
             </RoundedBox>
-            <Text color="black" fontSize={0.5}>
+            <Text color="black" fontSize={0.5} renderOrder={2}>
               {keyCode}
             </Text>
           </group>

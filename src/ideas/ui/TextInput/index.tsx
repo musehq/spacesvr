@@ -322,6 +322,7 @@ export function TextInput(props: TextProps) {
             maxWidth={INNER_WIDTH}
             // @ts-ignore
             whiteSpace="nowrap"
+            renderOrder={2}
           >
             {""}
           </Text>

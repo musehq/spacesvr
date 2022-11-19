@@ -106,6 +106,7 @@ export function Button(props: ButtonProps) {
           anchorY="middle"
           textAlign="center"
           position-z={DEPTH / 2 + 0.001}
+          renderOrder={2}
         >
           {children}
         </Text>
