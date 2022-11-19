@@ -39,15 +39,17 @@ export function Visual(props: VisualLayerProps) {
     rerender();
   }, []);
 
+  const USE_EFFECTS = childPasses.current.length > 0;
+
   useFrame(() => {
-    if (childPasses.current.length > 0) return;
+    if (USE_EFFECTS) return;
     gl.autoClear = true;
     gl.render(scene, camera);
   }, 1);
 
   return (
     <VisualContext.Provider value={{ registerPass, unregisterPass }}>
-      {childPasses.current.length > 0 && (
+      {USE_EFFECTS && (
         <Effects>{childPasses.current.map((p) => p.node)}</Effects>
       )}
       {children}

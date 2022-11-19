@@ -1,17 +1,20 @@
-import { PerspectiveCamera } from "three";
+import { PerspectiveCamera, Vector2 } from "three";
 
 const PADDING_X = 0.125;
 const PADDING_Y = 0.125;
 
 export const getHudPos = (
-  pos: [number, number],
+  pos: [number, number] | Vector2,
   camera: PerspectiveCamera,
   distance: number
 ) => {
   const { width, height } = getHudDims(camera, distance);
 
-  const x = pos[0] * (width - PADDING_X * 2) * 0.5;
-  const y = pos[1] * (height - PADDING_Y * 2) * 0.5;
+  const px = Array.isArray(pos) ? pos[0] : pos.x;
+  const py = Array.isArray(pos) ? pos[1] : pos.y;
+
+  const x = px * (width - PADDING_X * 2) * 0.5;
+  const y = py * (height - PADDING_Y * 2) * 0.5;
 
   return { x, y };
 };

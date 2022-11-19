@@ -12,6 +12,7 @@ type ButtonProps = {
   font?: string;
   fontSize?: number;
   maxWidth?: number;
+  width?: number;
   textColor?: string;
   color?: string;
   outline?: boolean;
@@ -26,6 +27,7 @@ export function Button(props: ButtonProps) {
     onClick,
     font = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf",
     fontSize = 0.05,
+    width,
     maxWidth = 0.25,
     textColor = "black",
     color = "#fff",
@@ -83,7 +85,8 @@ export function Button(props: ButtonProps) {
   }, []);
 
   const PADDING = fontSize * 0.9;
-  const WIDTH = dims[0] + PADDING * 2;
+  const MAX_WIDTH = width ? Math.min(width, maxWidth) : maxWidth;
+  const WIDTH = (width || dims[0]) + PADDING * 2;
   const HEIGHT = dims[1] + PADDING;
   const DEPTH = fontSize * 1.1;
   const OUTLINE_WIDTH = outline ? fontSize * 0.075 : 0;
@@ -97,12 +100,13 @@ export function Button(props: ButtonProps) {
           color={textColor}
           font={font}
           fontSize={fontSize}
-          maxWidth={maxWidth}
+          maxWidth={MAX_WIDTH}
           outlineWidth={OUTLINE_WIDTH}
           outlineColor={outlineColor}
           anchorY="middle"
           textAlign="center"
-          position-z={DEPTH / 2 + 0.0025}
+          position-z={DEPTH / 2 + 0.001}
+          renderOrder={2}
         >
           {children}
         </Text>

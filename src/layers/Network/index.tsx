@@ -41,7 +41,7 @@ export function Network(props: NetworkLayerProps) {
   return (
     <NetworkContext.Provider value={connection}>
       {!disableEntities && <NetworkedEntities />}
-      {connectionConfig.voice && <WalkieTalkie />}
+      {connection.voice && <WalkieTalkie />}
       {children}
     </NetworkContext.Provider>
   );

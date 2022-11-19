@@ -20,6 +20,8 @@ export function Key(props: Props) {
     ...config.stiff,
   });
 
+  const DEPTH = 0.25;
+
   useEffect(() => {
     const pressed = (e: KeyboardEvent) =>
       keyPress.map((k) => k.toLowerCase()).includes(e.key.toLowerCase());
@@ -49,19 +51,19 @@ export function Key(props: Props) {
 
   return (
     <group name="spacesvr-key" {...rest}>
-      <group position-z={-0.5}>
+      <group position-z={-DEPTH}>
         <animated.group scale-z={scale}>
-          <group position-z={0.25}>
+          <group position-z={DEPTH / 2}>
             <RoundedBox
-              args={[1, 1, 0.5]}
-              radius={0.125}
-              position-z={-0.25 - 0.01}
+              args={[1, 1, DEPTH]}
+              radius={DEPTH * 0.5}
+              position-z={-DEPTH / 2 - 0.01}
               smoothness={10}
             >
               {/* @ts-ignore */}
               <animated.meshStandardMaterial color={color} />
             </RoundedBox>
-            <Text color="black" fontSize={0.5}>
+            <Text color="black" fontSize={0.5} renderOrder={2}>
               {keyCode}
             </Text>
           </group>

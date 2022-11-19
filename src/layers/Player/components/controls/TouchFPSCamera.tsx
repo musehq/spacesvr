@@ -6,7 +6,7 @@ import {
   DefaultTouch,
   getCurrentTouch,
   tappedNipple,
-} from "../utils/touch";
+} from "../../logic/touch";
 
 const DRAG_SENSITIVITY = new Vector2(0.7, 0.7);
 

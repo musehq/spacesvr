@@ -15,6 +15,7 @@ type ToolProps = {
   pinY?: boolean;
   range?: number;
   orderIndex?: number;
+  bobStrength?: number;
   onSwitch?: (enabled: boolean) => void;
 };
 
@@ -35,6 +36,7 @@ export function Tool(props: ToolProps) {
     face = true,
     pinY = false,
     range,
+    bobStrength,
     orderIndex,
     onSwitch,
   } = props;
@@ -59,11 +61,19 @@ export function Tool(props: ToolProps) {
     if (onSwitch) onSwitch(toolbelt.activeTool?.name === name);
   }, [toolbelt.activeTool, onSwitch, name]);
 
+  if (!visible) return null;
+
   return (
     <>
       {createPortal(
         <group name={`tool-${name}`} visible={visible}>
-          <HUD pos={pos} pinY={pinY} distance={DISTANCE} range={range}>
+          <HUD
+            pos={pos}
+            pinY={pinY}
+            distance={DISTANCE}
+            range={range}
+            bobStrength={bobStrength}
+          >
             <OnScreen distance={DISTANCE} name={name} pos={pos}>
               <FacePlayer enabled={face}>{visible && children}</FacePlayer>
             </OnScreen>

@@ -5,23 +5,42 @@ import {
   useMemo,
   createContext,
   useContext,
+  useCallback,
 } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Camera, Quaternion, Raycaster, Vector3 } from "three";
-import NippleMovement from "./controls/NippleMovement";
-import KeyboardMovement from "./controls/KeyboardMovement";
-import PointerLockControls from "./controls/PointerLockControls";
-import TouchFPSCamera from "./controls/TouchFPSCamera";
+import NippleMovement from "./components/controls/NippleMovement";
+import KeyboardMovement from "./components/controls/KeyboardMovement";
+import PointerLockControls from "./components/controls/PointerLockControls";
+import TouchFPSCamera from "./components/controls/TouchFPSCamera";
 import {
   useCapsuleCollider,
   VisibleCapsuleCollider,
-} from "./colliders/CapsuleCollider";
-import { GyroControls } from "./controls/GyroControls";
-import { useSpringVelocity } from "./utils/velocity";
-import { createPlayerState } from "./utils/player";
+} from "./components/colliders/CapsuleCollider";
+import { GyroControls } from "./components/controls/GyroControls";
+import { useSpringVelocity } from "./logic/velocity";
 import { useEnvironment } from "../Environment";
-import VRControllerMovement from "./controls/VRControllerMovement";
-import { PlayerState } from "./types/player";
+import VRControllerMovement from "./components/controls/VRControllerMovement";
+import { useControlLock } from "./logic/controls";
+import { useBob } from "./logic/bob";
+
+type PlayerVec = {
+  set: (vec: Vector3) => void;
+  get: () => Vector3;
+};
+
+type PlayerControls = {
+  lock: () => void;
+  unlock: () => void;
+  isLocked: () => boolean;
+};
+
+type PlayerState = {
+  position: PlayerVec;
+  velocity: PlayerVec;
+  controls: PlayerControls;
+  raycaster: Raycaster;
+};
 
 export const PlayerContext = createContext({} as PlayerState);
 export const usePlayer = () => useContext(PlayerContext);
@@ -38,19 +57,27 @@ export type PlayerProps = {
   };
 };
 
-type PlayerLayer = { children: ReactNode[] | ReactNode } & PlayerProps;
+type PlayerLayer = {
+  children: ReactNode[] | ReactNode;
+} & PlayerProps;
 
 /**
  * Player represents a user controlled entity, complete with a
  * control scheme and a physical representation that interacts with other physics-
  * enabled objects.
  *
- *
- *
  * @constructor
  */
 export function Player(props: PlayerLayer) {
-  const { children, pos = [0, 1, 0], rot = 0, speed = SPEED, controls } = props;
+  const {
+    children,
+    pos = [0, 1, 0],
+    rot = 0,
+    speed = SPEED,
+    controls = {
+      disableGyro: true,
+    },
+  } = props;
 
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
@@ -70,6 +97,8 @@ export function Player(props: PlayerLayer) {
     () => new Raycaster(new Vector3(), new Vector3(), 0, 2),
     []
   );
+
+  const bob = useBob(velocity, direction);
 
   // initial rotation
   useEffect(() => {
@@ -92,7 +121,7 @@ export function Player(props: PlayerLayer) {
     };
   }, [bodyApi, bodyApi.position, bodyApi.velocity]);
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
 
     // update raycaster on desktop (mobile uses default)
@@ -106,24 +135,47 @@ export function Player(props: PlayerLayer) {
 
     if (!lockControls.current) {
       updateVelocity(cam, velocity.current);
+      bob.update(clock);
     }
   });
 
-  const state = createPlayerState(
-    bodyApi,
-    position,
-    velocity,
-    lockControls,
-    device.mobile ? defaultRaycaster : raycaster
+  const setPosition = useCallback(
+    (pos: Vector3) => {
+      bodyApi.position.set(pos.x, pos.y, pos.z);
+      position.current.copy(pos);
+    },
+    [bodyApi.position]
   );
 
+  const setVelocity = useCallback(
+    (vel: Vector3) => {
+      bodyApi.velocity.set(vel.x, vel.y, vel.z);
+      velocity.current.copy(vel);
+    },
+    [bodyApi.velocity]
+  );
+
+  const controlLock = useControlLock(lockControls);
+
+  const value = {
+    position: {
+      get: () => position.current.clone(),
+      set: setPosition,
+    },
+    velocity: {
+      get: () => velocity.current.clone(),
+      set: setVelocity,
+    },
+    controls: controlLock,
+    raycaster: device.mobile ? defaultRaycaster : raycaster,
+  };
+
   return (
-    <PlayerContext.Provider value={state}>
+    <PlayerContext.Provider value={value}>
       {device.mobile && (
         <>
-          {controls?.disableGyro ? (
-            <TouchFPSCamera />
-          ) : (
+          {controls?.disableGyro && <TouchFPSCamera />}
+          {!controls?.disableGyro && (
             <GyroControls fallback={<TouchFPSCamera />} />
           )}
           <NippleMovement direction={direction} />

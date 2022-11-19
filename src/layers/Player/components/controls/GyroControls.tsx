@@ -7,8 +7,8 @@ import {
   DefaultTouch,
   getCurrentTouch,
   tappedNipple,
-} from "../utils/touch";
-import { DeviceOrientationControls } from "../lib/DeviceOrientationControls";
+} from "../../logic/touch";
+import { DeviceOrientationControls } from "three-stdlib";
 
 const ALPHA_SENSITIVITY = 0.008;
 

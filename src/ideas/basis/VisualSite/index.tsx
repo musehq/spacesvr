@@ -20,6 +20,7 @@ export default function VisualSite(props: VisualSiteProps) {
           color="white"
           outlineWidth={0.025}
           rotation-y={-Math.PI / 2}
+          renderOrder={2}
         >
           /{site.slug}
         </Text>
