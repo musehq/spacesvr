@@ -44,7 +44,7 @@ export default function HUD(props: HUDProps) {
 
   const { velocity } = usePlayer();
 
-  const t = 0.00001;
+  const t = 0.0001;
 
   const group = useRef<Group>(null);
   const [targetPos] = useState(new Vector2());
@@ -72,8 +72,8 @@ export default function HUD(props: HUDProps) {
     // apply passes pos and offset pos
     const off = spring.offset.get();
     targetPos.fromArray(pos);
-    targetPos.x += off[0];
-    targetPos.y += off[1];
+    targetPos.x += off[0] || 0;
+    targetPos.y += off[1] || 0;
     lerpedPos.lerp(targetPos, alpha);
 
     // calculate x position based on camera and screen width
@@ -85,8 +85,8 @@ export default function HUD(props: HUDProps) {
     dummy1.copy(lastQuat);
     dummy2.copy(camera.quaternion);
     thisEuler.setFromQuaternion(camera.quaternion);
-    let y_axis_vel = dummy1.multiply(dummy2.invert()).y / delta;
-    let x_axis_vel = (thisEuler.x - lastEuler.x) / delta;
+    let y_axis_vel = dummy1.multiply(dummy2.invert()).y / (delta || 0.00001);
+    let x_axis_vel = (thisEuler.x - lastEuler.x) / (delta || 0.00001);
 
     // implement range
     const RANGE_SET = range > 0;
