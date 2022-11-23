@@ -24,14 +24,14 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
 
   const { paused } = useEnvironment();
 
-  const pressedKeys = useRef([false, false, false, false]);
+  const pressedKeys = useRef([false, false, false, false, false]);
 
   // key events
   const calcDirection = () => {
     const press = pressedKeys.current; // [w, a, s, d]
     const yAxis = -1 * Number(press[0]) + Number(press[2]);
     const xAxis = -1 * Number(press[1]) + Number(press[3]);
-    return [xAxis, yAxis, 0];
+    return [xAxis, yAxis, press[4] ? 1 : 0];
   };
 
   const onKeyDown = (ev: KeyboardEvent) => {
@@ -92,6 +92,9 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
       case 39: // keyCode for arrow right
         pressedKeys.current[3] = pressedState;
         break;
+      case "Space":
+        pressedKeys.current[4] = pressedState;
+        break;
       default:
         return;
     }
@@ -100,7 +103,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
   useEffect(() => {
     if (paused) {
       direction.current.set(0, 0, 0);
-      pressedKeys.current = [false, false, false, false];
+      pressedKeys.current = [false, false, false, false, false];
       return;
     }
 

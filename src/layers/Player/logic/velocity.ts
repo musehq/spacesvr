@@ -9,6 +9,7 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
   const dummy = useMemo(() => new Vector3(), []);
 
   const [quat] = useState(new Quaternion());
+  const target = useRef(0);
 
   const updateVelocity = (cam: Camera, velocity: Vector3) => {
     // get forward/back movement and left/right movement velocities
@@ -16,11 +17,21 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     dummy.z = direction.current.y; // forward/back
     dummy.multiplyScalar(speed);
 
+    console.log(direction.current.z);
+
+    dummy.y = 0;
     quat.copy(cam.quaternion);
     quat.x = 0;
     quat.z = 0;
     dummy.applyQuaternion(quat);
-    dummy.y = velocity.y;
+    const vel = velocity.length() / speed;
+    console.log(vel);
+    target.current = MathUtils.lerp(
+      target.current,
+      direction.current.z * 0.75,
+      0.05 + vel * 0.075
+    );
+    dummy.y = Math.min(velocity.y + target.current, 4 + vel);
 
     // keep y velocity intact and update velocity
     if (!device.desktop) {
@@ -28,6 +39,7 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     } else {
       const newX = MathUtils.lerp(velocity.x, dummy.x, 0.25);
       const newZ = MathUtils.lerp(velocity.z, dummy.z, 0.25);
+      const newY = MathUtils.lerp(velocity.y, dummy.y, 0.25);
       bodyApi.velocity.set(newX, dummy.y, newZ);
     }
   };
