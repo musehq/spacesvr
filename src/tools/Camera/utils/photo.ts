@@ -56,6 +56,7 @@ export const usePhotography = (
     r.toneMapping = ACESFilmicToneMapping;
 
     document.body.append(r.domElement);
+    cam.current.aspect = aspect.x / aspect.y;
 
     r.render(scene, cam.current);
 

@@ -145,6 +145,14 @@ export function TextInput(props: TextProps) {
     _text.sync();
   }, []);
 
+  const SHOW_PLACEHOLDER = !focused && placeholder && !input.value;
+  const VAL = SHOW_PLACEHOLDER
+    ? placeholder
+    : type === "password"
+    ? input.value.replace(/./g, "•")
+    : input.value;
+  const COL = SHOW_PLACEHOLDER ? "#828282" : "#000";
+
   const scrollLeft = useRef(0);
   const blink = useCaretBlink(0.65);
   if (textRef.current && input && caret.current && highlight.current) {
@@ -152,17 +160,8 @@ export function TextInput(props: TextProps) {
     const _caret = caret.current;
     const _highlight = highlight.current;
 
-    if (!focused && placeholder && input.value === "") {
-      _text.text = placeholder;
-      _text.color = "#828282";
-    } else {
-      if (type === "password") {
-        _text.text = input.value.replace(/./g, "•");
-      } else {
-        _text.text = input.value;
-      }
-      _text.color = "black";
-    }
+    _text.text = VAL;
+    _text.color = COL;
 
     syncOnChange(_text, "focused", focused);
     syncOnChange(_text, "selectionStart", input.selectionStart);
@@ -202,7 +201,8 @@ export function TextInput(props: TextProps) {
         const lastIndex = caretPositions.length - 2;
         const activeIndex = Math.min(activeSel * 3, input.value.length * 3 - 2);
         const lastCaretX = caretPositions[lastIndex];
-        const activeCaretX = caretPositions[activeIndex] || lastCaretX; // fallback for fast typing
+        const activeCaretX =
+          activeSel == 0 ? 0 : caretPositions[activeIndex] || lastCaretX; // fallback for fast typing
 
         // move it to the active character
         if (activeCaretX !== undefined) {
@@ -315,16 +315,17 @@ export function TextInput(props: TextProps) {
           <Text
             name="text"
             ref={textRef}
-            color="black"
+            color={COL}
             anchorX="left"
             fontSize={fontSize}
             font={font}
             maxWidth={INNER_WIDTH}
+            position-x={-INNER_WIDTH / 2}
             // @ts-ignore
             whiteSpace="nowrap"
             renderOrder={2}
           >
-            {""}
+            {VAL}
           </Text>
         </Suspense>
         <group name="blink" ref={blink.blinkRef}>

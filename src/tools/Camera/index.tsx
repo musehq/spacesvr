@@ -20,7 +20,11 @@ import { useLimitedFrame } from "../../logic";
 const AUDIO_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/tools/camera/shutter-sound.mp3";
 
-export function Camera() {
+type CameraProps = { onCapture?: () => void };
+
+export function Camera(props: CameraProps) {
+  const { onCapture } = props;
+
   const { device, paused } = useEnvironment();
   const { scene } = useThree();
   const toolbelt = useToolbelt();
@@ -62,6 +66,7 @@ export function Camera() {
     const audio = new Audio(AUDIO_URL);
     audio.play();
     photo.takePicture();
+    if (onCapture) onCapture();
   };
 
   useEffect(() => {
