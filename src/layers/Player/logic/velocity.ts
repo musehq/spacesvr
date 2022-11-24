@@ -17,15 +17,12 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     dummy.z = direction.current.y; // forward/back
     dummy.multiplyScalar(speed);
 
-    console.log(direction.current.z);
-
     dummy.y = 0;
     quat.copy(cam.quaternion);
     quat.x = 0;
     quat.z = 0;
     dummy.applyQuaternion(quat);
     const vel = velocity.length() / speed;
-    console.log(vel);
     target.current = MathUtils.lerp(
       target.current,
       direction.current.z * 0.75,
