@@ -66,8 +66,7 @@ export function VisualWorld(props: VisualWorldProps) {
   useFrame(({ clock }) => {
     if (!limiter.isReady(clock) || !mat || !mat.userData.shader) return;
 
-    mat.userData.shader.uniforms.time.value =
-      clock.getElapsedTime() + SEED * 1000;
+    mat.userData.shader.uniforms.time.value = clock.elapsedTime + SEED * 1000;
   });
 
   return (

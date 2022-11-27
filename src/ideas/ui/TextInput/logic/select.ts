@@ -79,7 +79,7 @@ export const getClickType = (
   lastClickTime: MutableRefObject<number>,
   lastDoubleClickTime: MutableRefObject<number>
 ): 1 | 2 | 3 => {
-  const time = clock.getElapsedTime();
+  const time = clock.elapsedTime;
   const clickTime = time - lastClickTime.current;
   const doubleClickTime = time - lastDoubleClickTime.current;
 

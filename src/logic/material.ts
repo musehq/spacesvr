@@ -57,7 +57,7 @@ export const useModifiedStandardShader = (
 
   useLimitedFrame(70, ({ clock }) => {
     if (!time || !mat.userData.shader?.uniforms?.time) return;
-    mat.userData.shader.uniforms.time.value = clock.getElapsedTime();
+    mat.userData.shader.uniforms.time.value = clock.elapsedTime;
   });
 
   return mat;

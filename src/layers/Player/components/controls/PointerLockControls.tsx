@@ -1,8 +1,8 @@
-import { useEffect, useCallback, useRef, useState } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import { Euler, Vector3 } from "three";
+import { useEffect, useCallback, useRef } from "react";
+import { useThree } from "@react-three/fiber";
+import { Euler } from "three";
 import { PauseEvent, useEnvironment } from "../../../Environment";
-import * as THREE from "three";
+import { isTyping } from "../../../../logic/dom";
 
 const MIN_POLAR_ANGLE = 0; // radians
 const MAX_POLAR_ANGLE = Math.PI; // radians
@@ -25,24 +25,14 @@ export default function PointerLockCamera() {
   const { paused, setPaused, events } = useEnvironment();
 
   const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
-  const [dummy] = useState(new Vector3());
   const isLocked = useRef(false);
   const lock = () => domElement.requestPointerLock();
   const unlock = () => domElement.ownerDocument.exitPointerLock();
 
-  useFrame(() => {
-    if (isLocked.current) {
-      const lookAt = new THREE.Vector3(0, 0, -1);
-      lookAt.applyQuaternion(camera.quaternion);
-      dummy.set(1, 0, 1);
-      lookAt.multiply(dummy).normalize();
-    }
-  });
-
   // update camera while controls are locked
   const onMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!isLocked.current) return;
+      if (!isLocked.current || isTyping()) return;
 
       const movementX =
         // @ts-ignore

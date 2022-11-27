@@ -1,7 +1,6 @@
 import { ReactNode, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
 import { Group } from "three";
-import { useLimiter } from "../../logic/limiter";
+import { useLimitedFrame } from "../../logic/limiter";
 
 type FloatingProps = {
   height?: number;
@@ -14,14 +13,12 @@ export function Floating(props: FloatingProps) {
 
   const group = useRef<Group>(null);
   const seed = useRef(Math.random());
-  const limiter = useLimiter(75);
 
-  useFrame(({ clock }) => {
-    if (!group.current || !limiter.isReady(clock)) return;
+  useLimitedFrame(75, ({ clock }) => {
+    if (!group.current) return;
 
     group.current.position.y =
-      height *
-      Math.sin(clock.getElapsedTime() * speed * 0.4 + seed.current * 10000);
+      height * Math.sin(clock.elapsedTime * speed * 0.4 + seed.current * 10000);
   });
 
   return (

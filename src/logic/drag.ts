@@ -65,7 +65,7 @@ export const useDrag = (
       dragPoint.set(touch.clientX, touch.clientY);
       const delta = dragPoint.sub(downPoint);
 
-      const time = clock.getElapsedTime();
+      const time = clock.elapsedTime;
       const elapsed = time - lastTouchRead.current;
       velocity.set(delta.x / elapsed / aspect, delta.y / elapsed / aspect);
       lastTouchRead.current = time;

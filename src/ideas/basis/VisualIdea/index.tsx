@@ -64,7 +64,7 @@ export function VisualIdea(props: VisualIdeaProps) {
     if (!mat?.userData?.shader || !limiter.isReady(clock)) return;
 
     mat.userData.shader.uniforms.time.value =
-      clock.getElapsedTime() / 6 + seed * 1000;
+      clock.elapsedTime / 6 + seed * 1000;
 
     mat.userData.shader.uniforms.color.value.set(col.get());
   });
