@@ -17,7 +17,7 @@ export const useLimiter = (frequency: number): Limiter => {
 
   return {
     isReady: (clock: Clock) => {
-      const time = clock.getElapsedTime();
+      const time = clock.elapsedTime;
       const ready = time - lastCall.current > 1 / frequency;
       if (ready) {
         lastCall.current = time;

@@ -71,14 +71,14 @@ export default function MobileDesktopInteractable(props: InteractableProps) {
   useEffect(() => {
     const startPress = () => {
       RAYCASTER.ray.at(1, down.start);
-      down.time = clock.getElapsedTime();
+      down.time = clock.elapsedTime;
     };
 
     const endPress = () => {
       if (!onClick || !group.current) return;
       const newPos = RAYCASTER.ray.at(1, new Vector3());
       const dist = down.start.distanceTo(newPos);
-      const timeDiff = clock.getElapsedTime() - down.time;
+      const timeDiff = clock.elapsedTime - down.time;
       if (dist > MAX_DRAG || timeDiff > CLICK_TIMEOUT) return;
       // either look for hover state or re-do raycast
       if (DETECT_HOVER) {

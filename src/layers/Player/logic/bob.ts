@@ -18,8 +18,8 @@ export const useBob = (
     const IS_GROUNDED = Math.abs(velocity.current.y) < 0.01;
     bob.set(IS_MOVING && IS_GROUNDED ? 1 : 0);
     const amt = bob.get();
-    const y = Math.sin(clock.getElapsedTime() * 20) * 0.0055 * amt;
-    const x = Math.cos(clock.getElapsedTime() * 15 + 0.3) * 0.002 * amt;
+    const y = Math.sin(clock.elapsedTime * 20) * 0.0055 * amt;
+    const x = Math.cos(clock.elapsedTime * 15 + 0.3) * 0.002 * amt;
     offset.set(x, y, 0);
     offset.applyQuaternion(camera.quaternion);
     camera.position.add(offset);

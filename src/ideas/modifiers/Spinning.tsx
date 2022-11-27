@@ -1,7 +1,6 @@
 import { ReactNode, useRef, useState } from "react";
 import { Group } from "three";
-import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../logic/limiter";
+import { useLimitedFrame } from "../../logic/limiter";
 
 type Props = {
   children: ReactNode;
@@ -15,18 +14,16 @@ export function Spinning(props: Props) {
 
   const group = useRef<Group>(null);
   const [seed] = useState(Math.random());
-  const limiter = useLimiter(75);
 
-  useFrame(({ clock }) => {
-    if (!group.current || !limiter.isReady(clock)) return;
+  useLimitedFrame(75, ({ clock }) => {
+    if (!group.current) return;
 
     group.current.rotation.x =
-      clock.getElapsedTime() * xSpeed * 0.25 + xSpeed * seed * 100;
+      clock.elapsedTime * xSpeed * 0.25 + xSpeed * seed * 100;
     group.current.rotation.y =
-      clock.getElapsedTime() * ySpeed * (0.25 + seed / 10) +
-      ySpeed * seed * 1000;
+      clock.elapsedTime * ySpeed * (0.25 + seed / 10) + ySpeed * seed * 1000;
     group.current.rotation.z =
-      clock.getElapsedTime() * zSpeed * 0.25 + zSpeed * seed * 40;
+      clock.elapsedTime * zSpeed * 0.25 + zSpeed * seed * 40;
   });
 
   return (
