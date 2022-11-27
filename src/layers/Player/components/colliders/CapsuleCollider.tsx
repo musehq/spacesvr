@@ -5,8 +5,8 @@ import { Group } from "three";
 
 // height of 0.9 (eye level) for a perceived height of 1
 const HEIGHT = 0.9;
-const RADIUS = 0.2;
-const SEGMENTS = 10;
+const RADIUS = 0.225;
+const SEGMENTS = 8;
 
 const SPHERE_SHAPE: ShapeType = "Sphere";
 
