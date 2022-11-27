@@ -56,6 +56,7 @@ export default function HUD(props: HUDProps) {
   const [thisEuler] = useState(new Euler(0, 0, 0, "YXZ"));
   const [dummy1] = useState(new Quaternion());
   const [dummy2] = useState(new Quaternion());
+  const [hud] = useState(new Vector2());
 
   const [spring, set] = useSpring(() => ({
     offset: [0, 0],
@@ -77,9 +78,8 @@ export default function HUD(props: HUDProps) {
     lerpedPos.lerp(targetPos, alpha);
 
     // calculate x position based on camera and screen width
-    const hud = getHudPos(lerpedPos, camera as PerspectiveCamera, distance);
-    const { x, y } = hud;
-    group.current.position.set(x, y, -distance);
+    getHudPos(lerpedPos, camera as PerspectiveCamera, distance, hud);
+    group.current.position.set(hud.x, hud.y, -distance);
 
     // calculate rotation velocities about the respective ROTATION axis (not screen space)
     dummy1.copy(lastQuat);
@@ -125,10 +125,9 @@ export default function HUD(props: HUDProps) {
     // bob a bit based on player velocity
     const vel_len = velocity.get().length() > 1 ? 1 : 0;
     const strength = bobStrength || Math.max(lerpedPos.length(), 0.05);
-    x_axis_vel +=
-      Math.sin(clock.getElapsedTime() * 15) * vel_len * 0.2 * strength;
+    x_axis_vel += Math.sin(clock.elapsedTime * 15) * vel_len * 0.2 * strength;
     y_axis_vel +=
-      Math.cos(clock.getElapsedTime() * 20 + 12) * vel_len * 0.1 * strength;
+      Math.cos(clock.elapsedTime * 20 + 12) * vel_len * 0.1 * strength;
 
     // set spring targets based on velocities
     const scale_ang = 0.1;

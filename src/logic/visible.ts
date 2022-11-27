@@ -11,7 +11,7 @@ import { useLimitedFrame } from "./limiter";
 export const useVisible = (val: SpringValue<number>) => {
   const [visible, setVisible] = useState(false);
 
-  useLimitedFrame(30, () => {
+  useLimitedFrame(5, () => {
     const v = val.get();
     if (visible && v === 0) setVisible(false);
     else if (!visible && v > 0) setVisible(true);

@@ -22,7 +22,7 @@ export const useCaretBlink = (rate = 1): BlinkManager => {
 
   useFrame(({ clock }) => {
     if (!blinkRef.current) return;
-    const diff = clock.getElapsedTime() - startTime.current;
+    const diff = clock.elapsedTime - startTime.current;
     if (diff < RESET_TIMEOUT) {
       blinkRef.current.visible = true;
     } else {
@@ -36,7 +36,7 @@ export const useCaretBlink = (rate = 1): BlinkManager => {
   });
 
   const reset = () => {
-    startTime.current = clock.getElapsedTime();
+    startTime.current = clock.elapsedTime;
   };
 
   return { blinkRef, reset };
