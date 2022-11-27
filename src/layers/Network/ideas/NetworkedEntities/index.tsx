@@ -1,7 +1,9 @@
-import { useMemo, useRef } from "react";
+import { ReactNode, useMemo, useRef } from "react";
 import {
   CylinderBufferGeometry,
+  Group,
   InstancedMesh,
+  Mesh,
   MeshNormalMaterial,
 } from "three";
 import { useNetwork } from "../../logic/network";
@@ -13,14 +15,24 @@ import {
 } from "@geckos.io/snapshot-interpolation/lib/types";
 import { useObj } from "./logic/resources";
 import { useEntities } from "./logic/entity";
+import { useModel, useRerender } from "../../../../logic";
 
-export default function NetworkedEntities() {
+const ZIPPA_MODEL =
+  "https://d1htv66kutdwsl.cloudfront.net/238a7ef1-c47a-4630-adf1-4e763c8a41d5/79decc4d-4521-44ad-9272-d3627bef738f.glb";
+
+type NetworkedEntitiesProps = {
+  children?: ReactNode | ReactNode[];
+};
+
+export default function NetworkedEntities(props: NetworkedEntitiesProps) {
+  const { children } = props;
+
   const { connected, useChannel } = useNetwork();
 
-  const mesh = useRef<InstancedMesh>(null);
-  const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 32), []);
-  const mat = useMemo(() => new MeshNormalMaterial(), []);
+  const group = useRef<Group>(null);
+  const meshes = useRef<InstancedMesh[]>([]);
   const obj = useObj();
+  const rerender = useRerender();
 
   const entities = useEntities();
 
@@ -66,10 +78,52 @@ export default function NetworkedEntities() {
 
   // receive player data
   useLimitedFrame(55, () => {
-    if (!mesh.current) return;
+    if (!group.current) return;
 
     const snapshot = SI.calcInterpolation("x y z q(quat)");
     if (!snapshot) return;
+
+    let changed = false;
+    // 1. find any meshes that haven't already been converted to instanced meshes in the local array
+    group.current.traverse((child) => {
+      if (child instanceof Mesh) {
+        const index = meshes.current.findIndex(
+          (m) => m.userData.meshId === child.id
+        );
+        if (index === -1) {
+          changed = true;
+          const geometry = child.geometry;
+          const material = child.material;
+          const mesh = new InstancedMesh(geometry, material, entities.length);
+          mesh.userData.meshId = child.id;
+          meshes.current.push(mesh);
+        }
+      }
+    });
+
+    // 2. remove any meshes that have been removed from the scene
+    meshes.current.forEach((mesh, index) => {
+      if (!group.current?.getObjectById(mesh.id)) {
+        const removed = meshes.current.splice(index, 1);
+        for (mesh of removed) {
+          changed = true;
+          mesh.dispose();
+        }
+      }
+    });
+
+    // 3. update the instanced meshes
+    meshes.current.forEach((mesh) => {
+      if (mesh.count != entities.length) {
+        mesh.count = entities.length;
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      console.log("changed!");
+      rerender();
+    }
 
     let i = 0;
     for (const entityState of snapshot.state) {
@@ -84,7 +138,10 @@ export default function NetworkedEntities() {
         quat.w as number
       );
       obj.updateMatrix();
-      mesh.current.setMatrixAt(i, obj.matrix);
+
+      for (const mesh of meshes.current) {
+        mesh.setMatrixAt(i, obj.matrix);
+      }
 
       const posAudio = entities[i]?.posAudio;
       if (posAudio) {
@@ -100,8 +157,24 @@ export default function NetworkedEntities() {
       i++;
     }
 
-    mesh.current.instanceMatrix.needsUpdate = true;
+    for (const mesh of meshes.current) {
+      mesh.instanceMatrix.needsUpdate = true;
+    }
   });
+
+  // const model = useModel(ZIPPA_MODEL);
+
+  /**
+   *
+   *         <instancedMesh
+   *           args={[
+   *             model.nodes.Zip_Head001_Mesh001.geometry,
+   *             mat,
+   *             entities.length,
+   *           ]}
+   *           matrixAutoUpdate={false}
+   *         />
+   */
 
   if (!connected) {
     return null;
@@ -119,11 +192,18 @@ export default function NetworkedEntities() {
             />
           )
       )}
-      <instancedMesh
-        ref={mesh}
-        args={[geo, mat, entities.length]}
-        matrixAutoUpdate={false}
-      />
+      {meshes.current.map((mesh) =>
+        mesh ? <primitive key={mesh.id} object={mesh} /> : null
+      )}
+      <group name="spacesvr-entities-meshes" ref={group} visible={false}>
+        {children}
+        {!children && (
+          <mesh>
+            <cylinderBufferGeometry args={[0.1, 0.1, 0.2, 8]} />
+            <meshNormalMaterial />
+          </mesh>
+        )}
+      </group>
     </group>
   );
 }
