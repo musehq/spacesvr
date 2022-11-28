@@ -18,13 +18,11 @@ export default function Draggable(props: DraggableProps) {
   const { set, distance, enabled, children } = props;
 
   const toolbelt = useToolbelt();
-  const { viewport, size, gl } = useThree();
+  const { size, gl } = useThree();
   const { device } = useEnvironment();
   const { raycaster } = usePlayer();
 
   const group = useRef<Group>(null);
-
-  const aspect = size.width / viewport.width;
 
   const DOWN_SWIPE_DIST = size.height * 0.28;
   const SIDE_SWIPE_DIST = size.width * 0.3;
@@ -46,8 +44,8 @@ export default function Draggable(props: DraggableProps) {
 
         set({
           pos: [
-            (delta.x / aspect) * distance * 0.7,
-            (-delta.y / aspect) * distance * (delta.y < 0 ? 0.15 : 0.5),
+            delta.x * 0.003 * distance * 0.7,
+            -delta.y * 0.003 * distance * (delta.y < 0 ? 0.15 : 0.5),
             0,
           ],
         });
