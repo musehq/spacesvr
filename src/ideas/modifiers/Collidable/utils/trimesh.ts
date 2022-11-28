@@ -1,11 +1,14 @@
-import { useTrimesh } from "@react-three/cannon";
+import { Triplet, useTrimesh } from "@react-three/cannon";
 import {
   BufferAttribute,
   BufferGeometry,
   InterleavedBufferAttribute,
 } from "three";
 
-export const useTrimeshCollision = (geometry: BufferGeometry) => {
+export const useTrimeshCollision = (
+  geometry: BufferGeometry,
+  trans?: { pos?: Triplet; rot?: Triplet }
+) => {
   const indices = (geometry.index as BufferAttribute).array as number[];
 
   const isInterleaved =
@@ -30,6 +33,8 @@ export const useTrimeshCollision = (geometry: BufferGeometry) => {
     () => ({
       type: "Static",
       args: [vertices, indices],
+      position: trans?.pos,
+      rotation: trans?.rot,
     }),
     undefined,
     [geometry.uuid]
