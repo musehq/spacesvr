@@ -31,11 +31,11 @@ export function Camera(props: CameraProps) {
   const cam = useRef<ThrPerspectiveCamera>();
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
-  const photo = usePhotography(cam);
 
-  const [pressShutter, setPressShutter] = useState(false);
   const [open, setOpen] = useState(false);
+  const [pressShutter, setPressShutter] = useState(false);
   const ENABLED = toolbelt.activeTool?.name === "Camera";
+  const photo = usePhotography(cam, open);
 
   const { shutterY, rotX, rotY, scale } = useSpring({
     shutterY: pressShutter || !open ? 0 : 1,
