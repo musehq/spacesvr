@@ -22,12 +22,14 @@ type Photography = {
 };
 
 export const usePhotography = (
-  cam: MutableRefObject<PerspectiveCamera | undefined>
+  cam: MutableRefObject<PerspectiveCamera | undefined>,
+  open: boolean
 ): Photography => {
   const { device } = useEnvironment();
   const { scene } = useThree();
 
   const [fov, setFov] = useState(50);
+  useEffect(() => setFov(50), [open]);
   const resolution = useMemo(
     () => new Vector2(3, 2).normalize().multiplyScalar(2186),
     []
@@ -91,8 +93,8 @@ export const usePhotography = (
       ":" +
       today.getMinutes();
 
-    link.download = `${name}.png`;
-    link.href = renderer.domElement.toDataURL("image/png");
+    link.download = `${name}.jpg`;
+    link.href = renderer.domElement.toDataURL("image/jpeg");
     link.click();
 
     link.remove();
