@@ -348,7 +348,7 @@ export function TextInput(props: TextProps) {
         <RoundedBox
           args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
           radius={RADIUS}
-          smoothness={8}
+          smoothness={6}
         >
           <meshStandardMaterial color="white" />
         </RoundedBox>
@@ -356,7 +356,7 @@ export function TextInput(props: TextProps) {
       <RoundedBox
         args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
         radius={RADIUS}
-        smoothness={8}
+        smoothness={6}
         position-z={-0.001}
       >
         {/* @ts-ignore */}

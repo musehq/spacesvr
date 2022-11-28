@@ -1,8 +1,8 @@
 export default function Lights() {
   return (
     <group name="lights">
-      <ambientLight intensity={0.5} />
-      <pointLight intensity={0.5} />
+      <ambientLight intensity={Math.PI * 0.5} />
+      <pointLight intensity={Math.PI * 0.5} />
     </group>
   );
 }
