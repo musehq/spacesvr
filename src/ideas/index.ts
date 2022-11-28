@@ -20,6 +20,7 @@ export * from "./modifiers/Floating";
 export * from "./modifiers/LookAtPlayer";
 export * from "./modifiers/Spinning";
 export * from "./modifiers/VisualEffect";
+export * from "./ui/Dialogue";
 export * from "./ui/TextInput";
 export * from "./ui/Arrow";
 export * from "./ui/Button";

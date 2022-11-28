@@ -8,6 +8,7 @@ import {
   Switch,
   LostWorld,
   Camera,
+  Dialogue,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
@@ -62,6 +63,10 @@ export default function Workshop() {
         </Link>
       </group>
       <group position-x={-6} position-z={-3}>
+        <Dialogue
+          position={[0, 1, 5]}
+          dialogue={[{ key: "init", text: "hello world" }]}
+        />
         <mesh position-y={0.5}>
           <boxBufferGeometry args={[1, 1, 1]} />
           <meshNormalMaterial />
