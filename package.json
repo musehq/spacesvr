@@ -56,7 +56,6 @@
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@geckos.io/snapshot-interpolation": "^1.1.0",
-    "@juggle/resize-observer": "^3.2.0",
     "@react-spring/three": "^9.4.5",
     "@react-three/cannon": "6.4.0",
     "@react-three/drei": "9.11.3",
