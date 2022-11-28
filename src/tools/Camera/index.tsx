@@ -1,24 +1,23 @@
-import { useEffect, useMemo, useRef, Suspense, useState } from "react";
-import {
-  Group,
-  Quaternion,
-  Vector3,
-  Mesh,
-  PerspectiveCamera as ThrPerspectiveCamera,
-} from "three";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Group, Mesh, PerspectiveCamera as ThrPerspectiveCamera } from "three";
 import { createPortal, MeshProps, useThree } from "@react-three/fiber";
 import { PerspectiveCamera, Text } from "@react-three/drei";
-import CameraModel from "./models/Camera";
-import { usePhotography } from "./utils/photo";
+import { usePhotography } from "./logic/photo";
 import { useEnvironment } from "../../layers/Environment";
 import { config, useSpring, animated } from "@react-spring/three";
 import { Tool } from "../../ideas/modifiers/Tool";
 import { useToolbelt } from "../../layers/Toolbelt";
-import { Interactable } from "../../ideas";
-import { useLimitedFrame } from "../../logic";
+import { Button, Interactable, Model } from "../../ideas";
+import { isTyping, useKeypress } from "../../logic";
+import { useRendering } from "./logic/rendering";
+import Instruction from "./components/Instruction";
 
 const AUDIO_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/tools/camera/shutter-sound.mp3";
+const CAMERA_MODEL_URL =
+  "https://d1htv66kutdwsl.cloudfront.net/6a38d41a-9fd4-43aa-bd7a-e2c6e16f6f20/ec577637-0ab6-4101-b077-d84f6a69e062.glb";
+const FONT_URL =
+  "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf";
 
 type CameraProps = { onCapture?: () => void };
 
@@ -33,93 +32,113 @@ export function Camera(props: CameraProps) {
   const group = useRef<Group>(null);
   const mesh = useRef<Mesh>(null);
   const photo = usePhotography(cam);
-  const [pressShutter, setPressShutter] = useState(false);
 
+  const [pressShutter, setPressShutter] = useState(false);
+  const [open, setOpen] = useState(false);
   const ENABLED = toolbelt.activeTool?.name === "Camera";
 
-  const { shutterY } = useSpring({
-    shutterY: pressShutter ? 0 : 1,
+  const { shutterY, rotX, rotY, scale } = useSpring({
+    shutterY: pressShutter || !open ? 0 : 1,
+    rotX: open ? 0 : 0.3,
+    rotY: open ? 0 : device.mobile ? Math.PI - 0.5 : -0.1,
+    scale: open ? (device.mobile ? 0.15 : 0.2) : device.mobile ? 0.1 : 0.25,
     config: config.stiff,
   });
 
-  const dummy = useMemo(() => new Vector3(), []);
-  const qummy = useMemo(() => new Quaternion(), []);
-  useLimitedFrame(24, (state) => {
-    if (!cam.current || !mesh.current || !group.current || !ENABLED) return;
+  useRendering(ENABLED, cam, group, mesh, photo.target);
 
-    // move mesh to camera's position
-    mesh.current.getWorldPosition(dummy);
-    cam.current.position.set(0, 0, 0);
-    cam.current.position.add(dummy);
-    mesh.current.getWorldQuaternion(qummy);
-    cam.current.rotation.setFromQuaternion(qummy);
-
-    // render to camera viewfinder
-    state.gl.autoClear = true;
-    state.gl.setRenderTarget(photo.target);
-    state.gl.render(scene, cam.current);
-    state.gl.setRenderTarget(null);
-  });
-
-  const onClick = () => {
+  const onClick = useCallback(() => {
     setPressShutter(true);
     const audio = new Audio(AUDIO_URL);
     audio.play();
     photo.takePicture();
     if (onCapture) onCapture();
-  };
+  }, [onCapture, photo]);
 
   useEffect(() => {
-    if (!ENABLED || paused || pressShutter || device.mobile) return;
+    if (!ENABLED || paused || pressShutter || !open) return;
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, [ENABLED, paused, photo, pressShutter, device, onClick]);
+  }, [ENABLED, paused, photo, pressShutter, device, open, onCapture]);
 
   useEffect(() => {
     if (pressShutter) setTimeout(() => setPressShutter(false), 750);
   }, [pressShutter]);
 
+  useKeypress(
+    "c",
+    () => {
+      if (isTyping() || !ENABLED) return;
+      setOpen(!open);
+    },
+    [ENABLED, open]
+  );
+
   const BoxApproximation = (props: MeshProps) => (
-    <mesh position-z={-0.5} {...props}>
-      <boxBufferGeometry args={[3.5, 1.75, 1]} />
-      <meshLambertMaterial color="gray" />
+    <mesh position-z={0.5} {...props}>
+      <boxBufferGeometry args={[4, 2.25, 1.15]} />
     </mesh>
   );
 
+  const POS: [number, number] = open
+    ? [0, 0]
+    : device.mobile
+    ? [0.9, 0.9]
+    : [0.8, -0.8];
+
+  const INFO_TEXT = device.mobile
+    ? "tap camera to take a picture"
+    : "click to take a picture\nscroll to zoom\nc to close";
+
   return (
-    <group name="camera" ref={group}>
-      <Tool name="Camera" pos={[0, 0]} pinY>
-        <group scale={0.175}>
-          <Suspense fallback={<BoxApproximation />}>
-            <CameraModel rotation-y={Math.PI} />
-          </Suspense>
+    <group name="camera-tool-resources" ref={group}>
+      <Tool name="Camera" pos={POS} pinY face={false}>
+        <Instruction open={open} setOpen={setOpen} />
+        <animated.group scale={scale} rotation-x={rotX} rotation-y={rotY}>
+          <Model src={CAMERA_MODEL_URL} center rotation-y={Math.PI} />
           {device.mobile && (
-            <Interactable onClick={onClick}>
+            <Interactable onClick={!open ? () => setOpen(true) : onClick}>
               <BoxApproximation visible={false} />
             </Interactable>
           )}
-          <group name="content" position={[0, -0.18, 0.15]} scale={2}>
+          <group name="content" position={[0, -0.18, 1.001]} scale={2}>
             <animated.group scale-y={shutterY}>
-              <mesh ref={mesh} name="viewfinder" position-y={0.05}>
+              <mesh ref={mesh} name="viewfinder" position-y={-0.025} scale={1}>
                 <planeBufferGeometry args={[photo.aspect.x, photo.aspect.y]} />
                 <meshBasicMaterial map={photo.target.texture} />
               </mesh>
             </animated.group>
             <Text
+              font={FONT_URL}
               color="white"
               fontSize={0.075}
               anchorY="top"
-              position-y={-0.225}
+              position-y={-0.525}
+              lineHeight={1.05}
+              rotation-x={-0.4}
               outlineColor="black"
-              outlineWidth={0.01}
+              outlineWidth={0.075 * 0.1}
+              renderOrder={10}
+              visible={open}
+              textAlign="center"
             >
-              {`${device.mobile ? "tap" : "click"} to take a picture`}
+              {INFO_TEXT}
             </Text>
+            {device.mobile && open && (
+              <Button
+                position-y={-0.75}
+                scale={1.75}
+                rotation-x={-0.4}
+                onClick={() => setOpen(false)}
+              >
+                close
+              </Button>
+            )}
           </group>
-        </group>
+        </animated.group>
       </Tool>
       {createPortal(
-        <PerspectiveCamera ref={cam} near={0.1} far={200} />,
+        <PerspectiveCamera ref={cam} near={0.1} far={200} fov={photo.fov} />,
         scene
       )}
     </group>
