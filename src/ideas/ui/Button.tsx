@@ -28,7 +28,7 @@ export function Button(props: ButtonProps) {
     font = "https://d27rt3a60hh1lx.cloudfront.net/fonts/Quicksand_Bold.otf",
     fontSize = 0.05,
     width,
-    maxWidth = 0.25,
+    maxWidth,
     textColor = "black",
     color = "#fff",
     outline = true,
@@ -85,7 +85,11 @@ export function Button(props: ButtonProps) {
   }, []);
 
   const PADDING = fontSize * 0.9;
-  const MAX_WIDTH = width ? Math.min(width, maxWidth) : maxWidth;
+  const MAX_WIDTH = !maxWidth
+    ? Infinity
+    : width
+    ? Math.max(width, maxWidth)
+    : maxWidth;
   const WIDTH = (width || dims[0]) + PADDING * 2;
   const HEIGHT = dims[1] + PADDING;
   const DEPTH = fontSize * 1.1;
@@ -123,7 +127,7 @@ export function Button(props: ButtonProps) {
         <RoundedBox
           args={[WIDTH, HEIGHT, DEPTH]}
           radius={RADIUS}
-          smoothness={8}
+          smoothness={6}
         >
           {/* @ts-ignore */}
           <animated.meshStandardMaterial color={animColor} />
