@@ -6,8 +6,8 @@ export function LostWorld() {
   return (
     <group name="lost-world">
       <Fog color="white" near={0.1} far={15} />
-      <directionalLight position-y={1} intensity={0.6} />
-      <ambientLight intensity={0.6} />
+      <directionalLight position-y={1} intensity={1.8} />
+      <ambientLight intensity={1} />
       <Background color="white" />
       <LostFloor />
     </group>

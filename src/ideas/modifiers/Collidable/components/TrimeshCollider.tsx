@@ -31,13 +31,9 @@ export default function TrimeshCollider(props: TrimeshColliderProps) {
     return g;
   }, [geo, curScale]);
 
-  const [, api] = useTrimeshCollision(geometry);
-
-  // there's some state update that causes the api not to receive an out of sync position
-  // i think it's whenever the api gets recreated. for now, just re-apply transforms every 2 seconds
-  const needsUpdate = useRef(false);
-  useLimitedFrame(1 / 2, () => {
-    needsUpdate.current = true;
+  const [, api] = useTrimeshCollision(geometry, {
+    pos: pos.toArray(),
+    rot: [euler.x, euler.y, euler.z],
   });
 
   const lastUpdatedMatrix = useRef<Matrix4>(new Matrix4());
@@ -49,16 +45,12 @@ export default function TrimeshCollider(props: TrimeshColliderProps) {
     group.current.matrixWorld.decompose(pos, quat, scale);
 
     // no need to update if nothing changed
-    if (
-      lastUpdatedMatrix.current.equals(group.current.matrixWorld) &&
-      !needsUpdate.current
-    ) {
+    if (lastUpdatedMatrix.current.equals(group.current.matrixWorld)) {
       return;
     }
 
     // update last values
     lastUpdatedMatrix.current.copy(group.current.matrixWorld);
-    needsUpdate.current = false;
 
     // if a change was found, update collider
     api.position.copy(pos);

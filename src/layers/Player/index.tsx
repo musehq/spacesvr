@@ -94,7 +94,7 @@ export function Player(props: PlayerLayer) {
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
   const raycaster = useMemo(
-    () => new Raycaster(new Vector3(), new Vector3(), 0, 2),
+    () => new Raycaster(new Vector3(), new Vector3(), 0, 5),
     []
   );
 
