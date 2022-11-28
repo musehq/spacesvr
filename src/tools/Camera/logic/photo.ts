@@ -66,7 +66,7 @@ export const usePhotography = (
     // increase/decrease fov on scroll
     const onScroll = (e: WheelEvent) => {
       if (!cam.current) return;
-      const fov = MathUtils.clamp(cam.current.fov + e.deltaY * 0.05, 10, 75);
+      const fov = MathUtils.clamp(cam.current.fov + e.deltaY * 0.05, 10, 85);
       setFov(fov);
     };
     window.addEventListener("wheel", onScroll);

@@ -2,7 +2,6 @@ import { useEffect, useCallback, useRef } from "react";
 import { useThree } from "@react-three/fiber";
 import { Euler } from "three";
 import { PauseEvent, useEnvironment } from "../../../Environment";
-import { isTyping } from "../../../../logic/dom";
 
 const MIN_POLAR_ANGLE = 0; // radians
 const MAX_POLAR_ANGLE = Math.PI; // radians
@@ -32,7 +31,7 @@ export default function PointerLockCamera() {
   // update camera while controls are locked
   const onMouseMove = useCallback(
     (event: MouseEvent) => {
-      if (!isLocked.current || isTyping()) return;
+      if (!isLocked.current) return;
 
       const movementX =
         // @ts-ignore

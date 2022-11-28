@@ -57,7 +57,6 @@ export default function Instruction(props: InstructionProps) {
             position-x={-0.035}
             position-z={0.1}
             rotation-x={-0.3}
-            onPress={() => setOpen(!open)}
           />
         </Floating>
       )}
