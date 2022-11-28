@@ -76,7 +76,8 @@ export function Button(props: ButtonProps) {
   // keep dimensions up to date
   useLayoutEffect(() => {
     textRef.current.addEventListener("synccomplete", () => {
-      const info = textRef.current.textRenderInfo;
+      const info = textRef.current?.textRenderInfo;
+      if (!info) return;
       const w = info.blockBounds[2] - info.blockBounds[0];
       const h = info.blockBounds[3] - info.blockBounds[1];
       setDims([w, h]);
