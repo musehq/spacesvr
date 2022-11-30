@@ -12,7 +12,7 @@ import { useEnvironment } from "../../../layers/Environment";
 import { useThree } from "@react-three/fiber";
 
 export const useRendering = (
-  ENABLED: boolean,
+  enabled: boolean,
   cam: MutableRefObject<PerspectiveCamera | undefined>,
   group: RefObject<Group>,
   mesh: RefObject<Mesh>,
@@ -30,7 +30,7 @@ export const useRendering = (
     if (!paused) prepRendering.current = false;
   }, [paused]);
   useLimitedFrame(1 / 4, (state) => {
-    if (ENABLED || !prepRendering.current || !cam.current) return; // don't double render
+    if (enabled || !prepRendering.current || !cam.current) return; // don't double render
     state.gl.autoClear = true;
     state.gl.setRenderTarget(target);
     state.gl.render(scene, cam.current);
@@ -39,8 +39,7 @@ export const useRendering = (
   });
 
   useLimitedFrame(24, (state) => {
-    if (!cam.current || !mesh.current || !group.current || !ENABLED || !open)
-      return;
+    if (!cam.current || !mesh.current || !group.current || !enabled) return;
 
     // move mesh to camera's position
     mesh.current.getWorldPosition(dummy);

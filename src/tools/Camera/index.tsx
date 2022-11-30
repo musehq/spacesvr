@@ -45,7 +45,7 @@ export function Camera(props: CameraProps) {
     config: config.stiff,
   });
 
-  useRendering(ENABLED, cam, group, mesh, photo.target);
+  useRendering(ENABLED && open, cam, group, mesh, photo.target);
 
   const onClick = useCallback(() => {
     setPressShutter(true);
