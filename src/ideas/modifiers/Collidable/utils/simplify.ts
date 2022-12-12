@@ -1,4 +1,4 @@
-import { BufferGeometry } from "three";
+import { BufferGeometry, Loader, DefaultLoadingManager } from "three";
 import { SimplifyModifier } from "../lib/SimplifyModifier";
 
 export const generateSimplifiedGeo = (
@@ -6,5 +6,19 @@ export const generateSimplifiedGeo = (
   triTarget: number
 ) => {
   const modifier = new SimplifyModifier();
-  return modifier.modify(geo, Math.floor(triTarget));
+
+  class SimplifyGeoLoader extends Loader {
+    constructor() {
+      super(DefaultLoadingManager);
+    }
+
+    load(geo: BufferGeometry, triTarget: number) {
+      const result = modifier.modify(geo, Math.floor(triTarget));
+
+      return result;
+    }
+  }
+
+  const simplifyGeoLoader = new SimplifyGeoLoader();
+  return simplifyGeoLoader.load(geo, triTarget);
 };
