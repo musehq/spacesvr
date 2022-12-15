@@ -3,10 +3,10 @@ import { VisualIdea } from "../basis/VisualIdea";
 import { RoundedBox } from "../primitives/RoundedBox";
 import { GroupProps } from "@react-three/fiber";
 import { Raycaster } from "three";
-import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
 import { useState } from "react";
-import { universe } from "../../logic/universe";
+import { cache } from "../../logic/cache";
+import { HitBox } from "../primitives/HitBox";
 
 type SwitchProps = {
   value?: boolean;
@@ -46,20 +46,27 @@ export function Switch(props: SwitchProps) {
 
   return (
     <group name="spacesvr-switch-input" {...rest}>
-      <Interactable onClick={() => setVal(!val)} raycaster={passedRaycaster}>
-        <animated.group position-x={posX}>
-          <VisualIdea scale={KNOB_SIZE} idea={val ? onIdea : offIdea} />
-        </animated.group>
-        <RoundedBox args={[WIDTH, HEIGHT, DEPTH]}>
-          {/* @ts-ignore */}
-          <animated.meshBasicMaterial color={knobColor} />
-        </RoundedBox>
-        <RoundedBox
-          args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
-          material={universe.mat_basic_gray}
-          position-z={-0.001}
-        />
-      </Interactable>
+      <animated.group position-x={posX}>
+        <VisualIdea scale={KNOB_SIZE} idea={val ? onIdea : offIdea} />
+      </animated.group>
+      <HitBox
+        args={[KNOB_SIZE, KNOB_SIZE, KNOB_SIZE]}
+        onClick={() => setVal(!val)}
+        position-x={val ? WIDTH / 2 : -WIDTH / 2}
+      />
+      <HitBox
+        args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
+        onClick={() => setVal(!val)}
+      />
+      <RoundedBox args={[WIDTH, HEIGHT, DEPTH]}>
+        {/* @ts-ignore */}
+        <animated.meshBasicMaterial color={knobColor} />
+      </RoundedBox>
+      <RoundedBox
+        args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
+        material={cache.mat_basic_gray}
+        position-z={-0.001}
+      />
     </group>
   );
 }

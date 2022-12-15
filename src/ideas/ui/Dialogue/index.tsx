@@ -7,7 +7,8 @@ import { DialogueFSM } from "./logic/types";
 import Bubbles from "./ideas/Bubbles";
 import VisualInteraction from "./ideas/VisualInteraction";
 import { FacePlayer } from "../../modifiers/FacePlayer";
-import { universe } from "../../../logic/universe";
+import { cache } from "../../../logic/cache";
+import { RoundedBox } from "../../primitives/RoundedBox";
 export * from "./logic/types";
 
 type DialogueProps = {
@@ -57,9 +58,9 @@ export function Dialogue(props: DialogueProps) {
         <group name="main-dialogue" position={offset}>
           <group name="look-at" ref={group}>
             <animated.group scale={scale} position-x={POS_X}>
-              <mesh
-                geometry={universe.geo_rounded_box_1x0_35}
-                material={universe.mat_standard_cream_double}
+              <RoundedBox
+                args={[WIDTH, HEIGHT, DEPTH]}
+                material={cache.mat_standard_cream_double}
               />
               <group name="interactions" position-z={DEPTH / 2 + 0.003}>
                 {dialogue.map((interaction) => (

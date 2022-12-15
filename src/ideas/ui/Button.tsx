@@ -2,10 +2,10 @@ import { Text } from "@react-three/drei";
 import { animated, config, useSpring } from "@react-spring/three";
 import { GroupProps } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
 import { Color, Raycaster } from "three";
 import { RoundedBox } from "../primitives/RoundedBox";
+import { HitBox } from "../primitives/HitBox";
 
 type ButtonProps = {
   children?: string;
@@ -115,16 +115,13 @@ export function Button(props: ButtonProps) {
         >
           {children}
         </Text>
-        <Interactable
+        <HitBox
+          args={[WIDTH, HEIGHT, DEPTH]}
           onClick={onButtonClick}
           onHover={() => setHovered(true)}
           onUnHover={() => setHovered(false)}
           raycaster={raycaster}
-        >
-          <mesh visible={false} name="hitbox">
-            <boxBufferGeometry args={[WIDTH, HEIGHT, DEPTH]} />
-          </mesh>
-        </Interactable>
+        />
         <RoundedBox args={[WIDTH, HEIGHT, DEPTH]}>
           {/* @ts-ignore */}
           <animated.meshStandardMaterial color={animColor} />

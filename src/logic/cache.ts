@@ -1,18 +1,40 @@
 import { DoubleSide, MeshBasicMaterial, MeshStandardMaterial } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
+import { useEffect, useState } from "react";
 
-const universe_cache = new Map();
+const universe_cache = new Map<string, any>();
 
-function getResource<T = any>(key: string, constructor: () => T) {
+function getResource<T = any>(
+  key: string,
+  constructor: () => T,
+  opts?: { verbose?: boolean }
+) {
   let resource = universe_cache.get(key);
   if (!resource) {
+    if (opts?.verbose) console.log(`[CACHE] ${key} not found, creating new`);
     resource = constructor();
     universe_cache.set(key, resource);
+  } else {
+    if (opts?.verbose) console.log(`[CACHE] ${key} found, returning`);
   }
   return resource;
 }
 
-export const universe = {
+export const cache = {
+  getResource,
+  useResource: <T = any>(
+    key: string,
+    constructor: () => T,
+    opts?: { verbose?: boolean }
+  ) => {
+    const [resource, setResource] = useState<T>(
+      getResource(key, constructor, opts)
+    );
+    useEffect(() => {
+      setResource(getResource(key, constructor, opts));
+    }, [key]);
+    return resource;
+  },
   get mat_standard_white(): MeshStandardMaterial {
     return getResource<MeshStandardMaterial>(
       "mat_standard_white",
@@ -61,22 +83,46 @@ export const universe = {
       () => new MeshBasicMaterial({ color: "black", wireframe: true })
     );
   },
-  get geo_rounded_box_1x1(): RoundedBoxGeometry {
+  get geo_rounded_box_1x1x0_25(): RoundedBoxGeometry {
     return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x1",
+      "geo_rounded_box_1x1x0_25",
       () => new RoundedBoxGeometry(1, 1, 0.25, 4, 0.125)
     );
   },
-  get geo_rounded_box_1x0_35(): RoundedBoxGeometry {
+  get geo_rounded_box_1x0_35x0_125(): RoundedBoxGeometry {
     return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_35",
+      "geo_rounded_box_1x0_35x0_125",
       () => new RoundedBoxGeometry(1, 0.35, 0.125, 4, 0.0625)
     );
   },
-  get geo_rounded_box_1x0_3(): RoundedBoxGeometry {
+  get geo_rounded_box_1x0_3x0_1(): RoundedBoxGeometry {
     return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_3",
+      "geo_rounded_box_1x0_3x0_1",
       () => new RoundedBoxGeometry(1, 0.3, 0.1, 4, 0.05)
+    );
+  },
+  get geo_rounded_box_1x0_19x0_23(): RoundedBoxGeometry {
+    return getResource<RoundedBoxGeometry>(
+      "geo_rounded_box_1x0_19x0_23",
+      () => new RoundedBoxGeometry(1, 0.19, 0.23, 4, 0.095)
+    );
+  },
+  get geo_rounded_box_1x0_44x0_23(): RoundedBoxGeometry {
+    return getResource<RoundedBoxGeometry>(
+      "geo_rounded_box_1x0_44x0_23",
+      () => new RoundedBoxGeometry(1, 0.44, 0.23, 4, 0.115)
+    );
+  },
+  get geo_rounded_box_1x0_11x0_06(): RoundedBoxGeometry {
+    return getResource<RoundedBoxGeometry>(
+      "geo_rounded_box_1x0_11x0_06",
+      () => new RoundedBoxGeometry(1, 0.11, 0.06, 4, 0.03)
+    );
+  },
+  get geo_rounded_box_1x0_13x0_04(): RoundedBoxGeometry {
+    return getResource<RoundedBoxGeometry>(
+      "geo_rounded_box_1x0_13x0_04",
+      () => new RoundedBoxGeometry(1, 0.13, 0.04, 4, 0.02)
     );
   },
 };

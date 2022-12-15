@@ -1,6 +1,7 @@
 export * from "./basis";
 export * from "./assets";
 export * from "./bvh";
+export * from "./cache";
 export * from "./collision";
 export * from "./dom";
 export * from "./drag";
@@ -10,5 +11,4 @@ export * from "./keyboard";
 export * from "./keys";
 export * from "./limiter";
 export * from "./rerender";
-export * from "./universe";
 export * from "./visible";

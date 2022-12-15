@@ -1,6 +1,6 @@
 import { GroupProps } from "@react-three/fiber";
 import { ReactNode } from "react";
-import { universe } from "../../../logic";
+import { cache } from "../../../logic/cache";
 
 type PaneProps = {
   width: number;
@@ -15,7 +15,7 @@ export default function Pane(props: PaneProps) {
 
   return (
     <group name="pane" {...rest}>
-      <mesh material={universe.mat_standard_black}>
+      <mesh material={cache.mat_standard_black}>
         <planeBufferGeometry args={[width + BORDER * 2, height + BORDER * 2]} />
       </mesh>
       <mesh position-z={0.001}>

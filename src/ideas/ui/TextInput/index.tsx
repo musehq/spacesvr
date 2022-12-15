@@ -4,7 +4,6 @@ import { RoundedBox } from "../../primitives/RoundedBox";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
 import { useTextInput } from "../../../logic/input";
-import { Interactable } from "../../modifiers/Interactable";
 import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
 import { Mesh, MeshStandardMaterial, Raycaster } from "three";
@@ -18,14 +17,8 @@ import {
 import { useCaretBlink } from "./logic/blink";
 import { useDragSelect } from "./logic/drag";
 import { useLimitedFrame } from "../../../logic/limiter";
-import { universe } from "../../../logic/universe";
-
-const highlightMat = new MeshStandardMaterial({
-  color: "blue",
-  transparent: true,
-  opacity: 0.3,
-  depthWrite: false,
-});
+import { cache } from "../../../logic/cache";
+import { HitBox } from "../../primitives/HitBox";
 
 type TextProps = {
   value?: string;
@@ -87,6 +80,17 @@ export function TextInput(props: TextProps) {
   }, [input, onBlur]);
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
+
+  const highlightMat = cache.useResource(
+    "spacesvr_textinput_highlight",
+    () =>
+      new MeshStandardMaterial({
+        color: "blue",
+        transparent: true,
+        opacity: 0.3,
+        depthWrite: false,
+      })
+  );
 
   const BORDER = fontSize * 0.1;
   const PADDING_X = fontSize * 0.5;
@@ -341,7 +345,7 @@ export function TextInput(props: TextProps) {
             name="caret"
             ref={caret}
             visible={false}
-            material={universe.mat_basic_black}
+            material={cache.mat_basic_black}
           >
             <planeBufferGeometry args={[0.075 * fontSize, fontSize]} />
           </mesh>
@@ -355,12 +359,15 @@ export function TextInput(props: TextProps) {
           <boxBufferGeometry args={[1, fontSize, DEPTH * 0.45]} />
         </mesh>
       </group>
-      <Interactable onClick={registerClick} raycaster={RAYCASTER}>
-        <RoundedBox
-          args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
-          material={universe.mat_standard_white}
-        />
-      </Interactable>
+      <HitBox
+        args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
+        raycaster={RAYCASTER}
+        onClick={registerClick}
+      />
+      <RoundedBox
+        args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
+        material={cache.mat_standard_white}
+      />
       <RoundedBox args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]} position-z={-0.001}>
         {/* @ts-ignore */}
         <animated.meshStandardMaterial color={color} />

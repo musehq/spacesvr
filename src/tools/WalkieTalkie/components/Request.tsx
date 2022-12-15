@@ -1,7 +1,7 @@
 import { GroupProps } from "@react-three/fiber";
 import { Text } from "@react-three/drei";
 import { RoundedBox } from "../../../ideas/primitives/RoundedBox";
-import { universe } from "../../../logic";
+import { cache } from "../../../logic/cache";
 
 type RequestProps = { width: number } & GroupProps;
 
@@ -31,7 +31,7 @@ export default function Request(props: RequestProps) {
       </Text>
       <RoundedBox
         args={[width, FONT_SIZE * 2 + PADDING_Y * 4, DEPTH]}
-        material={universe.mat_standard_white}
+        material={cache.mat_standard_white}
       />
     </group>
   );
