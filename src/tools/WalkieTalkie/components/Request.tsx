@@ -1,5 +1,7 @@
 import { GroupProps } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
+import { RoundedBox } from "../../../ideas/primitives/RoundedBox";
+import { cache } from "../../../logic/cache";
 
 type RequestProps = { width: number } & GroupProps;
 
@@ -29,10 +31,8 @@ export default function Request(props: RequestProps) {
       </Text>
       <RoundedBox
         args={[width, FONT_SIZE * 2 + PADDING_Y * 4, DEPTH]}
-        radius={Math.min(width, FONT_SIZE, DEPTH) * 0.5}
-      >
-        <meshStandardMaterial color="white" />
-      </RoundedBox>
+        material={cache.mat_standard_white}
+      />
     </group>
   );
 }

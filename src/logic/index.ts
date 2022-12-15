@@ -1,6 +1,7 @@
 export * from "./basis";
 export * from "./assets";
 export * from "./bvh";
+export * from "./cache";
 export * from "./collision";
 export * from "./dom";
 export * from "./drag";
