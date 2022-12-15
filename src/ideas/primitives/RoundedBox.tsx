@@ -50,11 +50,9 @@ export function RoundedBox(props: RoundedBox) {
   }, [width, height, depth]);
 
   return (
-    <group name="spacesvr-rounded-box">
-      <mesh {...rest} geometry={geo}>
-        {children}
-      </mesh>
-    </group>
+    <mesh name="spacesvr-rounded-box" {...rest} geometry={geo}>
+      {children}
+    </mesh>
   );
 }
 
