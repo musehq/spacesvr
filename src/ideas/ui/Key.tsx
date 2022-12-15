@@ -1,7 +1,8 @@
 import { GroupProps } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import { animated, config, useSpring } from "@react-spring/three";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { universe } from "../../logic";
 
 type Props = {
   keyCode: string;
@@ -54,15 +55,13 @@ export function Key(props: Props) {
       <group position-z={-DEPTH}>
         <animated.group scale-z={scale}>
           <group position-z={DEPTH / 2}>
-            <RoundedBox
-              args={[1, 1, DEPTH]}
-              radius={DEPTH * 0.5}
+            <mesh
+              geometry={universe.geo_rounded_box_1x1}
               position-z={-DEPTH / 2 - 0.01}
-              smoothness={10}
             >
               {/* @ts-ignore */}
               <animated.meshStandardMaterial color={color} />
-            </RoundedBox>
+            </mesh>
             <Text color="black" fontSize={0.5} renderOrder={2}>
               {keyCode}
             </Text>

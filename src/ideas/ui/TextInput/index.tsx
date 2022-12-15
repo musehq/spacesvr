@@ -1,12 +1,13 @@
 import { useRef, Suspense, useState, useCallback, useEffect } from "react";
-import { RoundedBox, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
+import { RoundedBox } from "../../primitives/RoundedBox";
 import { GroupProps, useThree } from "@react-three/fiber";
 import { animated, useSpring } from "@react-spring/three";
 import { useTextInput } from "../../../logic/input";
 import { Interactable } from "../../modifiers/Interactable";
 import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
-import { Mesh, Raycaster } from "three";
+import { Mesh, MeshStandardMaterial, Raycaster } from "three";
 import { syncOnChange } from "./logic/sync";
 import {
   getClickedCaret,
@@ -17,6 +18,14 @@ import {
 import { useCaretBlink } from "./logic/blink";
 import { useDragSelect } from "./logic/drag";
 import { useLimitedFrame } from "../../../logic/limiter";
+import { universe } from "../../../logic/universe";
+
+const highlightMat = new MeshStandardMaterial({
+  color: "blue",
+  transparent: true,
+  opacity: 0.3,
+  depthWrite: false,
+});
 
 type TextProps = {
   value?: string;
@@ -90,7 +99,6 @@ export function TextInput(props: TextProps) {
   const OUTER_WIDTH = width + BORDER * 2;
 
   const DEPTH = fontSize * 0.5;
-  const RADIUS = Math.min(INPUT_WIDTH, INPUT_HEIGHT, DEPTH) * 0.5;
 
   const shift = useShiftHold();
   const lastClickTime = useRef(0);
@@ -329,36 +337,31 @@ export function TextInput(props: TextProps) {
           </Text>
         </Suspense>
         <group name="blink" ref={blink.blinkRef}>
-          <mesh name="caret" ref={caret} visible={false}>
+          <mesh
+            name="caret"
+            ref={caret}
+            visible={false}
+            material={universe.mat_basic_black}
+          >
             <planeBufferGeometry args={[0.075 * fontSize, fontSize]} />
-            <meshBasicMaterial color="black" />
           </mesh>
         </group>
-        <mesh name="highlight" ref={highlight} visible={false}>
+        <mesh
+          name="highlight"
+          ref={highlight}
+          visible={false}
+          material={highlightMat}
+        >
           <boxBufferGeometry args={[1, fontSize, DEPTH * 0.45]} />
-          <meshStandardMaterial
-            color="blue"
-            transparent
-            opacity={0.3}
-            depthWrite={false}
-          />
         </mesh>
       </group>
       <Interactable onClick={registerClick} raycaster={RAYCASTER}>
         <RoundedBox
           args={[INPUT_WIDTH, INPUT_HEIGHT, DEPTH]}
-          radius={RADIUS}
-          smoothness={6}
-        >
-          <meshStandardMaterial color="white" />
-        </RoundedBox>
+          material={universe.mat_standard_white}
+        />
       </Interactable>
-      <RoundedBox
-        args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
-        radius={RADIUS}
-        smoothness={6}
-        position-z={-0.001}
-      >
+      <RoundedBox args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]} position-z={-0.001}>
         {/* @ts-ignore */}
         <animated.meshStandardMaterial color={color} />
       </RoundedBox>

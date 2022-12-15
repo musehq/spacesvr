@@ -10,4 +10,5 @@ export * from "./keyboard";
 export * from "./keys";
 export * from "./limiter";
 export * from "./rerender";
+export * from "./universe";
 export * from "./visible";

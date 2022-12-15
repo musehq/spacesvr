@@ -1,13 +1,13 @@
 import { GroupProps } from "@react-three/fiber";
 import { useRef, useState } from "react";
-import { DoubleSide, Group } from "three";
-import { RoundedBox } from "@react-three/drei";
+import { Group } from "three";
 import { animated, useSpring } from "@react-spring/three";
 import { useLimitedFrame } from "../../../logic/limiter";
 import { DialogueFSM } from "./logic/types";
 import Bubbles from "./ideas/Bubbles";
 import VisualInteraction from "./ideas/VisualInteraction";
 import { FacePlayer } from "../../modifiers/FacePlayer";
+import { universe } from "../../../logic/universe";
 export * from "./logic/types";
 
 type DialogueProps = {
@@ -49,7 +49,6 @@ export function Dialogue(props: DialogueProps) {
   const HEIGHT = 0.35;
   const DEPTH = 0.125;
   const POS_X = side === "right" ? WIDTH / 2 : -WIDTH / 2;
-  const RADIUS = Math.min(WIDTH, HEIGHT, DEPTH) * 0.5;
 
   return (
     <group name="dialogue" {...rest}>
@@ -58,13 +57,10 @@ export function Dialogue(props: DialogueProps) {
         <group name="main-dialogue" position={offset}>
           <group name="look-at" ref={group}>
             <animated.group scale={scale} position-x={POS_X}>
-              <RoundedBox
-                args={[WIDTH, HEIGHT, DEPTH]}
-                radius={RADIUS}
-                smoothness={6}
-              >
-                <meshStandardMaterial color="#aaa" side={DoubleSide} />
-              </RoundedBox>
+              <mesh
+                geometry={universe.geo_rounded_box_1x0_35}
+                material={universe.mat_standard_cream_double}
+              />
               <group name="interactions" position-z={DEPTH / 2 + 0.003}>
                 {dialogue.map((interaction) => (
                   <VisualInteraction

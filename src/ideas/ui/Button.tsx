@@ -1,10 +1,11 @@
-import { RoundedBox, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import { animated, config, useSpring } from "@react-spring/three";
 import { GroupProps } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Interactable } from "../modifiers/Interactable";
 import { Idea } from "../../logic/basis/idea";
 import { Color, Raycaster } from "three";
+import { RoundedBox } from "../primitives/RoundedBox";
 
 type ButtonProps = {
   children?: string;
@@ -95,7 +96,6 @@ export function Button(props: ButtonProps) {
   const HEIGHT = dims[1] + PADDING;
   const DEPTH = fontSize * 1.1;
   const OUTLINE_WIDTH = outline ? fontSize * 0.075 : 0;
-  const RADIUS = Math.min(WIDTH, HEIGHT, DEPTH) * 0.5;
 
   return (
     <group name={`spacesvr-button-${children}`} {...rest}>
@@ -125,11 +125,7 @@ export function Button(props: ButtonProps) {
             <boxBufferGeometry args={[WIDTH, HEIGHT, DEPTH]} />
           </mesh>
         </Interactable>
-        <RoundedBox
-          args={[WIDTH, HEIGHT, DEPTH]}
-          radius={RADIUS}
-          smoothness={6}
-        >
+        <RoundedBox args={[WIDTH, HEIGHT, DEPTH]}>
           {/* @ts-ignore */}
           <animated.meshStandardMaterial color={animColor} />
         </RoundedBox>

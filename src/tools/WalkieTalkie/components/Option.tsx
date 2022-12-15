@@ -1,5 +1,6 @@
 import { GroupProps } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
+import { RoundedBox } from "../../../ideas/primitives/RoundedBox";
 import { Interactable } from "../../../ideas/modifiers/Interactable";
 import { useSpring, animated } from "@react-spring/three";
 import { useState } from "react";
@@ -32,10 +33,7 @@ export function Option(props: OptionProps) {
         onHover={() => setHovered(true)}
         onUnHover={() => setHovered(false)}
       >
-        <RoundedBox
-          args={[width, FONT_SIZE + PADDING_Y * 2, DEPTH]}
-          radius={Math.min(width, FONT_SIZE, DEPTH) * 0.5}
-        >
+        <RoundedBox args={[width, FONT_SIZE + PADDING_Y * 2, DEPTH]}>
           {/* @ts-ignore */}
           <animated.meshStandardMaterial color={color} />
         </RoundedBox>

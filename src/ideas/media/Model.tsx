@@ -1,6 +1,6 @@
 import { Suspense, useMemo } from "react";
 import { GroupProps } from "@react-three/fiber";
-import { useModel } from "../../logic";
+import { universe, useModel } from "../../logic";
 import { Box3, Vector3 } from "three";
 import { SkeletonUtils } from "three-stdlib";
 import { ErrorBoundary } from "react-error-boundary";
@@ -43,9 +43,8 @@ function FallbackModel(props: ModelProps) {
 
   return (
     <group name="spacesvr-fallback-model" {...rest}>
-      <mesh>
+      <mesh material={universe.mat_basic_black_wireframe}>
         <boxBufferGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="black" wireframe />
       </mesh>
     </group>
   );
