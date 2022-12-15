@@ -62,6 +62,10 @@ const NippleMovement = (props: NippleMovementProps) => {
         direction.current.set(0, 0, 0);
       });
 
+      nippleContainer.current.addEventListener("touchstart", (ev) => {
+        ev.preventDefault();
+      });
+
       return () => {
         if (nipple.current) nipple.current.destroy();
       };
