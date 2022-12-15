@@ -1,8 +1,9 @@
 import { GroupProps } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
-import { Interactable } from "../../../ideas/modifiers/Interactable";
+import { Text } from "@react-three/drei";
+import { RoundedBox } from "../../../ideas/primitives/RoundedBox";
 import { useSpring, animated } from "@react-spring/three";
 import { useState } from "react";
+import { HitBox } from "../../../ideas/primitives/HitBox";
 
 type OptionProps = {
   onClick: () => void;
@@ -27,19 +28,16 @@ export function Option(props: OptionProps) {
 
   return (
     <group name="option" {...rest}>
-      <Interactable
+      <RoundedBox args={[width, FONT_SIZE + PADDING_Y * 2, DEPTH]}>
+        {/* @ts-ignore */}
+        <animated.meshStandardMaterial color={color} />
+      </RoundedBox>
+      <HitBox
+        args={[width, FONT_SIZE + PADDING_Y * 2, DEPTH]}
         onClick={onClick}
         onHover={() => setHovered(true)}
         onUnHover={() => setHovered(false)}
-      >
-        <RoundedBox
-          args={[width, FONT_SIZE + PADDING_Y * 2, DEPTH]}
-          radius={Math.min(width, FONT_SIZE, DEPTH) * 0.5}
-        >
-          {/* @ts-ignore */}
-          <animated.meshStandardMaterial color={color} />
-        </RoundedBox>
-      </Interactable>
+      />
       <group position-z={DEPTH / 2 + 0.001}>
         <Text
           fontSize={FONT_SIZE}

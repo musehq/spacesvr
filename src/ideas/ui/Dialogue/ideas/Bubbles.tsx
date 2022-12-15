@@ -39,7 +39,7 @@ export default function Bubbles(props: BubblesProps) {
     for (let i = 0; i < numStops; i++) {
       const perc = i / (numStops - 1);
       obj.position.set(perc * pos.x, perc * pos.y, perc * pos.z);
-      const sc = 0.01 + perc * 0.05;
+      const sc = 0.8 + perc * 4;
       const delay = 60 / 1000;
       const time = 400 / 1000;
       const delta = clock.elapsedTime - startTime.current;
@@ -55,8 +55,8 @@ export default function Bubbles(props: BubblesProps) {
     mesh.current.instanceMatrix.needsUpdate = true;
   });
 
-  const geo = useMemo(() => new SphereBufferGeometry(4, 32, 16), []);
-  const mat = useIdeaMaterial(undefined, 4);
+  const geo = useMemo(() => new SphereBufferGeometry(0.05, 32, 16), []);
+  const mat = useIdeaMaterial(undefined, 0.05);
 
   return (
     <>

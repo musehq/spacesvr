@@ -11,8 +11,8 @@ export const useIdeaMaterial = (idea: Idea | undefined, radius: number) => {
 
   const { col } = useSpring({ col: hex });
 
-  const NOISE_AMPLITUDE = 0.82;
-  const NOISE_FREQ = 0.154;
+  const NOISE_AMPLITUDE = radius * 0.32;
+  const NOISE_FREQ = 0.554 / radius;
 
   const mat = useMemo(() => {
     const material = new MeshStandardMaterial({

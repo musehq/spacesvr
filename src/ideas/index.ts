@@ -20,6 +20,8 @@ export * from "./modifiers/Floating";
 export * from "./modifiers/LookAtPlayer";
 export * from "./modifiers/Spinning";
 export * from "./modifiers/VisualEffect";
+export * from "./primitives/HitBox";
+export * from "./primitives/RoundedBox";
 export * from "./ui/Dialogue";
 export * from "./ui/TextInput";
 export * from "./ui/Arrow";
