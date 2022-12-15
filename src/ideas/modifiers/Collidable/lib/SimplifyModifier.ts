@@ -3,7 +3,7 @@
 // also modified to reduce to match a tri count rather than remove X number of vertices
 
 import { BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
-import * as BufferGeometryUtils from "three-stdlib";
+import { mergeVertices } from "three-stdlib";
 
 const cb = new Vector3(),
   ab = new Vector3();
@@ -363,7 +363,7 @@ class SimplifyModifier {
       if (name !== "position") geometry.deleteAttribute(name);
     }
 
-    geometry = BufferGeometryUtils.mergeVertices(geometry);
+    geometry = mergeVertices(geometry);
 
     //
     // put data of original geometry in different data structures
