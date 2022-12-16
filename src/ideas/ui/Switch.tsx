@@ -53,10 +53,12 @@ export function Switch(props: SwitchProps) {
         args={[KNOB_SIZE, KNOB_SIZE, KNOB_SIZE]}
         onClick={() => setVal(!val)}
         position-x={val ? WIDTH / 2 : -WIDTH / 2}
+        raycaster={passedRaycaster}
       />
       <HitBox
         args={[OUTER_WIDTH, OUTER_HEIGHT, DEPTH]}
         onClick={() => setVal(!val)}
+        raycaster={passedRaycaster}
       />
       <RoundedBox args={[WIDTH, HEIGHT, DEPTH]}>
         {/* @ts-ignore */}
