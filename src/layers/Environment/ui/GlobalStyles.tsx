@@ -19,7 +19,7 @@ const globalStyles = css`
     height: 100vh;
     user-select: none;
     overflow: hidden;
-    touch-action: pan-x pan-y;
+    touch-action: none;
     -webkit-overflow-scrolling: touch;
     font-family: "Quicksand", sans-serif;
     font-size: 27px;
