@@ -17,11 +17,17 @@ export function HitBox(props: HitBox) {
     onClick,
     onHover,
     onUnHover,
+    raycaster,
     ...rest
   } = props;
 
   return (
-    <Interactable onClick={onClick} onHover={onHover} onUnHover={onUnHover}>
+    <Interactable
+      onClick={onClick}
+      onHover={onHover}
+      onUnHover={onUnHover}
+      raycaster={raycaster}
+    >
       <mesh visible={visible} name="spacesvr-hitbox" {...rest}>
         <boxBufferGeometry args={args} />
         {visible && (
