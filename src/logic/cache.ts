@@ -59,6 +59,12 @@ export const cache = {
       () => new MeshStandardMaterial({ color: "#ff007f" })
     );
   },
+  get mat_basic_white(): MeshBasicMaterial {
+    return getResource<MeshBasicMaterial>(
+      "mat_basic_white",
+      () => new MeshBasicMaterial({ color: "white" })
+    );
+  },
   get mat_basic_black(): MeshBasicMaterial {
     return getResource<MeshBasicMaterial>(
       "mat_basic_black",
@@ -81,48 +87,6 @@ export const cache = {
     return getResource<MeshBasicMaterial>(
       "mat_basic_black_wireframe",
       () => new MeshBasicMaterial({ color: "black", wireframe: true })
-    );
-  },
-  get geo_rounded_box_1x1x0_25(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x1x0_25",
-      () => new RoundedBoxGeometry(1, 1, 0.25, 4, 0.125)
-    );
-  },
-  get geo_rounded_box_1x0_35x0_125(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_35x0_125",
-      () => new RoundedBoxGeometry(1, 0.35, 0.125, 4, 0.0625)
-    );
-  },
-  get geo_rounded_box_1x0_3x0_1(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_3x0_1",
-      () => new RoundedBoxGeometry(1, 0.3, 0.1, 4, 0.05)
-    );
-  },
-  get geo_rounded_box_1x0_19x0_23(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_19x0_23",
-      () => new RoundedBoxGeometry(1, 0.19, 0.23, 4, 0.095)
-    );
-  },
-  get geo_rounded_box_1x0_44x0_23(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_44x0_23",
-      () => new RoundedBoxGeometry(1, 0.44, 0.23, 4, 0.115)
-    );
-  },
-  get geo_rounded_box_1x0_11x0_06(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_11x0_06",
-      () => new RoundedBoxGeometry(1, 0.11, 0.06, 4, 0.03)
-    );
-  },
-  get geo_rounded_box_1x0_13x0_04(): RoundedBoxGeometry {
-    return getResource<RoundedBoxGeometry>(
-      "geo_rounded_box_1x0_13x0_04",
-      () => new RoundedBoxGeometry(1, 0.13, 0.04, 4, 0.02)
     );
   },
 };
