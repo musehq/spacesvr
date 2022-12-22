@@ -1,27 +1,48 @@
 import { cache } from "../../logic/cache";
 import { NamedArrayTuple } from "@react-three/drei/helpers/ts-utils";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
+import { Vector3 } from "three";
+import { MeshProps } from "@react-three/fiber";
 
 type RoundedBox = {
   args?: NamedArrayTuple<
     (width?: number, height?: number, depth?: number) => void
   >;
-} & Omit<JSX.IntrinsicElements["mesh"], "args">;
+} & Omit<MeshProps, "args"> & {
+    "scale-x"?: number;
+    "scale-y"?: number;
+    "scale-z"?: number;
+  };
+
+type CachedBox = {
+  key: string;
+  width: number;
+  height: number;
+  depth: number;
+};
+
+const local_cache: CachedBox[] = [];
 
 export function RoundedBox(props: RoundedBox) {
   const {
     args: [width = 1, height = 1, depth = 0.25] = [],
     children,
+    scale,
+    "scale-x": scaleX,
+    "scale-y": scaleY,
+    "scale-z": scaleZ,
     ...rest
   } = props;
+
+  const [locScale, setLocScale] = useState(new Vector3(1, 1, 1));
 
   const geo = useMemo(() => {
     const tolerance = 0.25; // 25% tolerance
 
-    let closestBox = undefined;
+    let closestBox: CachedBox | undefined = undefined;
     let closestOffset = Infinity;
-    for (const box of CACHED_BOXES) {
+    for (const box of local_cache) {
       const scale = box.width / width;
       const heightDiff = Math.abs(box.height - height * scale);
       const depthDiff = Math.abs(box.depth - depth * scale);
@@ -35,75 +56,37 @@ export function RoundedBox(props: RoundedBox) {
       }
     }
 
-    if (closestBox) {
-      return (cache[closestBox.key] as RoundedBoxGeometry)
-        .clone()
-        .scale(
-          width / closestBox.width,
-          height / closestBox.height,
-          depth / closestBox.depth
-        );
-    }
+    const key =
+      closestBox?.key ?? `geo_rounded_box_${width}x${height}x${depth}`;
+    const w = closestBox?.width ?? width;
+    const h = closestBox?.height ?? height;
+    const d = closestBox?.depth ?? depth;
+    const r = Math.min(w, h, d) / 2;
 
-    const radius = Math.min(width, height, depth) / 2;
-    return new RoundedBoxGeometry(width, height, depth, 4, radius);
+    const get_geo = () =>
+      cache.getResource(
+        key,
+        () => new RoundedBoxGeometry(width, height, depth, 4, r)
+      );
+
+    // make sure to cache result if it's not already cached
+    if (!closestBox) local_cache.push({ key, width, height, depth });
+
+    setLocScale(new Vector3(width / w, height / h, depth / d));
+    return get_geo();
   }, [width, height, depth]);
 
   return (
-    <mesh name="spacesvr-rounded-box" {...rest} geometry={geo}>
-      {children}
-    </mesh>
+    <group
+      name="spacesvr-rounded-box"
+      scale={scale}
+      scale-x={scaleX}
+      scale-y={scaleY}
+      scale-z={scaleZ}
+    >
+      <mesh {...rest} scale={locScale} geometry={geo}>
+        {children}
+      </mesh>
+    </group>
   );
 }
-
-type CachedBox = {
-  width: number;
-  height: number;
-  depth: number;
-  key: keyof typeof cache;
-};
-
-const CACHED_BOXES: CachedBox[] = [
-  {
-    width: 1,
-    height: 1,
-    depth: 0.25,
-    key: "geo_rounded_box_1x1x0_25",
-  },
-  {
-    width: 1,
-    height: 0.35,
-    depth: 0.125,
-    key: "geo_rounded_box_1x0_35x0_125",
-  },
-  {
-    width: 1,
-    height: 0.3,
-    depth: 0.1,
-    key: "geo_rounded_box_1x0_3x0_1",
-  },
-  {
-    width: 1,
-    height: 0.19,
-    depth: 0.23,
-    key: "geo_rounded_box_1x0_19x0_23",
-  },
-  {
-    width: 1,
-    height: 0.44,
-    depth: 0.23,
-    key: "geo_rounded_box_1x0_44x0_23",
-  },
-  {
-    width: 1,
-    height: 0.11,
-    depth: 0.06,
-    key: "geo_rounded_box_1x0_11x0_06",
-  },
-  {
-    width: 1,
-    height: 0.13,
-    depth: 0.04,
-    key: "geo_rounded_box_1x0_13x0_04",
-  },
-];
