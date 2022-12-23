@@ -3,13 +3,14 @@ import { NamedArrayTuple } from "@react-three/drei/helpers/ts-utils";
 import { useMemo, useState } from "react";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
 import { Vector3 } from "three";
-import { GroupProps } from "@react-three/fiber";
+import { GroupProps, MeshProps } from "@react-three/fiber";
 
 type RoundedBox = {
   args?: NamedArrayTuple<
     (width?: number, height?: number, depth?: number) => void
   >;
-} & Omit<GroupProps, "args">;
+} & Pick<MeshProps, "material"> &
+  Omit<GroupProps, "args">;
 
 type CachedBox = {
   key: string;
@@ -23,6 +24,7 @@ const local_cache: CachedBox[] = [];
 export function RoundedBox(props: RoundedBox) {
   const {
     args: [width = 1, height = 1, depth = 0.25] = [],
+    material,
     children,
     ...rest
   } = props;
@@ -70,7 +72,7 @@ export function RoundedBox(props: RoundedBox) {
 
   return (
     <group name="spacesvr-rounded-box" {...rest}>
-      <mesh scale={locScale} geometry={geo}>
+      <mesh scale={locScale} material={material} geometry={geo}>
         {children}
       </mesh>
     </group>
