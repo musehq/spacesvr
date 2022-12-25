@@ -46,8 +46,8 @@ export default function Workshop() {
   return (
     <StandardReality
       environmentProps={{ dev: process.env.NODE_ENV === "development" }}
+      playerProps={{ flying: true }}
     >
-      <Wings />
       <Image
         src="https://uploads.codesandbox.io/uploads/user/b3e56831-8b98s-4fee-b941-0e27f39883ab/I9vI-RoNmD7W.png"
         position={[-8, 2, 6.4]}
