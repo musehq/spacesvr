@@ -74,7 +74,7 @@ export function Player(props: PlayerLayer) {
     children,
     pos = [0, 1, 0],
     rot = 0,
-    flying = true,
+    flying = false,
     speed = SPEED,
     controls = {
       disableGyro: true,
@@ -185,7 +185,7 @@ export function Player(props: PlayerLayer) {
       )}
       {device.desktop && (
         <>
-          <KeyboardMovement direction={direction} />
+          <KeyboardMovement direction={direction} flying={flying} />
           <PointerLockControls />
         </>
       )}

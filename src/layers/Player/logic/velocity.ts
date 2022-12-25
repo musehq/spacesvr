@@ -10,7 +10,7 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
   const dummy = useMemo(() => new Vector3(), []);
 
   const [quat] = useState(new Quaternion());
-  const target = useRef(0);
+  const targetYVel = useRef(0);
 
   const clock = useThree((state) => state.clock);
   const lastvelocity = useRef(new Vector3());
@@ -22,11 +22,11 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     dumdum.copy(velocity);
     dumdum.y = 0;
     const vel = dumdum.length() / speed;
-    const y_change = velocity.y - lastvelocity.current.y;
-    const delta = clock.getElapsedTime() - lastTime.current;
-    y_accel.current = MathUtils.lerp(y_accel.current, y_change / delta, 0.1);
 
-    // console.log(Math.abs(y_accel.current * 0.085).toFixed(2))
+    const y_change = velocity.y - lastvelocity.current.y;
+    const elapsedTime = clock.getElapsedTime();
+    const delta = elapsedTime - lastTime.current;
+    y_accel.current = MathUtils.lerp(y_accel.current, y_change / delta, 0.1);
 
     // get forward/back movement and left/right movement velocities
     dummy.x = direction.current.x * 0.75;
@@ -38,12 +38,14 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     quat.x = 0;
     quat.z = 0;
     dummy.applyQuaternion(quat);
-    target.current = MathUtils.lerp(
-      target.current,
+
+    // calc y velocity
+    targetYVel.current = MathUtils.lerp(
+      targetYVel.current,
       direction.current.z * 0.6,
       0.05 + vel * 0.075
     );
-    dummy.y = Math.min(velocity.y + target.current, 4 + vel);
+    dummy.y = Math.min(velocity.y + targetYVel.current, 4 + vel);
 
     // keep y velocity intact and update velocity
     if (!device.desktop) {
@@ -56,7 +58,7 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
       lastvelocity.current.set(newX, dummy.y, newZ);
     }
 
-    lastTime.current = clock.getElapsedTime();
+    lastTime.current = elapsedTime;
   };
 
   return {
