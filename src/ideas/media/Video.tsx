@@ -118,9 +118,9 @@ export function Video(props: Props) {
     <group name="spacesvr-video" {...rest}>
       <mesh>
         <planeBufferGeometry args={[width, height]} />
-        <meshBasicMaterial side={DoubleSide}>
+        <meshStandardMaterial side={DoubleSide}>
           <videoTexture attach="map" args={[video]} encoding={sRGBEncoding} />
-        </meshBasicMaterial>
+        </meshStandardMaterial>
       </mesh>
       {speaker && <primitive object={speaker} />}
       {framed && (
