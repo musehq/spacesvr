@@ -9,12 +9,12 @@ import {
   LostWorld,
   Camera,
   Dialogue,
+  useKeypress,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
 import Analytics from "../ideas/Analytics";
 import Bloom from "../ideas/Bloom";
-import Wings from "../ideas/Wings";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -42,6 +42,9 @@ export default function Workshop() {
   }, []);
 
   const [hovering, setHovering] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+  useKeypress("m", () => setMounted(!mounted), [mounted]);
 
   return (
     <StandardReality
@@ -101,16 +104,18 @@ export default function Workshop() {
         framed
       />
       <group position={[1, 0.9, -5.5]}>
-        <TextInput
-          placeholder="First Name"
-          font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
-          fontSize={0.1}
-          width={1}
-          value={value}
-          onChange={setValue}
-          onBlur={() => console.log("blur!")}
-          onFocus={() => console.log("focus!")}
-        />
+        {mounted && (
+          <TextInput
+            placeholder="First Name"
+            font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
+            fontSize={0.1}
+            width={1}
+            value={value}
+            onChange={setValue}
+            onBlur={() => console.log("blur!")}
+            onFocus={() => console.log("focus!")}
+          />
+        )}
         <TextInput
           position-x={1.1}
           type="password"
