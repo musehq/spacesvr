@@ -1,7 +1,7 @@
-import { ShapeType, Triplet, useCompoundBody } from "@react-three/cannon";
-import { useEffect, useRef } from "react";
+import { ShapeType, useCompoundBody } from "@react-three/cannon";
+import { MutableRefObject, useEffect } from "react";
 import { useEnvironment } from "../../../Environment";
-import { Group } from "three";
+import { Group, Vector3 } from "three";
 
 // height of 0.9 (eye level) for a perceived height of 1
 const HEIGHT = 0.9;
@@ -16,14 +16,12 @@ const topSphere = { ...sphereProps, position: [0, -RADIUS, 0] };
 const middleSphere = { ...sphereProps, position: [0, -(HEIGHT / 2), 0] };
 const bottomSphere = { ...sphereProps, position: [0, -(HEIGHT - RADIUS), 0] };
 
-export const useCapsuleCollider = (pos = [0, 0, 0]) => {
-  const vPos = useRef(pos as Triplet);
-
+export const useCapsuleCollider = (initPos: MutableRefObject<Vector3>) => {
   const { paused } = useEnvironment();
 
   const compoundBody = useCompoundBody<Group>(() => ({
     mass: 0,
-    position: vPos.current,
+    position: initPos.current.toArray(),
     segments: SEGMENTS,
     fixedRotation: true,
     type: "Dynamic",

@@ -19,14 +19,19 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
   const [dumdum] = useState(new Vector3());
 
   const updateVelocity = (cam: Camera, velocity: Vector3) => {
-    dumdum.copy(velocity);
+    dumdum.x = velocity.x || 0;
     dumdum.y = 0;
+    dumdum.z = velocity.z || 0;
     const vel = dumdum.length() / speed;
 
-    const y_change = velocity.y - lastvelocity.current.y;
+    const y_change = (velocity.y || 0) - lastvelocity.current.y;
     const elapsedTime = clock.getElapsedTime();
-    const delta = elapsedTime - lastTime.current;
-    y_accel.current = MathUtils.lerp(y_accel.current, y_change / delta, 0.1);
+    const delta = Math.abs(elapsedTime - lastTime.current);
+    y_accel.current = MathUtils.lerp(
+      y_accel.current,
+      y_change / delta || 0, // i think this is the bad one!!! (for all the || 0's)
+      0.1
+    );
 
     // get forward/back movement and left/right movement velocities
     dummy.x = direction.current.x * 0.75;
@@ -45,15 +50,15 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
       direction.current.z * 0.6,
       0.05 + vel * 0.075
     );
-    dummy.y = Math.min(velocity.y + targetYVel.current, 4 + vel);
+    dummy.y = Math.min((velocity.y || 0) + targetYVel.current, 4 + vel);
 
     // keep y velocity intact and update velocity
     if (!device.desktop) {
       bodyApi.velocity.set(dummy.x, dummy.y, dummy.z);
       lastvelocity.current.set(dummy.x, dummy.y, dummy.z);
     } else {
-      const newX = MathUtils.lerp(velocity.x, dummy.x, 0.25);
-      const newZ = MathUtils.lerp(velocity.z, dummy.z, 0.25);
+      const newX = MathUtils.lerp(velocity.x || 0, dummy.x, 0.25);
+      const newZ = MathUtils.lerp(velocity.z || 0, dummy.z, 0.25);
       bodyApi.velocity.set(newX, dummy.y, newZ);
       lastvelocity.current.set(newX, dummy.y, newZ);
     }
