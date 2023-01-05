@@ -1,10 +1,11 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import { Euler } from "three";
 import { PauseEvent, useEnvironment } from "../../../Environment";
 
-const MIN_POLAR_ANGLE = 0; // radians
-const MAX_POLAR_ANGLE = Math.PI; // radians
+const EPS = 0.0001;
+const MIN_POLAR_ANGLE = EPS; // radians
+const MAX_POLAR_ANGLE = Math.PI - EPS; // radians
 const SENSITIVITY = 0.8;
 const PI_2 = Math.PI / 2;
 
@@ -14,7 +15,6 @@ const PI_2 = Math.PI / 2;
  *
  * https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/PointerLockControls.js
  *
- * @param props = { onUnlock: function to run when the pointer lock controls are unlocked }
  * @constructor
  */
 export default function PointerLockCamera() {
@@ -23,27 +23,28 @@ export default function PointerLockCamera() {
   const { domElement } = gl;
   const { paused, setPaused, events } = useEnvironment();
 
-  const { current: euler } = useRef(new Euler(0, 0, 0, "YXZ"));
   const isLocked = useRef(false);
-  const lock = () => domElement.requestPointerLock();
-  const unlock = () => domElement.ownerDocument.exitPointerLock();
+  const [euler] = useState(new Euler(0, 0, 0, "YXZ"));
+  const isCurrentlyLocked = useCallback(
+    () => domElement.ownerDocument.pointerLockElement === domElement,
+    [domElement]
+  );
+  const leaveTime = useRef(0);
 
-  // update camera while controls are locked
-  const onMouseMove = useCallback(
-    (event: MouseEvent) => {
+  useEffect(() => {
+    // update camera while controls are locked
+    const onMouseMove = (ev: MouseEvent) => {
       if (!isLocked.current) return;
 
-      const movementX =
-        // @ts-ignore
-        event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-      const movementY =
-        // @ts-ignore
-        event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+      // @ts-ignore
+      const dx = ev.movementX || ev.mozMovementX || ev.webkitMovementX || 0;
+      // @ts-ignore
+      const dy = ev.movementY || ev.mozMovementY || ev.webkitMovementY || 0;
 
       euler.setFromQuaternion(camera.quaternion);
 
-      euler.y -= movementX * SENSITIVITY * 0.002;
-      euler.x -= movementY * SENSITIVITY * 0.002;
+      euler.y -= dx * SENSITIVITY * 0.002;
+      euler.x -= dy * SENSITIVITY * 0.002;
 
       euler.x = Math.max(
         PI_2 - MAX_POLAR_ANGLE,
@@ -51,87 +52,73 @@ export default function PointerLockCamera() {
       );
 
       camera.quaternion.setFromEuler(euler);
-    },
-    [isLocked]
-  );
+    };
 
-  // handle pointer lock change
-  function onPointerlockChange() {
-    if (domElement.ownerDocument.pointerLockElement === domElement) {
-      isLocked.current = true;
-      if (paused) {
-        setPaused(false);
-      }
-    } else {
+    // automatically unlock on pointer lock error
+    function onError() {
       isLocked.current = false;
-      if (!paused) {
-        setPaused(true);
+      setPaused(true);
+    }
+
+    // handle pointer lock change
+    function onChange() {
+      if (isCurrentlyLocked()) {
+        isLocked.current = true;
+        if (paused) {
+          setPaused(false);
+        }
+      } else {
+        leaveTime.current = performance.now();
+        isLocked.current = false;
+        if (!paused) {
+          setPaused(true);
+        }
       }
     }
-  }
 
-  // automatically unlock on pointer lock error
-  function onPointerlockError() {
-    console.error("PointerLockControls: Unable to use Pointer Lock API");
-    isLocked.current = false;
-    setPaused(true);
-  }
+    const { ownerDocument } = domElement;
+    ownerDocument.addEventListener("mousemove", onMouseMove);
+    ownerDocument.addEventListener("pointerlockchange", onChange);
+    ownerDocument.addEventListener("pointerlockerror", onError);
+    return () => {
+      ownerDocument.removeEventListener("mousemove", onMouseMove);
+      ownerDocument.removeEventListener("pointerlockchange", onChange);
+      ownerDocument.removeEventListener("pointerlockerror", onError);
+    };
+  }, [
+    paused,
+    domElement,
+    setPaused,
+    euler,
+    camera.quaternion,
+    isCurrentlyLocked,
+  ]);
 
-  // events setup
+  // detect failed, uncaught pointer lock errors
   useEffect(() => {
     setTimeout(() => {
       if (!isLocked.current && !paused) {
         setPaused(true);
       }
     }, 250);
-
-    const { ownerDocument } = domElement;
-
-    ownerDocument.addEventListener("mousemove", onMouseMove, false);
-    ownerDocument.addEventListener(
-      "pointerlockchange",
-      onPointerlockChange,
-      false
-    );
-    ownerDocument.addEventListener(
-      "pointerlockerror",
-      onPointerlockError,
-      false
-    );
-
-    return () => {
-      ownerDocument.removeEventListener("mousemove", onMouseMove, false);
-      ownerDocument.removeEventListener(
-        "pointerlockchange",
-        onPointerlockChange,
-        false
-      );
-      ownerDocument.removeEventListener(
-        "pointerlockerror",
-        onPointerlockError,
-        false
-      );
-    };
-  }, [paused, onMouseMove, isLocked, onPointerlockChange]);
+  }, [paused, setPaused]);
 
   useEffect(() => {
-    // initial camera rotation
-    if (camera) {
-      camera?.lookAt(0, 2, 0);
-    }
-  }, []);
-
-  useEffect(() => {
-    const ev: PauseEvent = (p) => {
-      if (p) unlock();
-      else lock();
+    const ev: PauseEvent = (paused) => {
+      if (paused) {
+        domElement.ownerDocument.exitPointerLock();
+      } else {
+        if (performance.now() - leaveTime.current > 1250) {
+          domElement.requestPointerLock();
+        }
+      }
     };
     events.push(ev);
     return () => {
       const ind = events.indexOf(ev);
       if (ind >= 0) events.splice(ind, 1);
     };
-  }, [events, lock, unlock]);
+  }, [domElement, events, isCurrentlyLocked]);
 
   return null;
 }
