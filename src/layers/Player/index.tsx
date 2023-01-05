@@ -87,11 +87,8 @@ export function Player(props: PlayerLayer) {
 
   const { device } = useEnvironment();
 
-  // physical body
-  const [, bodyApi] = useCapsuleCollider(pos);
-  const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
-
   // local state
+  const initPos = useRef(new Vector3().fromArray(pos));
   const position = useRef(new Vector3());
   const velocity = useRef(new Vector3());
   const lockControls = useRef(false);
@@ -99,6 +96,10 @@ export function Player(props: PlayerLayer) {
     () => new Raycaster(new Vector3(), new Vector3(), 0, 5),
     []
   );
+
+  // physical body
+  const [, bodyApi] = useCapsuleCollider(initPos);
+  const { direction, updateVelocity } = useSpringVelocity(bodyApi, speed);
 
   const bob = useBob(velocity, direction);
 
@@ -143,6 +144,8 @@ export function Player(props: PlayerLayer) {
 
   const setPosition = useCallback(
     (pos: Vector3) => {
+      // in case it gets called before bodyapi is initialized
+      initPos.current.copy(pos);
       bodyApi.position.set(pos.x, pos.y, pos.z);
       position.current.copy(pos);
     },
