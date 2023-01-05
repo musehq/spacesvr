@@ -1,8 +1,9 @@
 import { MenuItem, useEnvironment } from "../logic/environment";
 import { useThree } from "@react-three/fiber";
 import { XRSession } from "three";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
+import { isStandaloneVR } from "../../../logic/browser";
 
 /**
  * Component to register menu items to the environment.
@@ -14,15 +15,17 @@ export function RegisterMenuItems() {
   const { setMenuItems } = useEnvironment();
   const vrMenu = useVRMenuItem();
   const fsMenu = useFsMenuItem();
+  const oqMenu = useOculusMenuItem();
 
   useEffect(() => {
     const arr: MenuItem[] = [];
 
     if (vrMenu) arr.push(vrMenu);
     if (fsMenu) arr.push(fsMenu);
+    if (oqMenu) arr.push(oqMenu);
 
     setMenuItems(arr);
-  }, [vrMenu?.text, fsMenu?.text]);
+  }, [vrMenu?.text, fsMenu?.text, oqMenu?.text, setMenuItems]);
 
   return null;
 }
@@ -36,27 +39,8 @@ export const useVRMenuItem = (): MenuItem | undefined => {
 
   const session = useRef<XRSession>();
   const [text, setText] = useState("Enter VR");
-  const [supported, setSupported] = useState(false);
 
-  useEffect(() => {
-    const isSupported = async () => {
-      if (!("xr" in window.navigator)) {
-        setSupported(false);
-        return;
-      }
-
-      const support = await xr.isSessionSupported("immersive-vr");
-      setSupported(support);
-    };
-
-    isSupported();
-  }, []);
-
-  if (!supported) {
-    return undefined;
-  }
-
-  const action = () => {
+  const action = useCallback(() => {
     async function onSessionStarted(sesh: XRSession) {
       sesh.addEventListener("end", onSessionEnded);
       await gl.xr.setSession(sesh);
@@ -87,7 +71,11 @@ export const useVRMenuItem = (): MenuItem | undefined => {
     } else {
       session.current?.end();
     }
-  };
+  }, [gl.xr, setDevice, setPaused, xr]);
+
+  if (!isStandaloneVR()) {
+    return undefined;
+  }
 
   return {
     text,
@@ -95,10 +83,19 @@ export const useVRMenuItem = (): MenuItem | undefined => {
   };
 };
 
+export const useOculusMenuItem = (): MenuItem | undefined => {
+  if (isStandaloneVR()) return;
+
+  return {
+    text: "Open in Meta Quest",
+    link: "https://www.oculus.com/open_url/?url=" + window.location.href,
+  };
+};
+
 export const useFsMenuItem = (): MenuItem | undefined => {
   const domElement = document.body;
 
-  const getRFS = () =>
+  const rfs =
     domElement.requestFullscreen ||
     // @ts-ignore
     domElement.webkitRequestFullScreen ||
@@ -109,7 +106,7 @@ export const useFsMenuItem = (): MenuItem | undefined => {
     undefined;
 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [fullscreenAvailable] = useState(getRFS() !== undefined);
+  const [fullscreenAvailable] = useState(rfs !== undefined);
 
   useEffect(() => {
     const handleFullscreenChange = () =>
@@ -121,21 +118,23 @@ export const useFsMenuItem = (): MenuItem | undefined => {
     };
   }, []);
 
-  if (!fullscreenAvailable) {
+  const action = useCallback(() => {
+    if (!rfs) return;
+    if (!document.fullscreenElement) {
+      rfs.apply(domElement, [{ navigationUI: "hide" }]);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }, [domElement, rfs]);
+
+  if (!fullscreenAvailable || isStandaloneVR()) {
     return undefined;
   }
 
   return {
     text: `${isFullscreen ? "Exit" : "Enter"} Fullscreen`,
-    action: () => {
-      if (!document.fullscreenElement) {
-        const rfs = getRFS();
-        rfs.apply(domElement, [{ navigationUI: "hide" }]);
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    },
+    action,
   };
 };

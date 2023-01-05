@@ -9,7 +9,17 @@ import {
 import { Device, DeviceState, useDevice } from "./device";
 import { AudioContext } from "three";
 
-export type MenuItem = { text: string; action: () => void };
+interface MenuLink {
+  text: string;
+  link: string;
+  action?: never;
+}
+interface MenuAction {
+  text: string;
+  link?: never;
+  action: () => void;
+}
+export type MenuItem = MenuLink | MenuAction;
 
 export type PauseEvent = (p: boolean) => void;
 export type EnvironmentState = {
