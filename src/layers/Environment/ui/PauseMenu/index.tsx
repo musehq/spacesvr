@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   Actions,
   ClickContainer,
@@ -14,14 +14,9 @@ import { useKeyboardLayout } from "../../../../logic/keyboard";
 import { MenuItem, useEnvironment } from "../../logic/environment";
 import { Idea } from "../../../../logic/basis";
 
-type PauseItem = Omit<MenuItem, "action"> & {
-  action?: () => void;
-  link?: string;
-};
-
 type PauseMenuProps = {
   title?: string;
-  pauseMenuItems?: PauseItem[];
+  pauseMenuItems?: MenuItem[];
   dev?: boolean;
 };
 
@@ -31,21 +26,18 @@ export default function PauseMenu(props: PauseMenuProps) {
   const { paused, setPaused, menuItems, device } = useEnvironment();
   const layout = useKeyboardLayout();
 
-  const closeOverlay = () => setPaused(false);
-  const continueIdea = useMemo(
-    () => new Idea().setFromCreation(Math.random(), 0.8, 0.95),
+  const closeOverlay = useCallback(() => {
+    const item = menuItems.find((item) => item.text === "Enter VR");
+    if (item && item.action) item.action();
+    else setPaused(false);
+  }, [menuItems, setPaused]);
+
+  const hex = useMemo(
+    () => new Idea().setFromCreation(Math.random(), 0.8, 0.95).getHex(),
     []
   );
 
-  if (dev) {
-    return (
-      <Container paused={paused} dev={true}>
-        <ClickContainer onClick={closeOverlay} />
-      </Container>
-    );
-  }
-
-  const PAUSE_ITEMS: PauseItem[] = [
+  const PAUSE_ITEMS: MenuItem[] = [
     ...pauseMenuItems,
     {
       text: "v2.9.2",
@@ -55,33 +47,37 @@ export default function PauseMenu(props: PauseMenuProps) {
   ];
 
   return (
-    <Container paused={paused}>
+    <Container paused={paused} dev={dev}>
       <ClickContainer onClick={closeOverlay} />
-      <Window>
-        <Title>{title}</Title>
-        <Instructions>
-          <p>Move – {device.mobile ? "Joystick" : layout}</p>
-          <p>Look – {device.mobile ? "Drag" : "Mouse"}</p>
-          <p>Pause – {device.mobile ? "Menu Button" : "Esc"}</p>
-          <p>Cycle Tool – {device.mobile ? "Edge Swipe" : "Tab"}</p>
-        </Instructions>
-        <Actions>
-          {PAUSE_ITEMS.map((item) =>
-            item.link ? (
-              <MenuLink key={item.text} href={item.link}>
-                {item.text}
-              </MenuLink>
-            ) : (
-              <MenuButton key={item.text} onClick={item.action}>
-                {item.text}
-              </MenuButton>
-            )
-          )}
-        </Actions>
-      </Window>
-      <Continue onClick={closeOverlay} color={continueIdea.getHex()}>
-        continue
-      </Continue>
+      {!dev && (
+        <>
+          <Window>
+            <Title>{title}</Title>
+            <Instructions>
+              <p>Move – {device.mobile ? "Joystick" : layout}</p>
+              <p>Look – {device.mobile ? "Drag" : "Mouse"}</p>
+              <p>Pause – {device.mobile ? "Menu Button" : "Esc"}</p>
+              <p>Cycle Tool – {device.mobile ? "Edge Swipe" : "Tab"}</p>
+            </Instructions>
+            <Actions>
+              {PAUSE_ITEMS.map((item) =>
+                item.link ? (
+                  <MenuLink key={item.text} href={item.link} target="_blank">
+                    {item.text}
+                  </MenuLink>
+                ) : (
+                  <MenuButton key={item.text} onClick={item.action}>
+                    {item.text}
+                  </MenuButton>
+                )
+              )}
+            </Actions>
+          </Window>
+          <Continue onClick={closeOverlay} color={hex}>
+            continue
+          </Continue>
+        </>
+      )}
     </Container>
   );
 }

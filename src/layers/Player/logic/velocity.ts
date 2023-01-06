@@ -34,8 +34,8 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     );
 
     // get forward/back movement and left/right movement velocities
-    dummy.x = direction.current.x * 0.75;
-    dummy.z = direction.current.y; // forward/back
+    dummy.x = (direction.current.x || 0) * 0.75;
+    dummy.z = direction.current.z || 0; // forward/back
     dummy.y = 0;
     dummy.multiplyScalar(speed + Math.abs(y_accel.current) * 0.085);
 
@@ -47,7 +47,7 @@ export const useSpringVelocity = (bodyApi: Api<Group>[1], speed: number) => {
     // calc y velocity
     targetYVel.current = MathUtils.lerp(
       targetYVel.current,
-      direction.current.z * 0.6,
+      (direction.current.y || 0) * 0.6,
       0.05 + vel * 0.075
     );
     dummy.y = Math.min((velocity.y || 0) + targetYVel.current, 4 + vel);
