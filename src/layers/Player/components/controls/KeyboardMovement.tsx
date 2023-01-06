@@ -32,7 +32,7 @@ const KeyboardMovement = (props: KeyboardMovementProps) => {
     const press = pressedKeys.current; // [w, a, s, d]
     const yAxis = -1 * Number(press[0]) + Number(press[2]);
     const xAxis = -1 * Number(press[1]) + Number(press[3]);
-    return [xAxis, yAxis, flying && press[4] ? 1 : 0];
+    return [xAxis, flying && press[4] ? 1 : 0, yAxis];
   }, [flying]);
 
   const updatePressedKeys = useCallback(

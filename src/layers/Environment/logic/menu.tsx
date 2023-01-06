@@ -34,9 +34,6 @@ export const useVRMenuItem = (): MenuItem | undefined => {
   const gl = useThree((state) => state.gl);
   const { setDevice, setPaused } = useEnvironment();
 
-  // @ts-ignore
-  const xr = navigator.xr;
-
   const session = useRef<XRSession>();
   const [text, setText] = useState("Enter VR");
 
@@ -67,11 +64,13 @@ export const useVRMenuItem = (): MenuItem | undefined => {
           "layers",
         ],
       };
+      // @ts-ignore
+      const xr = navigator.xr;
       xr.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
     } else {
       session.current?.end();
     }
-  }, [gl.xr, setDevice, setPaused, xr]);
+  }, [gl.xr, setDevice, setPaused]);
 
   if (!isStandaloneVR()) {
     return undefined;

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   Actions,
   ClickContainer,
@@ -26,11 +26,11 @@ export default function PauseMenu(props: PauseMenuProps) {
   const { paused, setPaused, menuItems, device } = useEnvironment();
   const layout = useKeyboardLayout();
 
-  const closeOverlay = () => {
+  const closeOverlay = useCallback(() => {
     const item = menuItems.find((item) => item.text === "Enter VR");
     if (item && item.action) item.action();
     else setPaused(false);
-  };
+  }, [menuItems, setPaused]);
   const hex = useMemo(
     () => new Idea().setFromCreation(Math.random(), 0.8, 0.95).getHex(),
     []

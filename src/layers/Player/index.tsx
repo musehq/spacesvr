@@ -125,19 +125,17 @@ export function Player(props: PlayerLayer) {
   }, [bodyApi, bodyApi.position, bodyApi.velocity]);
 
   useFrame(({ clock }) => {
-    const cam: Camera = device.xr ? gl.xr.getCamera(camera) : camera;
-
     // update raycaster on desktop (mobile uses default)
     if (device.desktop) {
       raycaster.ray.origin.copy(position.current);
       raycaster.ray.direction.set(0, 0, -1);
-      raycaster.ray.direction.applyQuaternion(cam.quaternion);
+      raycaster.ray.direction.applyQuaternion(camera.quaternion);
     }
 
     camera.position.copy(position.current);
 
     if (!lockControls.current) {
-      updateVelocity(cam, velocity.current);
+      updateVelocity(camera, velocity.current);
       bob.update(clock);
     }
   });
