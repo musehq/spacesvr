@@ -9,12 +9,12 @@ import {
   LostWorld,
   Camera,
   Dialogue,
-  useKeypress,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
 import Analytics from "../ideas/Analytics";
 import Bloom from "../ideas/Bloom";
+import PreloadImage from "../ideas/PreloadImage";
 
 export default function Workshop() {
   const [value, setValue] = useState("hello world");
@@ -42,9 +42,6 @@ export default function Workshop() {
   }, []);
 
   const [hovering, setHovering] = useState(false);
-
-  const [mounted, setMounted] = useState(false);
-  useKeypress("m", () => setMounted(!mounted), [mounted]);
 
   return (
     <StandardReality
@@ -97,25 +94,17 @@ export default function Workshop() {
         position={[-9.5, 2, 6.4]}
         rotation={[0, Math.PI, 0]}
       />
-      <Image
-        src="https://d1htv66kutdwsl.cloudfront.net/e7edec86-52b6-4734-9c43-ffd70bc5bef6/9d1e5c18-3fb5-4844-8b31-1a08b800976e.ktx2"
-        position={[-12.5, 2, 6.4]}
-        rotation={[0, Math.PI, 0]}
-        framed
-      />
       <group position={[1, 0.9, -5.5]}>
-        {mounted && (
-          <TextInput
-            placeholder="First Name"
-            font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
-            fontSize={0.1}
-            width={1}
-            value={value}
-            onChange={setValue}
-            onBlur={() => console.log("blur!")}
-            onFocus={() => console.log("focus!")}
-          />
-        )}
+        <TextInput
+          placeholder="First Name"
+          font="https://d27rt3a60hh1lx.cloudfront.net/fonts/custom-branding/FridgeChisel-Regular_lowerUppercase.otf"
+          fontSize={0.1}
+          width={1}
+          value={value}
+          onChange={setValue}
+          onBlur={() => console.log("blur!")}
+          onFocus={() => console.log("focus!")}
+        />
         <TextInput
           position-x={1.1}
           type="password"
@@ -139,15 +128,7 @@ export default function Workshop() {
         />
         <Switch position={[1, -0.3, 0]} onChange={(b) => console.log(b)} />
       </group>
-      <Image
-        name="outside-eddie"
-        src="https://d27rtd3a60hh1lx.cloudfront.net/content/muse.place/jasonmatias/EddieWave.jpg"
-        framed
-        frameWidth={0.75}
-        size={12}
-        rotation-y={0}
-        position={[-1.4, 1.5, -12]}
-      />
+      <PreloadImage />
       <Video
         src="https://dwvo2npct47gg.cloudfront.net/videos/AWGEDVD-final.mp4"
         size={4}
