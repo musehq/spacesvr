@@ -17,7 +17,6 @@ export default function PreloadImage() {
 
   return (
     <Image
-      name="outside-eddie"
       src={IMAGE_URL}
       framed
       frameWidth={0.75}

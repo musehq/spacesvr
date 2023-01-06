@@ -49,10 +49,11 @@ export const useEnvironmentState = (name: string): EnvironmentState => {
     (p: boolean) => {
       setPausedValue(p);
 
-      // hook into paused click event to make sure global context is running
+      // hook into paused click event to make sure global context is running.
       // https://github.com/mrdoob/three.js/blob/342946c8392639028da439b6dc0597e58209c696/src/audio/AudioContext.js#L9
-      const context = AudioContext.getContext();
+      // local state to only do once so we don't interfere with MuteOnHide
       if (!played) {
+        const context = AudioContext.getContext();
         if (context.state !== "running") context.resume();
         setPlayed(true);
       }

@@ -108,6 +108,7 @@ export default function PointerLockCamera() {
       if (paused) {
         domElement.ownerDocument.exitPointerLock();
       } else {
+        // leaving pointer lock makes you wait for 1.25s to relock, trying will throw error
         if (performance.now() - leaveTime.current > 1250) {
           domElement.requestPointerLock();
         }
