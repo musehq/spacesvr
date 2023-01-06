@@ -31,6 +31,7 @@ export default function PauseMenu(props: PauseMenuProps) {
     if (item && item.action) item.action();
     else setPaused(false);
   }, [menuItems, setPaused]);
+
   const hex = useMemo(
     () => new Idea().setFromCreation(Math.random(), 0.8, 0.95).getHex(),
     []
@@ -46,7 +47,7 @@ export default function PauseMenu(props: PauseMenuProps) {
   ];
 
   return (
-    <Container paused={paused}>
+    <Container paused={paused} dev={dev}>
       <ClickContainer onClick={closeOverlay} />
       {!dev && (
         <>
