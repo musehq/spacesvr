@@ -9,6 +9,7 @@ import {
 import { Effects } from "./modifiers/Effects";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRerender } from "../../logic/rerender";
+import { useEnvironment } from "../Environment";
 
 type Pass = { uuid: string; node: ReactElement; index: number };
 
@@ -24,6 +25,7 @@ type VisualLayerProps = { children: ReactNode[] | ReactNode };
 export function Visual(props: VisualLayerProps) {
   const { children } = props;
   const { scene, camera, gl } = useThree();
+  const { device } = useEnvironment();
 
   const childPasses = useRef<Pass[]>([]);
   const rerender = useRerender();
@@ -39,7 +41,7 @@ export function Visual(props: VisualLayerProps) {
     rerender();
   }, []);
 
-  const USE_EFFECTS = childPasses.current.length > 0;
+  const USE_EFFECTS = childPasses.current.length > 0 && !device.xr;
 
   useFrame(() => {
     if (USE_EFFECTS) return;

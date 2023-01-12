@@ -54,8 +54,8 @@ const NippleMovement = (props: NippleMovementProps) => {
       nipple.current.on("move", (evt, data) => {
         // i kinda pulled 60 out of my ass tbh
         const x = (data.distance / 60) * Math.cos(data.angle.radian);
-        const y = (-data.distance / 60) * Math.sin(data.angle.radian);
-        direction.current.set(x, y, 0);
+        const z = (-data.distance / 60) * Math.sin(data.angle.radian);
+        direction.current.set(x, 0, z);
       });
 
       nipple.current.on("end", () => {

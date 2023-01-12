@@ -1,6 +1,7 @@
 import {
   createContext,
   MutableRefObject,
+  useCallback,
   useContext,
   useMemo,
   useRef,
@@ -9,7 +10,17 @@ import {
 import { Device, DeviceState, useDevice } from "./device";
 import { AudioContext } from "three";
 
-export type MenuItem = { text: string; action: () => void };
+interface MenuLink {
+  text: string;
+  link: string;
+  action?: never;
+}
+interface MenuAction {
+  text: string;
+  link?: never;
+  action: () => void;
+}
+export type MenuItem = MenuLink | MenuAction;
 
 export type PauseEvent = (p: boolean) => void;
 export type EnvironmentState = {
@@ -32,17 +43,26 @@ export const useEnvironmentState = (name: string): EnvironmentState => {
   const [paused, setPausedValue] = useState(true);
   const events = useMemo<PauseEvent[]>(() => [], []);
 
-  const setPaused = (p: boolean) => {
-    setPausedValue(p);
+  const [played, setPlayed] = useState(false);
 
-    // hook into paused click event to make sure global context is running
-    // https://github.com/mrdoob/three.js/blob/342946c8392639028da439b6dc0597e58209c696/src/audio/AudioContext.js#L9
-    const context = AudioContext.getContext();
-    if (context.state !== "running") context.resume();
+  const setPaused = useCallback(
+    (p: boolean) => {
+      setPausedValue(p);
 
-    // call all pause events
-    events.map((ev: PauseEvent) => ev.apply(null, [p]));
-  };
+      // hook into paused click event to make sure global context is running.
+      // https://github.com/mrdoob/three.js/blob/342946c8392639028da439b6dc0597e58209c696/src/audio/AudioContext.js#L9
+      // local state to only do once so we don't interfere with MuteOnHide
+      if (!played) {
+        const context = AudioContext.getContext();
+        if (context.state !== "running") context.resume();
+        setPlayed(true);
+      }
+
+      // call all pause events
+      events.map((ev: PauseEvent) => ev.apply(null, [p]));
+    },
+    [events, played]
+  );
 
   const device = useDevice();
 

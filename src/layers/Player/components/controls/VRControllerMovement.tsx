@@ -15,6 +15,10 @@ type SmoothLocomotionProps = {
   direction: MutableRefObject<Vector3>;
 };
 
+type FlyProps = {
+  direction: MutableRefObject<Vector3>;
+};
+
 type VRControllerMovementProps = {
   position: MutableRefObject<Vector3>;
   direction: MutableRefObject<Vector3>;
@@ -63,16 +67,31 @@ const SmoothLocomotion = (props: SmoothLocomotionProps) => {
 
   useFrame(() => {
     if (controller && controller.inputSource.gamepad) {
-      const [, , x, y] = controller.inputSource.gamepad.axes;
+      const [, , x, z] = controller.inputSource.gamepad.axes;
       direction.current.x = x;
-      direction.current.y = y;
+      direction.current.z = z;
     }
   });
 
   return null;
 };
 
-const VRControllerMovement = (props: VRControllerMovementProps) => {
+const Fly = (props: FlyProps) => {
+  const { direction } = props;
+  const controller = useController("left");
+
+  useFrame(() => {
+    if (controller && controller.inputSource.gamepad) {
+      const [aButton] = controller.inputSource.gamepad.buttons;
+      if (!aButton) return;
+      direction.current.y = aButton.pressed ? 0.5 : 0;
+    }
+  });
+
+  return null;
+};
+
+export default function VRControllerMovement(props: VRControllerMovementProps) {
   const { position, direction, snapTurn, smoothLocomotion } = props;
   const { player } = useXR();
 
@@ -82,16 +101,16 @@ const VRControllerMovement = (props: VRControllerMovementProps) => {
     // average human height is ~1.7, player height is 1.
     // somehow subtracting 1 is more correct idk
     // update: now 1.4 seems right? who fukn knows
+    // update: definitely a difference between sitting + standing
     player.position.y -= 1.4;
   });
 
   return (
-    <group>
+    <>
+      <Fly direction={direction} />
       <SnapTurn {...snapTurn} />
       <SmoothLocomotion {...smoothLocomotion} direction={direction} />
       <DefaultXRControllers />
-    </group>
+    </>
   );
-};
-
-export default VRControllerMovement;
+}

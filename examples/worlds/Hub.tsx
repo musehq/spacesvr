@@ -10,15 +10,16 @@ export default function Hub() {
     >
       <Analytics />
       <LostWorld />
-      <group position-z={-1.5}>
+      <group position-z={-2.25}>
         <Title
           position-y={1.2}
+          position-z={-0.75}
           image="https://d27rt3a60hh1lx.cloudfront.net/spacesvr/spacesvr.png"
         >
           welcome to spacesvr
         </Title>
         <group position-y={0.8}>
-          <Link href="/multiplayer" position-x={-2}>
+          <Link href="/multiplayer" position-x={-1.5} position-z={0.75}>
             visit multiplayer page
           </Link>
           <Link href="/media" position-x={-1}>
@@ -27,7 +28,11 @@ export default function Hub() {
           <Link href="/workshop" position-x={1}>
             visit workshop page
           </Link>
-          <Link href="https://github.com/musehq/spacesvr" position-x={2}>
+          <Link
+            href="https://github.com/musehq/spacesvr"
+            position-x={1.5}
+            position-z={0.75}
+          >
             visit github
           </Link>
         </group>

@@ -72,6 +72,13 @@ export const useTextInput = (
     }
   }, [focused, velocity, controls]);
 
+  // free up wasd on unmount
+  useEffect(() => {
+    return () => {
+      if (!isTyping()) controls.unlock();
+    };
+  }, [controls]);
+
   // set up event listeners
   useEffect(() => {
     const formatNumber = (s: string) => {
