@@ -81,5 +81,3 @@ useModel.preload = function (url: string, gl: WebGLRenderer) {
 useModel.clear = function (url: string) {
   return useGLTF.clear([url]);
 };
-
-console.log(useModel);
