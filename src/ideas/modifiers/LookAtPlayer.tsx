@@ -1,48 +1,53 @@
 import { ReactNode, useMemo, useRef } from "react";
-import { Group, Quaternion, Vector2, Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
-import { useLimiter } from "../../logic/limiter";
+import { Euler, Group, Quaternion, Vector2, Vector3 } from "three";
+import { useLimitedFrame } from "../../logic/limiter";
 
-type Props = {
+type LookAtPlayer = {
   enabled?: boolean;
   children: ReactNode;
 };
 
-const AXIS = new Vector3(0, 1, 0);
+const DOWN_AXIS = new Vector3(0, -1, 0);
 
-export function LookAtPlayer(props: Props) {
+/**
+ * Will smoothly rotate its children to face the camera along the Y axis, regardless of the parent's rotation.
+ */
+export function LookAtPlayer(props: LookAtPlayer) {
   const { enabled = true, children } = props;
 
   const group = useRef<Group>(null);
-  const limiter = useLimiter(50);
-  const dummy1 = useMemo(() => new Vector2(), []);
-  const dummy2 = useMemo(() => new Vector2(), []);
-  const dummy3 = useMemo(() => new Vector3(), []);
-  const dummy4 = useMemo(() => new Quaternion().setFromAxisAngle(AXIS, 0), []);
 
-  useFrame(({ clock, camera }, delta) => {
-    if (!limiter.isReady(clock)) return;
+  const flatDelta = useMemo(() => new Vector2(), []);
+  const worldPos = useMemo(() => new Vector3(), []);
+  const worldQuat = useMemo(() => new Quaternion(), []);
+  const targetQuat = useMemo(() => new Quaternion(), []);
+  const parentQuat = useMemo(() => new Quaternion(), []);
+  const offsetRot = useMemo(() => new Euler(), []);
 
-    if (group.current) {
-      let rot = 0;
+  useLimitedFrame(50, ({ camera }, delta) => {
+    if (!group.current) return;
 
-      if (enabled) {
-        group.current.getWorldPosition(dummy3);
-        dummy1.set(dummy3.x, dummy3.z);
-        dummy2.set(camera.position.x, camera.position.z);
-        dummy1.sub(dummy2);
+    group.current.parent?.getWorldQuaternion(parentQuat);
+    offsetRot.setFromQuaternion(parentQuat, "YXZ");
+    targetQuat.set(0, 0, 0, 1);
 
-        rot = -dummy1.normalize().angle();
-        if (rot < 0) {
-          rot += Math.PI * 2;
-        }
-      }
+    if (enabled) {
+      group.current.getWorldPosition(worldPos);
+      group.current.getWorldQuaternion(worldQuat);
+      flatDelta.x = camera.position.x - worldPos.x;
+      flatDelta.y = camera.position.z - worldPos.z;
 
-      dummy4.setFromAxisAngle(AXIS, rot);
-
-      group.current.quaternion.slerp(dummy4, delta * 10);
+      const angle = flatDelta.angle() - Math.PI / 2 + offsetRot.y;
+      targetQuat.setFromAxisAngle(DOWN_AXIS, angle);
     }
+
+    const alpha = 1 - Math.pow(0.11, delta);
+    group.current.quaternion.slerp(targetQuat, alpha);
   });
 
-  return <group ref={group}>{children}</group>;
+  return (
+    <group name="look-at-player" ref={group}>
+      {children}
+    </group>
+  );
 }
