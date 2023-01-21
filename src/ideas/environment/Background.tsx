@@ -1,5 +1,5 @@
 import { Color } from "three";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
 type BackgroundProps = {
@@ -11,14 +11,15 @@ export function Background(props: BackgroundProps) {
 
   const scene = useThree((state) => state.scene);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const oldBackground = scene.background;
     const col = (color as Color) instanceof Color ? color : new Color(color);
     scene.background = col as Color;
 
     return () => {
-      scene.background = null;
+      scene.background = oldBackground;
     };
-  }, [color, scene]);
+  }, [color]);
 
   return null;
 }
