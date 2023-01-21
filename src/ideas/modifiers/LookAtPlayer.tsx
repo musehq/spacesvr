@@ -41,8 +41,7 @@ export function LookAtPlayer(props: LookAtPlayer) {
       targetQuat.setFromAxisAngle(DOWN_AXIS, angle);
     }
 
-    const alpha = 1 - Math.pow(0.11, delta);
-    group.current.quaternion.slerp(targetQuat, alpha);
+    group.current.quaternion.slerp(targetQuat, 0.11);
   });
 
   return (
