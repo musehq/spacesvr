@@ -6,7 +6,7 @@ import { animated, useSpring } from "@react-spring/three";
 import { useTextInput } from "../../../logic/input";
 import { useKeypress, useShiftHold } from "../../../logic/keys";
 import { usePlayer } from "../../../layers/Player";
-import { Mesh, MeshStandardMaterial, Raycaster } from "three";
+import { Group, Mesh, MeshStandardMaterial, Raycaster, Vector3 } from "three";
 import { syncOnChange } from "./logic/sync";
 import {
   getClickedCaret,
@@ -19,6 +19,7 @@ import { useDragSelect } from "./logic/drag";
 import { useLimitedFrame } from "../../../logic/limiter";
 import { cache } from "../../../logic/cache";
 import { HitBox } from "../../primitives/HitBox";
+import { useEnvironment } from "../../../layers/Environment";
 
 type TextProps = {
   value?: string;
@@ -51,9 +52,12 @@ export function TextInput(props: TextProps) {
   } = props;
 
   const clock = useThree((st) => st.clock);
+  const camera = useThree((st) => st.camera);
   const player = usePlayer();
+  const { device } = useEnvironment();
   const RAYCASTER = passedRaycaster || player.raycaster;
 
+  const group = useRef<Group>(null);
   const textRef = useRef<any>();
   const caret = useRef<Mesh>(null);
   const highlight = useRef<Mesh>(null);
@@ -67,17 +71,26 @@ export function TextInput(props: TextProps) {
 
   const { input, focused, focusInput } = useTextInput(type, val, setVal);
 
+  // focus callback
   useEffect(() => {
     if (!onFocus) return;
     input.addEventListener("focus", onFocus);
     return () => input.removeEventListener("focus", onFocus);
   }, [input, onFocus]);
 
+  // blur callback
   useEffect(() => {
     if (!onBlur) return;
     input.addEventListener("blur", onBlur);
     return () => input.removeEventListener("blur", onBlur);
   }, [input, onBlur]);
+
+  // look at input when focused, only on mobile
+  useEffect(() => {
+    if (!group.current || !focused || !device.mobile) return;
+    const worldpos = group.current.getWorldPosition(new Vector3());
+    camera.lookAt(worldpos);
+  }, [focused, camera, device]);
 
   const { color } = useSpring({ color: focused ? "#000" : "#828282" });
 
@@ -321,7 +334,7 @@ export function TextInput(props: TextProps) {
   });
 
   return (
-    <group name="spacesvr-text-input" {...rest}>
+    <group name="spacesvr-text-input" {...rest} ref={group}>
       <group name="content" position-z={DEPTH / 2 + 0.001}>
         <Suspense fallback={null}>
           <Text
