@@ -10,11 +10,12 @@ type OnScreenProps = {
   distance: number;
   name: string;
   pos: [number, number];
+  disableDraggable: boolean;
   children: ReactNode | ReactNode[];
 };
 
 export default function OnScreen(props: OnScreenProps) {
-  const { distance, name, pos, children } = props;
+  const { distance, name, pos, disableDraggable, children } = props;
 
   const toolbelt = useToolbelt();
 
@@ -80,7 +81,11 @@ export default function OnScreen(props: OnScreenProps) {
 
   return (
     <animated.group position={spring.pos} name="onscreen">
-      <Draggable set={set} distance={distance} enabled={ENABLED}>
+      <Draggable
+        set={set}
+        distance={distance}
+        enabled={ENABLED && !disableDraggable}
+      >
         {children}
       </Draggable>
     </animated.group>

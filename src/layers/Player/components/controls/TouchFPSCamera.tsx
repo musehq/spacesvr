@@ -59,20 +59,17 @@ export default function TouchFPSCamera() {
   const onTouchMove = (ev: TouchEvent) => {
     const touch = getCurrentTouch(touchStartPos.current.id, ev.touches);
 
-    if (!touch) {
-      return;
-    }
+    if (!touch) return;
 
     const { clientX, clientY } = touch;
     const newEuler = getNewEuler(clientX, clientY);
     camera.quaternion.setFromEuler(newEuler);
   };
+
   const onTouchEnd = (ev: TouchEvent) => {
     const touch = getCurrentTouch(touchStartPos.current.id, ev.changedTouches);
 
-    if (!touch) {
-      return;
-    }
+    if (!touch) return;
 
     const { clientX, clientY } = touch;
     originEuler.current = getNewEuler(clientX, clientY);
@@ -89,7 +86,7 @@ export default function TouchFPSCamera() {
       document.removeEventListener("touchmove", onTouchMove);
       document.removeEventListener("touchend", onTouchEnd);
     };
-  }, []);
+  }, [onTouchEnd, onTouchMove, onTouchStart]);
 
   return null;
 }
