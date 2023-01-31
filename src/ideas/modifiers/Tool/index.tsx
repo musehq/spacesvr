@@ -16,6 +16,7 @@ type ToolProps = {
   range?: number;
   orderIndex?: number;
   bobStrength?: number;
+  disableDraggable?: boolean;
   onSwitch?: (enabled: boolean) => void;
 };
 
@@ -38,6 +39,7 @@ export function Tool(props: ToolProps) {
     range,
     bobStrength,
     orderIndex,
+    disableDraggable = false,
     onSwitch,
   } = props;
 
@@ -74,7 +76,12 @@ export function Tool(props: ToolProps) {
             range={range}
             bobStrength={bobStrength}
           >
-            <OnScreen distance={DISTANCE} name={name} pos={pos}>
+            <OnScreen
+              distance={DISTANCE}
+              name={name}
+              pos={pos}
+              disableDraggable={disableDraggable}
+            >
               <FacePlayer enabled={face}>{visible && children}</FacePlayer>
             </OnScreen>
           </HUD>
