@@ -9,6 +9,7 @@ import {
   LostWorld,
   Camera,
   Dialogue,
+  VisualWorld,
 } from "spacesvr";
 import Title from "../ideas/Title";
 import Link from "../ideas/Link";
@@ -89,6 +90,7 @@ export default function Workshop() {
         rotation={[0, Math.PI, 0]}
         framed
       />
+      <VisualWorld position-x={5} scale={0.5} position-y={0.45} />
       <Image
         src="https://d1htv66kutdwsl.cloudfront.net/ff3aff8a-b3f9-4325-a274-d4ba44676bab/7f386117-5837-4d34-926c-f00ffa56c833.ktx2"
         position={[-9.5, 2, 6.4]}

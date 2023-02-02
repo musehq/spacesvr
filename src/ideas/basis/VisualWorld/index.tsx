@@ -1,7 +1,13 @@
 import { useEffect, useMemo } from "react";
-import { GroupProps, useFrame } from "@react-three/fiber";
-import { DoubleSide, Color, MeshStandardMaterial, Uniform } from "three";
-import { useLimiter } from "../../../logic/limiter";
+import { GroupProps } from "@react-three/fiber";
+import {
+  DoubleSide,
+  Color,
+  MeshStandardMaterial,
+  Uniform,
+  Vector3,
+} from "three";
+import { useLimitedFrame } from "../../../logic/limiter";
 import { frag, fragHead, vert, vertHead } from "./materials/world";
 import { World } from "../../../logic/basis/world";
 import { Idea } from "../../../logic/basis/idea";
@@ -11,15 +17,8 @@ type VisualWorldProps = { world?: World } & GroupProps;
 export function VisualWorld(props: VisualWorldProps) {
   const { world, ...rest } = props;
 
-  const color = useMemo(() => new Color(), []);
-
   const RADIUS = 4;
   const SEED = useMemo(() => Math.random(), []);
-  const HEX = world?.getHex() || "#808080";
-
-  useEffect(() => {
-    color.set(HEX);
-  }, [HEX, color]);
 
   const mat = useMemo(() => {
     const material = new MeshStandardMaterial({
@@ -29,13 +28,11 @@ export function VisualWorld(props: VisualWorldProps) {
     });
 
     material.onBeforeCompile = function (shader) {
-      const axiom = world ? world.getAxiom() : new Idea();
-
       const uniforms = {
         time: new Uniform(0),
-        axiom: new Uniform(new Color(axiom.getHex())),
-        up_norm: new Uniform(world?.getUpNorm()),
-        range: new Uniform(world?.getRange()),
+        axiom: new Uniform(new Color("#888888")),
+        up_norm: new Uniform(new Vector3(0, 1, 0)),
+        range: new Uniform(0),
       };
 
       shader.uniforms = { ...shader.uniforms, ...uniforms };
@@ -60,13 +57,22 @@ export function VisualWorld(props: VisualWorldProps) {
     material.needsUpdate = true;
 
     return material;
-  }, [vert, frag, vertHead, fragHead, world]);
+  }, []);
 
-  const limiter = useLimiter(50);
-  useFrame(({ clock }) => {
-    if (!limiter.isReady(clock) || !mat || !mat.userData.shader) return;
+  useEffect(() => {
+    if (!mat || !mat.userData.shader || !world) return;
 
-    mat.userData.shader.uniforms.time.value = clock.elapsedTime + SEED * 1000;
+    const unifs = mat.userData.shader.uniforms;
+    const axiom = world ? world.getAxiom() : new Idea();
+    unifs.axiom.value.set(new Color(axiom.getHex()));
+    unifs.up_norm.value = world?.getUpNorm();
+    unifs.range.value = world?.getRange();
+  }, [world, mat]);
+
+  useLimitedFrame(50, ({ clock }) => {
+    if (!mat || !mat.userData.shader) return;
+
+    mat.userData.shader.uniforms.time.value = clock.elapsedTime + SEED * 500;
   });
 
   return (
