@@ -27,9 +27,12 @@ export const useDrag = (
     onMove?: MovedDragCallback;
     onEnd?: MovedDragCallback;
   },
-  domElem?: HTMLElement
+  domElem?: HTMLElement,
+  deps: any[] = []
 ): Drag => {
   const { clock, size, viewport } = useThree();
+
+  const aspect = size.width / viewport.width;
 
   const [downPoint] = useState(new Vector2());
   const [dragPoint] = useState(new Vector2());
@@ -38,7 +41,26 @@ export const useDrag = (
 
   const lastTouchRead = useRef(0);
 
-  const aspect = size.width / viewport.width;
+  const onStart = useCallback<DragCallback>(
+    (p) => {
+      if (callback.onStart) callback.onStart(p);
+    },
+    [...deps]
+  );
+
+  const onMove = useCallback<MovedDragCallback>(
+    (p) => {
+      if (callback.onMove) callback.onMove(p);
+    },
+    [...deps]
+  );
+
+  const onEnd = useCallback<MovedDragCallback>(
+    (p) => {
+      if (callback.onEnd) callback.onEnd(p);
+    },
+    [...deps]
+  );
 
   const startDrag = useCallback(
     (e: TouchEvent) => {
@@ -46,17 +68,15 @@ export const useDrag = (
       const touch = e.touches[0];
       downPoint.set(touch.clientX, touch.clientY);
 
-      if (callback.onStart) {
-        callback.onStart({
-          e,
-          touch,
-          downPoint,
-          dragPoint: downPoint,
-          velocity,
-        });
-      }
+      onStart({
+        e,
+        touch,
+        downPoint,
+        dragPoint: downPoint,
+        velocity,
+      });
     },
-    [callback, downPoint, velocity]
+    [onStart, downPoint, velocity]
   );
 
   const moveDrag = useCallback(
@@ -70,11 +90,9 @@ export const useDrag = (
       velocity.set(delta.x / elapsed / aspect, delta.y / elapsed / aspect);
       lastTouchRead.current = time;
 
-      if (callback.onMove) {
-        callback.onMove({ e, touch, downPoint, dragPoint, velocity, delta });
-      }
+      onMove({ e, touch, downPoint, dragPoint, velocity, delta });
     },
-    [aspect, callback, clock, downPoint, dragPoint, velocity]
+    [aspect, onMove, clock, downPoint, dragPoint, velocity]
   );
 
   const endDrag = useCallback(
@@ -83,18 +101,16 @@ export const useDrag = (
       dragPoint.set(touch.clientX, touch.clientY);
       delta.copy(dragPoint).sub(downPoint);
 
-      if (callback.onEnd) {
-        callback.onEnd({ e, touch, downPoint, dragPoint, velocity, delta });
-      }
+      onEnd({ e, touch, downPoint, dragPoint, velocity, delta });
     },
-    [callback, delta, downPoint, dragPoint, velocity]
+    [onEnd, delta, downPoint, dragPoint, velocity]
   );
 
   useEffect(() => {
-    const elem = (domElem || document) as Document;
-    elem.addEventListener("touchstart", startDrag);
-    elem.addEventListener("touchmove", moveDrag);
-    elem.addEventListener("touchend", endDrag);
+    const elem = (domElem || document) as HTMLElement;
+    elem.addEventListener("touchstart", startDrag, { passive: true });
+    elem.addEventListener("touchmove", moveDrag, { passive: true });
+    elem.addEventListener("touchend", endDrag, { passive: true });
     return () => {
       elem.removeEventListener("touchstart", startDrag);
       elem.removeEventListener("touchmove", moveDrag);

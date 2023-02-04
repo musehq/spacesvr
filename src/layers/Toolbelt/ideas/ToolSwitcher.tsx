@@ -45,7 +45,8 @@ export default function ToolSwitcher() {
         }
       },
     },
-    gl.domElement
+    gl.domElement,
+    [screen.width, screen.height, toolbelt.next, toolbelt.prev]
   );
 
   return null;

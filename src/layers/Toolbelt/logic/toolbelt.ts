@@ -56,7 +56,12 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
       if (tools.length === 0) rerender();
       const tool = { name, orderIndex: orderIndex || 0 };
       tools.push(tool);
-      tools.sort((a, b) => a.orderIndex - b.orderIndex);
+      // sort tools by orderIndex, then by name
+      tools.sort((a, b) =>
+        a.orderIndex !== b.orderIndex
+          ? a.orderIndex - b.orderIndex
+          : a.name.localeCompare(b.name)
+      );
     },
     [tools]
   );
@@ -126,7 +131,9 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
 
   const show = useCallback(() => {
     setDirection("up");
-    setActiveIndex(lastActiveIndex.current);
+    setActiveIndex((oldInd) =>
+      oldInd === undefined ? lastActiveIndex.current : oldInd
+    );
   }, []);
 
   return {

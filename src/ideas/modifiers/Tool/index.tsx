@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, Suspense } from "react";
 import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
 import { useSpring } from "@react-spring/three";
@@ -45,13 +45,13 @@ export function Tool(props: ToolProps) {
 
   const toolbelt = useToolbelt();
   const ENABLED = toolbelt.activeTool?.name === name;
-
   const DISTANCE = 1;
 
   const { prog } = useSpring({
     prog: ENABLED ? 1 : 0,
     config: { mass: 4, friction: 90, tension: 800 },
   });
+
   const visible = useVisible(prog);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export function Tool(props: ToolProps) {
   return (
     <>
       {createPortal(
-        <group name={`tool-${name}`} visible={visible}>
+        <group name={`tool-${name}`}>
           <HUD
             pos={pos}
             pinY={pinY}
@@ -82,7 +82,9 @@ export function Tool(props: ToolProps) {
               pos={pos}
               disableDraggable={disableDraggable}
             >
-              <FacePlayer enabled={face}>{visible && children}</FacePlayer>
+              <Suspense fallback={null}>
+                <FacePlayer enabled={face}>{visible && children}</FacePlayer>
+              </Suspense>
             </OnScreen>
           </HUD>
         </group>,
