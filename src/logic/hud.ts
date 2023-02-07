@@ -1,4 +1,6 @@
 import { PerspectiveCamera, Vector2 } from "three";
+import { useThree } from "@react-three/fiber";
+import { useMemo } from "react";
 
 const PADDING_X = 0.125;
 const PADDING_Y = 0.125;
@@ -34,4 +36,12 @@ export const getHudDims = (camera: PerspectiveCamera, distance: number) => {
   const width = height * camera.aspect;
 
   return { width, height };
+};
+
+export const useHudDims = (distance = 1) => {
+  const camera = useThree((state) => state.camera) as PerspectiveCamera;
+  return useMemo(() => {
+    return getHudDims(camera, distance);
+    // make sure aspect is there
+  }, [camera, distance, camera.aspect]);
 };

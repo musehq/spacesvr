@@ -1,6 +1,7 @@
-import { ColorRepresentation } from "three";
+import { ColorRepresentation, Mesh } from "three";
 import { Interactable, InteractableProps } from "../modifiers/Interactable";
 import { MeshProps } from "@react-three/fiber";
+import { forwardRef } from "react";
 
 type HitBox = {
   args: [number, number, number];
@@ -9,7 +10,7 @@ type HitBox = {
 } & Omit<InteractableProps, "children"> &
   Omit<MeshProps, "args">;
 
-export function HitBox(props: HitBox) {
+export const HitBox = forwardRef<Mesh, HitBox>((props: HitBox, ref) => {
   const {
     args,
     visible = false,
@@ -28,7 +29,7 @@ export function HitBox(props: HitBox) {
       onUnHover={onUnHover}
       raycaster={raycaster}
     >
-      <mesh visible={visible} name="spacesvr-hitbox" {...rest}>
+      <mesh visible={visible} name="spacesvr-hitbox" ref={ref} {...rest}>
         <boxBufferGeometry args={args} />
         {visible && (
           <meshBasicMaterial color={color} transparent opacity={0.7} />
@@ -36,4 +37,4 @@ export function HitBox(props: HitBox) {
       </mesh>
     </Interactable>
   );
-}
+});

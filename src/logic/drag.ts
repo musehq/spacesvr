@@ -108,9 +108,9 @@ export const useDrag = (
 
   useEffect(() => {
     const elem = (domElem || document) as HTMLElement;
-    elem.addEventListener("touchstart", startDrag, { passive: true });
-    elem.addEventListener("touchmove", moveDrag, { passive: true });
-    elem.addEventListener("touchend", endDrag, { passive: true });
+    elem.addEventListener("touchstart", startDrag);
+    elem.addEventListener("touchmove", moveDrag);
+    elem.addEventListener("touchend", endDrag);
     return () => {
       elem.removeEventListener("touchstart", startDrag);
       elem.removeEventListener("touchmove", moveDrag);
