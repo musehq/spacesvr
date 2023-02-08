@@ -65,20 +65,18 @@ export default function PhotoPreview(props: PhotoPreview) {
   if (!photo.data.value || !containerRef.current || !device.mobile) return null;
 
   return (
-    <>
-      <Html>
-        {createPortal(
-          <>
-            <Wrapper>
-              <Image src={photo.data.value} />
-              <Text>press and hold the image to save it</Text>
-              <Button onClick={() => photo.data.set(undefined)}>close</Button>
-            </Wrapper>
-            <Background />
-          </>,
-          containerRef.current
-        )}
-      </Html>
-    </>
+    <Html>
+      {createPortal(
+        <>
+          <Wrapper>
+            <Image src={photo.data.value} />
+            <Text>press and hold the image to save it</Text>
+            <Button onClick={() => photo.data.set(undefined)}>close</Button>
+          </Wrapper>
+          <Background />
+        </>,
+        containerRef.current
+      )}
+    </Html>
   );
 }
