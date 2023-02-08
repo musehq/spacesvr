@@ -130,7 +130,6 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
   }, []);
 
   const show = useCallback(() => {
-    setDirection("up");
     setActiveIndex((oldInd) =>
       oldInd === undefined ? lastActiveIndex.current : oldInd
     );

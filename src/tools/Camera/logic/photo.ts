@@ -1,4 +1,10 @@
-import { MutableRefObject, useEffect, useMemo, useState } from "react";
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   NearestFilter,
   NoToneMapping,
@@ -33,7 +39,9 @@ export const usePhotography = (
     () => new Vector2(3, 2).normalize().multiplyScalar(2186),
     []
   );
+
   const aspect = useMemo(() => resolution.clone().normalize(), [resolution]);
+
   const target = useMemo(
     () =>
       new WebGLRenderTarget(resolution.x, resolution.y, {
@@ -44,6 +52,7 @@ export const usePhotography = (
       }),
     [resolution]
   );
+
   const renderer = useMemo(() => {
     const r = new WebGLRenderer({
       preserveDrawingBuffer: true,
@@ -61,7 +70,7 @@ export const usePhotography = (
     renderer.setPixelRatio(device.desktop ? 2 : 1); // could be 3, just really fat
   }, [device.desktop, target.width, target.height, renderer]);
 
-  const takePicture = () => {
+  const takePicture = useCallback(() => {
     if (!cam.current) return;
 
     document.body.append(renderer.domElement);
@@ -92,7 +101,7 @@ export const usePhotography = (
     }
 
     document.body.removeChild(renderer.domElement);
-  };
+  }, [aspect.x, aspect.y, cam, device.mobile, renderer, scene]);
 
   return {
     resolution,

@@ -3,7 +3,7 @@ import { MutableRefObject, useRef } from "react";
 import { Mesh, PerspectiveCamera } from "three";
 import { cache, useDrag } from "../../../logic";
 import { useSpring, animated } from "@react-spring/three";
-import { HitBox } from "../../../ideas";
+import { Button, HitBox } from "../../../ideas";
 import { Fov } from "../logic/fov";
 import { usePlayer } from "../../../layers";
 import { Text } from "@react-three/drei";
@@ -14,11 +14,12 @@ const FONT_URL =
 type MobileControls = {
   cam: MutableRefObject<PerspectiveCamera | undefined>;
   open: boolean;
+  setOpen: (open: boolean) => void;
   fov: Fov;
 } & GroupProps;
 
 export default function MobileControls(props: MobileControls) {
-  const { cam, open, fov, ...rest } = props;
+  const { cam, open, setOpen, fov, ...rest } = props;
 
   const { gl } = useThree();
   const { raycaster } = usePlayer();
@@ -84,6 +85,18 @@ export default function MobileControls(props: MobileControls) {
       >
         FOV Slider
       </Text>
+      {open && (
+        <Button
+          position-y={0.48}
+          position-x={-1}
+          scale={1.5}
+          rotation-x={0.2}
+          color="#ff0000"
+          onClick={() => setOpen(false)}
+        >
+          close
+        </Button>
+      )}
     </group>
   );
 }

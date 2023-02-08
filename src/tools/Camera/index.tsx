@@ -7,8 +7,8 @@ import { useEnvironment } from "../../layers/Environment";
 import { config, useSpring, animated } from "@react-spring/three";
 import { Tool } from "../../ideas/modifiers/Tool";
 import { useToolbelt } from "../../layers/Toolbelt";
-import { Button, HitBox, Model } from "../../ideas";
-import { cache, isTyping, useHudDims, useKeypress } from "../../logic";
+import { HitBox, Model } from "../../ideas";
+import { isTyping, useHudDims, useKeypress } from "../../logic";
 import { useRendering } from "./logic/rendering";
 import Instruction from "./components/Instruction";
 import DesktopControls from "./components/DesktopControls";
@@ -22,7 +22,7 @@ const AUDIO_URL =
 const CAMERA_MODEL_URL =
   "https://d1htv66kutdwsl.cloudfront.net/0308efc4-0b68-4b2e-b688-92512323178b/aa44f4af-f7c2-4050-9e6c-536ee07bbb1a.glb";
 
-const TIMEOUT = 3; //s
+const TIMEOUT = 2; //s
 
 type CameraProps = { onCapture?: () => void };
 
@@ -119,18 +119,11 @@ export function Camera(props: CameraProps) {
           )}
           <group name="top-row" position={[1, 0.7, 0.75]}>
             <ShutterButton
+              open={open}
               pressed={shutterPressed}
               setPressed={setShutterPressed}
               onPress={onClick}
             />
-            <mesh
-              position-x={0.05}
-              name="cover-mesh"
-              material={cache.mat_standard_black}
-              position-y={-0.17}
-            >
-              <boxBufferGeometry args={[0.5, 0.5, 0.3]} />
-            </mesh>
           </group>
           <group name="content" position={[0, -0.18, 1.101]} scale={2}>
             <mesh
@@ -158,19 +151,10 @@ export function Camera(props: CameraProps) {
               <MobileControls
                 cam={cam}
                 open={open}
+                setOpen={setOpen}
                 fov={fov}
                 position={[0.5, 0.12, 0.004]}
               />
-            )}
-            {device.mobile && open && (
-              <Button
-                position-y={-0.75}
-                scale={1.75}
-                rotation-x={-0.4}
-                onClick={() => setOpen(false)}
-              >
-                close
-              </Button>
             )}
           </group>
         </animated.group>

@@ -38,7 +38,7 @@ export const useRendering = (
     // move mesh to camera's position
     mesh.current.getWorldPosition(dummy);
     mesh.current.getWorldQuaternion(qummy);
-    cam.current.position.set(0, 0, -0.6).applyQuaternion(qummy); // move back 0.5m
+    cam.current.position.set(0, 0, 0.3).applyQuaternion(qummy); // move back 0.3m
     cam.current.position.add(dummy);
     cam.current.rotation.setFromQuaternion(qummy);
 
