@@ -59,6 +59,12 @@ export const cache = {
       () => new MeshStandardMaterial({ color: "#ff007f" })
     );
   },
+  get mat_standard_red(): MeshStandardMaterial {
+    return getResource<MeshStandardMaterial>(
+      "mat_standard_red",
+      () => new MeshStandardMaterial({ color: "#ff0000" })
+    );
+  },
   get mat_basic_white(): MeshBasicMaterial {
     return getResource<MeshBasicMaterial>(
       "mat_basic_white",

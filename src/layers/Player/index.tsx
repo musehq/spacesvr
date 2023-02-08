@@ -82,7 +82,6 @@ export function Player(props: PlayerLayer) {
   } = props;
 
   const camera = useThree((state) => state.camera);
-  const gl = useThree((state) => state.gl);
   const defaultRaycaster = useThree((state) => state.raycaster);
 
   const { device } = useEnvironment();

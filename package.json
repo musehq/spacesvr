@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "2.10.4",
+  "version": "2.10.5",
   "private": true,
   "description": "A standardized reality for future of the 3D Web",
   "keywords": [
@@ -85,6 +85,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/peerjs": "^1.1.0",
     "@types/react": "^18.0.12",
+    "@types/react-dom": "^18.0.10",
     "@types/three": "0.139.0",
     "@typescript-eslint/eslint-plugin": "^3.2.0",
     "@typescript-eslint/parser": "^3.2.0",

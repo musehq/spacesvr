@@ -9,7 +9,7 @@ export default function ToolSwitcher() {
 
   const registered = useRef(false);
 
-  const DETECT_RANGE_X = screen.width * 0.04;
+  const DETECT_RANGE_X = screen.width * 0.05;
   const DRAG_RANGE_X = screen.width * 0.08;
   const DETECT_RANGE_Y = screen.height * 0.5;
 
@@ -45,7 +45,8 @@ export default function ToolSwitcher() {
         }
       },
     },
-    gl.domElement
+    gl.domElement,
+    [screen.width, screen.height, toolbelt.next, toolbelt.prev]
   );
 
   return null;

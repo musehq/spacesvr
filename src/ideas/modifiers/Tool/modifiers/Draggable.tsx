@@ -67,7 +67,8 @@ export default function Draggable(props: DraggableProps) {
         valid.current = false;
       },
     },
-    gl.domElement
+    gl.domElement,
+    [device.mobile, enabled, toolbelt.hide, toolbelt.next, toolbelt.prev]
   );
 
   return <group ref={group}>{children}</group>;

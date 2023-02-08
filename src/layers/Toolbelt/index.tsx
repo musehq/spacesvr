@@ -4,14 +4,24 @@ import { PerspectiveCamera } from "three";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import Lights from "./ideas/Lights";
 import { ToolbeltContext, useToolbeltState } from "./logic/toolbelt";
+import WorldLights from "./ideas/WorldLights";
 export * from "./logic/toolbelt";
 
-export type ToolbeltProps = { showOnSpawn?: boolean };
+export type ToolbeltProps = {
+  showOnSpawn?: boolean;
+  worldLights?: boolean;
+  localLights?: boolean;
+};
 
 type ToolbeltLayer = { children: ReactNode[] | ReactNode } & ToolbeltProps;
 
 export function Toolbelt(props: ToolbeltLayer) {
-  const { children, showOnSpawn = true } = props;
+  const {
+    children,
+    showOnSpawn = true,
+    worldLights = true,
+    localLights = true,
+  } = props;
 
   const { camera } = useThree();
   const value = useToolbeltState(showOnSpawn);
@@ -42,7 +52,8 @@ export function Toolbelt(props: ToolbeltLayer) {
   return (
     <ToolbeltContext.Provider value={value}>
       <ToolSwitcher />
-      {createPortal(<Lights />, hudScene)}
+      {localLights && createPortal(<Lights />, hudScene)}
+      {worldLights && <WorldLights />}
       {children}
     </ToolbeltContext.Provider>
   );

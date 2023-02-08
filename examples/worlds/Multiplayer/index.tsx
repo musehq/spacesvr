@@ -11,6 +11,7 @@ export default function Multiplayer() {
       environmentProps={{ dev: process.env.NODE_ENV === "development" }}
       playerProps={{ pos: [5, 1, 0], rot: Math.PI }}
       networkProps={{ autoconnect: true, voice: true }}
+      toolbeltProps={{ showOnSpawn: false }}
     >
       <Analytics />
       <Title position-z={-1.5} position-y={1.2}>

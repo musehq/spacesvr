@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, Suspense, useState } from "react";
 import { useToolbelt } from "../../../layers/Toolbelt";
 import HUD from "./modifiers/HUD";
 import { useSpring } from "@react-spring/three";
@@ -6,6 +6,7 @@ import { useVisible } from "../../../logic/visible";
 import OnScreen from "./modifiers/OnScreen";
 import { createPortal } from "@react-three/fiber";
 import { FacePlayer } from "../FacePlayer";
+import ToolPreload from "./components/ToolPreload";
 
 type ToolProps = {
   children: ReactNode;
@@ -45,13 +46,15 @@ export function Tool(props: ToolProps) {
 
   const toolbelt = useToolbelt();
   const ENABLED = toolbelt.activeTool?.name === name;
-
   const DISTANCE = 1;
+
+  const [preloadDone, setPreloadDone] = useState(false);
 
   const { prog } = useSpring({
     prog: ENABLED ? 1 : 0,
     config: { mass: 4, friction: 90, tension: 800 },
   });
+
   const visible = useVisible(prog);
 
   useEffect(() => {
@@ -63,12 +66,18 @@ export function Tool(props: ToolProps) {
     if (onSwitch) onSwitch(toolbelt.activeTool?.name === name);
   }, [toolbelt.activeTool, onSwitch, name]);
 
+  if (!preloadDone) {
+    return (
+      <ToolPreload setPreloadDone={setPreloadDone}>{children}</ToolPreload>
+    );
+  }
+
   if (!visible) return null;
 
   return (
     <>
       {createPortal(
-        <group name={`tool-${name}`} visible={visible}>
+        <group name={`tool-${name}`}>
           <HUD
             pos={pos}
             pinY={pinY}
@@ -82,7 +91,9 @@ export function Tool(props: ToolProps) {
               pos={pos}
               disableDraggable={disableDraggable}
             >
-              <FacePlayer enabled={face}>{visible && children}</FacePlayer>
+              <FacePlayer enabled={face}>
+                <Suspense fallback={null}>{visible && children} </Suspense>
+              </FacePlayer>
             </OnScreen>
           </HUD>
         </group>,

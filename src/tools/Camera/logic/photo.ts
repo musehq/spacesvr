@@ -1,6 +1,11 @@
-import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import {
-  MathUtils,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
   NearestFilter,
   NoToneMapping,
   PerspectiveCamera,
@@ -13,28 +18,30 @@ import {
 import { useThree } from "@react-three/fiber";
 import { useEnvironment } from "../../../layers/Environment";
 
-type Photography = {
+export type Photography = {
   resolution: Vector2;
   aspect: Vector2;
   takePicture: () => void;
+  renderer: WebGLRenderer;
   target: WebGLRenderTarget;
-  fov: number;
+  data: { value?: string; set: (v: string | undefined) => void };
 };
 
 export const usePhotography = (
-  cam: MutableRefObject<PerspectiveCamera | undefined>,
-  open: boolean
+  cam: MutableRefObject<PerspectiveCamera | undefined>
 ): Photography => {
   const { device } = useEnvironment();
   const { scene } = useThree();
 
-  const [fov, setFov] = useState(50);
-  useEffect(() => setFov(50), [open]);
+  const [data, setData] = useState<string>();
+
   const resolution = useMemo(
     () => new Vector2(3, 2).normalize().multiplyScalar(2186),
     []
   );
+
   const aspect = useMemo(() => resolution.clone().normalize(), [resolution]);
+
   const target = useMemo(
     () =>
       new WebGLRenderTarget(resolution.x, resolution.y, {
@@ -45,6 +52,7 @@ export const usePhotography = (
       }),
     [resolution]
   );
+
   const renderer = useMemo(() => {
     const r = new WebGLRenderer({
       preserveDrawingBuffer: true,
@@ -58,22 +66,11 @@ export const usePhotography = (
   }, []);
 
   useEffect(() => {
-    renderer.setPixelRatio(device.desktop ? 2 : 1); // could be 3, just really fat
     renderer.setSize(target.width, target.height);
+    renderer.setPixelRatio(device.desktop ? 2 : 1); // could be 3, just really fat
   }, [device.desktop, target.width, target.height, renderer]);
 
-  useEffect(() => {
-    // increase/decrease fov on scroll
-    const onScroll = (e: WheelEvent) => {
-      if (!cam.current) return;
-      const fov = MathUtils.clamp(cam.current.fov + e.deltaY * 0.05, 10, 85);
-      setFov(fov);
-    };
-    window.addEventListener("wheel", onScroll);
-    return () => window.removeEventListener("wheel", onScroll);
-  }, [cam]);
-
-  const takePicture = () => {
+  const takePicture = useCallback(() => {
     if (!cam.current) return;
 
     document.body.append(renderer.domElement);
@@ -81,7 +78,6 @@ export const usePhotography = (
 
     renderer.render(scene, cam.current);
 
-    const link = document.createElement("a");
     const today = new Date();
     const name =
       document.title +
@@ -94,13 +90,25 @@ export const usePhotography = (
       ":" +
       today.getMinutes();
 
-    link.download = `${name}.jpg`;
-    link.href = renderer.domElement.toDataURL("image/jpeg");
-    link.click();
+    if (!device.mobile) {
+      const link = document.createElement("a");
+      link.download = `${name}.jpg`;
+      link.href = renderer.domElement.toDataURL("image/jpeg");
+      link.click();
+      link.remove();
+    } else {
+      setData(renderer.domElement.toDataURL("image/jpeg"));
+    }
 
-    link.remove();
     document.body.removeChild(renderer.domElement);
-  };
+  }, [aspect.x, aspect.y, cam, device.mobile, renderer, scene]);
 
-  return { resolution, aspect, takePicture, target, fov };
+  return {
+    resolution,
+    aspect,
+    takePicture,
+    target,
+    renderer,
+    data: { value: data, set: setData },
+  };
 };

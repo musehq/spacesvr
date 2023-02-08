@@ -1,5 +1,5 @@
 import { PhysicsProps as ProviderProps } from "@react-three/cannon";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { Physics as PhysicsProvider } from "@react-three/cannon";
 
 const defaultPhysicsProps: Partial<ProviderProps> = {
@@ -19,7 +19,11 @@ export function Physics(props: PhysicsLayerProps) {
 
   return (
     <PhysicsProvider {...defaultPhysicsProps} {...physicsProps}>
-      {children}
+      {/* physics is wrapped in a suspense so if a suspense bubbles all the way up here */}
+      {/* the physics will remount, lose its state, and cause serious problems. */}
+      {/*  */}
+      {/* solution: wrap the children in a suspense. */}
+      <Suspense fallback={null}>{children}</Suspense>
     </PhysicsProvider>
   );
 }

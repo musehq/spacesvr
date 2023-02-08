@@ -1,22 +1,16 @@
 import { MutableRefObject, RefObject, useEffect, useMemo, useRef } from "react";
 import { useLimitedFrame } from "../../../logic";
-import {
-  Group,
-  Mesh,
-  PerspectiveCamera,
-  Quaternion,
-  Vector3,
-  WebGLRenderTarget,
-} from "three";
+import { Group, Mesh, PerspectiveCamera, Quaternion, Vector3 } from "three";
 import { useEnvironment } from "../../../layers/Environment";
 import { useThree } from "@react-three/fiber";
+import { Photography } from "./photo";
 
 export const useRendering = (
   enabled: boolean,
   cam: MutableRefObject<PerspectiveCamera | undefined>,
   group: RefObject<Group>,
   mesh: RefObject<Mesh>,
-  target: WebGLRenderTarget
+  photo: Photography
 ) => {
   const { paused } = useEnvironment();
   const { scene } = useThree();
@@ -32,7 +26,7 @@ export const useRendering = (
   useLimitedFrame(1 / 4, (state) => {
     if (enabled || !prepRendering.current || !cam.current) return; // don't double render
     state.gl.autoClear = true;
-    state.gl.setRenderTarget(target);
+    state.gl.setRenderTarget(photo.target);
     state.gl.render(scene, cam.current);
     state.gl.setRenderTarget(null);
     state.gl.autoClear = false;
@@ -44,13 +38,16 @@ export const useRendering = (
     // move mesh to camera's position
     mesh.current.getWorldPosition(dummy);
     mesh.current.getWorldQuaternion(qummy);
-    cam.current.position.set(0, 0, 0.5).applyQuaternion(qummy); // move back 0.5m
+    cam.current.position.set(0, 0, 0.3).applyQuaternion(qummy); // move back 0.3m
     cam.current.position.add(dummy);
     cam.current.rotation.setFromQuaternion(qummy);
 
+    cam.current.aspect = photo.aspect.x / photo.aspect.y;
+    cam.current.updateProjectionMatrix();
+
     // render to camera viewfinder
     state.gl.autoClear = true;
-    state.gl.setRenderTarget(target);
+    state.gl.setRenderTarget(photo.target);
     state.gl.render(scene, cam.current);
     state.gl.setRenderTarget(null);
     state.gl.autoClear = false;

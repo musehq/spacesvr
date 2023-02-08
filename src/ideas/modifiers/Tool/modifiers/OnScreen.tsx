@@ -14,6 +14,9 @@ type OnScreenProps = {
   children: ReactNode | ReactNode[];
 };
 
+/**
+ * The logic to show a tool on screen and move it depending on the active tool
+ */
 export default function OnScreen(props: OnScreenProps) {
   const { distance, name, pos, disableDraggable, children } = props;
 
@@ -40,10 +43,7 @@ export default function OnScreen(props: OnScreenProps) {
     const _cam = camera as PerspectiveCamera;
     const AMT = 1.5;
 
-    if (toolbelt.activeTool === undefined) {
-      // hide it
-      set({ pos: [0, -1, distance] });
-    } else if (ENABLED) {
+    if (ENABLED) {
       // show it
       if (toolbelt.direction !== "up") {
         // unless the tool was hidden as will fly in bottom to top,
@@ -75,6 +75,7 @@ export default function OnScreen(props: OnScreenProps) {
     pos,
     set,
     spring.pos,
+    toolbelt.activeIndex,
     toolbelt.activeTool,
     toolbelt.direction,
   ]);
