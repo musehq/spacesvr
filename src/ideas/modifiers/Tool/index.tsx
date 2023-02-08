@@ -91,9 +91,9 @@ export function Tool(props: ToolProps) {
               pos={pos}
               disableDraggable={disableDraggable}
             >
-              <Suspense fallback={null}>
-                <FacePlayer enabled={face}>{visible && children}</FacePlayer>
-              </Suspense>
+              <FacePlayer enabled={face}>
+                <Suspense fallback={null}>{visible && children} </Suspense>
+              </FacePlayer>
             </OnScreen>
           </HUD>
         </group>,
