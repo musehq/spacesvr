@@ -3,7 +3,11 @@ import { useThree } from "@react-three/fiber";
 import { useMemo } from "react";
 
 const PADDING_X = 0.125;
+const PADDING_X_2 = PADDING_X * 2;
 const PADDING_Y = 0.125;
+const PADDING_Y_2 = PADDING_Y * 2;
+
+const RAD_PER_DEG_2 = Math.PI / 180 / 2;
 
 export const getHudPos = (
   pos: [number, number] | Vector2,
@@ -11,28 +15,28 @@ export const getHudPos = (
   distance: number,
   target?: Vector2
 ) => {
-  const vFOV = (camera.fov * Math.PI) / 180;
-  const height = 2 * Math.tan(vFOV / 2) * Math.abs(distance);
+  const vFOV = camera.fov * RAD_PER_DEG_2;
+  const height = 2 * Math.tan(vFOV) * Math.abs(distance);
   const width = height * camera.aspect;
 
-  const px = Array.isArray(pos) ? pos[0] : pos.x;
-  const py = Array.isArray(pos) ? pos[1] : pos.y;
+  const px = (pos as Vector2).x || (pos as [number, number])[0];
+  const py = (pos as Vector2).y || (pos as [number, number])[1];
 
-  const x = px * (width - PADDING_X * 2) * 0.5;
-  const y = py * (height - PADDING_Y * 2) * 0.5;
+  const x = px * (width - PADDING_X_2) * 0.5;
+  const y = py * (height - PADDING_Y_2) * 0.5;
 
   if (target) {
     target.x = x;
     target.y = y;
     return target;
-  } else {
-    return new Vector2(x, y);
   }
+
+  return new Vector2(x, y);
 };
 
 export const getHudDims = (camera: PerspectiveCamera, distance: number) => {
-  const vFOV = (camera.fov * Math.PI) / 180;
-  const height = 2 * Math.tan(vFOV / 2) * Math.abs(distance);
+  const vFOV = camera.fov * RAD_PER_DEG_2;
+  const height = 2 * Math.tan(vFOV) * Math.abs(distance);
   const width = height * camera.aspect;
 
   return { width, height };

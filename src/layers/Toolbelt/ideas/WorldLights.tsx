@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { AmbientLight, Group, Light } from "three";
-import { useLimitedFrame } from "../../../logic";
-import { createPortal, useFrame, useThree } from "@react-three/fiber";
+import { useLimitedFrame, useRerender } from "../../../logic";
+import { createPortal, useThree } from "@react-three/fiber";
 import { useToolbelt } from "../logic/toolbelt";
 
 type WorldLightsProps = {
@@ -15,37 +15,62 @@ export default function WorldLights(props: WorldLightsProps) {
   const { scene } = useThree();
   const group = useRef<Group>(null);
   const toolbelt = useToolbelt();
+  const rerender = useRerender();
 
-  const registered = useRef<Light[]>([]);
-  const [renderLights, setRenderLights] = useState<Light[]>([]);
+  const trackedLights = useRef<Light[]>([]);
+  const renderedLights = useRef<Light[]>([]);
 
   useLimitedFrame(1 / 2, () => {
-    const newLights: Light[] = [];
+    const sceneLights: Light[] = [];
 
     scene.traverse((obj) => {
       if (
         obj instanceof Light &&
         (!directional || obj! instanceof AmbientLight)
       ) {
-        newLights.push(obj);
+        sceneLights.push(obj);
       }
     });
 
-    if (
-      newLights.length !== registered.current.length ||
-      newLights.some((light, i) => light !== registered.current[i])
-    ) {
-      registered.current = newLights;
-      setRenderLights(newLights.map((l) => l.clone()));
+    let changed = false;
+
+    for (const light of sceneLights) {
+      // if light is not rendered, register it
+      if (
+        !renderedLights.current.find((obj) => obj.userData.uuid === light.uuid)
+      ) {
+        const newLight = light.clone();
+        newLight.userData.uuid = light.uuid;
+        renderedLights.current.push(newLight);
+        changed = true;
+      }
+    }
+
+    // if light is rendered but not in scene, unregister it
+    for (const light of renderedLights.current) {
+      if (!sceneLights.find((obj) => obj.uuid === light.userData.uuid)) {
+        renderedLights.current.splice(renderedLights.current.indexOf(light), 1);
+        light.dispose();
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      rerender();
+      trackedLights.current = sceneLights;
     }
   });
 
-  useFrame(({ camera }) => {
+  useLimitedFrame(30, ({ camera }) => {
     if (!enabled || !group.current) return;
     group.current.position.copy(camera.position);
-    renderLights.forEach((light, i) => {
-      light.position.copy(registered.current[i].position);
-      light.quaternion.copy(registered.current[i].quaternion);
+    renderedLights.current.forEach((light) => {
+      const trackedLight = trackedLights.current.find(
+        (li) => li.uuid === light.userData.uuid
+      );
+      if (!trackedLight) return;
+
+      light.matrixWorld.copy(trackedLight.matrixWorld);
     });
   });
 
@@ -53,7 +78,7 @@ export default function WorldLights(props: WorldLightsProps) {
     <>
       {createPortal(
         <group name="world-lights" ref={group}>
-          {renderLights.map((light) => (
+          {renderedLights.current.map((light) => (
             <primitive object={light} key={light.uuid} />
           ))}
         </group>,
