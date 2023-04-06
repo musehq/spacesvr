@@ -77,7 +77,7 @@ export function Camera(props: CameraProps) {
   }, [ENABLED, device.mobile, onClick, open, paused]);
 
   useKeypress(
-    "c",
+    ["c", "C"],
     () => {
       if (isTyping() || !ENABLED) return;
       setOpen(!open);
