@@ -5,7 +5,7 @@ import {
   InstancedMesh,
   MathUtils,
   Object3D,
-  SphereBufferGeometry,
+  SphereGeometry,
   Vector3,
 } from "three";
 import { useIdeaMaterial } from "../logic/ideaMat";
@@ -55,7 +55,7 @@ export default function Bubbles(props: BubblesProps) {
     mesh.current.instanceMatrix.needsUpdate = true;
   });
 
-  const geo = useMemo(() => new SphereBufferGeometry(0.05, 32, 16), []);
+  const geo = useMemo(() => new SphereGeometry(0.05, 32, 16), []);
   const mat = useIdeaMaterial(undefined, 0.05);
 
   return (

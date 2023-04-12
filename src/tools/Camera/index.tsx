@@ -133,7 +133,7 @@ export function Camera(props: CameraProps) {
               scale-x={1.1}
               scale-y={1.1}
             >
-              <planeBufferGeometry args={[photo.aspect.x, photo.aspect.y]} />
+              <planeGeometry args={[photo.aspect.x, photo.aspect.y]} />
               <meshStandardMaterial
                 map={photo.target.texture}
                 metalness={0.68}

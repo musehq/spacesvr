@@ -36,7 +36,7 @@ function UnsuspensedImage(props: ImageProps) {
   return (
     <group name="spacesvr-image" {...rest}>
       <mesh rotation={IS_COMPRESSED ? [0, Math.PI, Math.PI] : [0, 0, 0]}>
-        <planeBufferGeometry args={[WIDTH, HEIGHT]} />
+        <planeGeometry args={[WIDTH, HEIGHT]} />
         <meshBasicMaterial map={tex} side={DoubleSide} transparent />
       </mesh>
       {framed && (

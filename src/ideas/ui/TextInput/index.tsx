@@ -360,7 +360,7 @@ export function TextInput(props: TextProps) {
             visible={false}
             material={cache.mat_basic_black}
           >
-            <planeBufferGeometry args={[0.075 * fontSize, fontSize]} />
+            <planeGeometry args={[0.075 * fontSize, fontSize]} />
           </mesh>
         </group>
         <mesh
@@ -369,7 +369,7 @@ export function TextInput(props: TextProps) {
           visible={false}
           material={highlightMat}
         >
-          <boxBufferGeometry args={[1, fontSize, DEPTH * 0.45]} />
+          <boxGeometry args={[1, fontSize, DEPTH * 0.45]} />
         </mesh>
       </group>
       <HitBox

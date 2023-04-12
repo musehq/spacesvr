@@ -24,7 +24,7 @@ export function LostFloor() {
   return (
     <group name="spacesvr-lost-floor">
       <mesh rotation-x={-Math.PI / 2} material={mat}>
-        <planeBufferGeometry args={[10000, 10000, 1, 1]} />
+        <planeGeometry args={[10000, 10000, 1, 1]} />
       </mesh>
     </group>
   );

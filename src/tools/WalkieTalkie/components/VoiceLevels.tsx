@@ -67,7 +67,7 @@ export default function VoiceLevels(props: GroupProps) {
   return (
     <group name="voice-levels" {...props}>
       <mesh>
-        <planeBufferGeometry args={[0.095, 0.075]} />
+        <planeGeometry args={[0.095, 0.075]} />
         <meshStandardMaterial transparent>
           <canvasTexture
             // minFilter={LinearFilter}

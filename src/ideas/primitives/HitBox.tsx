@@ -30,7 +30,7 @@ export const HitBox = forwardRef<Mesh, HitBox>((props: HitBox, ref) => {
       raycaster={raycaster}
     >
       <mesh visible={visible} name="spacesvr-hitbox" ref={ref} {...rest}>
-        <boxBufferGeometry args={args} />
+        <boxGeometry args={args} />
         {visible && (
           <meshBasicMaterial color={color} transparent opacity={0.7} />
         )}

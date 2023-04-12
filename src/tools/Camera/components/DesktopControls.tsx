@@ -42,14 +42,14 @@ export default function DesktopControls(props: DesktopControls) {
   return (
     <group {...rest}>
       <mesh material={cache.mat_standard_white}>
-        <planeBufferGeometry args={[INDICATOR_WIDTH, LINE_THICKNESS]} />
+        <planeGeometry args={[INDICATOR_WIDTH, LINE_THICKNESS]} />
       </mesh>
       <animated.mesh
         material={cache.mat_standard_red}
         position-x={posX}
         position-y={LINE_LENGTH / 2 - LINE_THICKNESS / 2}
       >
-        <planeBufferGeometry args={[LINE_THICKNESS, LINE_LENGTH]} />
+        <planeGeometry args={[LINE_THICKNESS, LINE_LENGTH]} />
       </animated.mesh>
       <Text
         font={FONT_URL}

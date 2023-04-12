@@ -16,10 +16,10 @@ export default function Pane(props: PaneProps) {
   return (
     <group name="pane" {...rest}>
       <mesh material={cache.mat_standard_black}>
-        <planeBufferGeometry args={[width + BORDER * 2, height + BORDER * 2]} />
+        <planeGeometry args={[width + BORDER * 2, height + BORDER * 2]} />
       </mesh>
       <mesh position-z={0.001}>
-        <planeBufferGeometry args={[width, height]} />
+        <planeGeometry args={[width, height]} />
         <meshStandardMaterial color="#20C20E" />
       </mesh>
       <group name="content" position-z={0.002}>

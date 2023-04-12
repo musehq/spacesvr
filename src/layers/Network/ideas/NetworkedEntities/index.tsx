@@ -1,9 +1,5 @@
 import { useMemo, useRef } from "react";
-import {
-  CylinderBufferGeometry,
-  InstancedMesh,
-  MeshNormalMaterial,
-} from "three";
+import { CylinderGeometry, InstancedMesh, MeshNormalMaterial } from "three";
 import { useNetwork } from "../../logic/network";
 import { useLimitedFrame } from "../../../../logic/limiter";
 import { SnapshotInterpolation } from "@geckos.io/snapshot-interpolation";
@@ -18,7 +14,7 @@ export default function NetworkedEntities() {
   const { connected, useChannel } = useNetwork();
 
   const mesh = useRef<InstancedMesh>(null);
-  const geo = useMemo(() => new CylinderBufferGeometry(0.3, 0.3, 1, 32), []);
+  const geo = useMemo(() => new CylinderGeometry(0.3, 0.3, 1, 32), []);
   const mat = useMemo(() => new MeshNormalMaterial(), []);
   const obj = useObj();
 
