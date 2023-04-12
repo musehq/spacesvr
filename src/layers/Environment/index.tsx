@@ -6,10 +6,12 @@ import PauseMenu from "./ui/PauseMenu";
 import Crosshair from "./ui/Crosshair";
 import { RegisterMenuItems } from "./logic/menu";
 import { Props as ContainerProps } from "@react-three/fiber/dist/declarations/src/web/Canvas";
-import { XRCanvas } from "@react-three/xr";
 import { defaultCanvasProps } from "./logic/canvas";
 import { EnvironmentContext, useEnvironmentState } from "./logic/environment";
 import MuteOnHide from "./components/MuteOnHide";
+import { Canvas } from "@react-three/fiber";
+import { XR } from "@react-three/xr";
+
 export * from "./logic/environment";
 
 export type EnvironmentProps = {
@@ -46,12 +48,14 @@ export function Environment(props: EnvironmentLayerProps) {
           {pauseMenu || <PauseMenu dev={dev} title={name} />}
           <Crosshair />
         </EnvironmentContext.Provider>
-        <XRCanvas {...defaultCanvasProps} {...canvasProps}>
-          <EnvironmentContext.Provider value={state}>
-            <RegisterMenuItems />
-            {children}
-          </EnvironmentContext.Provider>
-        </XRCanvas>
+        <Canvas {...defaultCanvasProps} {...canvasProps}>
+          <XR>
+            <EnvironmentContext.Provider value={state}>
+              <RegisterMenuItems />
+              {children}
+            </EnvironmentContext.Provider>
+          </XR>
+        </Canvas>
       </Container>
     </>
   );

@@ -2,7 +2,12 @@
 // can remove once we upgrade to three.js r142
 // also modified to reduce to match a tri count rather than remove X number of vertices
 
-import { BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
+import {
+  BufferAttribute,
+  BufferGeometry,
+  Float32BufferAttribute,
+  Vector3,
+} from "three";
 import { mergeVertices } from "three-stdlib";
 
 const cb = new Vector3(),
@@ -374,7 +379,9 @@ class SimplifyModifier {
 
     // add vertices
 
-    const positionAttribute = geometry.getAttribute("position");
+    const positionAttribute = geometry.getAttribute(
+      "position"
+    ) as BufferAttribute;
 
     for (let i = 0; i < positionAttribute.count; i++) {
       const v = new Vector3().fromBufferAttribute(positionAttribute, i);

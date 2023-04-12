@@ -59,7 +59,7 @@ export const usePhotography = (
       precision: "highp",
       antialias: true,
     });
-    r.physicallyCorrectLights = true;
+    r.useLegacyLights = false;
     r.toneMapping = NoToneMapping;
     r.outputEncoding = sRGBEncoding;
     return r;

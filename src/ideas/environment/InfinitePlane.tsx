@@ -21,7 +21,7 @@ export function InfinitePlane(props: InfinitePlaneProps) {
 
   return (
     <mesh name="spacesvr-infinite-plane" ref={ref}>
-      <planeBufferGeometry args={size} />
+      <planeGeometry args={size} />
       <meshPhongMaterial color="#660000" />
     </mesh>
   );

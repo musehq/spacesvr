@@ -3,7 +3,7 @@ import { animated, config, useSpring } from "@react-spring/three";
 import { GroupProps } from "@react-three/fiber";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Idea } from "../../logic/basis/idea";
-import { Color, Raycaster } from "three";
+import { Color, ColorRepresentation, Raycaster } from "three";
 import { RoundedBox } from "../primitives/RoundedBox";
 import { HitBox } from "../primitives/HitBox";
 
@@ -15,7 +15,7 @@ type ButtonProps = {
   maxWidth?: number;
   width?: number;
   textColor?: string;
-  color?: string;
+  color?: ColorRepresentation;
   outline?: boolean;
   outlineColor?: string;
   idea?: Idea;

@@ -71,7 +71,7 @@ export default function ShutterButton(props: ShutterButton) {
         material={cache.mat_standard_black}
         position-y={-0.17}
       >
-        <boxBufferGeometry args={[0.5, 0.5, 0.3]} />
+        <boxGeometry args={[0.5, 0.5, 0.3]} />
       </mesh>
     </group>
   );

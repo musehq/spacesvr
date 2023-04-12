@@ -1,11 +1,6 @@
 import { RGBAFormat, WebGLRenderTarget, UnsignedByteType } from "three";
 import { extend, useThree, useFrame } from "@react-three/fiber";
-import {
-  EffectComposer,
-  RenderPass,
-  ShaderPass,
-  GammaCorrectionShader,
-} from "three-stdlib";
+import { EffectComposer, RenderPass, ShaderPass } from "three-stdlib";
 import {
   Children,
   cloneElement,

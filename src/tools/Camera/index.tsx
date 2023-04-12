@@ -77,7 +77,7 @@ export function Camera(props: CameraProps) {
   }, [ENABLED, device.mobile, onClick, open, paused]);
 
   useKeypress(
-    "c",
+    ["c", "C"],
     () => {
       if (isTyping() || !ENABLED) return;
       setOpen(!open);
@@ -133,7 +133,7 @@ export function Camera(props: CameraProps) {
               scale-x={1.1}
               scale-y={1.1}
             >
-              <planeBufferGeometry args={[photo.aspect.x, photo.aspect.y]} />
+              <planeGeometry args={[photo.aspect.x, photo.aspect.y]} />
               <meshStandardMaterial
                 map={photo.target.texture}
                 metalness={0.68}

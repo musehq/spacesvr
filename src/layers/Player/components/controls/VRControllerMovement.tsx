@@ -1,6 +1,6 @@
-import { DefaultXRControllers, useController, useXR } from "@react-three/xr";
+import { Controllers, useController, useXR } from "@react-three/xr";
 import { MutableRefObject, useRef } from "react";
-import { Vector3, XRHandedness } from "three";
+import { Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 
 type SnapTurnProps = {
@@ -110,7 +110,7 @@ export default function VRControllerMovement(props: VRControllerMovementProps) {
       <Fly direction={direction} />
       <SnapTurn {...snapTurn} />
       <SmoothLocomotion {...smoothLocomotion} direction={direction} />
-      <DefaultXRControllers />
+      <Controllers />
     </>
   );
 }

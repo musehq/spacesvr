@@ -1,9 +1,9 @@
-import { Color } from "three";
+import { Color, ColorRepresentation } from "three";
 import { useLayoutEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
 type BackgroundProps = {
-  color: Color | string | number;
+  color: ColorRepresentation;
 };
 
 export function Background(props: BackgroundProps) {

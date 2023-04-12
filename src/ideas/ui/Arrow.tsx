@@ -27,7 +27,7 @@ export function Arrow(props: ArrowProps) {
   return (
     <group name="spacesvr-arrow" {...rest}>
       <mesh scale={0.004} material={arrowMat}>
-        <planeBufferGeometry args={[98, 51]} />
+        <planeGeometry args={[98, 51]} />
       </mesh>
     </group>
   );
