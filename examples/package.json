@@ -10,17 +10,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@types/three": "0.139.0",
     "next": "12.1.6",
     "posthog-js": "^1.33.0",
-    "react": "18.1.0",
-    "react-dom": "18.1.0",
-    "three": "^0.139.2"
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/node": "17.0.40",
     "@types/react": "18.0.12",
     "@types/react-dom": "18.0.5",
+    "@types/three": "0.150.1",
     "typescript": "4.7.3"
   }
 }

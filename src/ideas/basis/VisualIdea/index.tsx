@@ -72,7 +72,7 @@ export function VisualIdea(props: VisualIdeaProps) {
   return (
     <group name="spacesvr-basis-idea" {...rest}>
       <mesh material={mat} scale={0.2}>
-        <sphereBufferGeometry args={[RADIUS, 48, 32]} />
+        <sphereGeometry args={[RADIUS, 48, 32]} />
       </mesh>
     </group>
   );

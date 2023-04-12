@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import {
-  BoxBufferGeometry,
+  BoxGeometry,
   BufferGeometry,
   Material,
   MeshStandardMaterial,
@@ -53,21 +53,21 @@ export function Frame(props: FrameProps) {
   const meshOffset = 0.0005;
 
   const geometry = useMemo<BufferGeometry>(() => {
-    const backPanel = new BoxBufferGeometry(
+    const backPanel = new BoxGeometry(
       width + frameWidth,
       height + frameWidth,
       frameDepth
     );
     backPanel.translate(0, 0, -frameDepth - meshOffset);
 
-    const topFrame = new BoxBufferGeometry(
+    const topFrame = new BoxGeometry(
       width + frameWidth,
       borderThickness,
       borderDepth
     );
     topFrame.translate(0, height / 2 + frameWidth / 2 - borderThickness / 2, 0);
 
-    const bottomFrame = new BoxBufferGeometry(
+    const bottomFrame = new BoxGeometry(
       width + frameWidth,
       borderThickness,
       borderDepth
@@ -78,7 +78,7 @@ export function Frame(props: FrameProps) {
       0
     );
 
-    const leftFrame = new BoxBufferGeometry(
+    const leftFrame = new BoxGeometry(
       borderThickness,
       height + frameWidth,
       borderDepth
@@ -89,7 +89,7 @@ export function Frame(props: FrameProps) {
       0
     );
 
-    const rightFrame = new BoxBufferGeometry(
+    const rightFrame = new BoxGeometry(
       borderThickness,
       height + frameWidth,
       borderDepth
@@ -116,7 +116,7 @@ export function Frame(props: FrameProps) {
   const backFrameGeometry = useMemo<BufferGeometry | undefined>(() => {
     if (!innerFrameMaterial) return undefined;
 
-    const backPanel = new BoxBufferGeometry(
+    const backPanel = new BoxGeometry(
       width + frameWidth,
       height + frameWidth,
       frameDepth

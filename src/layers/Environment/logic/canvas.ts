@@ -8,7 +8,7 @@ export const defaultCanvasProps: Partial<ContainerProps> = {
     depth: true,
     alpha: false,
     stencil: false,
-    physicallyCorrectLights: true,
+    useLegacyLights: false,
     toneMapping: NoToneMapping,
   },
   shadows: false,

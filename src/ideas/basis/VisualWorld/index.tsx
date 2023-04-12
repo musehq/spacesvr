@@ -78,7 +78,7 @@ export function VisualWorld(props: VisualWorldProps) {
   return (
     <group name="spacesvr-basis-world" {...rest}>
       <mesh material={mat} scale={0.2}>
-        <sphereBufferGeometry args={[RADIUS, 48, 32]} />
+        <sphereGeometry args={[RADIUS, 48, 32]} />
       </mesh>
     </group>
   );

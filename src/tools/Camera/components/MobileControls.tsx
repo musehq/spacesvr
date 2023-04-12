@@ -65,10 +65,10 @@ export default function MobileControls(props: MobileControls) {
       <group position-y={-0.15}>
         <HitBox ref={hitbox} args={[0.25, AREA_HEIGHT * 1.2, 0.05]} />
         <mesh material={cache.mat_standard_white}>
-          <planeBufferGeometry args={[LINE_THICKNESS * 2, AREA_HEIGHT]} />
+          <planeGeometry args={[LINE_THICKNESS * 2, AREA_HEIGHT]} />
         </mesh>
         <animated.mesh material={cache.mat_standard_red} position-y={posY}>
-          <planeBufferGeometry args={[LINE_LENGTH * 2, LINE_THICKNESS * 4]} />
+          <planeGeometry args={[LINE_LENGTH * 2, LINE_THICKNESS * 4]} />
         </animated.mesh>
       </group>
       <Text

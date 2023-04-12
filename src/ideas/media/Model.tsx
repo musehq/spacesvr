@@ -44,7 +44,7 @@ function FallbackModel(props: ModelProps) {
   return (
     <group name="spacesvr-fallback-model" {...rest}>
       <mesh material={cache.mat_basic_black_wireframe}>
-        <boxBufferGeometry args={[1, 1, 1]} />
+        <boxGeometry args={[1, 1, 1]} />
       </mesh>
     </group>
   );

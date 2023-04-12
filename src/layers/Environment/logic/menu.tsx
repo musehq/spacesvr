@@ -1,6 +1,5 @@
 import { MenuItem, useEnvironment } from "../logic/environment";
 import { useThree } from "@react-three/fiber";
-import { XRSession } from "three";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { isStandaloneVR } from "../../../logic/browser";
@@ -66,7 +65,7 @@ export const useVRMenuItem = (): MenuItem | undefined => {
       };
       // @ts-ignore
       const xr = navigator.xr;
-      xr.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
+      xr!.requestSession("immersive-vr", sessionInit).then(onSessionStarted);
     } else {
       session.current?.end();
     }

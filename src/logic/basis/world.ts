@@ -1,5 +1,5 @@
 import { Idea } from "./idea";
-import { Vector3 } from "three";
+import { HexColorString, Vector3 } from "three";
 
 type RefNode = {
   id: string;
@@ -58,7 +58,7 @@ export class World {
     return 0.3 + 0.7 * r;
   }
 
-  getHex(): string {
+  getHex(): HexColorString {
     return this.getIdea().getHex();
   }
 }

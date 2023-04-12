@@ -1,5 +1,6 @@
 // @ts-ignore
 import * as culori from "culori";
+import { HexColorString } from "three";
 
 /**
  * an idea is the fundamental substrate of reality.
@@ -56,7 +57,7 @@ export class Idea {
     return this;
   }
 
-  getHex(): string {
+  getHex(): HexColorString {
     const fixedColor = culori.rgb({
       mode: "oklch",
       l: this.utility,

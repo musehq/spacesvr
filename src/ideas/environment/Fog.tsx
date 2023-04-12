@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import { Color, Fog as ThreeFog } from "three";
+import { Color, ColorRepresentation, Fog as ThreeFog } from "three";
 
 type FogProps = {
-  color?: Color | string | number;
+  color?: ColorRepresentation;
   near?: number;
   far?: number;
 };

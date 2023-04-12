@@ -38,7 +38,7 @@ export const useCapsuleCollider = (initPos: MutableRefObject<Vector3>) => {
 export function VisibleCapsuleCollider() {
   const createSphere = (sphere: any) => (
     <mesh position={sphere.position}>
-      <sphereBufferGeometry args={sphere.args} />
+      <sphereGeometry args={sphere.args} />
       <meshStandardMaterial color="red" wireframe={true} />
     </mesh>
   );
