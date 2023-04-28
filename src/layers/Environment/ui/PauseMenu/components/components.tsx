@@ -16,6 +16,10 @@ export const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   opacity: ${(props) => (props.paused ? 1 : 0)};
   pointer-events: ${(props) => (props.paused ? "all" : "none")};
   font-family: "Quicksand", sans-serif;
+  font-size: 27px;
+  @media screen and (max-width: 500px) {
+    font-size: 24px;
+  }
 `;
 
 export const ClickContainer = styled.div`

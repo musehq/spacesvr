@@ -45,6 +45,11 @@ const Container = styled.div<{ finished: boolean }>`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  font-family: "Quicksand", sans-serif;
+  font-size: 27px;
+  @media screen and (max-width: 500px) {
+    font-size: 24px;
+  }
 `;
 
 const Text = styled.div`
