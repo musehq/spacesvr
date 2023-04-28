@@ -35,7 +35,7 @@ const Container = styled.div<{ finished: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 200;
+  z-index: 11;
   background: white;
   transition: opacity 0.75s ease-in;
   transition-delay: 0.5s;
