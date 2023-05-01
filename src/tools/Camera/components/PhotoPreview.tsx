@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   position: absolute;
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  z-index: 10;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 
 const Background = styled.div`
   position: absolute;
-  z-index: 99;
+  z-index: 9;
   width: 100%;
   height: 100%;
   top: 0;

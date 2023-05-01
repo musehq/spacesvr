@@ -6,7 +6,7 @@ export const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: 10;
   transition: opacity 0.25s ease;
   background: rgba(0, 0, 0, ${(props) => (props.dev ? 0 : 0.25)});
   display: flex;
@@ -16,6 +16,10 @@ export const Container = styled.div<{ paused: boolean; dev?: boolean }>`
   opacity: ${(props) => (props.paused ? 1 : 0)};
   pointer-events: ${(props) => (props.paused ? "all" : "none")};
   font-family: "Quicksand", sans-serif;
+  font-size: 27px;
+  @media screen and (max-width: 500px) {
+    font-size: 24px;
+  }
 `;
 
 export const ClickContainer = styled.div`

@@ -1,6 +1,6 @@
 {
   "name": "spacesvr",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "private": true,
   "description": "A standardized reality for future of the 3D Web",
   "keywords": [
@@ -61,10 +61,9 @@
     "@react-three/cannon": "6.4.0",
     "@react-three/drei": "9.65.3",
     "@react-three/fiber": "8.12.0",
-    "@react-three/xr": "^5.4.1",
+    "@react-three/xr": "5.4.1",
     "culori": "^0.18.2",
     "nipplejs": "0.8.1",
-    "node-fetch": "^2.6.1",
     "peerjs": "^1.4.6",
     "react-device-detect": "^1.13.1",
     "react-error-boundary": "^3.1.4",

@@ -8,11 +8,12 @@ import {
   useState,
 } from "react";
 import { Scene } from "three";
-import { isTyping, useRerender } from "../../../logic";
+import { useRerender } from "../../../logic";
 
 type Tool = {
   name: string;
   orderIndex: number;
+  icon?: string;
 };
 
 type Direction = "left" | "right" | "up";
@@ -20,16 +21,18 @@ type Direction = "left" | "right" | "up";
 type ToolbeltState = {
   tools: Tool[];
   activeTool?: Tool;
-  grant: (name: string, orderIndex?: number) => void;
+  grant: (name: string, icon?: string, orderIndex?: number) => void;
   revoke: (name: string) => void;
   hide: () => void;
   next: () => void;
   prev: () => void;
   show: () => void;
   activeIndex: number | undefined;
-  setActiveIndex: (i: number) => void;
+  setActiveIndex: (i: number | undefined) => void;
+  setActiveTool: (name: string) => void;
   hudScene: Scene;
   direction: Direction;
+  setDirection: (dir: Direction) => void;
 };
 export const ToolbeltContext = createContext({} as ToolbeltState);
 export const useToolbelt = () => useContext(ToolbeltContext);
@@ -47,14 +50,14 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
   const [direction, setDirection] = useState<Direction>("right");
 
   const grant = useCallback(
-    (name: string, orderIndex?: number) => {
+    (name: string, icon?: string, orderIndex?: number) => {
       // make sure no tool with same name or key exists
       if (tools.find((tool) => tool.name === name)) {
         console.error(`Toolbelt: Tool with same name already exists: ${name}`);
         return;
       }
       if (tools.length === 0) rerender();
-      const tool = { name, orderIndex: orderIndex || 0 };
+      const tool = { name, icon, orderIndex: orderIndex || 0 };
       tools.push(tool);
       // sort tools by orderIndex, then by name
       tools.sort((a, b) =>
@@ -75,29 +78,6 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
     },
     [tools]
   );
-
-  useEffect(() => {
-    const handleKeypress = (e: KeyboardEvent) => {
-      if (isTyping() || e.metaKey || e.ctrlKey) return;
-      if (e.key == "Tab") {
-        if (e.shiftKey) {
-          setDirection("left");
-          if (activeIndex === undefined) setActiveIndex(tools.length - 1);
-          else if (activeIndex === 0) setActiveIndex(undefined);
-          else setActiveIndex((activeIndex - 1 + tools.length) % tools.length);
-        } else {
-          setDirection("right");
-          if (activeIndex === undefined) setActiveIndex(0);
-          else if (activeIndex === tools.length - 1) setActiveIndex(undefined);
-          else setActiveIndex((activeIndex + 1) % tools.length);
-        }
-
-        e.preventDefault();
-      }
-    };
-    document.addEventListener("keydown", handleKeypress);
-    return () => document.removeEventListener("keydown", handleKeypress);
-  }, [activeIndex, tools]);
 
   useEffect(() => {
     if (activeIndex !== undefined) lastActiveIndex.current = activeIndex;
@@ -135,6 +115,14 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
     );
   }, []);
 
+  const setActiveTool = useCallback(
+    (name: string) => {
+      const index = tools.findIndex((tool) => tool.name === name);
+      if (index !== -1) setActiveIndex(index);
+    },
+    [tools]
+  );
+
   return {
     tools,
     activeTool: activeIndex !== undefined ? tools[activeIndex] : undefined,
@@ -146,7 +134,9 @@ export const useToolbeltState = (showOnSpawn: boolean): ToolbeltState => {
     show,
     activeIndex,
     setActiveIndex,
+    setActiveTool,
     hudScene,
     direction,
+    setDirection,
   };
 };

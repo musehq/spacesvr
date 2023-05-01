@@ -1,4 +1,3 @@
-import nodeFetch, { Response } from "node-fetch";
 import { Peer } from "peerjs";
 import { Signaller, SignallerConfig } from "./";
 
@@ -36,7 +35,7 @@ export class MuseSignaller implements Signaller {
   }
 
   async callBackend<T = any>(path: string, body: any): Promise<Response> {
-    return await nodeFetch(`${this.host}/sessions/${path}`, {
+    return await fetch(`${this.host}/sessions/${path}`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: { "Content-Type": "application/json" },

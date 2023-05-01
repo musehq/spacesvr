@@ -21,11 +21,6 @@ const globalStyles = css`
     overflow: hidden;
     touch-action: none;
     -webkit-overflow-scrolling: touch;
-    font-family: "Quicksand", sans-serif;
-    font-size: 27px;
-    @media screen and (max-width: 500px) {
-      font-size: 24px;
-    }
   }
 `;
 
@@ -40,9 +35,5 @@ export default function GlobalStyles() {
     };
   }, []);
 
-  return (
-    <>
-      <Global styles={globalStyles} />
-    </>
-  );
+  return <Global styles={globalStyles} />;
 }

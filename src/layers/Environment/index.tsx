@@ -42,7 +42,7 @@ export function Environment(props: EnvironmentLayerProps) {
     <>
       <GlobalStyles />
       <MuteOnHide />
-      <Container ref={state.containerRef}>
+      <Container id="__spacesvr" ref={state.containerRef}>
         <EnvironmentContext.Provider value={state}>
           {loadingScreen || <LoadingScreen />}
           {pauseMenu || <PauseMenu dev={dev} title={name} />}
