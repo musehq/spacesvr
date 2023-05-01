@@ -35,7 +35,7 @@ const Container = styled.div<{ finished: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 200;
+  z-index: 11;
   background: white;
   transition: opacity 0.75s ease-in;
   transition-delay: 0.5s;
@@ -45,6 +45,11 @@ const Container = styled.div<{ finished: boolean }>`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  font-family: "Quicksand", sans-serif;
+  font-size: 27px;
+  @media screen and (max-width: 500px) {
+    font-size: 24px;
+  }
 `;
 
 const Text = styled.div`

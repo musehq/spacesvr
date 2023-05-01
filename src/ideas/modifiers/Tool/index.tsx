@@ -11,6 +11,7 @@ import ToolPreload from "./components/ToolPreload";
 type ToolProps = {
   children: ReactNode;
   name: string;
+  icon?: string;
   pos?: [number, number];
   face?: boolean;
   pinY?: boolean;
@@ -34,6 +35,7 @@ export function Tool(props: ToolProps) {
   const {
     children,
     name,
+    icon,
     pos = [0, 0],
     face = true,
     pinY = false,
@@ -44,8 +46,8 @@ export function Tool(props: ToolProps) {
     onSwitch,
   } = props;
 
-  const toolbelt = useToolbelt();
-  const ENABLED = toolbelt.activeTool?.name === name;
+  const { grant, revoke, activeTool, hudScene } = useToolbelt();
+  const ENABLED = activeTool?.name === name;
   const DISTANCE = 1;
 
   const [preloadDone, setPreloadDone] = useState(false);
@@ -58,13 +60,13 @@ export function Tool(props: ToolProps) {
   const visible = useVisible(prog);
 
   useEffect(() => {
-    toolbelt.grant(name, orderIndex);
-    return () => toolbelt.revoke(name);
-  }, [name, toolbelt.grant, toolbelt.revoke, orderIndex]);
+    grant(name, icon, orderIndex);
+    return () => revoke(name);
+  }, [name, icon, grant, revoke, orderIndex]);
 
   useEffect(() => {
-    if (onSwitch) onSwitch(toolbelt.activeTool?.name === name);
-  }, [toolbelt.activeTool, onSwitch, name]);
+    if (onSwitch) onSwitch(activeTool?.name === name);
+  }, [activeTool, onSwitch, name]);
 
   if (!preloadDone) {
     return (
@@ -97,7 +99,7 @@ export function Tool(props: ToolProps) {
             </OnScreen>
           </HUD>
         </group>,
-        toolbelt.hudScene
+        hudScene
       )}
     </>
   );

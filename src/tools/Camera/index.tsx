@@ -21,6 +21,8 @@ const AUDIO_URL =
   "https://d27rt3a60hh1lx.cloudfront.net/tools/camera/shutter-sound.mp3";
 const CAMERA_MODEL_URL =
   "https://d1htv66kutdwsl.cloudfront.net/0308efc4-0b68-4b2e-b688-92512323178b/aa44f4af-f7c2-4050-9e6c-536ee07bbb1a.glb";
+const CAMERA_ICON_URL =
+  "https://d1htv66kutdwsl.cloudfront.net/44e643ef-7fe6-45da-9f99-54a5988ff338/8eb59c54-4aba-479a-b7cd-54a300b36c20.png";
 
 const TIMEOUT = 2; //s
 
@@ -97,6 +99,7 @@ export function Camera(props: CameraProps) {
         name="Camera"
         pos={POS}
         pinY
+        icon={CAMERA_ICON_URL}
         face={false}
         disableDraggable={open}
         onSwitch={(e) => !e && setOpen(false)}
