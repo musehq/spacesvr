@@ -159,7 +159,7 @@ const NoneItem = styled.div`
 `;
 
 export default function ToolSwitcher() {
-  const { containerRef } = useEnvironment();
+  const { paused, containerRef } = useEnvironment();
   const {
     next,
     prev,
@@ -217,7 +217,7 @@ export default function ToolSwitcher() {
 
   useEffect(() => {
     const handleKeypress = (e: KeyboardEvent) => {
-      if (isTyping() || e.metaKey || e.ctrlKey) return;
+      if (isTyping() || e.metaKey || e.ctrlKey || paused) return;
       if (e.key == "Tab") {
         if (e.shiftKey) {
           setDirection("left");
@@ -238,7 +238,7 @@ export default function ToolSwitcher() {
     };
     document.addEventListener("keydown", handleKeypress);
     return () => document.removeEventListener("keydown", handleKeypress);
-  }, [activeIndex, setActiveIndex, setDirection, setShowing, tools]);
+  }, [activeIndex, paused, setActiveIndex, setDirection, setShowing, tools]);
 
   const clickItem = useCallback(
     (index: number | undefined) => {
