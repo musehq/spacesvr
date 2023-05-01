@@ -31,7 +31,7 @@ const Container = styled.div<{ open: boolean }>`
   justify-content: center;
   width: max-content;
   max-height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 
   opacity: ${(props) => (props.open ? 1 : 0)};
   ${(props) =>
@@ -50,7 +50,7 @@ const Container = styled.div<{ open: boolean }>`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: hsl(0deg 0% 90% / 65%);
+    background-color: hsl(0deg 0% 90% / 50%);
     border-radius: ${OUTER_BORDER_RADIUS}px;
     backdrop-filter: blur(15px);
     z-index: -1;
@@ -77,6 +77,7 @@ const ToolItem = styled.div<{ title: string; active: boolean }>`
     ${(props) => !props.active && "display: none;"}
     content: "";
     position: absolute;
+    box-sizing: content-box;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -104,7 +105,8 @@ const ToolItem = styled.div<{ title: string; active: boolean }>`
     overflow: hidden;
     width: 100%;
     text-align: center;
-    color: black;
+    color: #222;
+    
 
     @media screen and (max-width: 600px) {
       font-size: 0.9rem;
@@ -122,6 +124,7 @@ const LetterContent = styled.div<{ perc: number }>`
   align-items: center;
   font-family: sans-serif;
   border-radius: 10px;
+  color: #444;
 
   @media screen and (max-width: 600px) {
     font-size: 3rem;
@@ -137,15 +140,16 @@ const ImageContent = styled.img`
 const NoneItem = styled.div`
   display: inline-block;
   position: relative;
-  border: 4px solid #444;
+  border: 6px solid #444;
   border-radius: 50%;
   width: 80px;
   height: 80px;
+  box-sizing: content-box;
 
   &::after {
     content: "";
     width: 84px;
-    height: 4px;
+    height: 6px;
     position: absolute;
     left: 50%;
     top: 50%;
