@@ -22,6 +22,7 @@ const Container = styled.div<{ open: boolean }>`
   z-index: 2;
   padding: ${FIXED_PADDING}px ${FIXED_PADDING}px 0 ${FIXED_PADDING}px;
   border-radius: ${OUTER_BORDER_RADIUS}px;
+  pointer-events: ${(props) => (props.open ? "all" : "none")};
 
   display: flex;
   max-width: calc(100% - 80px);
