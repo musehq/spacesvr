@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Timeout = NodeJS.Timeout;
 
 /**
  * A hook that allows you to toggle a boolean value.
  * @param delay time in ms
  */
 export const useDelayedToggle = (delay = 1000) => {
-  const timeoutId = useRef<Timeout | null>(null);
+  const timeoutId = useRef<any>(null);
   const [active, setActiveState] = useState(false);
 
   const setActive = useCallback(() => {
