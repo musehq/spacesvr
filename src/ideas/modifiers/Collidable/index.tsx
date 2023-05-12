@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { BufferGeometry, Group, Mesh } from "three";
+import { BufferGeometry, Group, Mesh, DefaultLoadingManager } from "three";
 import {
   findColliderMeshes,
   getGeometryTriCount,
@@ -8,6 +8,7 @@ import {
   getTransformedMeshGeo,
 } from "./utils/mesh";
 import TrimeshCollider from "./components/TrimeshCollider";
+import { GenerateSimplifiedGeoLoader } from "./utils/GenerateSimplifiedGeoLoader";
 import { generateSimplifiedGeo } from "./utils/simplify";
 
 type CollidableProps = {
@@ -25,6 +26,10 @@ export function Collidable(props: CollidableProps) {
     hideCollisionMeshes = false,
   } = props;
 
+  useEffect(() => {
+    DefaultLoadingManager.itemStart;
+  }, [children, enabled]);
+
   const group = useRef<Group>(null);
   const geoUUID = useRef<string>();
   const [collisionMeshes, setCollisionMeshes] = useState<Mesh[]>();
@@ -35,6 +40,8 @@ export function Collidable(props: CollidableProps) {
 
   // register collision meshes and collision geos
   useEffect(() => {
+    const loader = new GenerateSimplifiedGeoLoader();
+
     if (!group.current || !enabled) {
       setCollisionGeos(undefined);
       setCollisionMeshes(undefined);
@@ -73,9 +80,10 @@ export function Collidable(props: CollidableProps) {
     } else {
       const perc = triLimit / triCount;
       const simpGeos = geos
-        .map((g) => generateSimplifiedGeo(g, getGeometryTriCount(g) * perc))
+        .map((g) => loader.load(g, getGeometryTriCount(g) * perc))
         .filter((g) => g) as BufferGeometry[];
       setCollisionGeos(simpGeos);
+      DefaultLoadingManager.itemEnd;
     }
   }, [children, triLimit, enabled]);
 
